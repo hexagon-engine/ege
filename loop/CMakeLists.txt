@@ -5,6 +5,10 @@ set(SOURCES
 	"EventResult.h"
 	"GameLoop.cpp"
 	"GameLoop.h"
+	"Time.h"
+	"Timer.cpp"
+	"Timer.h"
+	"TimerEvent.h"
 )
 
 ege_add_module(loop)

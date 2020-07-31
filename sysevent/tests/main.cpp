@@ -17,7 +17,7 @@ public:
                 event.type = sf::Event::MouseButtonReleased;
                 event.mouseButton.button = sf::Mouse::XButton1;
                 EGE::SystemEvent sysevent(event);
-                fireEvent(EGE::SystemEvent::getTypeStatic(), sysevent);
+                fireEvent(sysevent);
             } break;
             case 2:
             {
@@ -25,13 +25,13 @@ public:
                 event.mouseMove.x = 123;
                 event.mouseMove.y = 321;
                 EGE::SystemEvent sysevent(event);
-                fireEvent(EGE::SystemEvent::getTypeStatic(), sysevent);
+                fireEvent(sysevent);
             } break;
             case 3:
             {
                 event.type = sf::Event::MouseEntered;
                 EGE::SystemEvent sysevent(event);
-                fireEvent(EGE::SystemEvent::getTypeStatic(), sysevent);
+                fireEvent(sysevent);
             } break;
             case 4:
             {
@@ -68,7 +68,7 @@ public:
 TESTCASE(event)
 {
     EXPECT_EQUAL(EGE::EventCast<EGE::Event>(new EGE::SystemEvent(sf::Event()))->getType(), "EGE::SystemEvent");
-    loop.addEventHandler(EGE::SystemEvent::getTypeStatic(), std::shared_ptr<EGE::EventHandler>(new MySystemEventHandler));
+    loop.addEventHandler(EGE::SystemEvent::getTypeStatic(), new MySystemEventHandler);
     loop.run();
 }
 

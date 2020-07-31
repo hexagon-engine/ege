@@ -12,7 +12,7 @@ void SFMLSystemWindow::callEvents(GameLoop* loop, SFMLSystemWindow::WaitForEvent
         sf::Event event;
         ASSERT(waitEvent(event));
         SystemEvent sysEvent(event);
-        ASSERT(loop->fireEvent(SystemEvent::getTypeStatic(), sysEvent) == EventResult::Success);
+        ASSERT(loop->fireEvent(sysEvent) == EventResult::Success);
     }
     else
     {
@@ -20,7 +20,7 @@ void SFMLSystemWindow::callEvents(GameLoop* loop, SFMLSystemWindow::WaitForEvent
         while(pollEvent(event))
         {
             SystemEvent sysEvent(event);
-            ASSERT(loop->fireEvent(SystemEvent::getTypeStatic(), sysEvent) == EventResult::Success);
+            ASSERT(loop->fireEvent(sysEvent) == EventResult::Success);
         }
     }
 }

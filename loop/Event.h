@@ -25,7 +25,7 @@ public:
     void cancel() { m_canceled = true; }
 
 private:
-    bool m_canceled;
+    bool m_canceled = false;
 };
 
 }

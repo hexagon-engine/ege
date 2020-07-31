@@ -42,7 +42,7 @@ public:
 EGE::EventResult MyGameLoop::onLoad()
 {
     m_window = std::make_shared<EGE::SFMLSystemWindow>();
-    addEventHandler(EGE::SystemEvent::getTypeStatic(), std::make_shared<MySystemEventHandler>(m_window));
+    addEventHandler(EGE::SystemEvent::getTypeStatic(), new MySystemEventHandler(m_window));
     m_window->create(sf::VideoMode(256, 256), "EGE Test");
     return EGE::EventResult::Success;
 }

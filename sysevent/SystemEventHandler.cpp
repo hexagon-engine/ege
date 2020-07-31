@@ -10,7 +10,7 @@ EventResult SystemEventHandler::handle(Event& event)
     SystemEvent* sysEvent = EventCast<SystemEvent>(&event);
     ASSERT(sysEvent);
     sf::Event sfEvent = sysEvent->getEvent();
-    //std::cerr << "SystemEventHandler: " << sfEvent.type << std::endl;
+    std::cerr << "SystemEventHandler: " << sfEvent.type << std::endl;
     switch(sfEvent.type)
     {
     case sf::Event::Closed:
@@ -102,6 +102,7 @@ EventResult SystemEventHandler::handle(Event& event)
             onSensorChange(sfEvent.sensor);
         } break;
     default:
+        std::cerr << "SystemEventHandler: invalid event type: " << sfEvent.type << std::endl;
         return EventResult::Failure;
     }
     return EventResult::Success;

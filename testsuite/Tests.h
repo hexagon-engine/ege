@@ -37,7 +37,6 @@ do {\
     { \
         fprintf(stderr, "\e[31;1mASSERTION FAILED:\e[0m [ %s ] -- In \e[33m%s\e[0m:\e[95m%d\e[0m {%s}\n", #a, __FILE__, __LINE__, tests.current().c_str()); \
         tests.fail(); \
-        return; \
     } \
 } while(0);
 
