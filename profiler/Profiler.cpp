@@ -116,6 +116,7 @@ void Profiler::end()
     DBG(PROFILER_DEBUG, "--- END ---");
     m_root.m_started = false;
     m_root.m_time += getTime() - m_root.m_startTime;
+    while(!m_startedSections.empty()) m_startedSections.pop();
 }
 
 std::string Profiler::toString()
