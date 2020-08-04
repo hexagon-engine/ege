@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <iostream>
 #include <stdlib.h>
 
 void _ege_assertion_failed(const char* expr, const char* file, size_t line);

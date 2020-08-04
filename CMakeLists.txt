@@ -52,6 +52,8 @@ include_directories("${CMAKE_SOURCE_DIR}")
 
 add_subdirectory(loop)
 add_subdirectory(main)
+add_subdirectory(profiler)
 add_subdirectory(sfml)
 add_subdirectory(sysevent)
 add_subdirectory(syswindow)
+
