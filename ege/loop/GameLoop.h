@@ -28,7 +28,7 @@ public:
     void addEventHandler(Event::EventType type, T* handler)
     {
         ASSERT(handler);
-        return addEventHandler(type, std::make_shared<T>(*handler));
+        return addEventHandler(type, std::shared_ptr<T>(handler));
     }
 
     void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
