@@ -23,6 +23,7 @@ class GUIGameLoop : public GameLoop
 public:
     //EGE_SINGLETON(GUIGameLoop);
     GUIGameLoop();
+    virtual ~GUIGameLoop();
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
     virtual EventResult onLoad() override { m_profiler.start(); return EventResult::Success; }
@@ -48,9 +49,9 @@ protected:
     Profiler m_profiler;
 
 private:
-    GUIScreen* m_currentGui;
+    GUIScreen* m_currentGui = nullptr;
     // to allow animations and lazy-load
-    GUIScreen* m_pendingGui;
+    GUIScreen* m_pendingGui = nullptr;
     std::shared_ptr<SFMLSystemWindow> m_systemWindow;
 };
 

@@ -60,10 +60,9 @@ private:
     int m_ticks = 0;
     std::map<std::string, std::shared_ptr<Timer>> m_timers;
 
-private:
-    bool m_running { true };
-    int m_exitCode { 0 };
-    long long m_tickCounter { 0 };
+    bool m_running = true;
+    int m_exitCode = 0;
+    long long m_tickCounter = 0;
     std::multimap<Event::EventType, std::shared_ptr<EventHandler>> m_eventHandlers;
 };
 

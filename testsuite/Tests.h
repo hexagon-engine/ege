@@ -24,6 +24,7 @@ public:
         for(auto& test: m_tests)
         {
             m_current = test.first;
+            fprintf(stderr, "%s", ("Current test: \e[1m" + m_current + "\e[0m\n").c_str());
             test.second();
         }
         return m_failed;

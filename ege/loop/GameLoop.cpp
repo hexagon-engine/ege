@@ -133,6 +133,10 @@ void GameLoop::updateTimers()
 
             onTimerFinish(timer.second.get());
             m_timers.erase(it);
+
+            if(m_timers.empty())
+                return;
+
             it = m_timers.find(timer.first);
         }
     }

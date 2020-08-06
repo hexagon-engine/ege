@@ -12,6 +12,13 @@ GUIGameLoop::GUIGameLoop()
 {
 }
 
+GUIGameLoop::~GUIGameLoop()
+{
+    //m_currentGui is 'delete'd when removing eventhandler
+    if(m_pendingGui)
+        delete m_pendingGui;
+}
+
 void GUIGameLoop::onTick(long long tickCount)
 {
     m_profiler.startSection("tick");
@@ -21,17 +28,26 @@ void GUIGameLoop::onTick(long long tickCount)
     if(m_pendingGui)
     {
         DBG(GUI_DEBUG, "initPendingGUI");
+        if(m_currentGui)
+        {
+            removeEventHandler(m_currentGui);
+            // it's 'delete'd by eventhandler
+        }
         m_currentGui = m_pendingGui;
         addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
-        m_pendingGui = NULL;
+        m_pendingGui = nullptr;
     }
 
     // Call system event handlers
     m_profiler.endStartSection("systemEvents");
     if(m_systemWindow)
     {
+        DBG(GUI_DEBUG, "systemEvents");
         m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
     }
+
+    m_profiler.endStartSection("timers");
+    updateTimers();
 
     m_profiler.endStartSection("logic");
     logicTick(tickCount);
@@ -51,11 +67,11 @@ void GUIGameLoop::onTick(long long tickCount)
 void GUIGameLoop::setCurrentGUIScreen(GUIScreen* screen, GUIScreenImmediateInit init)
 {
     DBG(GUI_DEBUG, "setCurrentGUIScreen");
-    if(m_currentGui)
-        removeEventHandler(m_currentGui);
 
     if(init == GUIGameLoop::GUIScreenImmediateInit::Yes)
     {
+        removeEventHandler(m_currentGui);
+        // it's 'delete'd by eventhandler
         m_currentGui = screen;
         addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
     }
