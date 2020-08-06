@@ -51,6 +51,18 @@ void GameLoop::addEventHandler(Event::EventType type, std::shared_ptr<EventHandl
     m_eventHandlers.insert(std::make_pair(type, handler));
 }
 
+void GameLoop::removeEventHandler(EventHandler* handler)
+{
+    for(auto it = m_eventHandlers.begin(); it != m_eventHandlers.end(); it++)
+    {
+        if(it->second.get() == handler)
+        {
+            m_eventHandlers.erase(it);
+            return;
+        }
+    }
+}
+
 EventResult GameLoop::fireEvent(Event& event)
 {
     EventResult result = EventResult::Success;

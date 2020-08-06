@@ -10,7 +10,7 @@ EventResult SystemEventHandler::handle(Event& event)
     SystemEvent* sysEvent = EventCast<SystemEvent>(&event);
     ASSERT(sysEvent);
     sf::Event sfEvent = sysEvent->getEvent();
-    std::cerr << "SystemEventHandler: " << sfEvent.type << std::endl;
+    //std::cerr << "SystemEventHandler: " << sfEvent.type << std::endl;
     switch(sfEvent.type)
     {
     case sf::Event::Closed:

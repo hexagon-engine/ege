@@ -6,7 +6,4 @@ set(SOURCES
 )
 
 ege_add_module(syswindow)
-ege_depend_module(syswindow loop)
-ege_depend_module(syswindow main)
-ege_depend_module(syswindow sfml)
 ege_depend_module(syswindow sysevent)

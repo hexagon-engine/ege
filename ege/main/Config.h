@@ -21,17 +21,24 @@ void _ege_assertion_failed(const char* expr, const char* file, size_t line);
     { \
         Yes, \
         No \
-    };
+    }
 
-#define DUMP(run,var) \
-    if constexpr(run) \
+#define EGE_SINGLETON(clazz,...) \
+    clazz& instance() \
     { \
-        std::cerr << #var << "= " << (var) << std::endl; \
+        static clazz inst(__VA_ARGS__); \
+        return inst; \
     }
 
 #define DBG(run,txt) \
     if constexpr(run) \
     { \
         std::cerr << "0004 EGE/main: debug: " << (txt) << std::endl; \
+    }
+
+#define DUMP(run,var) \
+    if constexpr(run) \
+    { \
+        std::cerr << #var << "= " << (var) << std::endl; \
     }
 

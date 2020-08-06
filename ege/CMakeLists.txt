@@ -1,3 +1,4 @@
+add_subdirectory(gui)
 add_subdirectory(loop)
 add_subdirectory(main)
 add_subdirectory(profiler)

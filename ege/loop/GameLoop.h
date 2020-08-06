@@ -24,17 +24,22 @@ public:
     bool isRunning() { return m_running; }
     long long getTickCount() { return m_tickCounter; }
 
-    template<class T>
-    void addEventHandler(Event::EventType type, T* handler)
+    void addEventHandler(Event::EventType type, EventHandler* handler)
     {
         ASSERT(handler);
-        return addEventHandler(type, std::shared_ptr<T>(handler));
+        addEventHandler(type, std::shared_ptr<EventHandler>(handler));
     }
 
     void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
+
+    // NOTE: removing event handlers in event handler is UB
+    // TODO: it's slow
+    void removeEventHandler(EventHandler* handler);
+
     size_t getEventHandlerCount() { return m_eventHandlers.size(); }
     EventResult fireEvent(Event& event);
 
+    // NOTE: it's synchronous load so cannot be used to display loading screen
     virtual EventResult onLoad() = 0;
     virtual void onTick(long long tickCount) = 0;
     virtual void onExit(int exitCode) = 0;
@@ -42,6 +47,7 @@ public:
     virtual void onTimerFinish(Timer* timer) {}
     virtual void onTimerTick(Timer* timer) {}
 
+    // TODO: use smart pointers here
     void addTimer(const std::string& name, Timer* timer, TimerImmediateStart);
     Timer* getTimer(const std::string& timer);
     void removeTimer(const std::string& timer);

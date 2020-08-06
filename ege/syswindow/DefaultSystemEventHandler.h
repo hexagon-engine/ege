@@ -22,6 +22,11 @@ public:
 
     virtual void onClose() override;
 
+    std::weak_ptr<SFMLSystemWindow> getWindow()
+    {
+        return m_window;
+    }
+
 private:
     std::weak_ptr<SFMLSystemWindow> m_window;
 };
