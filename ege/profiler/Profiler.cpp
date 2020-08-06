@@ -3,8 +3,9 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
-#include <main/Config.h>
-#include <profiler/Profiler.h>
+#include "Profiler.h"
+
+#include <ege/main/Config.h>
 
 namespace EGE
 {

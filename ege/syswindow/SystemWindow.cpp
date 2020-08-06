@@ -1,6 +1,11 @@
+/*
+EGE - Extendable Game Engine
+Copyright (c) Sppmacd 2020
+*/
+
 #include "SystemWindow.h"
 
-#include <sysevent/SystemEvent.h>
+#include <ege/sysevent/SystemEvent.h>
 
 namespace EGE
 {

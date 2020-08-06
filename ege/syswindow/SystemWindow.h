@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <loop/GameLoop.h>
+#include <ege/loop/GameLoop.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE

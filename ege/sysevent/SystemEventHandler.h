@@ -7,7 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SystemEvent.h"
 
-#include <loop/EventHandler.h>
+#include <ege/loop/EventHandler.h>
 
 namespace EGE
 {

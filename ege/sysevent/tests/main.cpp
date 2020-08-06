@@ -1,6 +1,6 @@
 #include <testsuite/Tests.h>
-#include <loop/GameLoop.h>
-#include <sysevent/SystemEventHandler.h>
+#include <ege/loop/GameLoop.h>
+#include <ege/sysevent/SystemEventHandler.h>
 
 class MyGameLoop : public EGE::GameLoop
 {

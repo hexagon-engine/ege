@@ -5,8 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/loop/Event.h>
 #include <SFML/Window.hpp>
-#include <loop/Event.h>
 
 namespace EGE
 {

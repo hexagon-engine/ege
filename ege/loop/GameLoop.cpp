@@ -8,8 +8,8 @@ Copyright (c) Sppmacd 2020
 #include "EventResult.h"
 #include "TimerEvent.h"
 
+#include <ege/main/Config.h>
 #include <iostream>
-#include <main/Config.h>
 #include <string.h>
 
 namespace EGE

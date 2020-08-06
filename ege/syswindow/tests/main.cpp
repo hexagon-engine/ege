@@ -1,8 +1,13 @@
+/*
+EGE - Extendable Game Engine
+Copyright (c) Sppmacd 2020
+*/
+
 #include <testsuite/Tests.h>
-#include <loop/GameLoop.h>
-#include <sysevent/SystemEvent.h>
-#include <syswindow/DefaultSystemEventHandler.h>
-#include <syswindow/SystemWindow.h>
+#include <ege/loop/GameLoop.h>
+#include <ege/sysevent/SystemEvent.h>
+#include <ege/syswindow/DefaultSystemEventHandler.h>
+#include <ege/syswindow/SystemWindow.h>
 
 class MyGameLoop : public EGE::GameLoop
 {

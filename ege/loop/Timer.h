@@ -5,8 +5,9 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <loop/Time.h>
-#include <main/Config.h>
+#include "Time.h"
+
+#include <ege/main/Config.h>
 #include <functional>
 #include <string>
 

@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <stack>
 #include <string>
 
-#define PROFILER_DEBUG 1
+#define PROFILER_DEBUG 0
 
 namespace EGE
 {

@@ -5,10 +5,10 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/sysevent/SystemEvent.h>
+#include <ege/sysevent/SystemEventHandler.h>
+#include <ege/syswindow/SystemWindow.h>
 #include <memory>
-#include <sysevent/SystemEvent.h>
-#include <sysevent/SystemEventHandler.h>
-#include <syswindow/SystemWindow.h>
 
 namespace EGE
 {

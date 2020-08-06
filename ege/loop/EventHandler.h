@@ -5,10 +5,11 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <main/Config.h>
 #include "Event.h"
 #include "EventResult.h"
 #include "EventCast.h"
+
+#include <ege/main/Config.h>
 
 namespace EGE
 {

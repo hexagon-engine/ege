@@ -8,7 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "GameLoop.h"
 
 #include <iostream>
-#include <main/Config.h>
+#include <ege/main/Config.h>
 #include <time.h>
 
 namespace EGE

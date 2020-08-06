@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <main/Config.h>
+#include <ege/main/Config.h>
 
 namespace EGE
 {

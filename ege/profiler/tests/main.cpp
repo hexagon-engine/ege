@@ -1,5 +1,5 @@
 #include <testsuite/Tests.h>
-#include <profiler/Profiler.h>
+#include <ege/profiler/Profiler.h>
 #include <iostream>
 
 void sleep(float secs)
