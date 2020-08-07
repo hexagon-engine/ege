@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/main/Config.h>
+#include <ege/profiler/Profiler.h>
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <string>
