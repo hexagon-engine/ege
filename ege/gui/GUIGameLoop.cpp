@@ -38,6 +38,7 @@ EventResult GUIGameLoop::onLoad()
      else
      {
          std::cerr << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager" << std::endl;
+         // TODO: implement GUIResourceManager
      }
      m_profiler.endSection();
      return EventResult::Success;
