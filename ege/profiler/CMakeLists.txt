@@ -1,6 +1,7 @@
 set(SOURCES
 	"Profiler.cpp"
 	"Profiler.h"
+	"ProfilerSectionStarter.h"
 )
 
 ege_add_module(profiler)

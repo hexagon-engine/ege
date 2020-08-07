@@ -1,5 +1,6 @@
 #include <testsuite/Tests.h>
 #include <ege/profiler/Profiler.h>
+#include <ege/profiler/ProfilerSectionStarter.h>
 #include <iostream>
 
 void sleep(float secs)
@@ -90,6 +91,31 @@ TESTCASE(restartTest)
             profiler.endSection();
 
         profiler.endSection();
+
+    profiler.end();
+
+    DEBUG_PRINT(("\n" + profiler.toString()).c_str());
+}
+
+TESTCASE(profilerSectionStarter)
+{
+    EGE::Profiler profiler;
+    profiler.start();
+
+    sleep(0.25f);
+    {
+        EGE::ProfilerSectionStarter starter(profiler, "test1");
+        sleep(0.5f);
+        {
+            EGE::ProfilerSectionStarter starter2(profiler, "subTest1");
+            {
+                EGE::ProfilerSectionStarter starter2(profiler, "subSubTest1");
+                sleep(1.f);
+            }
+            sleep(0.75f);
+        }
+        sleep(0.375f);
+    }
 
     profiler.end();
 
