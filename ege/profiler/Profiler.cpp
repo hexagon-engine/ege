@@ -6,6 +6,8 @@ Copyright (c) Sppmacd 2020
 #include "Profiler.h"
 
 #include <ege/main/Config.h>
+#include <algorithm>
+#include <vector>
 
 namespace EGE
 {
@@ -178,20 +180,16 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
     }
     info += '\n';
 
-    // empty space
-    for(size_t s = 0; s < m_depth; s++)
-    {
-        info += "|  ";
-    }
-    if(!m_subSections.empty())
-        info += "|  ";
-    info += '\n';
+    std::vector<Profiler::Section*> sections;
 
     // subsections
     for(auto it: m_subSections)
-    {
-        it.second.get()->addSectionInfo(info, m_time, rootTime);
-    }
+        sections.push_back(it.second.get());
+
+    std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
+
+    for(auto section: sections)
+        section->addSectionInfo(info, m_time, rootTime);
 }
 
 }
