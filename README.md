@@ -7,8 +7,8 @@ Extendable Game Engine
 * CMake 2.8+ (latest version recommended)
 
 ## Build
-* Install SFML 2.5+ and its dependencies
-Ubuntu: ```sudo apt install libsfml-dev```
+* Install required packages:
+Ubuntu: ```sudo apt install libsfml-dev g++ cmake make```
 
 * Run these commands:
 ```
