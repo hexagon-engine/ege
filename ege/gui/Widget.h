@@ -20,7 +20,8 @@ class Widget : public DefaultSystemEventHandler
 public:
     Widget(Widget* parent)
     : DefaultSystemEventHandler(parent->getWindow())
-    , m_parent(parent) {}
+    , m_parent(parent)
+    , m_gameLoop(parent->m_gameLoop) {}
 
     // for non-parented widgets, e.g. GUIScreen
     Widget(GUIGameLoop* gameLoop);
@@ -34,17 +35,21 @@ public:
     virtual void render(sf::RenderTarget& target);
 
     virtual void onUpdate(long long tickCounter) {}
+    virtual void onLoad() {};
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
 
     virtual bool isMouseOver(sf::Vector2f position);
 
+    virtual void setViewForWidget(sf::RenderTarget& target);
+
 protected:
     sf::Vector2f m_size;
     Widget* m_parent;
     bool m_mouseOver = false;
     bool m_leftClicked = false;
+    GUIGameLoop* m_gameLoop = nullptr;
 
 private:
     sf::Vector2f m_position;

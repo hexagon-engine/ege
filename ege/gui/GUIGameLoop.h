@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/loop/GameLoop.h>
 #include <ege/main/Config.h>
 #include <ege/profiler/Profiler.h>
+#include <ege/resources/ResourceManager.h>
 #include <ege/syswindow/SystemWindow.h>
 #include <memory>
 
@@ -26,7 +27,7 @@ public:
     virtual ~GUIGameLoop();
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
-    virtual EventResult onLoad() override { m_profiler.start(); return EventResult::Success; }
+    virtual EventResult onLoad() override;
     virtual void onTick(long long tickCount) override;
     virtual void onExit(int exitCode) override {}
     virtual EventResult onFinish(int exitCode) override
@@ -44,6 +45,8 @@ public:
     void setCurrentGUIScreen(GUIScreen* screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
     std::weak_ptr<SFMLSystemWindow> getWindow();
     void setWindow(std::shared_ptr<SFMLSystemWindow> window);
+    std::weak_ptr<ResourceManager> getResourceManager();
+    void setResourceManager(std::shared_ptr<ResourceManager> manager);
 
 protected:
     Profiler m_profiler;
@@ -53,6 +56,7 @@ private:
     // to allow animations and lazy-load
     GUIScreen* m_pendingGui = nullptr;
     std::shared_ptr<SFMLSystemWindow> m_systemWindow;
+    std::shared_ptr<ResourceManager> m_resourceManager;
 };
 
 }

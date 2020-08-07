@@ -224,6 +224,8 @@ void GUIScreen::onUpdate(long long tickCounter)
 void GUIScreen::render(sf::RenderTarget& target)
 {
     // TODO: draw only visible widgets
+    setPosition(sf::Vector2f());
+    m_size = sf::Vector2f(target.getSize());
     for(auto widget: m_childWidgets)
     {
         widget->render(target);
@@ -233,6 +235,7 @@ void GUIScreen::render(sf::RenderTarget& target)
 void GUIScreen::addWidget(std::shared_ptr<Widget> widget)
 {
     ASSERT(widget.get());
+    widget->onLoad();
     m_childWidgets.push_back(widget);
 }
 

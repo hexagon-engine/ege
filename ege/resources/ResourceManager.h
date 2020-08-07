@@ -21,6 +21,9 @@ public:
     void clear();
     bool isError();
 
+    std::shared_ptr<sf::Texture> getTexture(std::string name);
+    std::shared_ptr<sf::Font> getFont(std::string name);
+
 protected:
 
     // Loads specified resources from file.
@@ -35,9 +38,6 @@ protected:
 
     // TODO
     bool loadSystemFont(std::string fileName) { ASSERT(false); return false; }
-
-    std::shared_ptr<sf::Texture> getTexture(std::string name);
-    std::shared_ptr<sf::Font> getFont(std::string name);
 
     // Replaces default unknown texture with your own.
     void setUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr);

@@ -9,4 +9,5 @@ set(SOURCES
 
 ege_add_module(gui)
 ege_depend_module(gui profiler)
+ege_depend_module(gui resources)
 ege_depend_module(gui syswindow)

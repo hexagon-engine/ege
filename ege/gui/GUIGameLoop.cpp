@@ -19,6 +19,30 @@ GUIGameLoop::~GUIGameLoop()
         delete m_pendingGui;
 }
 
+EventResult GUIGameLoop::onLoad()
+{
+     m_profiler.start();
+     m_profiler.startSection("load");
+     if(m_resourceManager)
+     {
+         m_profiler.startSection("resourceManager");
+         bool success = m_resourceManager->reload();
+         success &= !m_resourceManager->isError();
+         if(!success)
+         {
+            m_profiler.endSection();
+            return EventResult::Failure;
+         }
+         m_profiler.endSection();
+     }
+     else
+     {
+         std::cerr << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager" << std::endl;
+     }
+     m_profiler.endSection();
+     return EventResult::Success;
+}
+
 void GUIGameLoop::onTick(long long tickCount)
 {
     m_profiler.startSection("tick");
@@ -34,6 +58,7 @@ void GUIGameLoop::onTick(long long tickCount)
             // it's 'delete'd by eventhandler
         }
         m_currentGui = m_pendingGui;
+        m_currentGui->onLoad();
         addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
         m_pendingGui = nullptr;
     }
@@ -73,6 +98,7 @@ void GUIGameLoop::setCurrentGUIScreen(GUIScreen* screen, GUIScreenImmediateInit 
         removeEventHandler(m_currentGui);
         // it's 'delete'd by eventhandler
         m_currentGui = screen;
+        m_currentGui->onLoad();
         addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
     }
     else
@@ -91,6 +117,16 @@ void GUIGameLoop::setWindow(std::shared_ptr<SFMLSystemWindow> window)
     // so it forces one GameLoop for window
     // so only one window is allowed currently
     m_systemWindow = std::shared_ptr<SFMLSystemWindow>(window);
+}
+
+std::weak_ptr<ResourceManager> GUIGameLoop::getResourceManager()
+{
+    return m_resourceManager;
+}
+
+void GUIGameLoop::setResourceManager(std::shared_ptr<ResourceManager> manager)
+{
+    m_resourceManager = manager;
 }
 
 void GUIGameLoop::render()

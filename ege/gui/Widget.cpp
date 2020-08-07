@@ -15,7 +15,8 @@ namespace EGE
 
 Widget::Widget(GUIGameLoop* gameLoop)
 : DefaultSystemEventHandler(gameLoop->getWindow())
-, m_parent(nullptr) {}
+, m_parent(nullptr)
+, m_gameLoop(gameLoop) {}
 
 sf::FloatRect Widget::getBoundingBox()
 {
@@ -24,14 +25,7 @@ sf::FloatRect Widget::getBoundingBox()
 
 void Widget::render(sf::RenderTarget& target)
 {
-    // set view
-    sf::View view(sf::FloatRect(m_position, m_size));
-    sf::Vector2u windowSize = target.getSize();
-    view.setViewport(sf::FloatRect(m_position.x / windowSize.x, m_position.y / windowSize.y,
-                                   m_size.x / windowSize.x, m_size.y / windowSize.y));
-    target.setView(view);
-    DUMP(0, view.getSize().x);
-    DUMP(0, view.getSize().y);
+    setViewForWidget(target);
 
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
@@ -73,6 +67,19 @@ void Widget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 bool Widget::isMouseOver(sf::Vector2f position)
 {
     return getBoundingBox().contains(position);
+}
+
+void Widget::setViewForWidget(sf::RenderTarget& target)
+{
+    sf::View view(sf::FloatRect(m_position, m_size));
+
+    DUMP(0, view.getSize().x);
+    DUMP(0, view.getSize().y);
+
+    sf::Vector2u windowSize = target.getSize();
+    view.setViewport(sf::FloatRect(m_position.x / windowSize.x, m_position.y / windowSize.y,
+                                   m_size.x / windowSize.x, m_size.y / windowSize.y));
+    target.setView(view);
 }
 
 }

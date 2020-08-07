@@ -6,10 +6,12 @@ class MyGameLoop : public EGE::GUIGameLoop
 public:
     virtual EGE::EventResult onLoad() override
     {
-        EGE::GUIGameLoop::onLoad();
+        EGE::EventResult result = EGE::GUIGameLoop::onLoad();
+        if(result == EGE::EventResult::Failure)
+            return result;
 
         DEBUG_PRINT("onLoad");
-        getWindow().lock().get()->setFramerateLimit(10);
+        getWindow().lock().get()->setFramerateLimit(60);
         return EGE::EventResult::Success;
     }
 
@@ -81,6 +83,63 @@ TESTCASE(guiChange)
                                      ->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
                                                     gameLoop.setCurrentGUIScreen(gui2);
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
+    gameLoop.run();
+}
+
+class MyGuiScreen : public EGE::GUIScreen
+{
+public:
+    std::shared_ptr<EGE::DummyWidget> widget1;
+    sf::Font* font;
+    sf::Texture* texture;
+
+    MyGuiScreen(MyGameLoop* loop)
+    : EGE::GUIScreen(loop) {}
+
+    virtual void onLoad()
+    {
+        EGE::GUIScreen::onLoad();
+        DEBUG_PRINT("MyResourceManager onLoad");
+        widget1 = std::make_shared<EGE::DummyWidget>(this);
+        widget1->setPosition(sf::Vector2f(50.f, 50.f));
+        widget1->setSize(sf::Vector2f(50.f, 50.f));
+        addWidget(widget1);
+        font = &*m_gameLoop->getResourceManager().lock()->getFont("font.ttf");
+        texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
+    }
+
+    virtual void render(sf::RenderTarget& target)
+    {
+        EGE::GUIScreen::render(target);
+        DEBUG_PRINT("MyResourceManager render");
+
+        setViewForWidget(target);
+        sf::Text text("TEST", *font, 30);
+        target.draw(text);
+        sf::Sprite sprite(*texture);
+        sprite.setPosition(0.f, 40.f);
+        target.draw(sprite);
+    }
+};
+class MyResourceManager : public EGE::ResourceManager
+{
+public:
+    virtual bool reload()
+    {
+        DEBUG_PRINT("MyResourceManager reload");
+        setResourcePath("root/res");
+        loadFontFromFile("font.ttf");
+        loadTextureFromFile("texture.png");
+        return true;
+    }
+};
+
+TESTCASE(resourceManager)
+{
+    MyGameLoop gameLoop;
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)"));
+    gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
+    gameLoop.setCurrentGUIScreen(new MyGuiScreen(&gameLoop));
     gameLoop.run();
 }
 

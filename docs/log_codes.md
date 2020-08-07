@@ -15,3 +15,5 @@
 	>> ResourceManager::getTexture() return m_unknownTexture
 ### 0009 EGE/resources: invalid FONT requested: %s
 	>> ResourceManager::getFont() return nullptr
+### 000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager
+
