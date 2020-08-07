@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "GUIGameLoop.h"
 
+#include <ege/profiler/ProfilerSectionStarter.h>
+
 namespace EGE
 {
 
@@ -21,27 +23,26 @@ GUIGameLoop::~GUIGameLoop()
 
 EventResult GUIGameLoop::onLoad()
 {
-     m_profiler.start();
-     m_profiler.startSection("load");
-     if(m_resourceManager)
-     {
-         m_profiler.startSection("resourceManager");
-         bool success = m_resourceManager->reload();
-         success &= !m_resourceManager->isError();
-         if(!success)
-         {
-            m_profiler.endSection();
-            return EventResult::Failure;
-         }
-         m_profiler.endSection();
-     }
-     else
-     {
-         std::cerr << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager" << std::endl;
-         // TODO: implement GUIResourceManager
-     }
-     m_profiler.endSection();
-     return EventResult::Success;
+    {
+        m_profiler.start();
+        ProfilerSectionStarter starter(m_profiler, "load");
+        if(m_resourceManager)
+        {
+            ProfilerSectionStarter starter2(m_profiler, "resourceManager");
+            bool success = m_resourceManager->reload();
+            success &= !m_resourceManager->isError();
+            if(!success)
+            {
+                return EventResult::Failure;
+            }
+        }
+        else
+        {
+            std::cerr << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager" << std::endl;
+            // TODO: implement GUIResourceManager
+        }
+        return EventResult::Success;
+    }
 }
 
 void GUIGameLoop::onTick(long long tickCount)
