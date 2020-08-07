@@ -127,7 +127,6 @@ public:
     virtual bool reload()
     {
         DEBUG_PRINT("MyResourceManager reload");
-        setResourcePath("root/res");
         loadFontFromFile("font.ttf");
         loadTextureFromFile("texture.png");
         return true;
