@@ -11,22 +11,12 @@ Extendable Game Engine
 Ubuntu: ```sudo apt install libsfml-dev g++ cmake make```
 
 * Run these commands:
+(Now only Unix-like systems supported)
 ```
-mkdir build
-cmake -S . -B build
+scripts/configure.sh
 cd build
 make
-make install
 ```
-On Windows:
-```
-mkdir build
-cmake -S . -B build -DSFML_ROOT "/path/to/sfml"
-cd build
-mingw32-make
-mingw32-make install
-```
-(You must have cmake and mingw32-make in your PATH)
 
 ## Link to your project
 (TODO)
