@@ -55,6 +55,8 @@
 #   add_executable(myapp ...)
 #   target_link_libraries(myapp ${SFML_LIBRARIES})
 
+## Modified by SPPMACD
+
 # define the SFML_STATIC macro if static build was chosen
 if(SFML_STATIC_LIBRARIES)
     add_definitions(-DSFML_STATIC)
@@ -74,9 +76,12 @@ set(FIND_SFML_PATHS
     /opt)
 
 # find the SFML include directory
-find_path(SFML_INCLUDE_DIR SFML/Config.hpp
+#[[find_path(SFML_INCLUDE_DIR SFML/Config.hpp
           PATH_SUFFIXES include
-          PATHS ${FIND_SFML_PATHS})
+          PATHS ${FIND_SFML_PATHS}) 
+]]
+# ``EGE``
+set(SFML_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${SFML_ROOT}/include)
 
 # check the version number
 set(SFML_VERSION_OK TRUE)

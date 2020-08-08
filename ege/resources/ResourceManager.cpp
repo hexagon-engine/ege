@@ -52,7 +52,7 @@ void ResourceManager::addTexture(std::string name, std::shared_ptr<sf::Texture> 
 void ResourceManager::addFont(std::string name, std::shared_ptr<sf::Font> font)
 {
     ASSERT(font);
-    ASSERT(font->hasGlyph('a')); //check for some common character
+    ASSERT(!font->getInfo().family.empty());
     m_loadedFonts.insert(std::make_pair(name, font));
 }
 
