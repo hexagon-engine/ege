@@ -1,0 +1,46 @@
+if(NOT IS_DIRECTORY ${EGE_LIB_ROOT})
+	message(FATAL_ERROR "EGE_LIB_ROOT must be an existing directory (currently is set to '${EGE_LIB_ROOT}')")
+endif()
+
+include(${EGE_LIB_ROOT}/cmake/EGEUtils.cmake)
+
+ege_message("INFO" "EGE lib root is '${EGE_LIB_ROOT}'")
+
+# SFML preparation
+set(CMAKE_MODULE_PATH "${EGE_LIB_ROOT}/cmake" ${CMAKE_MODULE_PATH})
+set(SFML_STATIC_LIBRARIES TRUE)
+set(EGE_SFML_ROOT "${EGE_LIB_ROOT}/build/SFML/build")
+ege_message("INFO" "SFML root is '${EGE_SFML_ROOT}'")
+set(SFML_ROOT ${EGE_SFML_ROOT})
+cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
+# TODO: find_path is buggy?
+find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
+
+macro(ege_executable targetname source_path modules)
+	ege_message("INFO" "Adding EXECUTABLE: \"${targetname}\" from ${CMAKE_SOURCE_DIR}/${source_path} (installed in ${CMAKE_INSTALL_PREFIX})")
+	file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/${source_path}/*")
+	add_executable("${targetname}" ${SOURCES})
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
+	
+	# add EGE modules
+	foreach(module ${modules})
+		target_link_libraries("${targetname}" PUBLIC "${EGE_LIB_ROOT}/build/root/modules/lib${module}.a")
+	endforeach()
+	target_include_directories("${targetname}" PUBLIC "${EGE_LIB_ROOT}")
+	
+	# add SFML
+	if(SFML_FOUND)
+		ege_message("INFO" "Adding SFML as dependency (SFML_INCLUDE_DIR=${SFML_INCLUDE_DIR})")
+		ege_link_sfml("${targetname}")
+		#if(${UNIX}) # TODO
+			target_link_libraries("${targetname}" PUBLIC dl)
+		#endif()
+	endif()
+	install(TARGETS "${targetname}" RUNTIME DESTINATION ".")
+endmacro()
+
+macro(ege_resources path)
+	ege_message("INFO" "Adding RESOURCES: ${CMAKE_SOURCE_DIR}/${path} (installed in ${CMAKE_INSTALL_PREFIX}/${path})")
+	install(DIRECTORY ${path} DESTINATION ".")
+endmacro()
+

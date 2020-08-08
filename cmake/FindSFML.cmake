@@ -81,7 +81,7 @@ set(FIND_SFML_PATHS
           PATHS ${FIND_SFML_PATHS}) 
 ]]
 # ``EGE``
-set(SFML_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${SFML_ROOT}/include)
+set(SFML_INCLUDE_DIR ${SFML_ROOT}/include)
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -368,3 +368,4 @@ endif()
 if(SFML_FOUND AND NOT SFML_FIND_QUIETLY)
     message(STATUS "Found SFML ${SFML_VERSION_MAJOR}.${SFML_VERSION_MINOR}.${SFML_VERSION_PATCH} in ${SFML_INCLUDE_DIR}")
 endif()
+
