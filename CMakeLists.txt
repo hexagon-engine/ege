@@ -8,13 +8,16 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/root")
 
 ### SFML ###
 
-cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+# SFML preparation
+set(CMAKE_MODULE_PATH "${EGE_LIB_ROOT}/cmake" ${CMAKE_MODULE_PATH})
 set(SFML_STATIC_LIBRARIES TRUE)
+set(EGE_SFML_ROOT "${EGE_LIB_ROOT}/build/SFML/build")
 ege_message("INFO" "SFML root is '${EGE_SFML_ROOT}'")
-set(SFML_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/${EGE_SFML_ROOT})
-find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
+set(SFML_ROOT ${EGE_SFML_ROOT})
+cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
 # TODO: find_path is buggy?
+find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
+
 if(SFML_FOUND)
 	ege_message("INFO" "Adding SFML as dependency (SFML_INCLUDE_DIR=${SFML_INCLUDE_DIR})")
 endif()

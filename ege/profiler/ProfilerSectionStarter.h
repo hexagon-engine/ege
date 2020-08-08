@@ -6,7 +6,6 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include "Profiler.h"
-#include <SFML/System/Lock.hpp>
 
 namespace EGE
 {
