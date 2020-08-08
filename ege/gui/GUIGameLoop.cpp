@@ -83,7 +83,7 @@ void GUIGameLoop::onTick(long long tickCount)
     render();
     m_profiler.endSection();
 
-    if(!m_systemWindow->isOpen())
+    if(m_systemWindow && !m_systemWindow->isOpen())
         exit();
 
     // TODO: tick rate limit?
