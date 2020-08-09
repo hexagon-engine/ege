@@ -18,6 +18,22 @@ class GUIGameLoop;
 class Widget : public DefaultSystemEventHandler
 {
 public:
+    class Command
+    {
+    public:
+        std::string getId()
+        {
+            return m_id;
+        }
+
+    protected:
+        Command(std::string id)
+        : m_id(id) {}
+
+    private:
+        std::string m_id;
+    };
+
     Widget(Widget* parent)
     : DefaultSystemEventHandler(parent->getWindow())
     , m_parent(parent)
@@ -36,6 +52,7 @@ public:
 
     virtual void onUpdate(long long tickCounter) {}
     virtual void onLoad() {};
+    virtual void onCommand(const Command& command);
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;

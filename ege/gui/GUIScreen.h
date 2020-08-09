@@ -41,7 +41,7 @@ public:
     virtual void onSensorChange(sf::Event::SensorEvent& event) override;
 
     // GUI-specific Events
-    virtual void onCommand(int id) {}
+    virtual void onCommand(const Command& command) override { (void)command; }
 
     // Widget Events
     virtual void onUpdate(long long tickCounter) override;
