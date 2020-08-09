@@ -12,8 +12,12 @@ namespace EGE
 
 void ResourceManager::clear()
 {
+    // Reset ResourceManager like the constructor
     m_loadedFonts.clear();
     m_loadedTextures.clear();
+    m_unknownTexture = nullptr;
+    m_resourcePath = "res";
+    m_defaultFont = "";
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::loadTextureFromFile(std::string fileName)
@@ -44,16 +48,28 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
 
 void ResourceManager::addTexture(std::string name, std::shared_ptr<sf::Texture> texture)
 {
-    ASSERT(texture);
-    ASSERT(texture->getSize().x > 0 && texture->getSize().y > 0);
-    m_loadedTextures.insert(std::make_pair(name, texture));
+    auto it = m_loadedTextures.find(name);
+    if(it == m_loadedTextures.end())
+    {
+        m_loadedTextures.insert(std::make_pair(name, texture));
+    }
+    else if(texture != nullptr)
+    {
+        it->second = texture;
+    }
 }
 
 void ResourceManager::addFont(std::string name, std::shared_ptr<sf::Font> font)
 {
-    ASSERT(font);
-    ASSERT(!font->getInfo().family.empty());
-    m_loadedFonts.insert(std::make_pair(name, font));
+    auto it = m_loadedFonts.find(name);
+    if(it == m_loadedFonts.end())
+    {
+        m_loadedFonts.insert(std::make_pair(name, font));
+    }
+    else if(font != nullptr)
+    {
+        it->second = font;
+    }
 }
 
 std::shared_ptr<sf::Texture> ResourceManager::getTexture(std::string name)
@@ -65,6 +81,12 @@ std::shared_ptr<sf::Texture> ResourceManager::getTexture(std::string name)
         m_loadedTextures[name] = m_unknownTexture;
         return m_unknownTexture;
     }
+    if(!it->second)
+    {
+        // TODO: call some user handler to allow him
+        // to change texture settings after loading
+        return loadTextureFromFile(name);
+    }
     return it->second;
 }
 
@@ -74,10 +96,47 @@ std::shared_ptr<sf::Font> ResourceManager::getFont(std::string name)
     if(it == m_loadedFonts.end())
     {
         std::cerr << "0009 EGE/resources: invalid FONT requested: " << name << std::endl;
-        m_loadedFonts[name] = nullptr;
+        if(name != m_defaultFont && !m_defaultFont.empty())
+        {
+            auto font = getDefaultFont();
+            if(!font)
+                return nullptr;
+            m_loadedFonts[name] = font;
+            return font;
+        }
         return nullptr;
     }
+    if(!it->second)
+    {
+        // TODO: call some user handler to allow him
+        // to change texture settings after loading
+        return loadFontFromFile(name);
+    }
     return it->second;
+}
+
+std::shared_ptr<sf::Font> ResourceManager::getDefaultFont()
+{
+    return getFont(m_defaultFont);
+}
+bool ResourceManager::setDefaultFont(std::string name)
+{
+    auto font = getFont(name);
+    if(font && font != getDefaultFont() || name.empty())
+    {
+        m_defaultFont = name;
+        return true;
+    }
+    else
+    {
+        if(!loadFontFromFile(name))
+        {
+            std::cerr << "000B EGE/resources: invalid FONT requested to be default: " << name << std::endl;
+            return false;
+        }
+        m_defaultFont = name;
+        return true;
+    }
 }
 
 void ResourceManager::setUnknownTexture(std::shared_ptr<sf::Texture> texture)

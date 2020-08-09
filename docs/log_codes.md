@@ -16,4 +16,5 @@
 ### 0009 EGE/resources: invalid FONT requested: %s
 	>> ResourceManager::getFont() return nullptr
 ### 000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager
-
+### 000B EGE/resources: invalid FONT requested to be default: %s
+	>> ResourceManager::setDefaultFont() return false

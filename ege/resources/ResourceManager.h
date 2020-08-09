@@ -23,6 +23,7 @@ public:
 
     std::shared_ptr<sf::Texture> getTexture(std::string name);
     std::shared_ptr<sf::Font> getFont(std::string name);
+    std::shared_ptr<sf::Font> getDefaultFont();
 
 protected:
 
@@ -32,19 +33,22 @@ protected:
     std::shared_ptr<sf::Font> loadFontFromFile(std::string fileName);
 
     // Adds preloaded resources to ResourceManager.
-    // Useful when you want to add your options to Texture before adding to RM.
-    void addTexture(std::string name, std::shared_ptr<sf::Texture> texture);
-    void addFont(std::string name, std::shared_ptr<sf::Font> font);
+    // Useful when you want to add your options to Texture/Font before adding to RM.
+    // If you specify nullptr as texture or font, the font will be lazy-loaded
+    // from file on first use.
+    void addTexture(std::string name, std::shared_ptr<sf::Texture> texture = nullptr);
+    void addFont(std::string name, std::shared_ptr<sf::Font> font = nullptr);
 
     // TODO
     bool loadSystemFont(std::string fileName) { ASSERT(false); return false; }
 
-    // Replaces default unknown texture with your own.
     void setUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr);
 
     // Sets the resource path (absolute or relative to current working directory)
     bool setResourcePath(std::string path);
 
+    // NOTE: the font will be automatically added to lazy-load if not added.
+    bool setDefaultFont(std::string name);
 private:
     std::shared_ptr<sf::Texture> m_unknownTexture;
 
@@ -53,6 +57,8 @@ private:
 
     bool m_error = false;
     std::string m_resourcePath = "res";
+protected:
+    std::string m_defaultFont;
 };
 
 }
