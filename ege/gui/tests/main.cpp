@@ -1,5 +1,6 @@
 #include <testsuite/Tests.h>
 #include <ege/gui/GUIGameLoop.h>
+#include <ege/gui/Button.h>
 
 class MyGameLoop : public EGE::GUIGameLoop
 {
@@ -96,7 +97,7 @@ public:
     MyGuiScreen(MyGameLoop* loop)
     : EGE::GUIScreen(loop) {}
 
-    virtual void onLoad()
+    virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
         DEBUG_PRINT("MyResourceManager onLoad");
@@ -108,7 +109,7 @@ public:
         texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
     }
 
-    virtual void render(sf::RenderTarget& target)
+    virtual void render(sf::RenderTarget& target) override
     {
         EGE::GUIScreen::render(target);
         DEBUG_PRINT("MyResourceManager render");
@@ -121,14 +122,80 @@ public:
         target.draw(sprite);
     }
 };
+
 class MyResourceManager : public EGE::ResourceManager
 {
 public:
-    virtual bool reload()
+    virtual bool reload() override
     {
         DEBUG_PRINT("MyResourceManager reload");
         loadFontFromFile("font.ttf");
         loadTextureFromFile("texture.png");
+        return true;
+    }
+};
+
+class MyGuiScreen2 : public EGE::GUIScreen
+{
+public:
+    std::shared_ptr<EGE::Button> button;
+    std::shared_ptr<EGE::Button> button2;
+    bool timerRunning = false;
+
+    MyGuiScreen2(MyGameLoop* loop)
+    : EGE::GUIScreen(loop) {}
+
+    virtual void onLoad() override
+    {
+        EGE::GUIScreen::onLoad();
+        DEBUG_PRINT("MyResourceManager onLoad");
+
+        button = std::make_shared<EGE::Button>(this);
+        button->setLabel("T.e.s.t&");
+        button->setPosition(sf::Vector2f(50.f, 50.f));
+        button->setSize(sf::Vector2f(200.f, 40.f));
+        addWidget(button);
+
+        button2 = std::make_shared<EGE::Button>(this);
+        button2->setLabel("T.e.s.t&:2");
+        button2->setPosition(sf::Vector2f(50.f, 150.f));
+        button2->setSize(sf::Vector2f(200.f, 40.f));
+    }
+
+    virtual void onCommand(const EGE::Widget::Command& command) override
+    {
+        if(command.getId() == "EGE::Button::Command")
+        {
+            EGE::Button::Command* bCommand = (EGE::Button::Command*)&command;
+            if(bCommand->getButton() == button.get() && !timerRunning)
+            {
+                DEBUG_PRINT("clicked");
+                addWidget(button2);
+                timerRunning = true;
+                getLoop()->addTimer("TimerHideWidget", &(new EGE::Timer(getLoop(), EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback(
+                    [this](std::string name, EGE::Timer* timer) {
+                        removeWidget(button2.get());
+                        timerRunning = false;
+                    }
+                ));
+            }
+        }
+    }
+
+    virtual void render(sf::RenderTarget& target)
+    {
+        EGE::GUIScreen::render(target);
+
+    }
+};
+
+class MyResourceManager2 : public EGE::ResourceManager
+{
+public:
+    virtual bool reload() override
+    {
+        DEBUG_PRINT("MyResourceManager reload");
+        setDefaultFont("font.ttf");
         return true;
     }
 };
@@ -139,6 +206,15 @@ TESTCASE(resourceManager)
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
     gameLoop.setCurrentGUIScreen(new MyGuiScreen(&gameLoop));
+    gameLoop.run();
+}
+
+TESTCASE(widgets)
+{
+    MyGameLoop gameLoop;
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (widgets)"));
+    gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
+    gameLoop.setCurrentGUIScreen(new MyGuiScreen2(&gameLoop));
     gameLoop.run();
 }
 

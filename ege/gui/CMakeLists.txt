@@ -1,8 +1,12 @@
 set(SOURCES
+	"Button.cpp"
+	"Button.h"
 	"GUIGameLoop.cpp"
 	"GUIGameLoop.h"
 	"GUIScreen.cpp"
 	"GUIScreen.h"
+	"Label.cpp"
+	"Label.h"
 	"Widget.cpp"
 	"Widget.h"
 )

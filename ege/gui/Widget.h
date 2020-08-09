@@ -21,7 +21,7 @@ public:
     class Command
     {
     public:
-        std::string getId()
+        std::string getId() const
         {
             return m_id;
         }
@@ -45,6 +45,10 @@ public:
     void setPosition(sf::Vector2f position)
     {
         m_position = position;
+    }
+    GUIGameLoop* getLoop()
+    {
+        return m_gameLoop;
     }
 
     virtual sf::FloatRect getBoundingBox();

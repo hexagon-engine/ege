@@ -48,7 +48,7 @@ public:
     virtual void onTimerTick(Timer* timer) {}
 
     // TODO: use smart pointers here
-    void addTimer(const std::string& name, Timer* timer, TimerImmediateStart);
+    void addTimer(const std::string& name, Timer* timer, TimerImmediateStart start = TimerImmediateStart::Yes);
     Timer* getTimer(const std::string& timer);
     void removeTimer(const std::string& timer);
     virtual void updateTimers();
@@ -58,7 +58,7 @@ public:
 
 private:
     int m_ticks = 0;
-    std::map<std::string, std::shared_ptr<Timer>> m_timers;
+    std::multimap<std::string, std::shared_ptr<Timer>> m_timers;
 
     bool m_running = true;
     int m_exitCode = 0;
