@@ -31,7 +31,6 @@ void Widget::render(sf::RenderTarget& target)
     if constexpr(WIDGET_DEBUG)
     {
         sf::RectangleShape rs(m_size);
-        rs.setPosition(m_position);
         if(m_mouseOver)
             rs.setFillColor(sf::Color::Red);
         if(m_leftClicked)
@@ -71,7 +70,7 @@ bool Widget::isMouseOver(sf::Vector2f position)
 
 void Widget::setViewForWidget(sf::RenderTarget& target)
 {
-    sf::View view(sf::FloatRect(m_position, m_size));
+    sf::View view(sf::FloatRect(sf::Vector2f(), m_size));
 
     DUMP(0, view.getSize().x);
     DUMP(0, view.getSize().y);
