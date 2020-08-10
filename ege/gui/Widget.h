@@ -46,6 +46,10 @@ public:
     {
         m_position = position;
     }
+    sf::Vector2f getPosition()
+    {
+        return m_position;
+    }
     GUIGameLoop* getLoop()
     {
         return m_gameLoop;
