@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
+#include <ege/gui/Label.h>
 
 class MyGameLoop : public EGE::GUIGameLoop
 {
@@ -26,7 +27,7 @@ TESTCASE(simple)
 {
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
-    gameLoop.setCurrentGUIScreen(new EGE::GUIScreen(&gameLoop));
+    gameLoop.setCurrentGUIScreen(std::make_shared<EGE::GUIScreen>(&gameLoop));
     gameLoop.run();
 }
 
@@ -34,14 +35,14 @@ TESTCASE(widget)
 {
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
-    auto gui = new EGE::GUIScreen(&gameLoop);
+    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
-    auto widget = new EGE::DummyWidget(gui);
+    auto widget = new EGE::DummyWidget(gui.get());
     widget->setPosition(sf::Vector2f(50.f, 50.f));
     widget->setSize(sf::Vector2f(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
 
-    auto widget2 = new EGE::DummyWidget(gui);
+    auto widget2 = new EGE::DummyWidget(gui.get());
     widget2->setPosition(sf::Vector2f(150.f, 50.f));
     widget2->setSize(sf::Vector2f(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
@@ -55,26 +56,26 @@ TESTCASE(guiChange)
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
 
-    auto gui = new EGE::GUIScreen(&gameLoop);
+    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
-    auto widget = new EGE::DummyWidget(gui);
+    auto widget = new EGE::DummyWidget(gui.get());
     widget->setPosition(sf::Vector2f(50.f, 50.f));
     widget->setSize(sf::Vector2f(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
 
-    auto widget2 = new EGE::DummyWidget(gui);
+    auto widget2 = new EGE::DummyWidget(gui.get());
     widget2->setPosition(sf::Vector2f(150.f, 50.f));
     widget2->setSize(sf::Vector2f(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
 
-    auto gui2 = new EGE::GUIScreen(&gameLoop);
+    auto gui2 = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
-    auto widget3 = new EGE::DummyWidget(gui);
+    auto widget3 = new EGE::DummyWidget(gui.get());
     widget3->setPosition(sf::Vector2f(50.f, 150.f));
     widget3->setSize(sf::Vector2f(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget3));
 
-    auto widget4 = new EGE::DummyWidget(gui);
+    auto widget4 = new EGE::DummyWidget(gui.get());
     widget4->setPosition(sf::Vector2f(150.f, 150.f));
     widget4->setSize(sf::Vector2f(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
@@ -140,6 +141,10 @@ class MyGuiScreen2 : public EGE::GUIScreen
 public:
     std::shared_ptr<EGE::Button> button;
     std::shared_ptr<EGE::Button> button2;
+
+    std::shared_ptr<EGE::Label> labelLeft;
+    std::shared_ptr<EGE::Label> labelCenter;
+    std::shared_ptr<EGE::Label> labelRight;
     bool timerRunning = false;
 
     MyGuiScreen2(MyGameLoop* loop)
@@ -160,6 +165,23 @@ public:
         button2->setLabel("T.e.s.t&:2");
         button2->setPosition(sf::Vector2f(50.f, 150.f));
         button2->setSize(sf::Vector2f(200.f, 40.f));
+
+        labelLeft = std::make_shared<EGE::Label>(this);
+        labelLeft->setString("Label Left");
+        labelLeft->setTextPosition(sf::Vector2f(10.f, 200.f));
+        addWidget(labelLeft);
+
+        labelCenter = std::make_shared<EGE::Label>(this);
+        labelCenter->setString("Label Center");
+        labelCenter->setTextPosition(sf::Vector2f(150.f, 250.f));
+        labelCenter->setTextAlign(EGE::Label::Align::Center);
+        addWidget(labelCenter);
+
+        labelRight = std::make_shared<EGE::Label>(this);
+        labelRight->setString("Label Right");
+        labelRight->setTextPosition(sf::Vector2f(290.f, 300.f));
+        labelRight->setTextAlign(EGE::Label::Align::Right);
+        addWidget(labelRight);
     }
 
     virtual void onCommand(const EGE::Widget::Command& command) override
@@ -205,16 +227,16 @@ TESTCASE(resourceManager)
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
-    gameLoop.setCurrentGUIScreen(new MyGuiScreen(&gameLoop));
+    gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen>(&gameLoop));
     gameLoop.run();
 }
 
 TESTCASE(widgets)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (widgets)"));
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 400), "EGE GUI Test (widgets)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
-    gameLoop.setCurrentGUIScreen(new MyGuiScreen2(&gameLoop));
+    gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen2>(&gameLoop));
     gameLoop.run();
 }
 

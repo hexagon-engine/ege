@@ -16,9 +16,6 @@ GUIGameLoop::GUIGameLoop()
 
 GUIGameLoop::~GUIGameLoop()
 {
-    //m_currentGui is 'delete'd when removing eventhandler
-    if(m_pendingGui)
-        delete m_pendingGui;
 }
 
 EventResult GUIGameLoop::onLoad()
@@ -56,12 +53,12 @@ void GUIGameLoop::onTick(long long tickCount)
         DBG(GUI_DEBUG, "initPendingGUI");
         if(m_currentGui)
         {
-            removeEventHandler(m_currentGui);
+            removeEventHandler(m_currentGui.get());
             // it's 'delete'd by eventhandler
         }
         m_currentGui = m_pendingGui;
         m_currentGui->onLoad();
-        addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
+        addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
         m_pendingGui = nullptr;
     }
 
@@ -91,17 +88,17 @@ void GUIGameLoop::onTick(long long tickCount)
     m_profiler.endSection();
 }
 
-void GUIGameLoop::setCurrentGUIScreen(GUIScreen* screen, GUIScreenImmediateInit init)
+void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init)
 {
     DBG(GUI_DEBUG, "setCurrentGUIScreen");
 
     if(init == GUIGameLoop::GUIScreenImmediateInit::Yes)
     {
-        removeEventHandler(m_currentGui);
+        removeEventHandler(m_currentGui.get());
         // it's 'delete'd by eventhandler
         m_currentGui = screen;
         m_currentGui->onLoad();
-        addEventHandler(SystemEvent::getTypeStatic(), std::shared_ptr<GUIScreen>(m_currentGui));
+        addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
     }
     else
         m_pendingGui = screen;

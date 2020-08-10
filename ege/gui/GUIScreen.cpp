@@ -25,6 +25,7 @@ void GUIScreen::onResize(sf::Event::SizeEvent& event)
     DefaultSystemEventHandler::onResize(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onResize(event);
     }
 }
@@ -54,6 +55,7 @@ void GUIScreen::onTextEnter(sf::Event::TextEvent& event)
     DefaultSystemEventHandler::onTextEnter(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onTextEnter(event);
     }
 }
@@ -63,6 +65,7 @@ void GUIScreen::onKeyPress(sf::Event::KeyEvent& event)
     DefaultSystemEventHandler::onKeyPress(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onKeyPress(event);
     }
 }
@@ -72,6 +75,7 @@ void GUIScreen::onKeyRelease(sf::Event::KeyEvent& event)
     DefaultSystemEventHandler::onKeyRelease(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onKeyRelease(event);
     }
 }
@@ -81,6 +85,7 @@ void GUIScreen::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
     DefaultSystemEventHandler::onMouseWheelScroll(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onMouseWheelScroll(event);
     }
 }
@@ -90,6 +95,7 @@ void GUIScreen::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     DefaultSystemEventHandler::onMouseButtonPress(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onMouseButtonPress(event);
     }
 }
@@ -99,6 +105,7 @@ void GUIScreen::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     DefaultSystemEventHandler::onMouseButtonRelease(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onMouseButtonRelease(event);
     }
 }
@@ -108,6 +115,7 @@ void GUIScreen::onMouseMove(sf::Event::MouseMoveEvent& event)
     DefaultSystemEventHandler::onMouseMove(event);
     for(auto widget: m_childWidgets)
     {
+        ASSERT(widget);
         widget->onMouseMove(event);
     }
 }
@@ -234,6 +242,7 @@ void GUIScreen::render(sf::RenderTarget& target)
 
 void GUIScreen::addWidget(std::shared_ptr<Widget> widget)
 {
+    DUMP(1, widget.get());
     ASSERT(widget.get());
     widget->onLoad();
     m_childWidgets.push_back(widget);

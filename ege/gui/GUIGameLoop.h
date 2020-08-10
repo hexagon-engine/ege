@@ -42,7 +42,7 @@ public:
     // NOTE: it's double-buffered and OpenGL-backed by default!
     virtual void render();
 
-    void setCurrentGUIScreen(GUIScreen* screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
+    void setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
     std::weak_ptr<SFMLSystemWindow> getWindow();
     void setWindow(std::shared_ptr<SFMLSystemWindow> window);
     std::weak_ptr<ResourceManager> getResourceManager();
@@ -52,9 +52,9 @@ protected:
     Profiler m_profiler;
 
 private:
-    GUIScreen* m_currentGui = nullptr;
+    std::shared_ptr<GUIScreen> m_currentGui = nullptr;
     // to allow animations and lazy-load
-    GUIScreen* m_pendingGui = nullptr;
+    std::shared_ptr<GUIScreen> m_pendingGui = nullptr;
     std::shared_ptr<SFMLSystemWindow> m_systemWindow;
     std::shared_ptr<ResourceManager> m_resourceManager;
 };
