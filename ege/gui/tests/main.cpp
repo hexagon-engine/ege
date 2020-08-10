@@ -163,23 +163,23 @@ public:
 
         button2 = std::make_shared<EGE::Button>(this);
         button2->setLabel("T.e.s.t&:2");
-        button2->setPosition(sf::Vector2f(50.f, 150.f));
+        button2->setPosition(sf::Vector2f(50.f, 100.f));
         button2->setSize(sf::Vector2f(200.f, 40.f));
 
         labelLeft = std::make_shared<EGE::Label>(this);
         labelLeft->setString("Label Left");
-        labelLeft->setTextPosition(sf::Vector2f(10.f, 200.f));
+        labelLeft->setTextPosition(sf::Vector2f(10.f, 150.f));
         addWidget(labelLeft);
 
         labelCenter = std::make_shared<EGE::Label>(this);
         labelCenter->setString("Label Center");
-        labelCenter->setTextPosition(sf::Vector2f(150.f, 250.f));
+        labelCenter->setTextPosition(sf::Vector2f(150.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
         labelRight = std::make_shared<EGE::Label>(this);
         labelRight->setString("Label Right");
-        labelRight->setTextPosition(sf::Vector2f(290.f, 300.f));
+        labelRight->setTextPosition(sf::Vector2f(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
     }
@@ -234,7 +234,7 @@ TESTCASE(resourceManager)
 TESTCASE(widgets)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 400), "EGE GUI Test (widgets)"));
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (widgets)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen2>(&gameLoop));
     gameLoop.run();

@@ -48,7 +48,6 @@ public:
 
     virtual void render(sf::RenderTarget& target) override;
 
-    // TODO: fix assertion failed when someone does that from event handler
     void addWidget(std::shared_ptr<Widget> widget);
     void removeWidget(Widget* widget);
 

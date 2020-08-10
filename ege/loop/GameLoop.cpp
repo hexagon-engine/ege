@@ -142,6 +142,18 @@ void GameLoop::updateTimers()
     }
     m_ticks++;
 }
+
+void GameLoop::deferredInvoke(std::function<void()> func)
+{
+    addTimer("EGE::GameLoop::deferredInvoke() helper timer", &(new Timer(this, Timer::Mode::Limited, Time(0, Time::Unit::Ticks)))->setCallback(
+        [func](std::string timerName, Timer* timer) {
+            (void) timerName;
+            (void) timer;
+            func();
+        }
+    ));
+}
+
 double GameLoop::time(Time::Unit unit)
 {
     if(unit == Time::Unit::Ticks)

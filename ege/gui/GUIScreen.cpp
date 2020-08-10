@@ -242,22 +242,28 @@ void GUIScreen::render(sf::RenderTarget& target)
 
 void GUIScreen::addWidget(std::shared_ptr<Widget> widget)
 {
-    DUMP(1, widget.get());
-    ASSERT(widget.get());
-    widget->onLoad();
-    m_childWidgets.push_back(widget);
+    // deferredInvoke to allow adding and removing widgets inside event handlers
+    getLoop()->deferredInvoke([this,widget]() {
+        DUMP(0, widget.get());
+        ASSERT(widget.get());
+        widget->onLoad();
+        m_childWidgets.push_back(widget);
+    });
 }
 
 void GUIScreen::removeWidget(Widget* widget)
 {
-    for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
-    {
-        if(it->get() == widget)
+    // deferredInvoke to allow adding and removing widgets inside event handlers
+    getLoop()->deferredInvoke([this,widget]() {
+        for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
         {
-            m_childWidgets.erase(it);
-            return;
+            if(it->get() == widget)
+            {
+                m_childWidgets.erase(it);
+                return;
+            }
         }
-    }
+    });
 }
 
 }

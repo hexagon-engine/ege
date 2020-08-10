@@ -52,6 +52,7 @@ public:
     Timer* getTimer(const std::string& timer);
     void removeTimer(const std::string& timer);
     virtual void updateTimers();
+    void deferredInvoke(std::function<void()> func);
 
     // get in-loop time in ticks or ms
     virtual double time(Time::Unit unit);
