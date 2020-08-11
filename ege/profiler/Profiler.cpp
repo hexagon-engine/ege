@@ -108,6 +108,7 @@ void Profiler::endStartSection(std::string name)
 
 void Profiler::start()
 {
+    if(m_root.m_started) return;
     DBG(PROFILER_DEBUG, "--- START ---");
     m_root.m_started = true;
     m_root.m_startTime = getTime();
@@ -116,6 +117,7 @@ void Profiler::start()
 
 void Profiler::end()
 {
+    if(!m_root.m_started) return;
     DBG(PROFILER_DEBUG, "--- END ---");
     m_root.m_started = false;
     m_root.m_time += getTime() - m_root.m_startTime;
