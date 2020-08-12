@@ -18,3 +18,7 @@
 ### 000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager
 ### 000B EGE/resources: invalid FONT requested to be default: %s
 	>> ResourceManager::setDefaultFont() return false
+### 000C EGE/gpo: std::exception caught in GameplayObjectRegistry::%s: %s
+	>> GameplayObjectRegistry::%s return RegistryError::Unknown
+### 000D EGE/gpo: unknown exception caught in GameplayObjectRegistry::%s: %s
+	>> GameplayObjectRegistry::%s return RegistryError::Unknown
