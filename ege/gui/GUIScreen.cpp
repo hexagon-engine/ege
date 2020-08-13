@@ -247,6 +247,11 @@ void GUIScreen::addWidget(std::shared_ptr<Widget> widget)
         DUMP(0, widget.get());
         ASSERT(widget.get());
         widget->onLoad();
+
+        // allow widgets know about window's size when creating
+        sf::Vector2u wndSize = getLoop()->getWindow()->lock()->getSize();
+        widget->onResize(sf::Event::SizeEvent{wndSize.x, wndSize.y});
+
         m_childWidgets.push_back(widget);
     });
 }
