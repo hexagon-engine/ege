@@ -33,8 +33,8 @@ public:
     virtual EventResult onFinish(int exitCode) override
     {
         // TODO: save it to file instead of std::cerr
-        m_profiler.end();
-        std::cerr << m_profiler.toString() << std::endl;
+        m_profiler.lock()->end();
+        std::cerr << m_profiler.lock()->toString() << std::endl;
         return EventResult::Success;
     }
     virtual void logicTick(long long tickCount) {(void) tickCount;}
@@ -47,9 +47,10 @@ public:
     void setWindow(std::shared_ptr<SFMLSystemWindow> window);
     std::weak_ptr<ResourceManager> getResourceManager();
     void setResourceManager(std::shared_ptr<ResourceManager> manager);
+    void setProfiler(std::weak_ptr<Profiler> profiler);
 
 protected:
-    Profiler m_profiler;
+    std::weak_ptr<Profiler> m_profiler;
 
 private:
     std::shared_ptr<GUIScreen> m_currentGui = nullptr;

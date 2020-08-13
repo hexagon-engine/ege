@@ -21,11 +21,11 @@ GUIGameLoop::~GUIGameLoop()
 EventResult GUIGameLoop::onLoad()
 {
     {
-        m_profiler.start();
-        ProfilerSectionStarter starter(m_profiler, "load");
+        m_profiler.lock()->start();
+        ProfilerSectionStarter starter(*m_profiler.lock(), "load");
         if(m_resourceManager)
         {
-            ProfilerSectionStarter starter2(m_profiler, "resourceManager");
+            ProfilerSectionStarter starter2(*m_profiler.lock(), "resourceManager");
             bool success = m_resourceManager->reload();
             success &= !m_resourceManager->isError();
             if(!success)
@@ -44,10 +44,10 @@ EventResult GUIGameLoop::onLoad()
 
 void GUIGameLoop::onTick(long long tickCount)
 {
-    m_profiler.startSection("tick");
+    m_profiler.lock()->startSection("tick");
 
     // Initialize pending GUI
-    m_profiler.startSection("initPendingGUI");
+    m_profiler.lock()->startSection("initPendingGUI");
     if(m_pendingGui)
     {
         DBG(GUI_DEBUG, "initPendingGUI");
@@ -63,29 +63,29 @@ void GUIGameLoop::onTick(long long tickCount)
     }
 
     // Call system event handlers
-    m_profiler.endStartSection("systemEvents");
+    m_profiler.lock()->endStartSection("systemEvents");
     if(m_systemWindow)
     {
         DBG(GUI_DEBUG, "systemEvents");
         m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
     }
 
-    m_profiler.endStartSection("timers");
+    m_profiler.lock()->endStartSection("timers");
     updateTimers();
 
-    m_profiler.endStartSection("logic");
+    m_profiler.lock()->endStartSection("logic");
     logicTick(tickCount);
 
-    m_profiler.endStartSection("render");
+    m_profiler.lock()->endStartSection("render");
     render();
-    m_profiler.endSection();
+    m_profiler.lock()->endSection();
 
     if(m_systemWindow && !m_systemWindow->isOpen())
         exit();
 
     // TODO: tick rate limit?
 
-    m_profiler.endSection();
+    m_profiler.lock()->endSection();
 }
 
 void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init)
@@ -128,20 +128,25 @@ void GUIGameLoop::setResourceManager(std::shared_ptr<ResourceManager> manager)
     m_resourceManager = manager;
 }
 
+void GUIGameLoop::setProfiler(std::weak_ptr<Profiler> profiler)
+{
+    m_profiler = profiler;
+}
+
 void GUIGameLoop::render()
 {
     if(m_systemWindow)
     {
-        m_profiler.startSection("clear");
+        m_profiler.lock()->startSection("clear");
         m_systemWindow->clear();
 
-        m_profiler.endStartSection("gui");
+        m_profiler.lock()->endStartSection("gui");
         if(m_currentGui)
             m_currentGui->render(*(m_systemWindow.get()));
 
-        m_profiler.endStartSection("display");
+        m_profiler.lock()->endStartSection("display");
         m_systemWindow->display();
-        m_profiler.endSection();
+        m_profiler.lock()->endSection();
     }
 }
 
