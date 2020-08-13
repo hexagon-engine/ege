@@ -22,6 +22,41 @@ sf::FloatRect Widget::getBoundingBox()
 {
     return sf::FloatRect(m_position, m_size);
 }
+sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
+{
+    sf::Vector2f parentPosition;
+
+    DUMP(WIDGET_DEBUG, m_parent);
+    if(m_parent)
+    {
+        parentPosition = (sf::Vector2f)m_parent->getPosition();
+    }
+
+    DUMP(WIDGET_DEBUG, m_size.x);
+    DUMP(WIDGET_DEBUG, m_size.y);
+
+    sf::Vector2u windowSize;
+    windowSize = target.getSize();
+
+    sf::Vector2f widgetPosition = parentPosition + getPosition();
+
+    DUMP(WIDGET_DEBUG, parentPosition.x);
+    DUMP(WIDGET_DEBUG, parentPosition.y);
+    DUMP(WIDGET_DEBUG, widgetPosition.x);
+    DUMP(WIDGET_DEBUG, widgetPosition.y);
+
+    sf::FloatRect currentRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
+                  m_size.x / windowSize.x, m_size.y / windowSize.y);
+
+    if(m_parent)
+    {
+        sf::FloatRect intersection;
+        currentRect.intersects((sf::FloatRect)m_parent->getViewport(target), intersection);
+        return intersection;
+    }
+    else
+        return currentRect;
+}
 
 void Widget::render(sf::RenderTarget& target)
 {
@@ -74,34 +109,10 @@ bool Widget::isMouseOver(sf::Vector2f position)
 
 void Widget::setViewForWidget(sf::RenderTarget& target)
 {
-    sf::Vector2f parentPosition;
-
-    DUMP(WIDGET_DEBUG, m_parent);
-    if(m_parent)
-        parentPosition = (sf::Vector2f)m_parent->getPosition();
-
-    sf::View view(sf::FloatRect(sf::Vector2f(), m_size));
-
-    DUMP(WIDGET_DEBUG, m_size.x);
-    DUMP(WIDGET_DEBUG, m_size.y);
-
-    sf::Vector2u windowSize;
-    windowSize = target.getSize();
-
-    sf::Vector2f widgetPosition = parentPosition + getPosition();
-
-    DUMP(WIDGET_DEBUG, parentPosition.x);
-    DUMP(WIDGET_DEBUG, parentPosition.y);
-    DUMP(WIDGET_DEBUG, widgetPosition.x);
-    DUMP(WIDGET_DEBUG, widgetPosition.y);
-
-    view.setViewport(sf::FloatRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
-                                   m_size.x / windowSize.x, m_size.y / windowSize.y));
-
-    DUMP(WIDGET_DEBUG, widgetPosition.x / windowSize.x);
-    DUMP(WIDGET_DEBUG, widgetPosition.y / windowSize.y);
-    DUMP(WIDGET_DEBUG, m_size.x / windowSize.x);
-    DUMP(WIDGET_DEBUG, m_size.y / windowSize.y);
+    sf::FloatRect viewport = getViewport(target);
+    sf::View view(sf::FloatRect(sf::Vector2f(),
+                                sf::Vector2f(viewport.getSize().x * target.getSize().x, viewport.getSize().y * target.getSize().y)));
+    view.setViewport(viewport);
     target.setView(view);
 }
 

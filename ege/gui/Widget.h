@@ -56,6 +56,7 @@ public:
     }
 
     virtual sf::FloatRect getBoundingBox();
+    virtual sf::FloatRect getViewport(sf::RenderTarget& target);
     virtual void render(sf::RenderTarget& target);
 
     virtual void onUpdate(long long tickCounter) {}

@@ -236,6 +236,7 @@ void GUIScreen::render(sf::RenderTarget& target)
     m_size = sf::Vector2f(target.getSize());
     for(auto widget: m_childWidgets)
     {
+        Widget::render(target);
         widget->render(target);
     }
 }
