@@ -22,3 +22,5 @@
 	>> GameplayObjectRegistry::%s return RegistryError::Unknown
 ### 000D EGE/gpo: unknown exception caught in GameplayObjectRegistry::%s: %s
 	>> GameplayObjectRegistry::%s return RegistryError::Unknown
+### 000E EGE/syswindow: window already removed, close skipped
+

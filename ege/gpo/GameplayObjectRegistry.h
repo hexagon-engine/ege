@@ -42,6 +42,7 @@ public:
         size_t numericId;
     };
 
+    // TODO: binary search of gpos?
     typedef std::vector<std::pair<IdTEntry, ObjT*>> ArrayType;
 
     GameplayObjectRegistry();

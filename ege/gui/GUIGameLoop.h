@@ -14,7 +14,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/syswindow/SystemWindow.h>
 #include <memory>
 
-#define GUI_DEBUG 0
+#define GUI_DEBUG 1
 
 namespace EGE
 {

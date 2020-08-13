@@ -242,15 +242,17 @@ void GUIScreen::render(sf::RenderTarget& target)
 
 void GUIScreen::addWidget(std::shared_ptr<Widget> widget)
 {
+    DUMP(GUI_DEBUG, "addWidget");
     // deferredInvoke to allow adding and removing widgets inside event handlers
     getLoop()->deferredInvoke([this,widget]() {
-        DUMP(0, widget.get());
+        DUMP(GUI_DEBUG, widget.get());
         ASSERT(widget.get());
         widget->onLoad();
 
         // allow widgets know about window's size when creating
-        sf::Vector2u wndSize = getLoop()->getWindow()->lock()->getSize();
-        widget->onResize(sf::Event::SizeEvent{wndSize.x, wndSize.y});
+        sf::Vector2u wndSize = getLoop()->getWindow().lock()->getSize();
+        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
+        widget->onResize(event);
 
         m_childWidgets.push_back(widget);
     });

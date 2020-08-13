@@ -9,7 +9,11 @@ namespace EGE
 {
     void DefaultSystemEventHandler::onClose()
     {
-        ASSERT(!m_window.expired())
+        if(m_window.expired())
+        {
+            std::cerr << "000E EGE/syswindow: window already removed, close skipped" << std::endl;
+            return;
+        }
         m_window.lock()->close();
     }
 }

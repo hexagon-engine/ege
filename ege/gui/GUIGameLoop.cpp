@@ -66,7 +66,7 @@ void GUIGameLoop::onTick(long long tickCount)
     m_profiler.lock()->endStartSection("systemEvents");
     if(m_systemWindow)
     {
-        DBG(GUI_DEBUG, "systemEvents");
+        DBG(0, "systemEvents");
         m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
     }
 
