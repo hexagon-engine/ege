@@ -138,7 +138,7 @@ void GUIGameLoop::render()
     if(m_systemWindow)
     {
         m_profiler.lock()->startSection("clear");
-        m_systemWindow->clear();
+        m_systemWindow->clear(m_backgroundColor);
 
         m_profiler.lock()->endStartSection("gui");
         if(m_currentGui)

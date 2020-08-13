@@ -141,6 +141,7 @@ TESTCASE(simple)
     game.getLoop()->setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(400, 400), "EGE::Game"));
     game.getLoop()->setResourceManager(std::make_shared<MyResourceManager>());
     game.getLoop()->setCurrentGUIScreen(std::make_shared<MyGuiScreen>(game.getLoop().get()));
+    game.getLoop()->setBackgroundColor(sf::Color(127, 127, 127));
     DUMP(1, game.run());
 }
 

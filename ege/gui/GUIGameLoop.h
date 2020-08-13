@@ -49,6 +49,15 @@ public:
     void setResourceManager(std::shared_ptr<ResourceManager> manager);
     void setProfiler(std::weak_ptr<Profiler> profiler);
 
+    void setBackgroundColor(sf::Color color)
+    {
+        m_backgroundColor = color;
+    }
+    sf::Color getBackgroundColor()
+    {
+        return m_backgroundColor;
+    }
+
 protected:
     std::weak_ptr<Profiler> m_profiler;
 
@@ -58,6 +67,7 @@ private:
     std::shared_ptr<GUIScreen> m_pendingGui = nullptr;
     std::shared_ptr<SFMLSystemWindow> m_systemWindow;
     std::shared_ptr<ResourceManager> m_resourceManager;
+    sf::Color m_backgroundColor;
 };
 
 }

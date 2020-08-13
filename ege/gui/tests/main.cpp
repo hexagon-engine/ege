@@ -28,6 +28,7 @@ TESTCASE(simple)
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
     gameLoop.setCurrentGUIScreen(std::make_shared<EGE::GUIScreen>(&gameLoop));
+    gameLoop.setBackgroundColor(sf::Color(127, 127, 127));
     gameLoop.run();
 }
 
