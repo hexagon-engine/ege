@@ -23,10 +23,17 @@ void _ege_assertion_failed(const char* expr, const char* file, size_t line);
         No \
     }
 
-#define EGE_SINGLETON(clazz,...) \
-    clazz& instance() \
+#define EGE_SINGLETON_VA(clazz,...) \
+    virtual clazz& instance() \
     { \
         static clazz inst(__VA_ARGS__); \
+        return inst; \
+    }
+
+#define EGE_SINGLETON(clazz) \
+    virtual clazz& instance() \
+    { \
+        static clazz inst; \
         return inst; \
     }
 
