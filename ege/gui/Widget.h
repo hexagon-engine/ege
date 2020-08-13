@@ -8,7 +8,7 @@ Copyright (c) Sppmacd 2020
 #include <SFML/System.hpp>
 #include <ege/syswindow/DefaultSystemEventHandler.h>
 
-#define WIDGET_DEBUG 0
+#define WIDGET_DEBUG 1
 
 namespace EGE
 {

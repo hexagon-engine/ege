@@ -30,11 +30,15 @@ void Widget::render(sf::RenderTarget& target)
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
     {
-        sf::RectangleShape rs(m_size);
+        sf::RectangleShape rs(m_size - sf::Vector2f(2.f, 2.f));
+        rs.setPosition(sf::Vector2f(1.f, 1.f));
+        rs.setOutlineColor(sf::Color::Cyan);
+        rs.setOutlineThickness(1.f);
+        rs.setFillColor(sf::Color::Transparent);
         if(m_mouseOver)
-            rs.setFillColor(sf::Color::Red);
+            rs.setOutlineColor(sf::Color::Red);
         if(m_leftClicked)
-            rs.setFillColor(sf::Color::Green);
+            rs.setOutlineColor(sf::Color::Green);
         target.draw(rs);
     }
 }
@@ -70,14 +74,34 @@ bool Widget::isMouseOver(sf::Vector2f position)
 
 void Widget::setViewForWidget(sf::RenderTarget& target)
 {
+    sf::Vector2f parentPosition;
+
+    DUMP(WIDGET_DEBUG, m_parent);
+    if(m_parent)
+        parentPosition = (sf::Vector2f)m_parent->getPosition();
+
     sf::View view(sf::FloatRect(sf::Vector2f(), m_size));
 
-    DUMP(0, view.getSize().x);
-    DUMP(0, view.getSize().y);
+    DUMP(WIDGET_DEBUG, m_size.x);
+    DUMP(WIDGET_DEBUG, m_size.y);
 
-    sf::Vector2u windowSize = target.getSize();
-    view.setViewport(sf::FloatRect(m_position.x / windowSize.x, m_position.y / windowSize.y,
+    sf::Vector2u windowSize;
+    windowSize = target.getSize();
+
+    sf::Vector2f widgetPosition = parentPosition + getPosition();
+
+    DUMP(WIDGET_DEBUG, parentPosition.x);
+    DUMP(WIDGET_DEBUG, parentPosition.y);
+    DUMP(WIDGET_DEBUG, widgetPosition.x);
+    DUMP(WIDGET_DEBUG, widgetPosition.y);
+
+    view.setViewport(sf::FloatRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
                                    m_size.x / windowSize.x, m_size.y / windowSize.y));
+
+    DUMP(WIDGET_DEBUG, widgetPosition.x / windowSize.x);
+    DUMP(WIDGET_DEBUG, widgetPosition.y / windowSize.y);
+    DUMP(WIDGET_DEBUG, m_size.x / windowSize.x);
+    DUMP(WIDGET_DEBUG, m_size.y / windowSize.y);
     target.setView(view);
 }
 

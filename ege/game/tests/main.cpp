@@ -88,9 +88,10 @@ public:
         rs.setFillColor(m_color->m_color);
         target.draw(rs);
 
+        std::cerr << "LABEL" << std::endl;
         EGE::Label label(this);
         label.setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
-        label.setTextPosition(sf::Vector2f(getPosition().x + 40.f, getPosition().y));
+        label.setTextPosition(sf::Vector2f(40.f, 0.f));
         label.setFontSize(15);
         label.render(target);
     }
