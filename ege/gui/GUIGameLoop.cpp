@@ -12,6 +12,7 @@ namespace EGE
 
 GUIGameLoop::GUIGameLoop()
 {
+    m_profiler = std::make_shared<Profiler>();
 }
 
 GUIGameLoop::~GUIGameLoop()
@@ -20,12 +21,13 @@ GUIGameLoop::~GUIGameLoop()
 
 EventResult GUIGameLoop::onLoad()
 {
+    ASSERT(m_profiler);
     {
-        m_profiler.lock()->start();
-        ProfilerSectionStarter starter(*m_profiler.lock(), "load");
+        m_profiler->start();
+        ProfilerSectionStarter starter(*m_profiler, "load");
         if(m_resourceManager)
         {
-            ProfilerSectionStarter starter2(*m_profiler.lock(), "resourceManager");
+            ProfilerSectionStarter starter2(*m_profiler, "resourceManager");
             bool success = m_resourceManager->reload();
             success &= !m_resourceManager->isError();
             if(!success)
@@ -44,10 +46,10 @@ EventResult GUIGameLoop::onLoad()
 
 void GUIGameLoop::onTick(long long tickCount)
 {
-    m_profiler.lock()->startSection("tick");
+    m_profiler->startSection("tick");
 
     // Initialize pending GUI
-    m_profiler.lock()->startSection("initPendingGUI");
+    m_profiler->startSection("initPendingGUI");
     if(m_pendingGui)
     {
         DBG(GUI_DEBUG, "initPendingGUI");
@@ -63,29 +65,29 @@ void GUIGameLoop::onTick(long long tickCount)
     }
 
     // Call system event handlers
-    m_profiler.lock()->endStartSection("systemEvents");
+    m_profiler->endStartSection("systemEvents");
     if(m_systemWindow)
     {
         DBG(0, "systemEvents");
         m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
     }
 
-    m_profiler.lock()->endStartSection("timers");
+    m_profiler->endStartSection("timers");
     updateTimers();
 
-    m_profiler.lock()->endStartSection("logic");
+    m_profiler->endStartSection("logic");
     logicTick(tickCount);
 
-    m_profiler.lock()->endStartSection("render");
+    m_profiler->endStartSection("render");
     render();
-    m_profiler.lock()->endSection();
+    m_profiler->endSection();
 
     if(m_systemWindow && !m_systemWindow->isOpen())
         exit();
 
     // TODO: tick rate limit?
 
-    m_profiler.lock()->endSection();
+    m_profiler->endSection();
 }
 
 void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init)
@@ -130,23 +132,23 @@ void GUIGameLoop::setResourceManager(std::shared_ptr<ResourceManager> manager)
 
 void GUIGameLoop::setProfiler(std::weak_ptr<Profiler> profiler)
 {
-    m_profiler = profiler;
+    m_profiler = profiler.lock();
 }
 
 void GUIGameLoop::render()
 {
     if(m_systemWindow)
     {
-        m_profiler.lock()->startSection("clear");
+        m_profiler->startSection("clear");
         m_systemWindow->clear(m_backgroundColor);
 
-        m_profiler.lock()->endStartSection("gui");
+        m_profiler->endStartSection("gui");
         if(m_currentGui)
             m_currentGui->render(*(m_systemWindow.get()));
 
-        m_profiler.lock()->endStartSection("display");
+        m_profiler->endStartSection("display");
         m_systemWindow->display();
-        m_profiler.lock()->endSection();
+        m_profiler->endSection();
     }
 }
 
