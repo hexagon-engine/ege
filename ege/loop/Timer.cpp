@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Timer.h"
 
-#include "GameLoop.h"
+#include "EventLoop.h"
 
 #include <iostream>
 #include <ege/main/Config.h>

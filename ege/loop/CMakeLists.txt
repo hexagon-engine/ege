@@ -2,6 +2,8 @@ set(SOURCES
 	"Event.h"
 	"EventCast.h"
 	"EventHandler.h"
+	"EventLoop.cpp"
+	"EventLoop.h"
 	"EventResult.h"
 	"GameLoop.cpp"
 	"GameLoop.h"

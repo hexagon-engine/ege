@@ -16,7 +16,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class GameLoop;
+class EventLoop;
 
 class Timer
 {
@@ -28,7 +28,7 @@ public:
     };
     EGE_ENUM_YES_NO(Finished);
 
-    Timer(GameLoop* loop, Mode mode, Time interval)
+    Timer(EventLoop* loop, Mode mode, Time interval)
     : m_interval(interval)
     , m_mode(mode)
     , m_loop(loop) {}
@@ -70,7 +70,7 @@ public:
         return m_interval;
     }
     Time getElapsedTime();
-    GameLoop* getLoop()
+    EventLoop* getLoop()
     {
         return m_loop;
     }
@@ -84,7 +84,7 @@ private:
     double m_startTime = 0.f;
     Time m_interval;
     Mode m_mode;
-    GameLoop* m_loop;
+    EventLoop* m_loop;
     std::function<void(std::string,Timer*)> m_callback = nullptr;
     std::string m_name;
     size_t m_iterations = 0;

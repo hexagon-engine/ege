@@ -15,7 +15,7 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Widget : public DefaultSystemEventHandler
+class Widget : public DefaultSystemEventHandler, public EventLoop
 {
 public:
     class Command
