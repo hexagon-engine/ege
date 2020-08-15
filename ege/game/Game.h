@@ -47,8 +47,6 @@ public:
 
 protected:
     std::shared_ptr<Profiler> m_profiler;
-
-private:
     std::shared_ptr<GameplayObjectManager> m_gameplayObjectManager;
     std::shared_ptr<GUIGameLoop> m_gameLoop;
 };
