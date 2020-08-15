@@ -26,24 +26,24 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
 {
     sf::Vector2f parentPosition;
 
-    DUMP(WIDGET_DEBUG, m_parent);
+    DUMP(0, m_parent);
     if(m_parent)
     {
         parentPosition = (sf::Vector2f)m_parent->getPosition();
     }
 
-    DUMP(WIDGET_DEBUG, m_size.x);
-    DUMP(WIDGET_DEBUG, m_size.y);
+    DUMP(0, m_size.x);
+    DUMP(0, m_size.y);
 
     sf::Vector2u windowSize;
     windowSize = target.getSize();
 
     sf::Vector2f widgetPosition = parentPosition + getPosition();
 
-    DUMP(WIDGET_DEBUG, parentPosition.x);
-    DUMP(WIDGET_DEBUG, parentPosition.y);
-    DUMP(WIDGET_DEBUG, widgetPosition.x);
-    DUMP(WIDGET_DEBUG, widgetPosition.y);
+    DUMP(0, parentPosition.x);
+    DUMP(0, parentPosition.y);
+    DUMP(0, widgetPosition.x);
+    DUMP(0, widgetPosition.y);
 
     sf::FloatRect currentRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
                   m_size.x / windowSize.x, m_size.y / windowSize.y);
@@ -114,6 +114,20 @@ void Widget::setViewForWidget(sf::RenderTarget& target)
                                 sf::Vector2f(viewport.getSize().x * target.getSize().x, viewport.getSize().y * target.getSize().y)));
     view.setViewport(viewport);
     target.setView(view);
+}
+
+void Widget::addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback)
+{
+    if(!animation->getUpdateCallback())
+    {
+        animation->setUpdateCallback([callback](std::string name, Timer* timer) {
+                                    Animation* anim = (Animation*)timer;
+                                    double val = anim->getValue(timer->getElapsedTime().getValue() / timer->getInterval().getValue());
+                                    DUMP(1, val);
+                                    callback(anim, val);
+                                });
+    }
+    addTimer("Widget Animation", animation);
 }
 
 }

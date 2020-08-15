@@ -1,4 +1,5 @@
 #include <testsuite/Tests.h>
+#include <ege/gui/Animation.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
 #include <ege/gui/Label.h>
@@ -137,6 +138,43 @@ public:
     }
 };
 
+class AnimationGraphWidget : public EGE::Widget
+{
+    std::vector<double> m_vals;
+    int m_max = 1;
+public:
+    AnimationGraphWidget(EGE::Widget* parent)
+    : EGE::Widget(parent) {}
+
+    void setMax(int m)
+    {
+        m_max = m;
+    }
+
+    void addVal(double val)
+    {
+        m_vals.push_back(val);
+    }
+
+    void setSize(sf::Vector2f size)
+    {
+        m_size = size;
+    }
+
+    void render(sf::RenderTarget& target)
+    {
+        Widget::render(target);
+        sf::VertexArray varr(sf::LineStrip);
+        int c = 0;
+        for(double v: m_vals)
+        {
+            varr.append(sf::Vertex(sf::Vector2f((double)c * m_size.x / m_max, v * (m_size.y / 12.f) + m_size.y / 2.f), sf::Color::Red));
+            c++;
+        }
+        target.draw(varr);
+    }
+};
+
 class MyGuiScreen2 : public EGE::GUIScreen
 {
 public:
@@ -146,6 +184,7 @@ public:
     std::shared_ptr<EGE::Label> labelLeft;
     std::shared_ptr<EGE::Label> labelCenter;
     std::shared_ptr<EGE::Label> labelRight;
+    std::shared_ptr<AnimationGraphWidget> graph;
     bool timerRunning = false;
 
     MyGuiScreen2(MyGameLoop* loop)
@@ -154,6 +193,7 @@ public:
     virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
+        getWindow().lock()->setFramerateLimit(60);
         DEBUG_PRINT("MyResourceManager onLoad");
 
         button = std::make_shared<EGE::Button>(this);
@@ -183,6 +223,21 @@ public:
         labelRight->setTextPosition(sf::Vector2f(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
+
+        graph = std::make_shared<AnimationGraphWidget>(this);
+        graph->setPosition(sf::Vector2f(150.f, 300.f));
+        graph->setSize(sf::Vector2f(100.f, 100.f));
+        graph->setMax(600.f);
+        addWidget(graph);
+
+        auto anim = std::make_shared<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+        anim->addKeyframe(0.0, 1.0);
+        anim->addKeyframe(0.1, 5.0);
+        anim->addKeyframe(0.5, -3.0);
+        anim->addKeyframe(1.0, 6.0);
+        addAnimation(anim, [this](EGE::Animation* a, double val) {
+                        graph->addVal(val);
+                     });
     }
 
     virtual void onCommand(const EGE::Widget::Command& command) override

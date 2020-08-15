@@ -28,7 +28,6 @@ void Button::render(sf::RenderTarget& target)
     auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 18);
-    text.setFillColor(sf::Color::Black);
     text.setPosition(m_size / 2.f);
     text.setOrigin(text.getLocalBounds().width / 2.f, text.getLocalBounds().height / 2.f);
     target.draw(text);

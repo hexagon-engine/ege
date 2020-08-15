@@ -223,6 +223,7 @@ void GUIScreen::onSensorChange(sf::Event::SensorEvent& event)
 
 void GUIScreen::onUpdate(long long tickCounter)
 {
+    updateTimers();
     for(auto widget: m_childWidgets)
     {
         widget->onUpdate(tickCounter);

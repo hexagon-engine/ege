@@ -34,17 +34,22 @@ Timer::Finished Timer::update()
     double time = m_loop->time(m_interval.getUnit());
     DUMP(TIMER_DEBUG, (long long)time);
 
+    if(m_updateCallback)
+        m_updateCallback(m_name, this);
+
     if(m_started && time >= m_startTime + m_interval.getValue())
     {
-        DBG(1, "run callback");
         m_iterations++;
-        m_callback(m_name, this);
+
+        if(m_callback)
+            m_callback(m_name, this);
+
         switch(m_mode)
         {
         case Mode::Limited:
-            m_remaining_iterations--;
+            m_remainingIterations--;
             m_startTime = time;
-            if(m_remaining_iterations == 0)
+            if(m_remainingIterations == 0)
                 return Finished::Yes;
             break;
         case Mode::Infinite:

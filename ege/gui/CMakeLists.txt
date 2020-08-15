@@ -1,4 +1,6 @@
 set(SOURCES
+	"Animation.cpp"
+	"Animation.h"
 	"Button.cpp"
 	"Button.h"
 	"GUIGameLoop.cpp"

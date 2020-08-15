@@ -75,6 +75,10 @@ void GUIGameLoop::onTick(long long tickCount)
     m_profiler->endStartSection("timers");
     updateTimers();
 
+    m_profiler->endStartSection("guiUpdate");
+    if(m_currentGui)
+        m_currentGui->onUpdate(getTickCount());
+
     m_profiler->endStartSection("logic");
     logicTick(tickCount);
 

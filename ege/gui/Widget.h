@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <SFML/System.hpp>
+#include <ege/gui/Animation.h>
 #include <ege/syswindow/DefaultSystemEventHandler.h>
 
 #define WIDGET_DEBUG 1
@@ -69,6 +70,8 @@ public:
     virtual bool isMouseOver(sf::Vector2f position);
 
     virtual void setViewForWidget(sf::RenderTarget& target);
+
+    void addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback);
 
 protected:
     sf::Vector2f m_size;
