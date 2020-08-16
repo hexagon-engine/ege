@@ -41,6 +41,8 @@ EventResult SystemEventHandler::handle(Event& event)
         {
             onKeyRelease(sfEvent.key);
         } break;
+    case sf::Event::MouseWheelMoved: //SFML backward compability
+        break;
     case sf::Event::MouseWheelScrolled:
         {
             onMouseWheelScroll(sfEvent.mouseWheelScroll);
