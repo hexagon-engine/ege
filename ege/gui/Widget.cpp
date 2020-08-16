@@ -126,7 +126,7 @@ void Widget::addAnimation(std::shared_ptr<Animation> animation, std::function<vo
                                     if(time < 0.0)
                                         return;
                                     double val = anim->getValue(time);
-                                    DUMP(1, val);
+                                    DUMP(ANIMATION_DEBUG, val);
                                     callback(anim, val);
                                 });
     }
