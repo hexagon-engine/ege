@@ -21,14 +21,17 @@ public:
     : m_value(value)
     , m_unit(unit) {}
 
-    double getValue()
+    double getValue() const
     {
         return m_value;
     }
-    Unit getUnit()
+    Unit getUnit() const
     {
         return m_unit;
     }
+    Time operator+(double _2);
+    Time& operator+=(double _2);
+
 private:
     double m_value;
     Unit m_unit;

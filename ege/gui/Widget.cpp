@@ -122,12 +122,18 @@ void Widget::addAnimation(std::shared_ptr<Animation> animation, std::function<vo
     {
         animation->setUpdateCallback([callback](std::string name, Timer* timer) {
                                     Animation* anim = (Animation*)timer;
-                                    double val = anim->getValue(timer->getElapsedTime().getValue() / timer->getInterval().getValue());
+                                    double time = (timer->getElapsedTime().getValue()) / (timer->getInterval().getValue());
+                                    if(time < 0.0)
+                                        return;
+                                    double val = anim->getValue(time);
                                     DUMP(1, val);
                                     callback(anim, val);
                                 });
     }
-    addTimer("Widget Animation", animation);
+
+    Timer* timer = new Timer(this, Timer::Mode::Limited, animation->getDelay());
+    timer->setCallback([animation, this](std::string name, Timer* timer) { addTimer("Widget Animation", animation); });
+    addTimer("Widget Animation Delay", timer);
 }
 
 }

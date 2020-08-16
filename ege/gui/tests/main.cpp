@@ -3,6 +3,7 @@
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
 #include <ege/gui/Label.h>
+#include <cmath>
 
 class MyGameLoop : public EGE::GUIGameLoop
 {
@@ -184,7 +185,9 @@ public:
     std::shared_ptr<EGE::Label> labelLeft;
     std::shared_ptr<EGE::Label> labelCenter;
     std::shared_ptr<EGE::Label> labelRight;
+    std::shared_ptr<EGE::Label> labelAnimated;
     std::shared_ptr<AnimationGraphWidget> graph;
+    std::shared_ptr<AnimationGraphWidget> graph2;
     bool timerRunning = false;
 
     MyGuiScreen2(MyGameLoop* loop)
@@ -224,8 +227,14 @@ public:
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
 
+        labelAnimated = std::make_shared<EGE::Label>(this);
+        labelAnimated->setString("Animation");
+        labelAnimated->setTextPosition(sf::Vector2f(150.f, 300.f));
+        labelAnimated->setTextAlign(EGE::Label::Align::Center);
+        addWidget(labelAnimated);
+
         graph = std::make_shared<AnimationGraphWidget>(this);
-        graph->setPosition(sf::Vector2f(150.f, 300.f));
+        graph->setPosition(sf::Vector2f(300.f, 100.f));
         graph->setSize(sf::Vector2f(100.f, 100.f));
         graph->setMax(600.f);
         addWidget(graph);
@@ -237,6 +246,33 @@ public:
         anim->addKeyframe(1.0, 6.0);
         addAnimation(anim, [this](EGE::Animation* a, double val) {
                         graph->addVal(val);
+                     });
+
+        graph2 = std::make_shared<AnimationGraphWidget>(this);
+        graph2->setPosition(sf::Vector2f(300.f, 210.f));
+        graph2->setSize(sf::Vector2f(100.f, 100.f));
+        graph2->setMax(300.f);
+        addWidget(graph2);
+
+        auto anim2 = std::make_shared<EGE::Animation>(this, EGE::Time(5.0, EGE::Time::Unit::Seconds));
+        anim2->addKeyframe(0.0, 1.0);
+        anim2->addKeyframe(0.1, 5.0);
+        anim2->addKeyframe(0.5, -3.0);
+        anim2->addKeyframe(1.0, 6.0);
+        anim2->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
+        addAnimation(anim2, [this](EGE::Animation* a, double val) {
+                        graph2->addVal(val);
+                     });
+
+
+        auto animLabel = std::make_shared<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        animLabel->addKeyframe(0.0, -1.0);
+        animLabel->addKeyframe(0.5, 1.0);
+        animLabel->addKeyframe(1.0, -1.0);
+        animLabel->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
+        animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
+        addAnimation(animLabel, [this](EGE::Animation* a, double val) {
+                        labelAnimated->setTextPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
                      });
     }
 
@@ -290,7 +326,7 @@ TESTCASE(resourceManager)
 TESTCASE(_widgets)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (widgets)"));
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(500, 500), "EGE GUI Test (widgets)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen2>(&gameLoop));
     gameLoop.run();
