@@ -287,7 +287,7 @@ TESTCASE(resourceManager)
     gameLoop.run();
 }
 
-TESTCASE(widgets)
+TESTCASE(_widgets)
 {
     MyGameLoop gameLoop;
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (widgets)"));
