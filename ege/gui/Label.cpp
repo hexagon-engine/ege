@@ -9,6 +9,12 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+void Label::setString(sf::String str)
+{
+    m_string = str;
+    m_geometryChanged = true;
+}
+
 void Label::setTextAlign(Align align)
 {
     m_align = align;
@@ -21,10 +27,16 @@ void Label::setFontSize(int size)
     m_geometryChanged = true;
 }
 
-void Label::setTextPosition(sf::Vector2f position)
+void Label::setPosition(sf::Vector2f position)
 {
+    setPositionInternal(position);
     m_textPosition = position;
     m_geometryChanged = true;
+};
+
+void Label::setPositionInternal(sf::Vector2f position)
+{
+    Widget::setPosition(position);
 }
 
 void Label::updateGeometry()
@@ -43,15 +55,15 @@ void Label::updateGeometry()
         {
             case Align::Left:
                 text.setOrigin(0.f, 0.f);
-                setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y));
+                setPositionInternal(sf::Vector2f(m_textPosition.x, m_textPosition.y));
                 break;
             case Align::Center:
                 text.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-                setPosition(sf::Vector2f(m_textPosition.x - bounds.width / 2.f, m_textPosition.y - bounds.height / 2.f));
+                setPositionInternal(sf::Vector2f(m_textPosition.x - bounds.width / 2.f, m_textPosition.y - bounds.height / 2.f));
                 break;
             case Align::Right:
                 text.setOrigin(bounds.width, bounds.height);
-                setPosition(sf::Vector2f(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
+                setPositionInternal(sf::Vector2f(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
         }
         text.setPosition(m_textPosition - getPosition());
         m_text = text;

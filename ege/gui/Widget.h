@@ -43,7 +43,7 @@ public:
     // for non-parented widgets, e.g. GUIScreen
     Widget(GUIGameLoop* gameLoop);
 
-    void setPosition(sf::Vector2f position)
+    virtual void setPosition(sf::Vector2f position)
     {
         m_position = position;
     }

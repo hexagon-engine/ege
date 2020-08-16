@@ -57,6 +57,10 @@ public:
     {
         return m_backgroundColor;
     }
+    sf::Time getLatestFrameTime()
+    {
+        return m_frameTime;
+    }
 
 protected:
     std::shared_ptr<Profiler> m_profiler;
@@ -68,6 +72,8 @@ private:
     std::shared_ptr<SFMLSystemWindow> m_systemWindow;
     std::shared_ptr<ResourceManager> m_resourceManager;
     sf::Color m_backgroundColor;
+    sf::Clock m_fpsClock;
+    sf::Time m_frameTime;
 };
 
 }

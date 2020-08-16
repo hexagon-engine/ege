@@ -42,6 +42,7 @@ EventResult GUIGameLoop::onLoad()
         }
         return EventResult::Success;
     }
+    m_fpsClock.restart();
 }
 
 void GUIGameLoop::onTick(long long tickCount)
@@ -90,8 +91,8 @@ void GUIGameLoop::onTick(long long tickCount)
         exit();
 
     // TODO: tick rate limit?
-
     m_profiler->endSection();
+    m_frameTime = m_fpsClock.restart();
 }
 
 void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init)

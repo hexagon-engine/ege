@@ -90,7 +90,7 @@ public:
 
         EGE::Label label(this);
         label.setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
-        label.setTextPosition(sf::Vector2f(40.f, 0.f));
+        label.setPosition(sf::Vector2f(40.f, 0.f));
         label.setFontSize(15);
         label.render(target);
     }

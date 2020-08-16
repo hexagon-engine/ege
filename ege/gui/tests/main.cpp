@@ -165,6 +165,14 @@ public:
     void render(sf::RenderTarget& target)
     {
         Widget::render(target);
+
+        sf::RectangleShape rs(m_size - sf::Vector2f(2.f, 2.f));
+        rs.setPosition(1.f, 1.f);
+        rs.setOutlineThickness(1.f);
+        rs.setOutlineColor(sf::Color::White);
+        rs.setFillColor(sf::Color(255, 255, 255, 30));
+        target.draw(rs);
+
         sf::VertexArray varr(sf::LineStrip);
         int c = 0;
         for(double v: m_vals)
@@ -186,6 +194,7 @@ public:
     std::shared_ptr<EGE::Label> labelCenter;
     std::shared_ptr<EGE::Label> labelRight;
     std::shared_ptr<EGE::Label> labelAnimated;
+    std::shared_ptr<EGE::Label> labelFPS;
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
     bool timerRunning = false;
@@ -212,26 +221,32 @@ public:
 
         labelLeft = std::make_shared<EGE::Label>(this);
         labelLeft->setString("Label Left");
-        labelLeft->setTextPosition(sf::Vector2f(10.f, 150.f));
+        labelLeft->setPosition(sf::Vector2f(10.f, 150.f));
         addWidget(labelLeft);
 
         labelCenter = std::make_shared<EGE::Label>(this);
         labelCenter->setString("Label Center");
-        labelCenter->setTextPosition(sf::Vector2f(150.f, 200.f));
+        labelCenter->setPosition(sf::Vector2f(150.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
         labelRight = std::make_shared<EGE::Label>(this);
         labelRight->setString("Label Right");
-        labelRight->setTextPosition(sf::Vector2f(290.f, 250.f));
+        labelRight->setPosition(sf::Vector2f(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
 
         labelAnimated = std::make_shared<EGE::Label>(this);
         labelAnimated->setString("Animation");
-        labelAnimated->setTextPosition(sf::Vector2f(150.f, 300.f));
+        labelAnimated->setPosition(sf::Vector2f(150.f, 300.f));
         labelAnimated->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelAnimated);
+
+        labelFPS = std::make_shared<EGE::Label>(this);
+        labelFPS->setString("FPS: 0.0");
+        labelFPS->setPosition(sf::Vector2f(10.f, 10.f));
+        labelFPS->setTextAlign(EGE::Label::Align::Center);
+        addWidget(labelFPS);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
@@ -264,7 +279,6 @@ public:
                         graph2->addVal(val);
                      });
 
-
         auto animLabel = std::make_shared<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
         animLabel->addKeyframe(0.0, -1.0);
         animLabel->addKeyframe(0.5, 1.0);
@@ -272,8 +286,13 @@ public:
         animLabel->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
         addAnimation(animLabel, [this](EGE::Animation* a, double val) {
-                        labelAnimated->setTextPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
+                        labelAnimated->setPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
                      });
+    }
+
+    virtual void onResize(sf::Event::SizeEvent& event)
+    {
+        labelFPS->setPosition(sf::Vector2f(event.width / 2.f, 10.f));
     }
 
     virtual void onCommand(const EGE::Widget::Command& command) override
@@ -296,10 +315,10 @@ public:
         }
     }
 
-    virtual void render(sf::RenderTarget& target)
+    virtual void onUpdate(long long tickCounter)
     {
-        EGE::GUIScreen::render(target);
-
+        EGE::GUIScreen::onUpdate(tickCounter);
+        labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop()->getLatestFrameTime().asSeconds())));
     }
 };
 

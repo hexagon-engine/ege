@@ -24,21 +24,14 @@ public:
     Label(Widget* parent)
     : Widget(parent) {}
 
-    void setString(sf::String str)
-    {
-        m_string = str;
-    }
+    void setString(sf::String str);
     void setTextAlign(Align align);
-    // do not confuse with setPosition
-    void setTextPosition(sf::Vector2f position);
+    virtual void setPosition(sf::Vector2f position);
     void setFontSize(int size);
     virtual void render(sf::RenderTarget& target) override;
 
-private:
-    virtual void setPosition(sf::Vector2f position)
-    {
-        Widget::setPosition(position);
-    };
+protected:
+    void setPositionInternal(sf::Vector2f position);
     void updateGeometry();
 
     sf::String m_string;
