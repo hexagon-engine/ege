@@ -11,7 +11,7 @@ Copyright (c) Sppmacd 2020
 #include <SFML/System.hpp>
 #include <ege/syswindow/DefaultSystemEventHandler.h>
 
-#define WIDGET_DEBUG 0
+#define WIDGET_DEBUG 1
 
 namespace EGE
 {
@@ -62,7 +62,7 @@ public:
     virtual sf::FloatRect getViewport(sf::RenderTarget& target);
     virtual void render(sf::RenderTarget& target);
 
-    virtual void onUpdate(long long tickCounter) {}
+    virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};
     virtual void onCommand(const Command& command) {}
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;

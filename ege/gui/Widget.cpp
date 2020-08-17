@@ -116,4 +116,10 @@ void Widget::setViewForWidget(sf::RenderTarget& target)
     target.setView(view);
 }
 
+void Widget::onUpdate(long long tickCounter)
+{
+    (void)tickCounter;
+    updateTimers();
+}
+
 }

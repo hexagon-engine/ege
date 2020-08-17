@@ -43,6 +43,7 @@ void Label::updateGeometry()
 {
     if(m_geometryChanged)
     {
+        ASSERT(!getLoop()->getResourceManager().expired());
         if(!m_font)
         {
             m_font = getLoop()->getResourceManager().lock()->getDefaultFont();
