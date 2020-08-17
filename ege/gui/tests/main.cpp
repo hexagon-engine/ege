@@ -197,6 +197,7 @@ public:
     std::shared_ptr<EGE::Label> labelFPS;
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
+    std::shared_ptr<EGE::Label> ball;
     bool timerRunning = false;
 
     MyGuiScreen2(MyGameLoop* loop)
@@ -242,6 +243,12 @@ public:
         labelAnimated->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelAnimated);
 
+        ball = std::make_shared<EGE::Label>(this);
+        ball->setString("O");
+        ball->setPosition(sf::Vector2f(0.f, 0.f));
+        ball->setTextAlign(EGE::Label::Align::Center);
+        addWidget(ball);
+
         labelFPS = std::make_shared<EGE::Label>(this);
         labelFPS->setString("FPS: 0.0");
         labelFPS->setPosition(sf::Vector2f(10.f, 10.f));
@@ -266,10 +273,10 @@ public:
         graph2 = std::make_shared<AnimationGraphWidget>(this);
         graph2->setPosition(sf::Vector2f(300.f, 210.f));
         graph2->setSize(sf::Vector2f(100.f, 100.f));
-        graph2->setMax(300.f);
+        graph2->setMax(600.f);
         addWidget(graph2);
 
-        auto anim2 = std::make_shared<EGE::Animation>(this, EGE::Time(5.0, EGE::Time::Unit::Seconds));
+        auto anim2 = std::make_shared<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
         anim2->addKeyframe(0.0, 1.0);
         anim2->addKeyframe(0.1, 5.0);
         anim2->addKeyframe(0.5, -3.0);
@@ -277,6 +284,16 @@ public:
         anim2->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
         addAnimation(anim2, [this](EGE::Animation* a, double val) {
                         graph2->addVal(val);
+                     });
+
+        auto anim3 = std::make_shared<EGE::Animation>(this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
+        anim3->addKeyframe(0.0, -1.0);
+        anim3->addKeyframe(1.0, 1.0);
+        anim3->setEasingFunction([](double x)->double {
+                                                return ((x-0.5)*(x-0.5));
+                                                } );
+        addAnimation(anim3, [this](EGE::Animation* a, double val) {
+                        ball->setPosition(sf::Vector2f(300.f, 400.f + val * 40.0));
                      });
 
         auto animLabel = std::make_shared<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
@@ -305,7 +322,7 @@ public:
                 DEBUG_PRINT("clicked");
                 addWidget(button2);
                 timerRunning = true;
-                getLoop()->addTimer("TimerHideWidget", &(new EGE::Timer(getLoop(), EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback(
+                addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback(
                     [this](std::string name, EGE::Timer* timer) {
                         removeWidget(button2.get());
                         timerRunning = false;
