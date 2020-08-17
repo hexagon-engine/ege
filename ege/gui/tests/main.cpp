@@ -1,5 +1,6 @@
 #include <testsuite/Tests.h>
 #include <ege/gui/Animation.h>
+#include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
 #include <ege/gui/Label.h>
@@ -281,7 +282,7 @@ public:
         anim2->addKeyframe(0.1, 5.0);
         anim2->addKeyframe(0.5, -3.0);
         anim2->addKeyframe(1.0, 6.0);
-        anim2->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
+        anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
         addAnimation(anim2, [this](EGE::Animation* a, double val) {
                         graph2->addVal(val);
                      });
@@ -300,7 +301,7 @@ public:
         animLabel->addKeyframe(0.0, -1.0);
         animLabel->addKeyframe(0.5, 1.0);
         animLabel->addKeyframe(1.0, -1.0);
-        animLabel->setEasingFunction([](double x)->double { return x < 0.5 ? 2 * x * x : 1 - std::pow(-2 * x + 2, 2) / 2; } );
+        animLabel->setEasingFunction(EGE::AnimationEasingFunctions::constant1);
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
         addAnimation(animLabel, [this](EGE::Animation* a, double val) {
                         labelAnimated->setPosition(sf::Vector2f(150.f + val * 30.f, 300.f));

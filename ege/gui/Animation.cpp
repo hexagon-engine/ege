@@ -29,6 +29,9 @@ double Animation::getValue(double time)
     ASSERT(!m_keyframes.empty());
     std::pair<double, double> previous;
 
+    if(m_iterations > 1)
+         previous = m_keyframes.back();
+
     // ensure that keyframes are sorted!
     if(!m_sorted)
     {
@@ -42,12 +45,14 @@ double Animation::getValue(double time)
 
         m_sorted = true;
     }
-    if(time > 1.0)
-        return m_keyframes.back().second;
-    if(time < 0.0)
-        return m_keyframes.front().second;
-
     DUMP(ANIMATION_DEBUG, time);
+
+    while(time > 1.0)
+        time--;
+
+    while(time < 0.0)
+        time++;
+
     for(auto keyframe: m_keyframes)
     {
         if(keyframe.first >= time)
