@@ -1,4 +1,6 @@
 set(SOURCES
+	"Animatable.cpp"
+	"Animatable.h"
 	"Animation.cpp"
 	"Animation.h"
 	"AnimationEasingFunctions.cpp"

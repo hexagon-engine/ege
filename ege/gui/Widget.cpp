@@ -116,24 +116,4 @@ void Widget::setViewForWidget(sf::RenderTarget& target)
     target.setView(view);
 }
 
-void Widget::addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback)
-{
-    if(!animation->getUpdateCallback())
-    {
-        animation->setUpdateCallback([callback](std::string name, Timer* timer) {
-                                    Animation* anim = (Animation*)timer;
-                                    double time = (timer->getElapsedTime().getValue()) / (timer->getInterval().getValue());
-                                    if(time < 0.0)
-                                        return;
-                                    double val = anim->getValue(time);
-                                    DUMP(ANIMATION_DEBUG, val);
-                                    callback(anim, val);
-                                });
-    }
-
-    Timer* timer = new Timer(this, Timer::Mode::Limited, animation->getDelay());
-    timer->setCallback([animation, this](std::string name, Timer* timer) { addTimer("Widget Animation", animation); });
-    addTimer("Widget Animation Delay", timer);
-}
-
 }

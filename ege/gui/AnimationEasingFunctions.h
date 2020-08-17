@@ -59,6 +59,8 @@ double easeInBounce(double x);
 double easeOutBounce(double x);
 double easeInOutBounce(double x);
 
+// TODO: cubic-bezier
+
 }
 
 }

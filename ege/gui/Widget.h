@@ -5,8 +5,10 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Animatable.h"
+#include "Animation.h"
+
 #include <SFML/System.hpp>
-#include <ege/gui/Animation.h>
 #include <ege/syswindow/DefaultSystemEventHandler.h>
 
 #define WIDGET_DEBUG 0
@@ -16,7 +18,7 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Widget : public DefaultSystemEventHandler, public EventLoop
+class Widget : public Animatable, public DefaultSystemEventHandler
 {
 public:
     class Command
@@ -70,8 +72,6 @@ public:
     virtual bool isMouseOver(sf::Vector2f position);
 
     virtual void setViewForWidget(sf::RenderTarget& target);
-
-    void addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback);
 
 protected:
     sf::Vector2f m_size;
