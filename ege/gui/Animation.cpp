@@ -47,6 +47,10 @@ double Animation::getValue(double time)
     }
     DUMP(ANIMATION_DEBUG, time);
 
+    // clamp animation if it won't be repeated
+    if(m_remainingIterations == 1)
+        time = std::min(1.0, std::max(0.0, time));
+
     while(time > 1.0)
         time--;
 
