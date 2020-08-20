@@ -10,9 +10,8 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Scene::render(sf::RenderTarget& target)
+void Scene::renderOnly(sf::RenderTarget& target)
 {
-    Widget::render(target);
     for(auto pr: *this)
     {
         pr.second->render(target);

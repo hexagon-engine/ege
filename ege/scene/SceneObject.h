@@ -20,9 +20,9 @@ public:
     : m_owner(owner), m_name(name) {}
 
     virtual void onUpdate(long long tickCounter);
-    virtual void render(sf::RenderTarget& target) = 0;
+    virtual void render(sf::RenderTarget& target) const = 0;
 
-    bool isDead()
+    bool isDead() const
     {
         return m_dead;
     }
@@ -30,11 +30,11 @@ public:
     {
         m_id = id;
     }
-    std::string getName()
+    std::string getName() const
     {
         return m_name;
     }
-    long long getId()
+    long long getId() const
     {
         return m_id;
     }

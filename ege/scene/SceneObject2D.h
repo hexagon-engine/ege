@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "SceneObject.h"
 
 #include <ege/gui/AnimationEasingFunctions.h>
+#include <ege/main/Config.h>
 #include <functional>
 #include <SFML/Graphics.hpp>
 
@@ -39,7 +40,7 @@ public:
     virtual bool moveTo(sf::Vector2f pos);
 
     // with collision check
-    virtual bool flyTo(sf::Vector2f pos, float time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
+    virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
     virtual void render(sf::RenderTarget& target) const = 0;
 

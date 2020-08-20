@@ -25,7 +25,8 @@ public:
 
     typedef std::map<long long, std::shared_ptr<SceneObject>> ObjectMap;
 
-    virtual void render(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target);
+
     virtual void onUpdate(long long tickCounter);
     virtual void onResize(sf::Event::SizeEvent& event);
 

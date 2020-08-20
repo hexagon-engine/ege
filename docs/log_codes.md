@@ -23,4 +23,4 @@
 ### 000D EGE/gpo: unknown exception caught in GameplayObjectRegistry::%s: %s
 	>> GameplayObjectRegistry::%s return RegistryError::Unknown
 ### 000E EGE/syswindow: window already removed, close skipped
-
+### 000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform.
