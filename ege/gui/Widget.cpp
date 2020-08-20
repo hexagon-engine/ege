@@ -61,7 +61,11 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
 void Widget::render(sf::RenderTarget& target)
 {
     setViewForWidget(target);
+    renderOnly(target);
+}
 
+void Widget::renderOnly(sf::RenderTarget& target)
+{
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
     {

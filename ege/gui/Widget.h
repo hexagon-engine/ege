@@ -62,6 +62,9 @@ public:
     virtual sf::FloatRect getViewport(sf::RenderTarget& target);
     virtual void render(sf::RenderTarget& target);
 
+    // render without setting view
+    virtual void renderOnly(sf::RenderTarget& target);
+
     virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};
     virtual void onCommand(const Command& command) {}
