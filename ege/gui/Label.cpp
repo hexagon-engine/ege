@@ -74,9 +74,13 @@ void Label::updateGeometry()
 
 void Label::render(sf::RenderTarget& target)
 {
-    updateGeometry();
     Widget::render(target);
-    //m_text.setFillColor(sf::Color::Black);
+    renderOnly(target);
+}
+
+void Label::renderOnly(sf::RenderTarget& target)
+{
+    updateGeometry();
     target.draw(m_text);
 }
 

@@ -9,7 +9,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/loop/Timer.h>
 #include <vector>
 
-#define ANIMATION_DEBUG 0
+#define ANIMATION_DEBUG 1
 
 namespace EGE
 {

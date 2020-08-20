@@ -43,7 +43,7 @@ public:
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
-    virtual void render(sf::RenderTarget& target) override;
+    virtual void renderOnly(sf::RenderTarget& target) override;
 
 private:
     // position may be needed for some animations

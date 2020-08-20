@@ -29,6 +29,7 @@ public:
     virtual void setPosition(sf::Vector2f position);
     void setFontSize(int size);
     virtual void render(sf::RenderTarget& target) override;
+    virtual void renderOnly(sf::RenderTarget& target) override;
 
 protected:
     void setPositionInternal(sf::Vector2f position);
