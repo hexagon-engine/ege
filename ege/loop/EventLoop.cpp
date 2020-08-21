@@ -73,18 +73,23 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     m_timers.insert(std::make_pair(name, timer));
 }
 
-Timer* EventLoop::getTimer(const std::string& timer)
+std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
 {
-    auto it = m_timers.find(timer);
-    if(it != m_timers.end())
-        return it->second.get();
-    return nullptr;
+    std::vector<std::weak_ptr<Timer>> timers;
+    decltype(m_timers)::iterator it;
+    while((it = m_timers.find(timer)) != m_timers.end())
+    {
+        timers.push_back(it->second);
+    }
+    return timers;
 }
 void EventLoop::removeTimer(const std::string& timer)
 {
-    auto it = m_timers.find(timer);
-    if(it != m_timers.end())
+    decltype(m_timers)::iterator it;
+    while((it = m_timers.find(timer)) != m_timers.end())
+    {
         m_timers.erase(it);
+    }
 }
 void EventLoop::updateTimers()
 {

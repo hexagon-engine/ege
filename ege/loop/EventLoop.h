@@ -45,7 +45,7 @@ public:
     }
 
     void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
-    Timer* getTimer(const std::string& timer);
+    std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
     void removeTimer(const std::string& timer);
     virtual void updateTimers();
     void deferredInvoke(std::function<void()> func);

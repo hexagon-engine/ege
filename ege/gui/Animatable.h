@@ -16,7 +16,8 @@ namespace EGE
 class Animatable : public EventLoop
 {
 public:
-    void addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback);
+    void addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback, std::string name = "*");
+    void removeAnimations(std::string name);
 };
 
 }
