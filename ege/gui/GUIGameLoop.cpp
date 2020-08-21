@@ -122,7 +122,11 @@ void GUIGameLoop::setWindow(std::shared_ptr<SFMLSystemWindow> window)
     // TODO: automatically deletes previous window!
     // so it forces one GameLoop for window
     // so only one window is allowed currently
-    m_systemWindow = std::shared_ptr<SFMLSystemWindow>(window);
+    m_systemWindow = window;
+    if(m_currentGui)
+    {
+        m_currentGui->setWindow(window);
+    }
 }
 
 std::weak_ptr<ResourceManager> GUIGameLoop::getResourceManager()
