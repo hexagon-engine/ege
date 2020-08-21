@@ -38,7 +38,6 @@ public:
     virtual void onTimerFinish(Timer* timer) {}
     virtual void onTimerTick(Timer* timer) {}
 
-    // TODO: use smart pointers here
     void addTimer(const std::string& name, Timer* timer, TimerImmediateStart start = TimerImmediateStart::Yes)
     {
         ASSERT(timer);
