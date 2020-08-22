@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/SceneObject2D.h>
+#include <ege/scene/TexturedObject2D.h>
 #include <ege/gui/Animation.h>
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
@@ -88,6 +89,7 @@ public:
         // define default font to be used by EGE Widgets (we are using them in MyObject::render())
         // it will be automatically loaded by engine.
         bool success = setDefaultFont("font.ttf");
+        success &= (bool)loadTextureFromFile("texture.png").get();
 
         // return true if setDefaultFont succeeded or false if not (e.g. font doesn't exist)
         return success;
@@ -172,6 +174,11 @@ TESTCASE(_2dCamera)
     auto removedObject = std::make_shared<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
+    auto texturedObject = std::make_shared<EGE::TexturedObject2D>(scene.get(), "Textured Object");
+    texturedObject->setPosition(sf::Vector2f(100.f, 100.f));
+    texturedObject->setTextureName("texture.png");
+    scene->addObject(texturedObject);
+
     // set Test Object to be removed after 5 seconds
     removedObject->addTimer("makeTestObjectDead", &((new EGE::Timer(removedObject.get(), EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
                                      ->setCallback([scene, removedObject](std::string, EGE::Timer* timer) {
@@ -190,4 +197,5 @@ TESTCASE(_2dCamera)
     // run loop
     gameLoop.run();
 }
+
 RUN_TESTS(scene);

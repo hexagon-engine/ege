@@ -32,7 +32,7 @@ public:
     {
         return sf::FloatRect(getPosition(), m_size);
     }
-    virtual void render(sf::RenderTarget& target);
+    virtual void render(sf::RenderTarget& target) const;
 
 private:
     sf::Vector2f m_size;

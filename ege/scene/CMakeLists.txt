@@ -13,6 +13,8 @@ set(SOURCES
 	"Scene2D.h"
 	"SceneObject.cpp"
 	"SceneObject.h"
+	"TexturedObject2D.cpp"
+	"TexturedObject2D.h"
 )
 
 ege_add_module(scene)
