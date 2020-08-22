@@ -123,9 +123,9 @@ TESTCASE(time)
     loop.addTimer("infinite 2s", &(*new Timer(&loop, Timer::Mode::Infinite, Time(0.5f, Time::Unit::Seconds)))
                     .setCallback(callback), EGE::GameLoop::TimerImmediateStart::Yes);
     loop.addTimer("stop-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(10.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimer("infinite 2s")->stop(); }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->stop(); }), EGE::GameLoop::TimerImmediateStart::Yes);
     loop.addTimer("restart-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(12.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimer("infinite 2s")->start(); }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->start(); }), EGE::GameLoop::TimerImmediateStart::Yes);
     loop.addTimer("remove-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(14.f, Time::Unit::Seconds)))
                     .setCallback([&loop](std::string name, Timer* timer) { loop.removeTimer("infinite 2s"); }), EGE::GameLoop::TimerImmediateStart::Yes);
     loop.addTimer("close", &(*new Timer(&loop, Timer::Mode::Limited, Time(15.f, Time::Unit::Seconds)))
