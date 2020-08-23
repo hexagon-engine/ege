@@ -1,4 +1,5 @@
 add_subdirectory(game)
+add_subdirectory(geometry)
 add_subdirectory(gpo)
 add_subdirectory(gui)
 add_subdirectory(loop)
