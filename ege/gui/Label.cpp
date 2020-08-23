@@ -74,13 +74,13 @@ void Label::updateGeometry()
 
 void Label::render(sf::RenderTarget& target)
 {
+    updateGeometry();
     Widget::render(target);
     renderOnly(target);
 }
 
 void Label::renderOnly(sf::RenderTarget& target)
 {
-    updateGeometry();
     target.draw(m_text);
 }
 
