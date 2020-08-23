@@ -3,6 +3,8 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
+#pragma once
+
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/profiler/Profiler.h>
