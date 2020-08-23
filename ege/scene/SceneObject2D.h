@@ -44,6 +44,10 @@ public:
 
     virtual void render(sf::RenderTarget& target) const = 0;
 
+protected:
+    double m_rotation = 0.0;
+    sf::Vector2f m_origin;
+
 private:
     sf::Vector2f m_position;
 };

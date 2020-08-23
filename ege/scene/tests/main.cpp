@@ -177,6 +177,7 @@ TESTCASE(_2dCamera)
     auto texturedObject = std::make_shared<EGE::TexturedObject2D>(scene.get(), "Textured Object");
     texturedObject->setPosition(sf::Vector2f(100.f, 100.f));
     texturedObject->setTextureName("texture.png");
+    texturedObject->center();
     scene->addObject(texturedObject);
 
     // set Test Object to be removed after 5 seconds

@@ -33,12 +33,18 @@ public:
 
     sf::FloatRect getBoundingBox()
     {
-        return sf::FloatRect(getPosition(), m_textureRect.getSize());
+        return sf::FloatRect(getPosition() - m_origin, m_textureRect.getSize());
     }
 
     void setPosition(sf::Vector2f position)
     {
         SceneObject2D::setPosition(position);
+        m_geometryChanged = true;
+    }
+
+    void center(bool centered = true)
+    {
+        m_centered = centered;
         m_geometryChanged = true;
     }
 
@@ -53,6 +59,7 @@ private:
     sf::FloatRect m_textureRect;
     sf::Sprite m_sprite;
     bool m_geometryChanged = true;
+    bool m_centered = false;
 };
 
 }

@@ -16,6 +16,10 @@ void TexturedObject2D::updateGeometry()
             m_textureRect = sf::FloatRect(0.f, 0.f, texture->getSize().x, texture->getSize().y);
         m_sprite.setTextureRect((sf::IntRect)m_textureRect);
         m_sprite.setPosition(getPosition());
+        if(m_centered)
+            m_origin = m_textureRect.getSize() / 2.f;
+        m_sprite.setOrigin(m_origin);
+        m_sprite.setRotation(m_rotation);
 
         m_geometryChanged = false;
     }
