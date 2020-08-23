@@ -3,12 +3,13 @@ Extendable Game Engine
 
 ## Dependencies
 * SFML 2.5.1+ and its dependencies (automatically installed by configure script)
+* Git (required to download SFML)
 * C++ compiler with at least C++17 and #pragma once support (GCC fully supported)
 * CMake 2.8+ (latest version recommended)
 
 ## Build
 * Install required packages:
-Ubuntu: ```sudo apt install g++ cmake make```
+Ubuntu: ```sudo apt install g++ cmake make git```
 
 * Run these commands:
 (Now only Unix-like systems supported)
@@ -19,7 +20,7 @@ make
 ```
 
 ## Link to your project (Unix and Unix-like system)
-Linking to projects is now TODO and is very unintuitive, but works.
+Linking to projects is WIP and is very unintuitive, but works.
 To create project with EGE:
 
 * Build EGE with ^^ these instructions ^^.
