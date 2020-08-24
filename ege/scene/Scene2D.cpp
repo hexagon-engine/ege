@@ -26,6 +26,9 @@ void Scene2D::renderOnly(sf::RenderTarget& target)
     }
     else
     {
+        sf::View view = target.getView();
+        view.setCenter(sf::Vector2f(0.f, 0.f));
+        target.setView(view);
         std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
     }
 

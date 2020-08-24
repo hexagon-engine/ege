@@ -40,6 +40,8 @@ void TexturedObject2D::onUpdate(long long tickCounter)
 
 void TexturedObject2D::render(sf::RenderTarget& target) const
 {
+    DUMP(SCENE_DEBUG, m_sprite.getPosition().x);
+    DUMP(SCENE_DEBUG, m_sprite.getPosition().y);
     target.draw(m_sprite);
 }
 

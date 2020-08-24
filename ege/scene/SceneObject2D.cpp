@@ -12,9 +12,9 @@ bool SceneObject2D::moveTo(sf::Vector2f pos)
 {
     // TODO: collisions
     m_position = pos;
-    DUMP(1, m_name);
-    DUMP(1, m_position.x);
-    DUMP(1, m_position.y);
+    //DUMP(1, m_name);
+    //DUMP(1, m_position.x);
+    //DUMP(1, m_position.y);
     return true;
 }
 
