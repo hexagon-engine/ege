@@ -12,6 +12,7 @@ void TexturedObject2D::updateGeometry()
 {
     if(m_geometryChanged)
     {
+        //DBG(SCENE_DEBUG, "TexturedObject2D::updateGeometry");
         ResourceManager* resManager = m_owner->getLoop()->getResourceManager().lock().get();
         ASSERT(resManager);
         sf::Texture* texture = resManager->getTexture(m_texture).get();
@@ -40,8 +41,9 @@ void TexturedObject2D::onUpdate(long long tickCounter)
 
 void TexturedObject2D::render(sf::RenderTarget& target) const
 {
-    DUMP(SCENE_DEBUG, m_sprite.getPosition().x);
-    DUMP(SCENE_DEBUG, m_sprite.getPosition().y);
+    SceneObject2D::render(target);
+    //DUMP(SCENE_DEBUG, m_sprite.getPosition().x);
+    //DUMP(SCENE_DEBUG, m_sprite.getPosition().y);
     target.draw(m_sprite);
 }
 

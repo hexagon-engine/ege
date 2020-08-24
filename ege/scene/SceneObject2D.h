@@ -12,6 +12,8 @@ Copyright (c) Sppmacd 2020
 #include <functional>
 #include <SFML/Graphics.hpp>
 
+#define SCENEOBJECT2D_DEBUG 1
+
 namespace EGE
 {
 
@@ -22,7 +24,7 @@ public:
     SceneObject2D(EGE::Scene* owner, std::string name)
     : SceneObject(owner, name) {}
 
-    void setPosition(sf::Vector2f position)
+    virtual void setPosition(sf::Vector2f position)
     {
         m_position = position;
     }
@@ -30,7 +32,7 @@ public:
     {
         return m_position;
     }
-    void setMotion(sf::Vector2f motion)
+    virtual void setMotion(sf::Vector2f motion)
     {
         m_motion = motion;
     }
@@ -39,7 +41,7 @@ public:
         return m_motion;
     }
 
-    virtual sf::FloatRect getBoundingBox()
+    virtual sf::FloatRect getBoundingBox() const
     {
         return sf::FloatRect(m_position, sf::Vector2f(0.f, 0.f));
     }
@@ -50,7 +52,7 @@ public:
     // with collision check
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
-    virtual void render(sf::RenderTarget& target) const = 0;
+    virtual void render(sf::RenderTarget& target) const;
     virtual void onUpdate(long long tickCounter);
 
 protected:

@@ -11,7 +11,7 @@ namespace EGE
 bool SceneObject2D::moveTo(sf::Vector2f pos)
 {
     // TODO: collisions
-    m_position = pos;
+    setPosition(pos);
     //DUMP(1, m_name);
     //DUMP(1, m_position.x);
     //DUMP(1, m_position.y);
@@ -44,6 +44,21 @@ bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(
                     }
                  });
     return true;
+}
+
+void SceneObject2D::render(sf::RenderTarget& target) const
+{
+    // debug shape
+    if constexpr(SCENEOBJECT2D_DEBUG)
+    {
+        sf::FloatRect rect(getBoundingBox());
+        sf::RectangleShape rs(rect.getSize() - sf::Vector2f(2.f, 2.f));
+        rs.setPosition(rect.getPosition() + sf::Vector2f(1.f, 1.f));
+        rs.setOutlineColor(sf::Color::Cyan);
+        rs.setOutlineThickness(1.f);
+        rs.setFillColor(sf::Color::Transparent);
+        target.draw(rs);
+    }
 }
 
 void SceneObject2D::onUpdate(long long tickCounter)
