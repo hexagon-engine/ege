@@ -11,6 +11,7 @@ Copyright (c) Sppmacd 2020
 
 #include <map>
 #include <memory>
+#include <vector>
 
 namespace EGE
 {
