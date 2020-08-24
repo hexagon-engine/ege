@@ -32,8 +32,8 @@ public:
 
     long long addObject(std::shared_ptr<SceneObject> object);
 
-    SceneObject* getObject(std::function<bool(SceneObject*)> predicate);
-    SceneObject* getObject(std::string name);
+    std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
+    std::vector<SceneObject*> getObjects(std::string name);
     SceneObject* getObject(long long id);
 
     ObjectMap::const_iterator begin()

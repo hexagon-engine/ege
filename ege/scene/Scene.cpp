@@ -50,13 +50,21 @@ long long Scene::addObject(std::shared_ptr<SceneObject> object)
     return m_greatestId;
 }
 
-SceneObject* Scene::getObject(std::function<bool(SceneObject*)> predicate)
+std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> predicate)
 {
-    return std::find_if(begin(), end(), [predicate](auto pr)->bool { return predicate(pr.second.get()); })->second.get();
+    std::vector<SceneObject*> objects;
+    for(ObjectMap::value_type it: m_objects)
+    {
+        if(predicate(it.second.get()))
+        {
+            objects.push_back(it.second.get());
+        }
+    }
+    return objects;
 }
-SceneObject* Scene::getObject(std::string name)
+std::vector<SceneObject*> Scene::getObjects(std::string name)
 {
-    return getObject([name](SceneObject* object)->bool { return object->getName() == name; });
+    return getObjects([name](SceneObject* object)->bool { return object->getName() == name; });
 }
 SceneObject* Scene::getObject(long long id)
 {
