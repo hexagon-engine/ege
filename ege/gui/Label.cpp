@@ -41,6 +41,7 @@ void Label::setPositionInternal(sf::Vector2f position)
 
 void Label::updateGeometry()
 {
+    // FIXME: label is weirdly clipped (':('; '???')
     if(m_geometryChanged)
     {
         ASSERT(!getLoop()->getResourceManager().expired());
