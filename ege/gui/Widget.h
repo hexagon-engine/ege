@@ -49,13 +49,17 @@ public:
     {
         m_position = position;
     }
-    sf::Vector2f getPosition()
+    sf::Vector2f getPosition() const
     {
         return m_position;
     }
-    GUIGameLoop* getLoop()
+    GUIGameLoop* getLoop() const
     {
         return m_gameLoop;
+    }
+    sf::Vector2f getSize() const
+    {
+        return m_size;
     }
 
     virtual sf::FloatRect getBoundingBox();
