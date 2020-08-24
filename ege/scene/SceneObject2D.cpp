@@ -46,4 +46,10 @@ bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(
     return true;
 }
 
+void SceneObject2D::onUpdate(long long tickCounter)
+{
+    SceneObject::onUpdate(tickCounter);
+    moveTo(getPosition() + m_motion);
+}
+
 }

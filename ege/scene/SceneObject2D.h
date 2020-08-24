@@ -30,6 +30,14 @@ public:
     {
         return m_position;
     }
+    void setMotion(sf::Vector2f motion)
+    {
+        m_motion = motion;
+    }
+    sf::Vector2f getMotion() const
+    {
+        return m_motion;
+    }
 
     virtual sf::FloatRect getBoundingBox()
     {
@@ -43,10 +51,12 @@ public:
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
     virtual void render(sf::RenderTarget& target) const = 0;
+    virtual void onUpdate(long long tickCounter);
 
 protected:
     double m_rotation = 0.0;
     sf::Vector2f m_origin;
+    sf::Vector2f m_motion;
 
 private:
     sf::Vector2f m_position;
