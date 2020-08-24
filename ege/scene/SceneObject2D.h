@@ -59,6 +59,7 @@ protected:
     double m_rotation = 0.0;
     sf::Vector2f m_origin;
     sf::Vector2f m_motion;
+    sf::Vector2f m_scale = sf::Vector2f(1, 1);
 
 private:
     sf::Vector2f m_position;

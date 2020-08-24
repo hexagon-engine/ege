@@ -26,9 +26,24 @@ void TexturedObject2D::updateGeometry()
             m_origin = m_textureRect.getSize() / 2.f;
         m_sprite.setOrigin(m_origin);
         m_sprite.setRotation(m_rotation);
+        m_sprite.setScale(m_scale);
 
         m_geometryChanged = false;
     }
+}
+
+sf::FloatRect TexturedObject2D::getBoundingBox() const
+{
+    sf::Vector2f origin = m_origin;
+    if(m_centered)
+        origin = m_textureRect.getSize() / 2.f;
+
+    sf::FloatRect rect(getPosition(), m_textureRect.getSize());
+    rect.width *= m_scale.x;
+    rect.height *= m_scale.y;
+    rect.left -= origin.x * m_scale.x;
+    rect.top -= origin.y * m_scale.y;
+    return rect;
 }
 
 void TexturedObject2D::onUpdate(long long tickCounter)

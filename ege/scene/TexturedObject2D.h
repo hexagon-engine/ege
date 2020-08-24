@@ -31,15 +31,7 @@ public:
         m_geometryChanged = true;
     }
 
-    sf::FloatRect getBoundingBox() const
-    {
-        sf::Vector2f origin = m_origin;
-        if(m_centered)
-            origin = m_textureRect.getSize() / 2.f;
-
-        sf::FloatRect rect(getPosition() - origin, m_textureRect.getSize());
-        return rect;
-    }
+    sf::FloatRect getBoundingBox() const;
 
     void setPosition(sf::Vector2f position)
     {
