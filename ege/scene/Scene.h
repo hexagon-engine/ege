@@ -58,8 +58,10 @@ public:
     // before first render. You can revert this behaviour by using setSize().
     virtual void setViewForWidget(sf::RenderTarget& target);
 
-private:
+protected:
     ObjectMap m_objects;
+
+private:
     bool m_autoResizable = false;
     long long m_greatestId = 0;
 };
