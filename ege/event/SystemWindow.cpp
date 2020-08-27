@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SystemWindow.h"
 
-#include <ege/sysevent/SystemEvent.h>
+#include <ege/event/SystemEvent.h>
 
 namespace EGE
 {

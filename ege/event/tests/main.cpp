@@ -5,9 +5,9 @@ Copyright (c) Sppmacd 2020
 
 #include <testsuite/Tests.h>
 #include <ege/loop/GameLoop.h>
-#include <ege/sysevent/SystemEvent.h>
-#include <ege/syswindow/DefaultSystemEventHandler.h>
-#include <ege/syswindow/SystemWindow.h>
+#include <ege/event/SystemEvent.h>
+#include <ege/event/DefaultSystemEventHandler.h>
+#include <ege/event/SystemWindow.h>
 
 class MyGameLoop : public EGE::GameLoop
 {

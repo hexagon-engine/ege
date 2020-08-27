@@ -9,7 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "Animation.h"
 
 #include <SFML/System.hpp>
-#include <ege/syswindow/DefaultSystemEventHandler.h>
+#include <ege/event/DefaultSystemEventHandler.h>
 
 #define WIDGET_DEBUG 1
 

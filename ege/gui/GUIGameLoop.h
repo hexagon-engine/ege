@@ -7,11 +7,11 @@ Copyright (c) Sppmacd 2020
 
 #include "GUIScreen.h"
 
+#include <ege/event/SystemWindow.h>
 #include <ege/loop/GameLoop.h>
 #include <ege/main/Config.h>
 #include <ege/profiler/Profiler.h>
 #include <ege/resources/ResourceManager.h>
-#include <ege/syswindow/SystemWindow.h>
 #include <memory>
 
 #define GUI_DEBUG 1

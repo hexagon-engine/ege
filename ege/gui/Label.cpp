@@ -51,7 +51,8 @@ void Label::updateGeometry()
         }
         sf::Text text(m_string, *m_font, m_fontSize);
         sf::FloatRect bounds = text.getLocalBounds();
-        bounds.height += 5.f; //SFML text bounds bug??
+        bounds.height += 7.f * m_fontSize / 15.f; //SFML text bounds bug??
+        bounds.width += 1.f * m_fontSize / 15.f;
         m_size = sf::Vector2f(bounds.width, bounds.height);
         switch(m_align)
         {
