@@ -24,3 +24,10 @@
 	>> GameplayObjectRegistry::%s return RegistryError::Unknown
 ### 000E EGE/syswindow: window already removed, close skipped
 ### 000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform.
+### 0010 EGE/network: Server listening on %d
+### 0011 EGE/network: Failed to start server on %d
+### 0012 EGE/network: Closing server
+### 0013 EGE/network: Client connected (ip=%s, port=%d)
+### 0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)
+### 0015 EGE/network: Event Receive failed (rejected by EventHandler)
+### 0016 EGE/network: Socket Receive failed (system error)
