@@ -3,6 +3,8 @@ set(SOURCES
   "Client.h"
   "ClientConnection.cpp"
   "ClientConnection.h"
+	"Packet.cpp"
+	"Packet.h"
 	"Server.cpp"
 	"Server.h"
 )

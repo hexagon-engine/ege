@@ -1,4 +1,11 @@
+/*
+EGE - Extendable Game Engine
+Copyright (c) Sppmacd 2020
+*/
+
 #include "Server.h"
+
+#include <iostream>
 
 namespace EGE
 {
@@ -8,35 +15,35 @@ bool Server::start()
     sf::Socket::Status status = m_listener.listen(m_serverPort);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "0011 EGE/network: Failed to start server on " << m_serverPort << std::cerr;
+        std::cerr << "0011 EGE/network: Failed to start server on " << m_serverPort << std::endl;
         return false;
     }
-    std::cerr << "0010 EGE/network: Server listening on " << m_serverPort << std::cerr;
+    std::cerr << "0010 EGE/network: Server listening on " << m_serverPort << std::endl;
     return true;
 }
 
 void Server::close()
 {
-    std::cerr << "0012 EGE/network: Closing server" << std::cerr;
+    std::cerr << "0012 EGE/network: Closing server" << std::endl;
     m_listener.close();
 }
 
 // synchronous
-bool Server::sendTo(const Packet& packet, int id)
+bool Server::sendTo(std::shared_ptr<Packet> packet, int id)
 {
-    std::weak_ptr<Client> client = getClient(id);
+    std::weak_ptr<ClientConnection> client = getClient(id);
     if(client.expired())
         return false;
 
     return client.lock()->send(packet);
 }
 
-bool Server::sendToAll(const Packet& packet)
+bool Server::sendToAll(std::shared_ptr<Packet> packet)
 {
-    return sendTo(packet, [](Client*)->bool { return true; });
+    return sendTo(packet, [](ClientConnection*)->bool { return true; });
 }
 
-bool Server::sendTo(const Packet& packet, std::function<bool(Client*)> predicate)
+bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection*)> predicate)
 {
     bool success = true;
     for(auto pr: m_clients)
@@ -49,14 +56,14 @@ bool Server::sendTo(const Packet& packet, std::function<bool(Client*)> predicate
     return success;
 }
 
-std::weak_ptr<Client> Server::getClient(int id)
+std::weak_ptr<ClientConnection> Server::getClient(int id)
 {
     return m_clients[id];
 }
 
-std::vector<std::weak_ptr<Client>> Server::getClients(std::function<bool(Client*)> predicate)
+std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bool(ClientConnection*)> predicate)
 {
-    std::vector<std::weak_ptr<Client>> clients;
+    std::vector<std::weak_ptr<ClientConnection>> clients;
     for(auto pr: m_clients)
     {
         if(predicate(pr.second.get()))
@@ -65,7 +72,7 @@ std::vector<std::weak_ptr<Client>> Server::getClients(std::function<bool(Client*
     return clients;
 }
 
-int Server::addClient(std::shared_ptr<Client> client)
+int Server::addClient(std::shared_ptr<ClientConnection> client)
 {
     EventResult result = onClientConnect(client.get());
     if(result == EventResult::Failure)
@@ -75,16 +82,18 @@ int Server::addClient(std::shared_ptr<Client> client)
     }
 
     m_lastClientUid++;
+    client->setID(m_lastClientUid);
     m_clients.insert(std::make_pair(m_lastClientUid, client));
     return m_lastClientUid;
 }
 
-void Server::kickClient(Client* client)
+void Server::kickClient(ClientConnection* client)
 {
     onClientDisconnect(client);
 
     // close socket etc.
     client->kick();
+    m_selector.remove(*client->getSocket().lock().get());
 
     // remove client from array
     m_clients.erase(m_clients.find(client->getID()));
@@ -93,38 +102,51 @@ void Server::kickClient(Client* client)
 // accepts new clients, removes disconnected clients, etc.
 void Server::select()
 {
-    if(selector.wait(seconds(2)))
+    // check if any client disconnected itself explicitly
+    if(!m_clients.empty())
     {
-        if(selector.isReady(listener))
+        for(auto& pr : m_clients)
         {
-            std::shared_ptr<TcpSocket> socket = std::make_shared<TcpSocket>();
-            Socket::Status status2 = listener.accept(*socket);
-
-            if(status2 == Socket::Done)
+            if(!pr.second->isConnected())
             {
-                std::shared_ptr<Client> client = std::make_shared<Client>(this, socket);
+                std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
+                kickClient(pr.second.get());
+            }
+        }
+    }
+
+    if(m_selector.wait(sf::seconds(2)))
+    {
+        if(m_selector.isReady(m_listener))
+        {
+            std::shared_ptr<sf::TcpSocket> socket = std::make_shared<sf::TcpSocket>();
+            sf::Socket::Status status2 = m_listener.accept(*socket);
+
+            if(status2 == sf::Socket::Done)
+            {
+                std::shared_ptr<ClientConnection> client = makeClient(this, socket);
                 if(client)
                 {
                     int id = addClient(client);
                     if(id)
                     {
-                        client->setID(id);
-                        std::cerr << "0013 EGE/network: Client connected (ip=" << socket->getRemoteAddress() << ", port=" << socket->getRemotePort() << ")" << std::endl;
+                        // TODO: onm_clientsuccessfulConnect()
+                        std::cerr << "0013 EGE/network: Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")" << std::endl;
                     }
                 }
             }
         }
-        if(!clients.empty())
+        if(!m_clients.empty())
         {
-            for(auto& pr : clients)
+            for(auto& pr : m_clients)
             {
-                sf::TcpSocket* sck = pr.second->getSocket();
-                if(selector.isReady(*sck))
+                std::weak_ptr<sf::TcpSocket> sck = pr.second->getSocket();
+                if(m_selector.isReady(*sck.lock().get()))
                 {
-                    sf::Packet packet;
-                    if(sck->receive(packet) == Socket::Done)
+                    std::shared_ptr<Packet> packet = pr.second->receive();
+                    if(packet)
                     {
-                        EventResult result = onReceive(pr.second.get(), Packet(packet));
+                        EventResult result = onReceive(pr.second.get(), packet);
                         if(result == EventResult::Failure)
                         {
                             std::cerr << "0014 EGE/network: Event Receive failed (rejected by EventHandler)" << std::endl;
@@ -133,7 +155,6 @@ void Server::select()
                     }
                     else
                     {
-                        std::cerr << "0016 EGE/network: Socket Receive failed (system error)" << std::endl;
                         kickClient(pr.second.get());
                     }
                 }

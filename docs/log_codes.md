@@ -31,3 +31,5 @@
 ### 0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)
 ### 0015 EGE/network: Event Receive failed (rejected by EventHandler)
 ### 0016 EGE/network: Socket Receive failed (system error)
+### 0017 EGE/network: Socket Send failed (system error)
+### 0018 EGE/network: Kicking client %s:%s due to explicit disconnect
