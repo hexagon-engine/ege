@@ -5,12 +5,14 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/util/Serializable.h>
+
 #include <string>
 
 namespace EGE
 {
 
-class GameplayObject
+class GameplayObject : public Serializable
 {
     std::string m_id;
 public:

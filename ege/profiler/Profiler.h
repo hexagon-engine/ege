@@ -10,12 +10,14 @@ Copyright (c) Sppmacd 2020
 #include <stack>
 #include <string>
 
+#include <ege/util/Serializable.h>
+
 #define PROFILER_DEBUG 0
 
 namespace EGE
 {
 
-class Profiler
+class Profiler : public Serializable
 {
 public:
     Profiler();
@@ -29,12 +31,15 @@ public:
     void end();
     std::string toString();
 
+    virtual std::shared_ptr<ObjectMap> serialize();
+    virtual void deserialize(std::shared_ptr<ObjectMap>);
+
 private:
     void startSectionLL(std::string name);
     void endSectionLL();
     long long getTime();
 
-    struct Section
+    struct Section : public Serializable
     {
         std::map<std::string, std::shared_ptr<Section>> m_subSections;
         long long m_time; //in ns
@@ -45,6 +50,9 @@ private:
 
         Section* findSubSection(std::string name);
         void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
+
+        virtual std::shared_ptr<ObjectMap> serialize();
+        virtual void deserialize(std::shared_ptr<ObjectMap>);
     };
     Section m_root;
     std::stack<Section*> m_startedSections;

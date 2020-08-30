@@ -13,7 +13,7 @@ bool GameplayObjectManager::reload()
     return clear() && load();
 }
 
-std::string GameplayObjectManager::toString()
+std::string GameplayObjectManager::toString() const
 {
     return "EGE::GameplayObjectManager\n";
 }

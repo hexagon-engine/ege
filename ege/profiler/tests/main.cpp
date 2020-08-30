@@ -41,6 +41,7 @@ TESTCASE(simple)
     profiler.end();
 
     DEBUG_PRINT(("\n" + profiler.toString()).c_str());
+    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
 }
 
 TESTCASE(restartTest)
@@ -95,6 +96,7 @@ TESTCASE(restartTest)
     profiler.end();
 
     DEBUG_PRINT(("\n" + profiler.toString()).c_str());
+    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
 }
 
 TESTCASE(profilerSectionStarter)
@@ -120,6 +122,7 @@ TESTCASE(profilerSectionStarter)
     profiler.end();
 
     DEBUG_PRINT(("\n" + profiler.toString()).c_str());
+    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
 }
 
 RUN_TESTS(profiler)

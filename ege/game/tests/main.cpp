@@ -4,6 +4,8 @@
 #include <ege/gpo/GameplayObject.h>
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
+#include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectMap.h>
 
 class MyColor : public EGE::GameplayObject
 {
@@ -13,6 +15,24 @@ public:
     , m_color(color) {}
 
     sf::Color m_color;
+
+    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    {
+        std::shared_ptr<EGE::ObjectMap> map = std::make_shared<EGE::ObjectMap>();
+        map->addObject("r", std::make_shared<EGE::ObjectInt>(m_color.r));
+        map->addObject("g", std::make_shared<EGE::ObjectInt>(m_color.g));
+        map->addObject("b", std::make_shared<EGE::ObjectInt>(m_color.b));
+        map->addObject("a", std::make_shared<EGE::ObjectInt>(m_color.a));
+        return map;
+    }
+
+    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    {
+        m_color.r = obj->getObject("r").lock()->asInt();
+        m_color.g = obj->getObject("g").lock()->asInt();
+        m_color.b = obj->getObject("b").lock()->asInt();
+        m_color.a = obj->getObject("a").lock()->asInt();
+    }
 };
 
 class MyGameplayObjectManager : public EGE::GameplayObjectManager

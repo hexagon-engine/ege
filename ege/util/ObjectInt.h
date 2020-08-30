@@ -10,30 +10,27 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class ObjectString : public Object
+class ObjectInt : public Object
 {
 public:
-    ObjectString(std::string str)
-    : m_string(str) {}
+    ObjectInt(long long num)
+    : m_number(num) {}
 
     virtual std::string toString() const;
 
     // TODO: int representations
-    virtual std::string asString() const { return m_string; }
-    virtual bool asBool() const { return m_string == "true"; }
+    virtual std::string asString() const { return std::to_string(m_number); }
+    virtual long long asInt() const { return m_number; }
+    virtual bool asBool() const { return m_number; }
 
     virtual bool isString() const { return true; }
+    virtual bool isInt() const { return true; }
     virtual bool isBool() const { return true; }
 
     virtual std::shared_ptr<Object> copy() const;
 
-    size_t length()
-    {
-        return m_string.size();
-    }
-
 private:
-    std::string m_string;
+    long long m_number;
 };
 
 }

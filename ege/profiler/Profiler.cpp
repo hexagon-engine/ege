@@ -5,8 +5,10 @@ Copyright (c) Sppmacd 2020
 
 #include "Profiler.h"
 
-#include <ege/main/Config.h>
 #include <algorithm>
+#include <ege/main/Config.h>
+#include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectMap.h>
 #include <vector>
 
 namespace EGE
@@ -192,6 +194,49 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
 
     for(auto section: sections)
         section->addSectionInfo(info, m_time, rootTime);
+}
+
+std::shared_ptr<ObjectMap> Profiler::Section::serialize()
+{
+    std::shared_ptr<ObjectMap> map = std::make_shared<ObjectMap>();
+
+    // this section
+    map->addObject("time", std::make_shared<ObjectInt>(m_time));
+
+    // sub sections
+    std::vector<Profiler::Section*> sections;
+    for(auto it: m_subSections)
+        sections.push_back(it.second.get());
+
+    std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
+    std::shared_ptr<ObjectMap>& sectionMap = (std::shared_ptr<ObjectMap>&)map->addObject("sections", std::make_shared<ObjectMap>());
+
+    for(auto section: sections)
+    {
+        sectionMap->addObject(section->m_name, section->serialize());
+    }
+    return map;
+}
+
+void Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
+{
+    //TODO
+    DBG(1, "TODO: profiler deserialize not implemented");
+    ASSERT(false);
+}
+
+std::shared_ptr<ObjectMap> Profiler::serialize()
+{
+    std::shared_ptr<ObjectMap> map = std::make_shared<ObjectMap>();
+    map->addObject("root", m_root.serialize());
+    return map;
+}
+
+void Profiler::deserialize(std::shared_ptr<ObjectMap>)
+{
+    //TODO
+    DBG(1, "TODO: profiler deserialize not implemented");
+    ASSERT(false);
 }
 
 }

@@ -20,6 +20,8 @@ enum class RegistryError : int
     NumericIdExists = -3
 };
 
+// TODO: be Serializable
+
 // Gameplay Object Registry.
 // Note that objects MUST be created dynamically
 // because they are destroyed when game is closed.
@@ -29,6 +31,7 @@ enum class RegistryError : int
 // * must have IdT::IdT() <default constructor>
 // * must have copy constructor or assigment operator
 // * must have operator==(const IdT&, const IdT&)
+// * SHOULD be derived from GameplayObject
 // The best for it will be number primitive type e.g. int.
 //
 // The ObjT can be anything.

@@ -23,7 +23,7 @@ public:
 
     typedef std::map<std::string, std::shared_ptr<Object>> InternalMap;
 
-    std::weak_ptr<Object>& addObject(std::string name, std::shared_ptr<Object> subObject);
+    std::shared_ptr<Object>& addObject(std::string name, std::shared_ptr<Object> subObject);
     std::weak_ptr<Object> getObject(std::string name);
 
     virtual std::string toString() const;

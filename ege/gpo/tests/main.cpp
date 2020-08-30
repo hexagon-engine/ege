@@ -3,6 +3,11 @@
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
 
+#include <ege/util/Object.h>
+#include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectMap.h>
+#include <ege/util/ObjectString.h>
+
 class MyObject : public EGE::GameplayObject
 {
     int m_int;
@@ -24,6 +29,20 @@ public:
     virtual std::string type()
     {
         return "unknown";
+    }
+
+    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    {
+        std::shared_ptr<EGE::ObjectMap> map = std::make_shared<EGE::ObjectMap>();
+        map->addObject("int", std::make_shared<EGE::ObjectInt>(m_int));
+        map->addObject("string", std::make_shared<EGE::ObjectString>(m_string));
+        return map;
+    }
+
+    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    {
+        m_int = obj->getObject("int").lock()->asInt();
+        m_string = obj->getObject("string").lock()->asString();
     }
 };
 
@@ -55,6 +74,16 @@ public:
     bool clear()
     {
         return true;
+    }
+
+    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    {
+        return nullptr;
+    }
+
+    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    {
+        // TODO because of EGE::GameplayObjectRegistry
     }
 
 private:
