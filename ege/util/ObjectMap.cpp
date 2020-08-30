@@ -18,10 +18,10 @@ ObjectMap::ObjectMap(const ObjectMap& map)
     }
 }
 
-void ObjectMap::addObject(std::string name, std::shared_ptr<Object> subObject)
+std::weak_ptr<Object>& ObjectMap::addObject(std::string name, std::shared_ptr<Object> subObject)
 {
     ASSERT(subObject);
-    m_subObjects[name] = subObject;
+    return m_subObjects[name] = subObject;
 }
 
 std::weak_ptr<Object> ObjectMap::getObject(std::string name)
