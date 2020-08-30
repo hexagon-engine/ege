@@ -7,3 +7,4 @@ set(SOURCES
 )
 
 ege_add_module(gpo)
+ege_depend_module(gpo util)

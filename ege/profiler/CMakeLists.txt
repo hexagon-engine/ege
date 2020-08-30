@@ -6,3 +6,4 @@ set(SOURCES
 
 ege_add_module(profiler)
 ege_depend_module(profiler main)
+ege_depend_module(profiler util)
