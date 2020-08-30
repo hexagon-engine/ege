@@ -1,3 +1,4 @@
+add_subdirectory(event)
 add_subdirectory(game)
 add_subdirectory(geometry)
 add_subdirectory(gpo)
@@ -9,4 +10,5 @@ add_subdirectory(profiler)
 add_subdirectory(resources)
 add_subdirectory(scene)
 add_subdirectory(sfml)
-add_subdirectory(event)
+add_subdirectory(util)
+
