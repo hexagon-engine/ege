@@ -14,8 +14,8 @@ namespace EGE
 class Packet
 {
 public:
-    virtual bool fromSFMLPacket(const sf::Packet& packet) = 0;
-    virtual const sf::Packet& toSFMLPacket() = 0;
+    virtual bool fromSFMLPacket(sf::Packet& packet) = 0;
+    virtual sf::Packet toSFMLPacket() = 0;
 
 };
 

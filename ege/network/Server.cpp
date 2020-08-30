@@ -18,6 +18,7 @@ bool Server::start()
         std::cerr << "0011 EGE/network: Failed to start server on " << m_serverPort << std::endl;
         return false;
     }
+    m_selector.add(m_listener);
     std::cerr << "0010 EGE/network: Server listening on " << m_serverPort << std::endl;
     return true;
 }
@@ -25,6 +26,8 @@ bool Server::start()
 void Server::close()
 {
     std::cerr << "0012 EGE/network: Closing server" << std::endl;
+    m_selector.clear();
+    m_clients.clear();
     m_listener.close();
 }
 
@@ -84,11 +87,13 @@ int Server::addClient(std::shared_ptr<ClientConnection> client)
     m_lastClientUid++;
     client->setID(m_lastClientUid);
     m_clients.insert(std::make_pair(m_lastClientUid, client));
+    m_selector.add(*client->getSocket().lock().get());
     return m_lastClientUid;
 }
 
 void Server::kickClient(ClientConnection* client)
 {
+    std::cerr << "001B EGE/network: Kicking client (" << client->getSocket().lock()->getRemoteAddress() << ":" << client->getSocket().lock()->getRemotePort() << ")" << std::endl;
     onClientDisconnect(client);
 
     // close socket etc.
@@ -102,19 +107,6 @@ void Server::kickClient(ClientConnection* client)
 // accepts new clients, removes disconnected clients, etc.
 void Server::select()
 {
-    // check if any client disconnected itself explicitly
-    if(!m_clients.empty())
-    {
-        for(auto& pr : m_clients)
-        {
-            if(!pr.second->isConnected())
-            {
-                std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
-                kickClient(pr.second.get());
-            }
-        }
-    }
-
     if(m_selector.wait(sf::seconds(2)))
     {
         if(m_selector.isReady(m_listener))
@@ -130,7 +122,7 @@ void Server::select()
                     int id = addClient(client);
                     if(id)
                     {
-                        // TODO: onm_clientsuccessfulConnect()
+                        // TODO: onClientSuccessfulConnect()
                         std::cerr << "0013 EGE/network: Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")" << std::endl;
                     }
                 }
@@ -157,6 +149,19 @@ void Server::select()
                     {
                         kickClient(pr.second.get());
                     }
+                }
+            }
+        }
+
+        // check if any client disconnected itself explicitly
+        if(!m_clients.empty())
+        {
+            for(auto& pr : m_clients)
+            {
+                if(!pr.second->isConnected())
+                {
+                    std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
+                    kickClient(pr.second.get());
                 }
             }
         }

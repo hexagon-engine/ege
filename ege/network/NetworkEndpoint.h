@@ -19,7 +19,11 @@ class NetworkEndpoint
 public:
     bool send(std::shared_ptr<Packet> packet);
     std::shared_ptr<Packet> receive();
-    bool isConnected();
+
+    bool isConnected()
+    {
+        return m_connected;
+    }
 
     std::weak_ptr<sf::TcpSocket> getSocket()
     {
@@ -29,11 +33,12 @@ public:
     // synchronous
     void disconnect();
 
-    virtual std::shared_ptr<Packet> makePacket(const sf::Packet& packet) = 0;
+    virtual std::shared_ptr<Packet> makePacket(sf::Packet& packet) = 0;
 
 protected:
     std::shared_ptr<sf::TcpSocket> m_socket;
     bool m_connected = true;
+    sf::Mutex m_accessMutex;
 };
 
 }
