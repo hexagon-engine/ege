@@ -22,9 +22,9 @@ cmake -B build -S . -DBUILD_SHARED_LIBS=FALSE -DCMAKE_INSTALL_PREFIX=build
 cd build
 ege_echo INFO "Building SFML..."
 echo "The script needs sudo for installing; press Ctrl+C to cancel"
-sudo make install -j
+make install -j
 cd ../../..
-sudo chown "${USER}" build/SFML
+chown "${USER}" build/SFML
 
 # run cmake
 ege_echo INFO "Creating build system..."
