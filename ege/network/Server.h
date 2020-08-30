@@ -16,7 +16,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class Server
+class Server : public NetworkEndpoint
 {
 public:
     Server(int port = 0)
