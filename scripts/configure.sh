@@ -15,6 +15,7 @@ make --version || exit 1
 
 # download and build sfml
 ege_echo INFO "Downloading SFML..."
+mkdir build
 cd build
 git clone https://github.com/sfml/SFML.git
 cd SFML
@@ -22,11 +23,10 @@ cmake -B build -S . -DBUILD_SHARED_LIBS=FALSE -DCMAKE_INSTALL_PREFIX=build
 cd build
 ege_echo INFO "Building SFML..."
 echo "The script needs sudo for installing; press Ctrl+C to cancel"
-sudo make install -j
+make install -j
 cd ../../..
-sudo chown "${USER}" build/SFML
+chown "${USER}" build/SFML
 
 # run cmake
 ege_echo INFO "Creating build system..."
-mkdir build
 cmake -B build -S . -DEGE_SFML_ROOT="build/SFML/build"
