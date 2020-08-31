@@ -1,0 +1,13 @@
+set(SOURCES
+	"AsyncHandler.cpp"
+	"AsyncHandler.h"
+	"AsyncLoop.cpp"
+	"AsyncLoop.h"
+	"AsyncTask.cpp"
+	"AsyncTask.h"
+)
+
+ege_add_module(asyncLoop)
+ege_depend_module(asyncLoop loop)
+ege_depend_module(asyncLoop main)
+ege_depend_module(asyncLoop sfml)

@@ -2,9 +2,9 @@
 	>> GameLoop::run() return 0x0001
 ### 0002 EGE/loop: finish failed
 	>> GameLoop::run() return 0x0002
-### 0003 EGE/main: ASSERTION FAILED: ...
+### 0003 EGE/main: ASSERTION FAILED: %s
 	>> exit(1234)
-### 0004 EGE/main: debug: ...
+### 0004 EGE/main: debug: %s
 ### 0005 EGE/resources: could not load resource: TEXTURE %s
 	>> ResourceManager::loaTexturefromFile() return false
 ### 0006 EGE/resources: could not load resource: FONT %s
@@ -27,7 +27,7 @@
 ### 0010 EGE/network: Server listening on %d
 ### 0011 EGE/network: Failed to start server on %d
 ### 0012 EGE/network: Closing server
-### 0013 EGE/network: Client connected (ip=%s, port=%d)
+### 0013 EGE/network: Client connected (%s:%d)
 ### 0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)
 ### 0015 EGE/network: Event Receive failed (rejected by EventHandler)
 ### 0016 EGE/network: Socket Receive failed (system error)
@@ -36,3 +36,4 @@
 ### 0019 EGE/network: Client: Connection failed to (%s:%s)
 ### 001A EGE/network: Disconnecting network endpoint (%d)
 ### 001B EGE/network: Kicking client (%s:%d)
+### 001C EGE/asyncLoop: AsyncTask[%s] worker finished with non-zero (%d) status!

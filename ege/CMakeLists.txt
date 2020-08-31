@@ -1,3 +1,4 @@
+add_subdirectory(asyncLoop)
 add_subdirectory(event)
 add_subdirectory(game)
 add_subdirectory(geometry)
