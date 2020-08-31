@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "GameLoop.h"
 
-#include "EventResult.h"
+#include <ege/loop/EventResult.h>
 
 namespace EGE
 {

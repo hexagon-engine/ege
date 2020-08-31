@@ -85,7 +85,7 @@ TESTCASE(guiChange)
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
 
     gameLoop.setCurrentGUIScreen(gui);
-    gameLoop.addTimer("changeGUI", &((new EGE::Timer(&gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
+    gameLoop.addTimer("changeGUI", std::shared_ptr<EGE::Timer>(&(new EGE::Timer(&gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
                                      ->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
                                                     gameLoop.setCurrentGUIScreen(gui2);
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);

@@ -7,6 +7,8 @@ set(SOURCES
 	"AnimationEasingFunctions.h"
 	"Button.cpp"
 	"Button.h"
+	"GameLoop.cpp"
+	"GameLoop.h"
 	"GUIGameLoop.cpp"
 	"GUIGameLoop.h"
 	"GUIScreen.cpp"
@@ -18,6 +20,7 @@ set(SOURCES
 )
 
 ege_add_module(gui)
+ege_depend_module(gui asyncLoop)
 ege_depend_module(gui event)
 ege_depend_module(gui profiler)
 ege_depend_module(gui resources)

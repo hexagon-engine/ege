@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <ege/loop/GameLoop.h>
+#include <ege/loop/EventLoop.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -15,7 +15,7 @@ class SystemWindow
 {
 public:
     EGE_ENUM_YES_NO(WaitForEvents);
-    virtual void callEvents(GameLoop* loop, WaitForEvents wait) = 0;
+    virtual void callEvents(EventLoop* loop, WaitForEvents wait) = 0;
 };
 
 class SFMLSystemWindow : public SystemWindow, public sf::RenderWindow
@@ -33,7 +33,7 @@ public:
     : sf::RenderWindow(handle, settings)
     {}
 
-    virtual void callEvents(GameLoop* loop, WaitForEvents wait = WaitForEvents::No);
+    virtual void callEvents(EventLoop* loop, WaitForEvents wait = WaitForEvents::No);
 };
 
 }

@@ -5,8 +5,6 @@ set(SOURCES
 	"EventLoop.cpp"
 	"EventLoop.h"
 	"EventResult.h"
-	"GameLoop.cpp"
-	"GameLoop.h"
 	"Time.cpp"
 	"Time.h"
 	"Timer.cpp"

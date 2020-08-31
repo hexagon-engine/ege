@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void SFMLSystemWindow::callEvents(GameLoop* loop, SFMLSystemWindow::WaitForEvents wait)
+void SFMLSystemWindow::callEvents(EventLoop* loop, SFMLSystemWindow::WaitForEvents wait)
 {
     if(wait == SFMLSystemWindow::WaitForEvents::Yes)
     {

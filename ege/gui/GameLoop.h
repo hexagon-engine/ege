@@ -5,10 +5,10 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include "EventHandler.h"
-#include "EventLoop.h"
-#include "EventResult.h"
-#include "Timer.h"
+#include <ege/asyncLoop/ThreadSafeEventLoop.h>
+#include <ege/loop/EventHandler.h>
+#include <ege/loop/EventResult.h>
+#include <ege/loop/Timer.h>
 
 #include <map>
 #include <memory>
@@ -16,7 +16,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class GameLoop : public EventLoop
+class GameLoop : public ThreadSafeEventLoop
 {
 public:
     int run();

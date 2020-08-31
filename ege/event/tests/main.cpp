@@ -4,12 +4,12 @@ Copyright (c) Sppmacd 2020
 */
 
 #include <testsuite/Tests.h>
-#include <ege/loop/GameLoop.h>
+#include <ege/loop/EventLoop.h>
 #include <ege/event/SystemEvent.h>
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/event/SystemWindow.h>
 
-class MyGameLoop : public EGE::GameLoop
+class MyGameLoop : public EGE::EventLoop
 {
     std::shared_ptr<EGE::SFMLSystemWindow> m_window;
 public:
@@ -25,7 +25,46 @@ public:
     }
     virtual void onExit(int exitCode) { (void)exitCode; }
     virtual EGE::EventResult onFinish(int exitCode) { (void)exitCode; return EGE::EventResult::Success; }
+
+    int run();
+    void exit(int exitCode = 0);
+
+private:
+    bool m_running = true;
+    int m_exitCode = 0;
+    long long m_tickCounter = 0;
 };
+
+int MyGameLoop::run()
+{
+    auto result = onLoad();
+    if(result == EGE::EventResult::Failure)
+    {
+        std::cerr << "0001 EGE/loop: load failed" << std::endl;
+        return 0x0001;
+    }
+
+    while(m_running)
+    {
+        onTick(m_tickCounter++);
+    }
+
+    result = onFinish(m_exitCode);
+    if(result == EGE::EventResult::Failure)
+    {
+        std::cerr << "0002 EGE/loop: finish failed" << std::endl;
+        return 0x0002;
+    }
+
+    return m_exitCode;
+}
+
+void MyGameLoop::exit(int exitCode)
+{
+    m_exitCode = exitCode;
+    m_running = false;
+    onExit(exitCode);
+}
 
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
 {

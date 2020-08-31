@@ -1,18 +1,18 @@
 #include <testsuite/Tests.h>
-#include <ege/loop/GameLoop.h>
+#include <ege/loop/EventLoop.h>
 #include <ege/loop/TimerEvent.h>
 #include <iostream>
 
 using EGE::Time;
 using EGE::Timer;
 
-class MyGameLoop : public EGE::GameLoop
+class MyGameLoop : public EGE::EventLoop
 {
 public:
-    virtual EGE::EventResult onLoad() override;
-    virtual void onTick(long long tickCount) override;
-    virtual void onExit(int exitCode) override;
-    virtual EGE::EventResult onFinish(int exitCode) override;
+    virtual void onUpdate(long long tickCount);
+
+    bool running = true;
+    int m_tickCounter = 0;
 };
 
 struct TickEvent : public EGE::Event
@@ -26,13 +26,9 @@ struct TickEvent : public EGE::Event
     EGE_EVENT("TickEvent");
 };
 
-EGE::EventResult MyGameLoop::onLoad()
+void MyGameLoop::onUpdate(long long tickCount)
 {
-    DEBUG_PRINT("onLoad");
-    return EGE::EventResult::Success;
-}
-void MyGameLoop::onTick(long long tickCount)
-{
+    EGE::EventLoop::onUpdate();
     DEBUG_PRINT("onTick");
 
     TickEvent event(tickCount);
@@ -42,16 +38,7 @@ void MyGameLoop::onTick(long long tickCount)
         EXPECT(event.isCanceled());
 
     if(tickCount == 3)
-        exit(1);
-}
-void MyGameLoop::onExit(int exitCode)
-{
-    DEBUG_PRINT("onExit");
-}
-EGE::EventResult MyGameLoop::onFinish(int exitCode)
-{
-    DEBUG_PRINT("onFinish");
-    return EGE::EventResult::Failure;
+        running = false;
 }
 
 EGE::EventResult eventTest(TickEvent& event)
@@ -72,7 +59,12 @@ TESTCASE(gameLoop)
     MyGameLoop gameLoop;
     gameLoop.addEventHandler("TickEvent", new EGE::SimpleEventHandler<TickEvent>(eventTest));
     gameLoop.addEventHandler("TickEvent", new EGE::SimpleEventHandler<TickEvent>(eventTest2));
-    int rc = gameLoop.run();
+
+    while(gameLoop.running)
+    {
+        gameLoop.onUpdate(gameLoop.m_tickCounter);
+        gameLoop.m_tickCounter++;
+    }
 }
 
 EGE::EventResult timerEventTest(EGE::TimerEvent& event)
@@ -97,14 +89,14 @@ EGE::EventResult timerEventTest(EGE::TimerEvent& event)
 class MyGameLoop2 : public MyGameLoop
 {
 public:
-    void onTick(long long tickCount);
+    void onUpdate(long long tickCounter);
 };
 
-void MyGameLoop2::onTick(long long tickCount)
+void MyGameLoop2::onUpdate(long long tickCounter)
 {
     //DEBUG_PRINT("onTick :2");
 
-    GameLoop::onUpdate();
+    MyGameLoop::onUpdate(tickCounter);
 }
 
 TESTCASE(time)
@@ -115,24 +107,28 @@ TESTCASE(time)
                     };
 
     loop.addTimer("display-sec-count", &(*new Timer(&loop, Timer::Mode::Infinite, Time(1.f, Time::Unit::Seconds)))
-                    .setCallback([](std::string name, Timer* timer) { std::cerr << timer->getIterationCount() << " seconds" << std::endl; }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([](std::string name, Timer* timer) { std::cerr << timer->getIterationCount() << " seconds" << std::endl; }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("single-shot 5s", &(*new Timer(&loop, Timer::Mode::Limited, Time(5.f, Time::Unit::Seconds)))
-                    .setCallback(callback), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback(callback), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("5-shots-ticks 5s", &(*new Timer(&loop, Timer::Mode::Limited, Time(5.f, Time::Unit::Ticks)))
-                    .setCallback(callback).setRemainingIterationCount(5), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback(callback).setRemainingIterationCount(5), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("infinite 2s", &(*new Timer(&loop, Timer::Mode::Infinite, Time(0.5f, Time::Unit::Seconds)))
-                    .setCallback(callback), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback(callback), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("stop-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(10.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->stop(); }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->stop(); }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("restart-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(12.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->start(); }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.getTimers("infinite 2s")[0].lock()->start(); }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("remove-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(14.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.removeTimer("infinite 2s"); }), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.removeTimer("infinite 2s"); }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("close", &(*new Timer(&loop, Timer::Mode::Limited, Time(15.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string name, Timer* timer) { loop.exit(); }), EGE::GameLoop::TimerImmediateStart::Yes);
-    loop.addTimer("test-events", &(*new Timer(&loop, Timer::Mode::Infinite, Time(1.f, Time::Unit::Seconds))), EGE::GameLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string name, Timer* timer) { loop.running = false; }), EGE::EventLoop::TimerImmediateStart::Yes);
+    loop.addTimer("test-events", &(*new Timer(&loop, Timer::Mode::Infinite, Time(1.f, Time::Unit::Seconds))), EGE::EventLoop::TimerImmediateStart::Yes);
 
-    loop.run();
+    while(loop.running)
+    {
+        loop.onUpdate(loop.m_tickCounter);
+        loop.m_tickCounter++;
+    }
 }
 
 RUN_TESTS(loop)

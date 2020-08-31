@@ -27,14 +27,14 @@ public:
         addEventHandler(type, std::shared_ptr<EventHandler>(handler));
     }
 
-    void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
+    virtual void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
 
     // NOTE: removing event handlers in event handler is UB
     // TODO: it's slow
-    void removeEventHandler(EventHandler* handler);
+    virtual void removeEventHandler(EventHandler* handler);
 
-    size_t getEventHandlerCount() { return m_eventHandlers.size(); }
-    EventResult fireEvent(Event& event);
+    virtual size_t getEventHandlerCount() { return m_eventHandlers.size(); }
+    virtual EventResult fireEvent(Event& event);
 
     virtual void onTimerFinish(Timer* timer) {}
     virtual void onTimerTick(Timer* timer) {}
@@ -45,11 +45,11 @@ public:
         addTimer(name, std::shared_ptr<Timer>(timer), start);
     }
 
-    void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
-    std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
-    void removeTimer(const std::string& timer);
+    virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
+    virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
+    virtual void removeTimer(const std::string& timer);
     virtual void onUpdate();
-    void deferredInvoke(std::function<void()> func);
+    virtual void deferredInvoke(std::function<void()> func);
 
     // get in-loop time in ticks or ms
     virtual double time(Time::Unit unit);
