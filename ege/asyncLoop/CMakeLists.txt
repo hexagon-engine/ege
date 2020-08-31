@@ -5,6 +5,8 @@ set(SOURCES
 	"AsyncLoop.h"
 	"AsyncTask.cpp"
 	"AsyncTask.h"
+	"ThreadSafeEventLoop.cpp"
+	"ThreadSafeEventLoop.h"
 )
 
 ege_add_module(asyncLoop)
