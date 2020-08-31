@@ -3,15 +3,9 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
-#pragma once
-
-#include <SFML/Network.hpp>
+#include "SFMLPacket.h"
 
 namespace EGE
 {
-
-class Packet
-{
-};
-
+    // currently nothing
 }

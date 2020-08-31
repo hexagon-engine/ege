@@ -17,8 +17,8 @@ namespace EGE
 class NetworkEndpoint
 {
 public:
-    bool send(std::shared_ptr<Packet> packet);
-    std::shared_ptr<Packet> receive();
+    virtual bool send(std::shared_ptr<Packet> packet) = 0;
+    virtual std::shared_ptr<Packet> receive() = 0;
 
     bool isConnected()
     {
@@ -30,10 +30,13 @@ public:
         return m_socket;
     }
 
+    sf::Mutex& getMutex()
+    {
+        return m_accessMutex;
+    }
+
     // synchronous
     void disconnect();
-
-    virtual std::shared_ptr<Packet> makePacket(sf::Packet& packet) = 0;
 
 protected:
     std::shared_ptr<sf::TcpSocket> m_socket;

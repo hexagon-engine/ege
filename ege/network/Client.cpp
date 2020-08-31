@@ -26,11 +26,11 @@ bool Client::connect(sf::IpAddress ip, unsigned short port)
 
 void Client::update()
 {
-    sf::Packet packet;
+    auto packet = receive();
 
-    if(m_socket->receive(packet) == sf::Socket::Done)
+    if(packet)
     {
-        onReceive(makePacket(packet));
+        onReceive(packet);
     }
     else
     {

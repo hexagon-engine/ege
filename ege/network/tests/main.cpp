@@ -2,10 +2,11 @@
 
 #include <ege/network/Server.h>
 #include <ege/network/Client.h>
+#include <ege/network/SFMLNetworkImpl.h>
 
-#define PORT 54327
+int PORT;
 
-class MyPacket : public EGE::Packet
+class MyPacket : public EGE::SFMLPacket
 {
 public:
     // sender-side
@@ -53,15 +54,25 @@ private:
     bool m_valid = false;
 };
 
-class MyClientConnection : public EGE::ClientConnection
+class MyClientConnection : public EGE::ClientConnection, public EGE::SFMLNetworkImpl
 {
 public:
     MyClientConnection(EGE::Server* server, std::shared_ptr<sf::TcpSocket> socket)
     : EGE::ClientConnection(server, socket) {}
 
-    std::shared_ptr<EGE::Packet> makePacket(sf::Packet& packet)
+    std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
         return std::make_shared<MyPacket>(packet);
+    }
+
+    virtual bool send(std::shared_ptr<EGE::Packet> packet)
+    {
+        return sendTo(this, packet);
+    }
+
+    virtual std::shared_ptr<EGE::Packet> receive()
+    {
+        return receiveFrom(this);
     }
 };
 
@@ -106,10 +117,10 @@ public:
     bool running = true;
 };
 
-class MyClient : public EGE::Client
+class MyClient : public EGE::Client, public EGE::SFMLNetworkImpl
 {
 public:
-    std::shared_ptr<EGE::Packet> makePacket(sf::Packet& packet)
+    std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
         return std::make_shared<MyPacket>(packet);
     }
@@ -125,10 +136,23 @@ public:
         std::cerr << "Server sent message: " << mypacket->getString() << std::endl;
         return EGE::EventResult::Success;
     }
+
+    virtual bool send(std::shared_ptr<EGE::Packet> packet)
+    {
+        return sendTo(this, packet);
+    }
+
+    virtual std::shared_ptr<EGE::Packet> receive()
+    {
+        return receiveFrom(this);
+    }
 };
 
 TESTCASE(abstract)
 {
+    srand(time(NULL));
+    PORT = rand() % 64511 + 1024;
+
     MyServer server;
     MyClient client1;
     MyClient client2;
@@ -199,7 +223,7 @@ TESTCASE(abstract)
 
     client1.disconnect();
     // wait for server reaction
-    sf::sleep(sf::seconds(1.f));
+    sf::sleep(sf::seconds(10.f));
     server.close();
     // wait for client reaction
     sf::sleep(sf::seconds(1.f));

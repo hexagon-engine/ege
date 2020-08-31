@@ -9,6 +9,10 @@ set(SOURCES
 	"Packet.h"
 	"Server.cpp"
 	"Server.h"
+	"SFMLNetworkImpl.cpp"
+	"SFMLNetworkImpl.h"
+	"SFMLPacket.cpp"
+	"SFMLPacket.h"
 )
 
 ege_add_module(network)

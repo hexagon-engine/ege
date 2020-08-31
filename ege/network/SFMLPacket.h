@@ -7,11 +7,16 @@ Copyright (c) Sppmacd 2020
 
 #include <SFML/Network.hpp>
 
+#include "Packet.h"
+
 namespace EGE
 {
 
-class Packet
+// abstract
+class SFMLPacket : public Packet
 {
+public:
+    virtual sf::Packet toSFMLPacket() = 0;
 };
 
 }
