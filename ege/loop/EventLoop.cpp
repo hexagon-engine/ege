@@ -91,6 +91,13 @@ void EventLoop::removeTimer(const std::string& timer)
         m_timers.erase(it);
     }
 }
+
+void EventLoop::onUpdate()
+{
+    updateTimers();
+    m_ticks++;
+}
+
 void EventLoop::updateTimers()
 {
     for(auto it = m_timers.begin(); it != m_timers.end(); it++)
@@ -112,7 +119,6 @@ void EventLoop::updateTimers()
             it = m_timers.find(timer.first);
         }
     }
-    m_ticks++;
 }
 
 void EventLoop::deferredInvoke(std::function<void()> func)

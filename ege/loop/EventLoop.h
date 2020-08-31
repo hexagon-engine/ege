@@ -48,11 +48,14 @@ public:
     void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
     std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
     void removeTimer(const std::string& timer);
-    virtual void updateTimers();
+    virtual void onUpdate();
     void deferredInvoke(std::function<void()> func);
 
     // get in-loop time in ticks or ms
     virtual double time(Time::Unit unit);
+
+protected:
+    virtual void updateTimers();
 
 private:
     int m_ticks = 0;

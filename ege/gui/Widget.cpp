@@ -123,7 +123,7 @@ void Widget::setViewForWidget(sf::RenderTarget& target)
 void Widget::onUpdate(long long tickCounter)
 {
     (void)tickCounter;
-    updateTimers();
+    EventLoop::onUpdate();
 }
 
 }

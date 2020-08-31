@@ -104,7 +104,7 @@ void MyGameLoop2::onTick(long long tickCount)
 {
     //DEBUG_PRINT("onTick :2");
 
-    updateTimers();
+    GameLoop::onUpdate();
 }
 
 TESTCASE(time)

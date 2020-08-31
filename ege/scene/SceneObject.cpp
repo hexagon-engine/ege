@@ -13,7 +13,7 @@ namespace EGE
 void SceneObject::onUpdate(long long tickCounter)
 {
     (void) tickCounter;
-    updateTimers();
+    EventLoop::onUpdate();
 }
 
 }
