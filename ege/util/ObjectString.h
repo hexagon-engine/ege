@@ -27,6 +27,11 @@ public:
 
     virtual std::shared_ptr<Object> copy() const;
 
+    void setString(std::string str)
+    {
+        m_string = str;
+    }
+
     size_t length()
     {
         return m_string.size();

@@ -27,6 +27,11 @@ public:
     virtual bool isInt() const { return true; }
     virtual bool isBool() const { return true; }
 
+    void setNumber(long long number)
+    {
+        m_number = number;
+    }
+
     virtual std::shared_ptr<Object> copy() const;
 
 private:
