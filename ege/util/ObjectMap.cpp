@@ -26,9 +26,12 @@ std::shared_ptr<Object>& ObjectMap::addObject(std::string name, std::shared_ptr<
     return ref;
 }
 
-std::weak_ptr<Object> ObjectMap::getObject(std::string name)
+std::weak_ptr<Object> ObjectMap::getObject(std::string name) const
 {
-    return m_subObjects[name];
+    auto it = m_subObjects.find(name);
+    if(it != m_subObjects.end())
+        return it->second;
+    return {};
 }
 
 std::string ObjectMap::toString() const

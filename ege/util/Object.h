@@ -29,7 +29,6 @@ public:
     virtual bool isMap() const { return false; }
 
     virtual std::shared_ptr<Object> copy() const = 0;
-
 };
 
 }
