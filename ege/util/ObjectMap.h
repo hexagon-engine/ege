@@ -33,6 +33,7 @@ public:
     size_t size() const;
 
     virtual std::shared_ptr<ObjectMap> asMap() const;
+    virtual bool isMap() const { return true; }
 
     virtual std::shared_ptr<Object> copy() const { return asMap(); }
 
