@@ -7,7 +7,5 @@ Copyright (c) Sppmacd 2020
 
 namespace EGE
 {
-
-// nothing here yet...
-
+    // currently nothing
 }

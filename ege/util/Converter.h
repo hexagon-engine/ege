@@ -55,6 +55,16 @@ Internal::_ConverterOutput<I, O> objectOut(ObjectMap& _o, const Converter<I, O>&
     return Internal::_ConverterOutput<I, O>(_o, _c);
 }
 
+template<class I, class O>
+O convertTo(const I& input, const Converter<I, O>& inputConverter, const Converter<I, O>& outputConverter)
+{
+    ObjectMap tmp;
+    inputConverter.out(input, tmp);
+    O output;
+    outputConverter.in(output, tmp);
+    return output;
+}
+
 } //namespace EGE
 
 template<class I, class O>

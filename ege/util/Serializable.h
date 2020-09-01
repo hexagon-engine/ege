@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Converter.h"
 #include "ObjectMap.h"
 
 #include <memory>
