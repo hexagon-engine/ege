@@ -73,9 +73,6 @@ void GUIGameLoop::onTick(long long tickCount)
         m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
     }
 
-    m_profiler->endStartSection("eventLoopUpdate");
-    GameLoop::onUpdate();
-
     m_profiler->endStartSection("guiUpdate");
     if(m_currentGui)
         m_currentGui->onUpdate(getTickCount());

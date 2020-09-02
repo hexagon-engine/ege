@@ -21,7 +21,8 @@ int GameLoop::run()
 
     while(m_running)
     {
-        onTick(m_tickCounter++);
+        onTick(getTickCount());
+        onUpdate();
     }
 
     result = onFinish(m_exitCode);
@@ -36,8 +37,7 @@ int GameLoop::run()
 
 void GameLoop::exit(int exitCode)
 {
-    m_exitCode = exitCode;
-    m_running = false;
+    EventLoop::exit(exitCode);
     onExit(exitCode);
 }
 

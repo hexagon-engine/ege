@@ -151,4 +151,17 @@ double EventLoop::time(Time::Unit unit)
     return 0.0;
 }
 
+void EventLoop::exit(int exitCode)
+{
+    m_exitCode = exitCode;
+    m_running = false;
+}
+
+int EventLoop::run()
+{
+    while(m_running)
+        onUpdate();
+    return m_exitCode;
+}
+
 }

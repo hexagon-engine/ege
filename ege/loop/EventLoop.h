@@ -54,8 +54,16 @@ public:
     // get in-loop time in ticks or ms
     virtual double time(Time::Unit unit);
 
+    virtual int run();
+
+    virtual void exit(int exitCode = 0);
+    bool isRunning() { return m_running; }
+    long long getTickCount() { return m_ticks; }
+
 protected:
     virtual void updateTimers();
+    bool m_running = true;
+    int m_exitCode = 0;
 
 private:
     int m_ticks = 0;
