@@ -49,3 +49,6 @@ void _ege_assertion_failed(const char* expr, const char* file, size_t line);
         std::cerr << #var << "= " << (var) << std::endl; \
     }
 
+#define instanceof(pointer, clazz) \
+    (dynamic_cast<clazz*>(pointer))
+
