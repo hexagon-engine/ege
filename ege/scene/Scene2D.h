@@ -23,6 +23,10 @@ public:
     void setCamera(std::weak_ptr<CameraObject2D> camera);
     virtual void renderOnly(sf::RenderTarget& target);
 
+    virtual sf::View getView(sf::RenderTarget& target);
+    virtual sf::Vector2f mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos);
+    virtual sf::Vector2i mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos);
+
 protected:
     std::weak_ptr<CameraObject2D> m_camera;
 };

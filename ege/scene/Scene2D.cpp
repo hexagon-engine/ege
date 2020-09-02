@@ -13,11 +13,8 @@ void Scene2D::setCamera(std::weak_ptr<CameraObject2D> camera)
     m_camera = camera;
 }
 
-void Scene2D::renderOnly(sf::RenderTarget& target)
+sf::View Scene2D::getView(sf::RenderTarget& target)
 {
-    // we get view set for this specific widget
-    // but we must transform it for camera
-    // if camera doesn't exists we use zero coordinates
     if(!m_camera.expired())
     {
         sf::View view = target.getView();
@@ -72,18 +69,33 @@ void Scene2D::renderOnly(sf::RenderTarget& target)
         }
 
         view.setSize(_size);
-        target.setView(view);
+        return view;
     }
     else
     {
+        std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
         sf::View view = target.getView();
         view.setCenter(sf::Vector2f(0.f, 0.f));
-        target.setView(view);
-        std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
+        return view;
     }
+}
+
+void Scene2D::renderOnly(sf::RenderTarget& target)
+{
+    target.setView(getView(target));
 
     // render objects iteratively
     Scene::renderOnly(target);
+}
+
+sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos)
+{
+    return target.mapPixelToCoords(screenPos, getView(target));
+}
+
+sf::Vector2i Scene2D::mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos)
+{
+    return target.mapCoordsToPixel(scenePos, getView(target));
 }
 
 }
