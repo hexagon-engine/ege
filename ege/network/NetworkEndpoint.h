@@ -17,6 +17,7 @@ namespace EGE
 class NetworkEndpoint
 {
 public:
+    // almost always synchronous
     virtual bool send(std::shared_ptr<Packet> packet) = 0;
     virtual std::shared_ptr<Packet> receive() = 0;
 
