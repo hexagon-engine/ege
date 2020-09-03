@@ -15,7 +15,7 @@ bool Client::connect(sf::IpAddress ip, unsigned short port)
     sf::Lock lock(m_accessMutex);
 
     m_socket = std::make_shared<sf::TcpSocket>();
-    sf::Socket::Status status = m_socket->connect(ip, port);
+    sf::Socket::Status status = m_socket->connect(ip, port, sf::seconds(1.f));
     if(status != sf::Socket::Done)
     {
         std::cerr << "0019 EGE/network: Client: Connection failed to (" << ip << ":" << port << ")" << std::endl;

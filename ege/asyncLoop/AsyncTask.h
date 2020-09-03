@@ -25,8 +25,8 @@ public:
         bool finished;
     };
 
-    // WORKER is running in OTHER thread
-    // CALLBACK is running in MAIN thread (The same as AsyncLoop)
+    // WORKER runs in OTHER thread
+    // CALLBACK runs in MAIN thread (The same as AsyncLoop)
     // So if you want callback to be called, you must update AsyncLoop!
     AsyncTask(std::function<int()> worker, std::function<void(State)> callback);
 
