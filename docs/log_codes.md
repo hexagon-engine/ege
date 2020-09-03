@@ -37,3 +37,8 @@
 ### 001A EGE/network: Disconnecting network endpoint (%d)
 ### 001B EGE/network: Kicking client (%s:%d)
 ### 001C EGE/asyncLoop: AsyncTask[%s] worker finished with non-zero (%d) status!
+### 001D EGE/egeNetwork: Packet parsing error: %s
+### 001E EGE/egeNetwork: Starting server
+### 001F EGE/egeNetwork: Closing server
+### 0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required %d, got %d)
+### 0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required %d, got %d)
