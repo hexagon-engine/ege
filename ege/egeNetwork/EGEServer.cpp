@@ -100,7 +100,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
     if constexpr(EGESERVER_DEBUG)
     {
-        std::cerr << "Server: Received EGEPacket, type=" << (int)egePacket->getType() << std::endl;
+        std::cerr << "Server: Received EGEPacket, type=" << EGEPacket::typeString(egePacket->getType()) << std::endl;
         std::cerr << "args=" << egePacket->getArgs()->toString() << std::endl;
     }
 

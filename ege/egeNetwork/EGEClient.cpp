@@ -81,7 +81,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 
     if constexpr(EGECLIENT_DEBUG)
     {
-        std::cerr << "Client: Received EGEPacket, type=" << (int)egePacket->getType() << std::endl;
+        std::cerr << "Client: Received EGEPacket, type=" << EGEPacket::typeString(egePacket->getType()) << std::endl;
         std::cerr << "args=" << egePacket->getArgs()->toString() << std::endl;
     }
 

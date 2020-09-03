@@ -44,6 +44,8 @@ public:
         SSceneObjectControl = 0x0e
     };
 
+    static std::string typeString(Type type);
+
     // receiver
     EGEPacket(sf::Packet& data)
     {
