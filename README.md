@@ -1,6 +1,10 @@
 # ege
 Extendable Game Engine
 
+The engine is now depending on SFML (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be only OS-dependent.
+
+
+
 ## Dependencies
 * SFML 2.5.1+ and its dependencies (automatically installed by configure script)
 * Git (required to download SFML)
