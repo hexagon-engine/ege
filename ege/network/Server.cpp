@@ -27,7 +27,10 @@ void Server::close()
 {
     std::cerr << "0012 EGE/network: Closing server" << std::endl;
     m_selector.clear();
-    m_clients.clear();
+    {
+        sf::Lock lock(m_clientsAccessMutex);
+        m_clients.clear();
+    }
     m_listener.close();
 }
 
@@ -49,6 +52,7 @@ bool Server::sendToAll(std::shared_ptr<Packet> packet)
 bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection*)> predicate)
 {
     bool success = true;
+    sf::Lock lock(m_clientsAccessMutex);
     for(auto pr: m_clients)
     {
         if(predicate(pr.second.get()))
@@ -61,12 +65,14 @@ bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientCon
 
 std::weak_ptr<ClientConnection> Server::getClient(int id)
 {
+    sf::Lock lock(m_clientsAccessMutex);
     return m_clients[id];
 }
 
 std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bool(ClientConnection*)> predicate)
 {
     std::vector<std::weak_ptr<ClientConnection>> clients;
+    sf::Lock lock(m_clientsAccessMutex);
     for(auto pr: m_clients)
     {
         if(predicate(pr.second.get()))
@@ -86,7 +92,10 @@ int Server::addClient(std::shared_ptr<ClientConnection> client)
 
     m_lastClientUid++;
     client->setID(m_lastClientUid);
-    m_clients.insert(std::make_pair(m_lastClientUid, client));
+    {
+        sf::Lock lock(m_clientsAccessMutex);
+        m_clients.insert(std::make_pair(m_lastClientUid, client));
+    }
     m_selector.add(*client->getSocket().lock().get());
     return m_lastClientUid;
 }
@@ -101,6 +110,7 @@ void Server::kickClient(ClientConnection* client)
     m_selector.remove(*client->getSocket().lock().get());
 
     // remove client from array
+    sf::Lock lock(m_clientsAccessMutex);
     m_clients.erase(m_clients.find(client->getID()));
 }
 
@@ -128,6 +138,7 @@ void Server::select()
                 }
             }
         }
+        sf::Lock lock(m_clientsAccessMutex);
         if(!m_clients.empty())
         {
             for(auto& pr : m_clients)
@@ -154,6 +165,7 @@ void Server::select()
         }
 
         // check if any client disconnected itself explicitly
+        sf::Lock lock(m_clientsAccessMutex);
         if(!m_clients.empty())
         {
             for(auto& pr : m_clients)
