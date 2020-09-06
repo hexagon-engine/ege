@@ -45,15 +45,17 @@ public:
 
     virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket) = 0;
 
+protected:
+    sf::Mutex m_clientsAccessMutex;
+    int m_serverPort = 0;
+
 private:
     int addClient(std::shared_ptr<ClientConnection>);
 
     std::map<int, std::shared_ptr<ClientConnection>> m_clients;
     sf::TcpListener m_listener;
     sf::SocketSelector m_selector;
-    sf::Mutex m_clientsAccessMutex;
     int m_lastClientUid = 1;
-    int m_serverPort = 0;
 };
 
 }
