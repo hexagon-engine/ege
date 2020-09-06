@@ -55,7 +55,7 @@ static void hexDump(const void* data, size_t size, HexDumpSettings settings)
                 std::cerr << _data << " ";
             }
         }
-        std::cout << std::endl;
+        std::cout << std::dec << std::endl;
     }
 }
 // END HEX DUMP
@@ -72,12 +72,12 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 {
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    if constexpr(EGECLIENT_DEBUG)
+    /*if constexpr(EGECLIENT_DEBUG)
     {
         sf::Packet sfPacket = egePacket->toSFMLPacket();
         std::cerr << "Client: Hex dump: " << std::endl;
         hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }
+    }*/
 
     if constexpr(EGECLIENT_DEBUG)
     {
@@ -152,7 +152,8 @@ void EGEClient::onExit(int exitCode)
 
 void EGEClient::onTick(long long tickCount)
 {
-
+    if(!isConnected())
+        exit(tickCount);
 }
 
 std::shared_ptr<SFMLPacket> EGEClient::makePacket(sf::Packet& packet)

@@ -15,7 +15,7 @@ std::shared_ptr<SFMLPacket> EGEClientConnection::makePacket(sf::Packet& packet)
     return std::make_shared<EGEPacket>(packet);
 }
 
-void EGEClientConnection::setLastRecvTime(time_t t)
+void EGEClientConnection::setLastRecvTime(Time t)
 {
     m_lastRecv = t;
 }

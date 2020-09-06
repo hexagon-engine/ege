@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacket.h"
 
 #include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectString.h>
 
 namespace EGE
 {
@@ -59,8 +60,9 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSLoginRequest(std::shared_ptr<Obje
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSDisconnectReason(std::string message)
 {
-    std::cerr << "reason: " << message << std::endl;
-    return nullptr;
+    std::shared_ptr<ObjectMap> object = std::make_shared<ObjectMap>();
+    object->addObject("message", std::make_shared<ObjectString>(message));
+    return std::make_shared<EGEPacket>(EGEPacket::Type::SDisconnectReason, object);
 }
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectCreation(std::shared_ptr<SceneObject> object, std::string typeId)

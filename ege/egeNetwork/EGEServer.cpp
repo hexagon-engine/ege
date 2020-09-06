@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacket.h"
 
 #include <ege/asyncLoop/AsyncTask.h>
+#include <ege/network/ClientConnection.h>
 #include <iomanip>
 #include <iostream>
 
@@ -17,6 +18,7 @@ namespace EGE
 
 EventResult EGEServer::onClientConnect(ClientConnection* client)
 {
+    sf::Lock lock(m_clientsAccessMutex);
     // FIXME: it should be asynchronous
     bool success = true;
 
@@ -32,6 +34,7 @@ EventResult EGEServer::onClientConnect(ClientConnection* client)
 
 EventResult EGEServer::onClientDisconnect(ClientConnection* client)
 {
+    sf::Lock lock(m_clientsAccessMutex);
     if(!client->send(EGEPacket::generateSDisconnectReason("Disconnected")))
         return EventResult::Failure;
 
@@ -79,24 +82,30 @@ static void hexDump(const void* data, size_t size, HexDumpSettings settings)
                 std::cerr << _data << " ";
             }
         }
-        std::cout << std::endl;
+        std::cout << std::dec << std::endl;
     }
 }
 // END HEX DUMP
 
 EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packet> packet)
 {
+    sf::Lock lock(m_clientsAccessMutex);
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    if constexpr(EGESERVER_DEBUG)
+    /*if constexpr(EGESERVER_DEBUG)
     {
         sf::Packet sfPacket = egePacket->toSFMLPacket();
         std::cerr << "Server: Hex dump: " << std::endl;
         hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }
+    }*/
 
     EGEClientConnection* egeClient = (EGEClientConnection*)client;
-    egeClient->setLastRecvTime(::time(nullptr));
+
+    if(PING_DEBUG && egeClient->wasPinged())
+        std::cerr << "%%%%% Client is now responsing. clearing ping flag %%%%%" << std::endl;
+
+    egeClient->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
+    egeClient->setPinged(false);
 
     if constexpr(EGESERVER_DEBUG)
     {
@@ -169,12 +178,55 @@ void EGEServer::onExit(int exitCode)
 
 void EGEServer::onTick(long long tickCount)
 {
+    sf::Lock lock(m_clientsAccessMutex);
+    //if(tickCount % 100000 == 0) std::cerr << std::endl;
+    for(auto it: *this)
+    {
+        EGEClientConnection* client = (EGEClientConnection*)it.second.get();
+        double _time = time(Time::Unit::Seconds);
 
+        // If client is not talking to us, ping it to check if it's alive.
+        if(_time > client->getLastRecvTime().getValue() + 3.0)
+        {
+            // If we pinged client, and it's not responding, kick it.
+
+            if constexpr(PING_DEBUG)
+            {
+                std::cerr << "===== PING because of no recv in 1 second =====" << std::endl;
+            }
+            DUMP(PING_DEBUG, client->wasPinged());
+
+            if(client->wasPinged())
+            {
+                if constexpr(PING_DEBUG) std::cerr << "===== Kicking. =====" << std::endl;
+                kickClientWithReason(client, "Timed out");
+
+                // FIXME: update `it' instead of giving up on one client !! :)
+                break;
+            }
+
+            if constexpr(PING_DEBUG) std::cerr << "===== Sending _Ping. =====" << std::endl;
+            client->send(EGEPacket::generate_Ping());
+
+            // Remember that we pinged the client. The ping flag will be
+            // cleared when network thread receives any data from client.
+            client->setPinged();
+            client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
+        }
+    }
+}
+
+void EGEServer::kickClientWithReason(EGEClientConnection* client, std::string reason)
+{
+    ASSERT(client);
+    client->send(EGEPacket::generateSDisconnectReason(reason));
+    onClientDisconnect(client, reason);
+    kickClient(client);
 }
 
 std::shared_ptr<ClientConnection> EGEServer::makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket)
 {
-    return std::shared_ptr<ClientConnection>((ClientConnection*)new EGEClientConnection(server, socket));
+    return std::shared_ptr<ClientConnection>((ClientConnection*)new EGEClientConnection((EGEServer*)server, socket));
 }
 
 }

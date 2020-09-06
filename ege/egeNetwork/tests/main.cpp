@@ -75,20 +75,28 @@ TESTCASE(converter)
     std::cerr << std::dec;
 }
 
-#define PORT 1235
-
 TESTCASE(server)
 {
-    auto serverThread = []() {
+    srand(time(nullptr));
+    int PORT = rand() % 63536 + 2000;
+
+    auto serverThread = [PORT]() {
         EGE::EGEServer server(PORT);
         return server.run();
     };
     sf::Thread thread1(serverThread);
     thread1.launch();
+}
 
-    sf::sleep(sf::seconds(2.f));
+TESTCASE(client)
+{
+    int PORT = 0;
 
-    auto clientThread = []() {
+    // yes, there is no error handling...
+    std::cout << "Enter port: ";
+    std::cin >> PORT;
+
+    auto clientThread = [PORT]() {
         EGE::EGEClient client(sf::IpAddress::LocalHost, PORT);
         return client.run();
     };
