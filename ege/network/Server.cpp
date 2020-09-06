@@ -138,42 +138,47 @@ void Server::select()
                 }
             }
         }
-        sf::Lock lock(m_clientsAccessMutex);
-        if(!m_clients.empty())
+
         {
-            for(auto& pr : m_clients)
+            sf::Lock lock(m_clientsAccessMutex);
+            if(!m_clients.empty())
             {
-                std::weak_ptr<sf::TcpSocket> sck = pr.second->getSocket();
-                if(m_selector.isReady(*sck.lock().get()))
+                for(auto& pr : m_clients)
                 {
-                    std::shared_ptr<Packet> packet = pr.second->receive();
-                    if(packet)
+                    std::weak_ptr<sf::TcpSocket> sck = pr.second->getSocket();
+                    if(m_selector.isReady(*sck.lock().get()))
                     {
-                        EventResult result = onReceive(pr.second.get(), packet);
-                        if(result == EventResult::Failure)
+                        std::shared_ptr<Packet> packet = pr.second->receive();
+                        if(packet)
                         {
-                            std::cerr << "0014 EGE/network: Event Receive failed (rejected by EventHandler)" << std::endl;
+                            EventResult result = onReceive(pr.second.get(), packet);
+                            if(result == EventResult::Failure)
+                            {
+                                std::cerr << "0014 EGE/network: Event Receive failed (rejected by EventHandler)" << std::endl;
+                                kickClient(pr.second.get());
+                            }
+                        }
+                        else
+                        {
                             kickClient(pr.second.get());
                         }
-                    }
-                    else
-                    {
-                        kickClient(pr.second.get());
                     }
                 }
             }
         }
 
         // check if any client disconnected itself explicitly
-        sf::Lock lock(m_clientsAccessMutex);
-        if(!m_clients.empty())
         {
-            for(auto& pr : m_clients)
+            sf::Lock lock(m_clientsAccessMutex);
+            if(!m_clients.empty())
             {
-                if(!pr.second->isConnected())
+                for(auto& pr : m_clients)
                 {
-                    std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
-                    kickClient(pr.second.get());
+                    if(!pr.second->isConnected())
+                    {
+                        std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
+                        kickClient(pr.second.get());
+                    }
                 }
             }
         }

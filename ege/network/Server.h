@@ -19,6 +19,8 @@ namespace EGE
 class Server
 {
 public:
+    typedef std::map<int, std::shared_ptr<ClientConnection>> ClientMap;
+
     Server(int port = 0)
     : m_serverPort(port) {}
 
@@ -45,6 +47,15 @@ public:
 
     virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket) = 0;
 
+    ClientMap::iterator begin()
+    {
+        return m_clients.begin();
+    }
+    ClientMap::iterator end()
+    {
+        return m_clients.end();
+    }
+
 protected:
     sf::Mutex m_clientsAccessMutex;
     int m_serverPort = 0;
@@ -52,7 +63,7 @@ protected:
 private:
     int addClient(std::shared_ptr<ClientConnection>);
 
-    std::map<int, std::shared_ptr<ClientConnection>> m_clients;
+    ClientMap m_clients;
     sf::TcpListener m_listener;
     sf::SocketSelector m_selector;
     int m_lastClientUid = 1;
