@@ -45,7 +45,7 @@ void ThreadSafeEventLoop::removeTimer(const std::string& timer)
 
 void ThreadSafeEventLoop::onUpdate()
 {
-    EventLoop::updateTimers();
+    EventLoop::onUpdate();
     AsyncHandler::updateAsyncTasks();
 }
 
