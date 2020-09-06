@@ -143,7 +143,7 @@ double EventLoop::time(Time::Unit unit)
             return 0.0;
 
         // TODO: assume nobody will run our program longer than 1000000 seconds (~11 days)
-        double time = (long long)(_ts.tv_sec) % 1000000 + _ts.tv_nsec / 1000000000.0;
+        double time = (long long)(_ts.tv_sec) + _ts.tv_nsec / 1000000000.0;
         DUMP(TIMER_DEBUG, time);
         return time;
     }
