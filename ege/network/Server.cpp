@@ -106,17 +106,20 @@ void Server::kickClient(ClientConnection* client)
     onClientDisconnect(client);
 
     // close socket etc.
-    client->kick();
     m_selector.remove(*client->getSocket().lock().get());
+    client->kick();
 
     // remove client from array
     sf::Lock lock(m_clientsAccessMutex);
     m_clients.erase(m_clients.find(client->getID()));
 }
 
+#include <string.h>
+
 // accepts new clients, removes disconnected clients, etc.
 void Server::select()
 {
+    strerror(errno);
     if(m_selector.wait(sf::seconds(2)))
     {
         if(m_selector.isReady(m_listener))
@@ -156,11 +159,17 @@ void Server::select()
                             {
                                 std::cerr << "0014 EGE/network: Event Receive failed (rejected by EventHandler)" << std::endl;
                                 kickClient(pr.second.get());
+
+                                // FIXME: update `it' instead of giving up on one client !! :)
+                                break;
                             }
                         }
                         else
                         {
                             kickClient(pr.second.get());
+
+                            // FIXME: update `it' instead of giving up on one client !! :)
+                            break;
                         }
                     }
                 }
@@ -178,6 +187,9 @@ void Server::select()
                     {
                         std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
                         kickClient(pr.second.get());
+
+                        // FIXME: update `it' instead of giving up on one client !! :)
+                        break;
                     }
                 }
             }

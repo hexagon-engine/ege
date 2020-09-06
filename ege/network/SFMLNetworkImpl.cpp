@@ -24,7 +24,7 @@ bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> 
     if(status != sf::Socket::Done)
     {
         std::cerr << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")" << std::endl;
-        endpoint->disconnect();
+        //endpoint->disconnect();
         return false;
     }
     return true;
@@ -43,7 +43,7 @@ std::shared_ptr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
     if(status != sf::Socket::Done)
     {
         std::cerr << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")" << std::endl;
-        endpoint->disconnect();
+        //endpoint->disconnect();
         return nullptr;
     }
     return makePacket(sfPacket);
