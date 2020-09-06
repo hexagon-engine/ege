@@ -139,7 +139,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
         }
         break;
     default:
-        DBG(1, "EGEServer::onReceive: not implemented packet handler");
+        std::cerr << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
         return EventResult::Failure;
     }
 

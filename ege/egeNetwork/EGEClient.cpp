@@ -111,7 +111,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         }
         break;
     default:
-        DBG(1, "EGEClient::onReceive: not implemented packet handler");
+        std::cerr << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
         return EventResult::Failure;
     }
 
