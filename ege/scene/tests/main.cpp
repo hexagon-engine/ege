@@ -163,6 +163,7 @@ TESTCASE(_2dCamera)
     // the first fly
     cam->flyTo(sf::Vector2f(0.f, 100.f), 1.0);
     cam->addTimer("camera fly timer", timer);
+    cam->setScalingMode(EGE::ScalingMode::Centered);
 
     // set scene camera and add it to scene (to be updated)
     scene->setCamera(cam);

@@ -62,10 +62,10 @@ public:
     }
 
 protected:
-    float m_fov;
+    float m_fov = 0.f;
     CoordType m_size;
     Scene* m_parent;
-    ScalingMode m_scalingMode;
+    ScalingMode m_scalingMode = ScalingMode::None;
 };
 
 }

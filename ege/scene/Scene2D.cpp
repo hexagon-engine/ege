@@ -29,7 +29,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
                 _size = getSize();
 
                 // The SFML camera is by default centered, so "uncenter" it.
-                view.move(getSize() / -2.f);
+                view.move(getSize() / 2.f);
             }
             break;
         case ScalingMode::Centered:
