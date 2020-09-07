@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "EGEGame.h"
 #include "EGEPacket.h"
 
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
@@ -21,7 +22,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop
+class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop, public EGEGame
 {
 public:
     EGEClient(sf::IpAddress addr, unsigned short port)
@@ -54,6 +55,8 @@ public:
     }
 
     virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
+
+    void setScene(std::shared_ptr<Scene> scene);
 
 private:
     std::map<long long, EGEPacket::Type> m_uidMap;

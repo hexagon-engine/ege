@@ -3,6 +3,8 @@ set(SOURCES
 	"EGEClient.h"
 	"EGEClientConnection.cpp"
  	"EGEClientConnection.h"
+	"EGEGame.cpp"
+	"EGEGame.h"
 	"EGEPacket.cpp"
 	"EGEPacket.h"
 	"EGEPacketConverter.cpp"
@@ -14,6 +16,7 @@ set(SOURCES
 
 ege_add_module(egeNetwork)
 ege_depend_module(egeNetwork debug)
+ege_depend_module(egeNetwork gpo)
 ege_depend_module(egeNetwork gui)
 ege_depend_module(egeNetwork network)
 ege_depend_module(egeNetwork scene)

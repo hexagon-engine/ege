@@ -148,6 +148,9 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
 EventResult EGEServer::onLoad()
 {
+    if(!EGEGame::initialize())
+        return EventResult::Failure;
+
     // Run server thread
     auto serverNetworkWorker = [this]()->int {
         std::cerr << "001E EGE/egeNetwork: Starting server" << std::endl;

@@ -85,6 +85,9 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 
 EventResult EGEClient::onLoad()
 {
+    if(!EGEGame::initialize())
+        return EventResult::Failure;
+
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
         std::cerr << "001E EGE/egeNetwork: Starting client" << std::endl;

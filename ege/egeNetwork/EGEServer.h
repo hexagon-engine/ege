@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "EGEGame.h"
+
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/gui/GameLoop.h>
 #include <ege/network/Packet.h>
@@ -20,7 +22,7 @@ namespace EGE
 
 class EGEClientConnection;
 
-class EGEServer : public Server, public GameLoop
+class EGEServer : public Server, public GameLoop, public EGEGame
 {
 public:
     EGEServer(int port)
