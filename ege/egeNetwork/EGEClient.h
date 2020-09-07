@@ -39,6 +39,8 @@ public:
     virtual void onExit(int exitCode);
     virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
 
+    virtual void onDisconnect(std::string reason) {}
+
     virtual bool send(std::shared_ptr<Packet> packet)
     {
         return sendTo(this, packet);

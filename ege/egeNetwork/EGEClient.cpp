@@ -8,57 +8,12 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacket.h"
 
 #include <ege/asyncLoop/AsyncTask.h>
+#include <ege/debug/Dump.h>
 #include <iomanip>
 #include <iostream>
 
 namespace EGE
 {
-
-// START HEX DUMP
-struct HexDumpSettings
-{
-    int width;
-};
-
-static void hexDump(const void* data, size_t size, HexDumpSettings settings)
-{
-    for(size_t s = 0; s < size / settings.width + 1; s++)
-    {
-        std::cerr << std::hex << std::setfill('0') << std::setw(8) << s * settings.width << "   ";
-
-        // data as HEX DUMP
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)_data << " ";
-            }
-            else
-            {
-                std::cerr << "   ";
-            }
-        }
-
-        std::cerr << "  ";
-
-        // and as CHARACTERS
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                if(_data < 32 || _data >= 127)
-                    _data = '.';
-                std::cerr << _data << " ";
-            }
-        }
-        std::cout << std::dec << std::endl;
-    }
-}
-// END HEX DUMP
 
 bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
 {
@@ -72,12 +27,12 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 {
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    /*if constexpr(EGECLIENT_DEBUG)
+    if constexpr(EGECLIENT_DEBUG)
     {
         sf::Packet sfPacket = egePacket->toSFMLPacket();
         std::cerr << "Client: Hex dump: " << std::endl;
         hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }*/
+    }
 
     if constexpr(EGECLIENT_DEBUG)
     {
@@ -110,8 +65,18 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             sendWithUID(EGEPacket::generateCLogin(getLoginData(args)));
         }
         break;
+    case EGEPacket::Type::SDisconnectReason:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto obj = args->getObject("message");
+            ASSERT(!obj.expired());
+            ASSERT(obj.lock()->isString());
+            onDisconnect(obj.lock()->asString());
+            disconnect();
+        }
+        break;
     default:
-        std::cerr << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
+        std::cerr << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
         return EventResult::Failure;
     }
 
