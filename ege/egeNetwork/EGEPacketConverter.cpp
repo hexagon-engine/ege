@@ -16,11 +16,14 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-struct ParseResult
+namespace Internal
 {
-    std::string message;
-    size_t byte = 0;
-};
+    struct _ParseResult
+    {
+        std::string message;
+        size_t byte = 0;
+    };
+}
 
 static bool parseInt(sf::Packet& input, ObjectInt& object)
 {
@@ -42,7 +45,7 @@ static bool parseString(sf::Packet& input, ObjectString& object)
     return true;
 }
 
-static ParseResult parseMap(sf::Packet& input, ObjectMap& object);
+static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object);
 
 static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
 {
@@ -52,7 +55,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
     case 'm':
         {
             std::shared_ptr<ObjectMap> obj = std::make_shared<ObjectMap>();
-            ParseResult result = parseMap(input, *obj);
+            Internal::_ParseResult result = parseMap(input, *obj);
             if(!result.message.empty())
                 return nullptr;
             return obj;
@@ -78,7 +81,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
     return nullptr;
 }
 
-static ParseResult parseMap(sf::Packet& input, ObjectMap& object)
+static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
 {
     while(true)
     {
@@ -134,7 +137,7 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
 
     ASSERT(instanceof(&object, ObjectMap));
 
-    ParseResult result = parseMap(input, (ObjectMap&)object);
+    Internal::_ParseResult result = parseMap(input, (ObjectMap&)object);
     if(!result.message.empty())
     {
         std::cerr << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message << std::endl;
