@@ -93,13 +93,8 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain()
 #define DESERIALIZE_OBJECT_WITH_CHECK(from,name,varName,type) \
 { \
 auto tmp = from->getObject(name); \
-DUMP(1, name); \
-DUMP(1, !tmp.expired()); \
-DUMP(1, tmp.lock()->is##type()); \
-DUMP(1, varName); \
 if(!tmp.expired() && tmp.lock()->is##type()) \
     varName = tmp.lock()->as##type(); \
-DUMP(1, varName); \
 }
 
 void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
