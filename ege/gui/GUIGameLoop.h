@@ -62,6 +62,8 @@ public:
         return m_frameTime;
     }
 
+    virtual void setSubLoop(std::shared_ptr<EventLoop> loop);
+
 protected:
     std::shared_ptr<Profiler> m_profiler;
 

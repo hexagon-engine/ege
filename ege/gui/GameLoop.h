@@ -27,6 +27,11 @@ public:
     virtual void onTick(long long tickCount) = 0;
     virtual void onExit(int exitCode) = 0;
     virtual EventResult onFinish(int exitCode) = 0;
+
+    // It also calls onLoad for loop. Beware of it when you are setting
+    // EGE::EGEClient or EGE::EGEServer, which will be started now
+    // (and it creates threads, opens ports etc.)
+    virtual void setSubLoop(std::shared_ptr<EventLoop> loop);
 };
 
 }

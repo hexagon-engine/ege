@@ -60,7 +60,7 @@ public:
     bool isRunning() { return m_running; }
     long long getTickCount() { return m_ticks; }
 
-    void setSubLoop(std::shared_ptr<EventLoop> loop)
+    virtual void setSubLoop(std::shared_ptr<EventLoop> loop)
     {
         m_subLoop = loop;
     }
