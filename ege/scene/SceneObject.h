@@ -49,11 +49,25 @@ public:
     virtual std::shared_ptr<ObjectMap> serializeExtended();
     virtual void deserializeExtended(std::shared_ptr<ObjectMap>);
 
+    // Clears main and extended changed flags. Called by server.
+    void markClean();
+
 protected:
+    void setMainChanged(bool flag = true)
+    {
+        m_mainChanged = true;
+    }
+    void setExtendedChanged(bool flag = true)
+    {
+        m_extendedChanged = true;
+    }
+
     Scene* m_owner;
     bool m_dead = false;
     long long m_id = 0;
     std::string m_name;
+    bool m_mainChanged = true;
+    bool m_extendedChanged = true;
 };
 
 }
