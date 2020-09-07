@@ -50,7 +50,27 @@ public:
     virtual void deserializeExtended(std::shared_ptr<ObjectMap>);
 
     // Clears main and extended changed flags. Called by server.
-    void markClean();
+    // FIXME: it should be only callable by Server.
+
+    void clearMainChangedFlag()
+    {
+        m_mainChanged = false;
+    }
+
+    void clearExtendedChangedFlag()
+    {
+        m_extendedChanged = false;
+    }
+
+    bool getMainChangedFlag()
+    {
+         return m_mainChanged;
+    }
+
+    bool getExtendedChangedFlag()
+    {
+         return m_extendedChanged;
+    }
 
 protected:
     void setMainChanged(bool flag = true)

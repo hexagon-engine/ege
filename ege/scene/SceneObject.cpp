@@ -45,12 +45,6 @@ void SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
         return; // NO DATA PROVIDED
 }
 
-void SceneObject::markClean()
-{
-    m_mainChanged = false;
-    m_extendedChanged = false;
-}
-
 std::shared_ptr<ObjectMap> SceneObject::serializeMain()
 {
     return nullptr;
