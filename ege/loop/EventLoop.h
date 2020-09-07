@@ -60,6 +60,15 @@ public:
     bool isRunning() { return m_running; }
     long long getTickCount() { return m_ticks; }
 
+    void setSubLoop(std::shared_ptr<EventLoop> loop)
+    {
+        m_subLoop = loop;
+    }
+    std::shared_ptr<EventLoop> getSubLoop()
+    {
+        return m_subLoop;
+    }
+
 protected:
     virtual void updateTimers();
     bool m_running = true;
@@ -69,6 +78,7 @@ private:
     int m_ticks = 0;
     std::multimap<std::string, std::shared_ptr<Timer>> m_timers;
     std::multimap<Event::EventType, std::shared_ptr<EventHandler>> m_eventHandlers;
+    std::shared_ptr<EventLoop> m_subLoop;
 };
 
 }

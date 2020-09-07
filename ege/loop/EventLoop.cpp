@@ -94,6 +94,9 @@ void EventLoop::removeTimer(const std::string& timer)
 
 void EventLoop::onUpdate()
 {
+    if(m_subLoop)
+        m_subLoop->onUpdate();
+
     updateTimers();
     m_ticks++;
 }
