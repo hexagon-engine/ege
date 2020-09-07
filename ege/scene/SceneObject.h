@@ -7,16 +7,17 @@ Copyright (c) Sppmacd 2020
 
 #include <SFML/Graphics.hpp>
 #include <ege/gui/Animatable.h>
+#include <ege/util/Serializable.h>
 
 namespace EGE
 {
 
 class Scene;
 
-class SceneObject : public Animatable
+class SceneObject : public Animatable, public Serializable
 {
 public:
-    SceneObject(EGE::Scene* owner, std::string name)
+    SceneObject(Scene* owner, std::string name)
     : m_owner(owner), m_name(name) {}
 
     virtual void onUpdate(long long tickCounter);
@@ -39,8 +40,17 @@ public:
         return m_id;
     }
 
+    virtual std::shared_ptr<ObjectMap> serialize();
+    virtual void deserialize(std::shared_ptr<ObjectMap>);
+
+    virtual std::shared_ptr<ObjectMap> serializeMain();
+    virtual void deserializeMain(std::shared_ptr<ObjectMap>);
+
+    virtual std::shared_ptr<ObjectMap> serializeExtended();
+    virtual void deserializeExtended(std::shared_ptr<ObjectMap>);
+
 protected:
-    EGE::Scene* m_owner;
+    Scene* m_owner;
     bool m_dead = false;
     long long m_id = 0;
     std::string m_name;

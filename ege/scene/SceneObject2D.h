@@ -55,6 +55,9 @@ public:
     virtual void render(sf::RenderTarget& target) const;
     virtual void onUpdate(long long tickCounter);
 
+    virtual std::shared_ptr<ObjectMap> serializeMain();
+    virtual void deserializeMain(std::shared_ptr<ObjectMap>);
+
 protected:
     double m_rotation = 0.0;
     sf::Vector2f m_origin;

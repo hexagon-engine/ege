@@ -71,10 +71,10 @@ public:
     void render(sf::RenderTarget& target) const
     {
         sf::VertexArray varr(sf::Quads, 4);
-        varr.append(sf::Vertex(sf::Vector2f(-100.f, -100.f), sf::Color::Red));
-        varr.append(sf::Vertex(sf::Vector2f(100.f, -100.f), sf::Color::Green));
-        varr.append(sf::Vertex(sf::Vector2f(100.f, 100.f), sf::Color::Blue));
-        varr.append(sf::Vertex(sf::Vector2f(-100.f, 100.f), sf::Color::Yellow));
+        varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color::Red));
+        varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y-100.f), sf::Color::Green));
+        varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y+100.f), sf::Color::Blue));
+        varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y+100.f), sf::Color::Yellow));
         target.draw(varr);
     }
 };
@@ -197,6 +197,47 @@ TESTCASE(_2dCamera)
     gameLoop.setCurrentGUIScreen(gui);
 
     // run loop
+    gameLoop.run();
+}
+
+TESTCASE(serializer)
+{
+    // create loop
+    EGE::GUIGameLoop gameLoop;
+    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Serializer Test"));
+
+    // limit window framerate to 10
+    gameLoop.getWindow().lock()->setFramerateLimit(60);
+
+    // create main GUI
+    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
+
+    // create scene
+    auto scene = std::make_shared<EGE::Scene2D>(gui.get());
+
+    // create some object
+    auto myObject = std::make_shared<MyBackground>(scene.get(), "My Test");
+    myObject->setPosition(sf::Vector2f(0.f, 0.f));
+
+    // serialize object
+    auto data = myObject->serialize();
+    std::cerr << data->toString() << std::endl;
+
+    // deserialize object and add result
+    auto myObject2 = std::make_shared<MyBackground>(scene.get(), "My Object 5555");
+    myObject2->setPosition(sf::Vector2f(-100.f, -100.f));
+    myObject2->deserialize(data);
+    scene->addObject(myObject2);
+
+    // assign scene to GUI
+    gui->addWidget(scene);
+
+    // assign an instance of MyResourceManager to game loop
+    gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
+
+    // assign GUI to loop
+    gameLoop.setCurrentGUIScreen(gui);
+
     gameLoop.run();
 }
 
