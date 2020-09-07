@@ -6,7 +6,7 @@
 	>> exit(1234)
 ### 0004 EGE/main: debug: %s
 ### 0005 EGE/resources: could not load resource: TEXTURE %s
-	>> ResourceManager::loaTexturefromFile() return false
+	>> ResourceManager::loadTexturefromFile() return false
 ### 0006 EGE/resources: could not load resource: FONT %s
 	>> ResourceManager::loadFontfromFile() return false
 ### 0007 EGE/resources: could not open resource directory: %s
@@ -42,3 +42,4 @@
 ### 001F EGE/egeNetwork: Closing server
 ### 0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required %d, got %d)
 ### 0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required %d, got %d)
+### 0022 EGE/egeNetwork: Unimplemented packet handler: %s
