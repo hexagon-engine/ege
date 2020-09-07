@@ -20,7 +20,9 @@ ObjectMap::ObjectMap(const ObjectMap& map)
 
 std::shared_ptr<Object>& ObjectMap::addObject(std::string name, std::shared_ptr<Object> subObject)
 {
-    ASSERT(subObject);
+    if(!subObject)
+        return subObject;
+
     auto& ref = m_subObjects[name];
     ref = subObject;
     return ref;
@@ -80,6 +82,28 @@ size_t ObjectMap::size() const
 std::shared_ptr<ObjectMap> ObjectMap::asMap() const
 {
     return std::make_shared<ObjectMap>(*this);
+}
+
+std::shared_ptr<ObjectMap> ObjectMap::merge(std::shared_ptr<ObjectMap> other)
+{
+    auto me = std::dynamic_pointer_cast<ObjectMap>(copy());
+
+    for(auto it: *other)
+    {
+        auto eo1 = me->getObject(it.first);
+        auto existingObject = !eo1.expired() ? std::dynamic_pointer_cast<ObjectMap>((std::shared_ptr<Object>)eo1) : nullptr;
+        if(it.second->isMap() && existingObject)
+        {
+            me->addObject(it.first, existingObject->merge(std::dynamic_pointer_cast<ObjectMap>(it.second->copy())));
+        }
+        else if(!existingObject)
+        {
+            // Take only first object.
+            me->addObject(it.first, it.second->copy());
+        }
+    }
+
+    return std::dynamic_pointer_cast<ObjectMap>(me);
 }
 
 }

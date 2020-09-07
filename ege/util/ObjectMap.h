@@ -37,6 +37,7 @@ public:
     virtual bool isMap() const { return true; }
 
     virtual std::shared_ptr<Object> copy() const { return asMap(); }
+    std::shared_ptr<ObjectMap> merge(std::shared_ptr<ObjectMap> other);
 
 private:
      InternalMap m_subObjects;

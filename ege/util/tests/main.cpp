@@ -54,4 +54,33 @@ TESTCASE(converter)
     EXPECT_EQUAL(map2.getObject("myString").lock()->asString(), "test4443");
 }
 
+TESTCASE(merge)
+{
+    // simple merge
+    auto map1 = std::make_shared<EGE::ObjectMap>();
+    map1->addObject("object1", std::make_shared<EGE::ObjectString>("value1"));
+    map1->addObject("object2", std::make_shared<EGE::ObjectString>("value2"));
+    std::cerr << map1->toString() << std::endl;
+
+    auto map2 = std::make_shared<EGE::ObjectMap>();
+    map2->addObject("object3", std::make_shared<EGE::ObjectString>("value3"));
+    map2->addObject("object4", std::make_shared<EGE::ObjectString>("value4"));
+    std::cerr << map2->toString() << std::endl;
+
+    std::cerr << map1->merge(map2)->toString() << std::endl;
+
+    // deep merge
+    auto subMap1 = std::make_shared<EGE::ObjectMap>();
+    subMap1->addObject("SubObject1", std::make_shared<EGE::ObjectString>("gggg"));
+    map1->addObject("sub", subMap1);
+    std::cerr << map1->toString() << std::endl;
+
+    auto subMap2 = std::make_shared<EGE::ObjectMap>();
+    subMap2->addObject("SubObject2", std::make_shared<EGE::ObjectString>("gggg"));
+    map2->addObject("sub", subMap2);
+    std::cerr << map2->toString() << std::endl;
+
+    std::cerr << map1->merge(map2)->toString() << std::endl;
+}
+
 RUN_TESTS(util)
