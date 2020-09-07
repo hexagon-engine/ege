@@ -34,6 +34,14 @@ std::weak_ptr<Object> ObjectMap::getObject(std::string name) const
     return {};
 }
 
+bool ObjectMap::hasObject(std::string name) const
+{
+    auto it = m_subObjects.find(name);
+    if(it != m_subObjects.end())
+        return true;
+    return false;
+}
+
 std::string ObjectMap::toString() const
 {
     std::string str = "{";

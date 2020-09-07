@@ -25,6 +25,7 @@ public:
 
     std::shared_ptr<Object>& addObject(std::string name, std::shared_ptr<Object> subObject);
     std::weak_ptr<Object> getObject(std::string name) const;
+    bool hasObject(std::string name) const;
 
     virtual std::string toString() const;
 
