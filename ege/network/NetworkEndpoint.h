@@ -17,6 +17,8 @@ namespace EGE
 class NetworkEndpoint
 {
 public:
+    virtual ~NetworkEndpoint() {}
+
     // almost always synchronous
     virtual bool send(std::shared_ptr<Packet> packet) = 0;
     virtual std::shared_ptr<Packet> receive() = 0;
@@ -37,7 +39,7 @@ public:
     }
 
     // synchronous
-    void disconnect();
+    virtual void disconnect();
 
 protected:
     std::shared_ptr<sf::TcpSocket> m_socket;

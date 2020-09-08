@@ -30,15 +30,18 @@ public:
     , m_ip(addr)
     , m_port(port) {}
 
+    virtual ~EGEClient();
+
     virtual std::shared_ptr<ObjectMap> getLoginData(std::shared_ptr<ObjectMap>) { return nullptr; }
 
     virtual EventResult onReceive(std::shared_ptr<Packet> packet);
+    EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId);
 
     virtual EventResult onLoad();
     virtual void onTick(long long tickCount);
 
-    virtual void onExit(int exitCode);
-    virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
+    virtual void onExit(int) {}
+    virtual EventResult onFinish(int exitCode);
 
     virtual void onDisconnect(std::string reason) {}
 
@@ -56,8 +59,17 @@ public:
 
     virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
 
+    virtual void disconnect();
+
+    void setExitHandler(std::function<void(int)> func)
+    {
+        m_exitHandler = func;
+    }
+
 private:
     std::map<long long, EGEPacket::Type> m_uidMap;
+    std::shared_ptr<AsyncTask> m_clientTask;
+    std::function<void(int)> m_exitHandler;
     sf::IpAddress m_ip;
     unsigned short m_port;
 };

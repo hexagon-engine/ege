@@ -1,56 +1,21 @@
 #include <testsuite/Tests.h>
+#include <ege/debug/Dump.h>
 #include <ege/egeNetwork/EGEClient.h>
 #include <ege/egeNetwork/EGEPacket.h>
 #include <ege/egeNetwork/EGEServer.h>
+#include <ege/event/SystemWindow.h>
+#include <ege/gui/GUIGameLoop.h>
+#include <ege/gui/GUIScreen.h>
+#include <ege/scene/Scene2D.h>
+#include <ege/scene/SceneWidget.h>
+#include <ege/scene/TexturedObject2D.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
+#include <functional>
 #include <iomanip>
 #include <iostream>
-
-struct HexDumpSettings
-{
-    int width;
-};
-
-void hexDump(const void* data, size_t size, HexDumpSettings settings)
-{
-    for(size_t s = 0; s < size / settings.width + 1; s++)
-    {
-        std::cerr << std::hex << std::setfill('0') << std::setw(8) << s * settings.width << "   ";
-
-        // data as HEX DUMP
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)_data << " ";
-            }
-            else
-            {
-                std::cerr << "   ";
-            }
-        }
-
-        std::cerr << "  ";
-
-        // and as CHARACTERS
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                if(_data < 32 || _data >= 127)
-                    _data = '.';
-                std::cerr << _data << " ";
-            }
-        }
-        std::cout << std::endl;
-    }
-}
+#include <memory>
 
 TESTCASE(converter)
 {
@@ -68,12 +33,36 @@ TESTCASE(converter)
     sf::Packet sfPacket = packet.toSFMLPacket();
 
     std::cerr << "Hex dump: " << std::endl;
-    hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
+    EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(), EGE::HexDumpSettings{8});
 
     EGE::EGEPacket packet2(sfPacket);
     std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
     std::cerr << std::dec;
 }
+
+class MyObject : public EGE::SceneObject2D
+{
+public:
+    MyObject(EGE::Scene* owner)
+    : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
+    {
+        auto timer = std::make_shared<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+        timer->setCallback([this](std::string, EGE::Timer*) {
+                                std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
+                                m_dead = true;
+                           });
+
+        addTimer("timer", timer);
+    }
+
+    virtual void render(sf::RenderTarget& target) const
+    {
+        EGE::SceneObject2D::render(target);
+        sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
+        rs.setPosition(getPosition() - sf::Vector2f(5.f, 5.f));
+        target.draw(rs);
+    }
+};
 
 TESTCASE(server)
 {
@@ -82,26 +71,102 @@ TESTCASE(server)
 
     auto serverThread = [PORT]() {
         EGE::EGEServer server(PORT);
+
+        // Set initialize handler for Server. It will be called before starting listening.
+        server.setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
+                                gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
+                                                                [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
+                                                                    return std::make_shared<MyObject>(scene);
+                                                                }));
+                                return true;
+                            });
+
+        auto scene = std::make_shared<EGE::Scene2D>(nullptr);
+
+        auto timer = std::make_shared<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
+        timer->setCallback([scene](std::string name, EGE::Timer* timer) {
+                                auto object = std::make_shared<MyObject>(scene.get());
+                                object->setPosition(sf::Vector2f(rand() % 50 - 25, rand() % 50 - 25));
+                                scene->addObject(object);
+                           });
+
+        server.addTimer("timer", timer);
+
+        server.setScene(scene);
         return server.run();
     };
     sf::Thread thread1(serverThread);
     thread1.launch();
 }
 
+class MyGameLoop : public EGE::GUIGameLoop
+{
+    std::shared_ptr<EGE::EGEClient> m_client;
+    int m_port;
+
+public:
+    MyGameLoop(int port)
+    : m_port(port) {}
+
+    EGE::EventResult onLoad()
+    {
+        // Call base onLoad to create profiler, load resources etc.
+        if(EGE::GUIGameLoop::onLoad() == EGE::EventResult::Failure)
+            return EGE::EventResult::Failure;
+
+        // Create GUI and assign it to client.
+        auto gui = std::make_shared<EGE::GUIScreen>(this);
+        setCurrentGUIScreen(gui);
+
+        // Create client - define server IP and port.
+        m_client = std::make_shared<EGE::EGEClient>(sf::IpAddress::LocalHost, m_port);
+
+        // Create scene and assign it to client.
+        auto scene = std::make_shared<EGE::Scene2D>(this);
+        m_client->setScene(scene);
+
+        // Create SceneWidget to be displayed in the window.
+        gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
+
+        // Set initialize handler for Client. It will be called before connecting.
+        m_client->setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
+                                gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
+                                                                [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
+                                                                    return std::make_shared<MyObject>(scene);
+                                                                }));
+                                return true;
+                            });
+
+        // Set exit handler for Client. It will be called when client is disconnected.
+        m_client->setExitHandler([this](int retVal) {
+                                    std::cerr << "CLIENT CLOSED, R=" << retVal << std::endl;
+                                    exit(retVal);
+                                 });
+
+        // Set our Client as sub-loop. It will automatically connect to server now.
+        setSubLoop(m_client);
+
+        return EGE::EventResult::Success;
+    }
+};
+
 TESTCASE(client)
 {
     int PORT = 0;
 
-    // yes, there is no error handling...
+    // Ask user for port.
+    // Yes, there is no error handling...
     std::cout << "Enter port: ";
     std::cin >> PORT;
 
-    auto clientThread = [PORT]() {
-        EGE::EGEClient client(sf::IpAddress::LocalHost, PORT);
-        return client.run();
-    };
-    sf::Thread thread2(clientThread);
-    thread2.launch();
+    // Create GameLoop and window.
+    MyGameLoop loop(PORT);
+    loop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
+
+    // Run main loop.
+    loop.run();
+
+    // Here doing ANYTHING is NOT SAFE!!! (because of destructors)
 }
 
 RUN_TESTS(egeNetwork)

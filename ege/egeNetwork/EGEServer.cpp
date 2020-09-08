@@ -184,6 +184,10 @@ void EGEServer::onTick(long long tickCount)
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
         }
     }
+
+    // Update scene, because it's not done in GameLoop.
+    if(getScene())
+        getScene()->onUpdate(getTickCount());
 }
 
 EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<ObjectMap>)

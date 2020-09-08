@@ -73,7 +73,13 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
     }
     else
     {
-        std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
+        static bool warned = false;
+        if(!warned)
+        {
+            warned = true;
+            std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
+        }
+
         sf::View view = target.getView();
         view.setCenter(sf::Vector2f(0.f, 0.f));
         return view;

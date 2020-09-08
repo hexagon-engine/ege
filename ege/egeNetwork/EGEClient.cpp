@@ -15,6 +15,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+EGEClient::~EGEClient()
+{
+    disconnect();
+}
+
 bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
 {
     // FIXME: some assertion?
@@ -27,12 +32,12 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 {
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    if constexpr(EGECLIENT_DEBUG)
+    /*if constexpr(EGECLIENT_DEBUG)
     {
         sf::Packet sfPacket = egePacket->toSFMLPacket();
         std::cerr << "Client: Hex dump: " << std::endl;
         hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }
+    }*/
 
     if constexpr(EGECLIENT_DEBUG)
     {
@@ -43,6 +48,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
     switch(egePacket->getType())
     {
     case EGEPacket::Type::_Ping:
+        std::cerr << "====== PONG ======" << std::endl;
         send(EGEPacket::generate_Pong());
         break;
     case EGEPacket::Type::_Pong:
@@ -75,10 +81,45 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             disconnect();
         }
         break;
+    case EGEPacket::Type::SSceneObjectCreation:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto object = args->getObject("object");
+            auto id = args->getObject("id");
+            auto typeId = args->getObject("typeId");
+            ASSERT(!object.expired() && object.lock()->isMap());
+            ASSERT(!id.expired() && id.lock()->isInt());
+            ASSERT(!typeId.expired() && typeId.lock()->isString());
+            return createSceneObjectFromData(object.lock()->asMap(), id.lock()->asInt(), typeId.lock()->asString());
+        }
+        break;
     default:
         std::cerr << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
         return EventResult::Failure;
     }
+
+    return EventResult::Success;
+}
+
+EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId)
+{
+    if(!getScene()) //scene not created
+        return EventResult::Success;
+
+    EGEGame::GPOM* gpom = getGameplayObjectManager().get();
+    ASSERT(gpom);
+
+    auto func = gpom->sceneObjectCreators.findById(typeId);
+    if(!func) //game version mismatch?
+    {
+        std::cerr << "Not found '" << typeId << "' in GPOM! Did you forgot to add SceneObjectCreator?" << std::endl;
+        return EventResult::Failure;
+    }
+
+    std::shared_ptr<SceneObject> sceneObject = (*func)(getScene().get());
+    sceneObject->setObjectId(id); // Don't assign ID automatically!
+    sceneObject->deserialize(object);
+    getScene()->addObject(sceneObject);
 
     return EventResult::Success;
 }
@@ -97,25 +138,34 @@ EventResult EGEClient::onLoad()
         send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
 
         while(isRunning())
+        {
             update();
+            if(!isConnected())
+                m_running = false;
+        }
 
         return 0;
     };
     auto clientNetworkCallback = [this](AsyncTask::State state) {
         std::cerr << "001F EGE/egeNetwork: Closing client" << std::endl;
-        exit(state.returnCode);
+
+        exit(state.returnCode); // << FIXME: segfault sometimes here from AsyncLoop destructor
+
+        if(m_exitHandler)
+            m_exitHandler(state.returnCode);
     };
 
-    std::shared_ptr<AsyncTask> task = std::make_shared<AsyncTask>(clientNetworkWorker, clientNetworkCallback);
-    addAsyncTask(task, "EGEServer network task");
+    m_clientTask = std::make_shared<AsyncTask>(clientNetworkWorker, clientNetworkCallback);
+    addAsyncTask(m_clientTask, "EGEServer network task");
 
     return EventResult::Success;
 }
 
-void EGEClient::onExit(int exitCode)
+EventResult EGEClient::onFinish(int exitCode)
 {
     (void) exitCode;
     disconnect();
+    return EventResult::Success;
 }
 
 void EGEClient::onTick(long long tickCount)
@@ -127,6 +177,20 @@ void EGEClient::onTick(long long tickCount)
 std::shared_ptr<SFMLPacket> EGEClient::makePacket(sf::Packet& packet)
 {
     return std::make_shared<EGEPacket>(packet);
+}
+
+void EGEClient::disconnect()
+{
+    Client::disconnect();
+    onDisconnect("Disconnected");
+
+    /*if(m_clientTask)
+    {
+        m_clientTask->wait();
+
+        // We don't need the task anymore.
+        m_clientTask = std::shared_ptr<AsyncTask>();
+    }*/
 }
 
 }

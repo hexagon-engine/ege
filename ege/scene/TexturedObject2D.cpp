@@ -51,7 +51,10 @@ void TexturedObject2D::onUpdate(long long tickCounter)
     // TODO: it should be in render phase (it's not necessary on server)
     // maybe void renderUpdate() ??
     SceneObject2D::onUpdate(tickCounter);
-    updateGeometry();
+
+    // Update geometry (only on client)
+    if(m_owner->getLoop())
+        updateGeometry();
 }
 
 void TexturedObject2D::render(sf::RenderTarget& target) const

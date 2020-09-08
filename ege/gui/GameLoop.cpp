@@ -14,10 +14,6 @@ int GameLoop::run()
 {
     auto result = onLoad();
 
-    auto subLoop = getSubGameLoop();
-    if(subLoop)
-        subLoop->onLoad();
-
     if(result == EventResult::Failure)
     {
         std::cerr << "0001 EGE/loop: load failed" << std::endl;
@@ -37,7 +33,7 @@ int GameLoop::run()
 
     result = onFinish(m_exitCode);
 
-    subLoop = getSubGameLoop();
+    auto subLoop = getSubGameLoop();
     if(subLoop)
     {
         auto result2 = subLoop->onFinish(m_exitCode);

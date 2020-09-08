@@ -45,12 +45,23 @@ public:
 
     virtual bool initialize();
 
-    // to be overridden by user
-    virtual bool registerSceneObjectCreators(GPOM*) { return true; }
+    virtual bool registerSceneObjectCreators(GPOM* gpom)
+    {
+        if(m_handler)
+            return m_handler(gpom);
+        else
+            return false;
+    }
+
+    void setInitializeHandler(std::function<bool(GPOM*)> handler)
+    {
+        m_handler = handler;
+    }
 
 private:
     std::shared_ptr<GPOM> m_gameplayObjectManager;
     std::shared_ptr<Scene> m_scene;
+    std::function<bool(GPOM*)> m_handler;
 };
 
 }

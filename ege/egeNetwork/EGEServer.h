@@ -15,7 +15,7 @@ Copyright (c) Sppmacd 2020
 #include <memory>
 
 #define EGESERVER_DEBUG 0
-#define PING_DEBUG 0
+#define PING_DEBUG 1
 
 namespace EGE
 {

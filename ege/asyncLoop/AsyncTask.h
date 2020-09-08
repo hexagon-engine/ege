@@ -39,6 +39,7 @@ public:
 
     // Safe.
     virtual void stop() {}
+    void wait();
 
     // Not safe!
     void terminate();

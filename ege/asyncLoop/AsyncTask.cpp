@@ -16,7 +16,7 @@ AsyncTask::AsyncTask(std::function<int()> worker, std::function<void(AsyncTask::
 AsyncTask::~AsyncTask()
 {
     if(!m_currentState.finished)
-        terminate();
+        m_thread.terminate();
 }
 
 void AsyncTask::start()
@@ -38,6 +38,11 @@ void AsyncTask::entryPoint()
 {
     // atomic?
     m_currentState = AsyncTask::State{m_worker(), true};
+}
+
+void AsyncTask::wait()
+{
+    m_thread.wait();
 }
 
 void AsyncTask::terminate()
