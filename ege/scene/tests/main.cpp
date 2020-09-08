@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/SceneObject2D.h>
+#include <ege/scene/SceneWidget.h>
 #include <ege/scene/TexturedObject2D.h>
 #include <ege/gui/Animation.h>
 #include <ege/gui/AnimationEasingFunctions.h>
@@ -109,7 +110,7 @@ TESTCASE(simple)
     auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene>(gui.get());
+    auto scene = std::make_shared<EGE::Scene>(&gameLoop);
 
     // add some objects to scene
     scene->addObject(std::make_shared<MyObject>(scene.get(), "My Object", sf::Vector2f(200.f, 200.f)));
@@ -123,7 +124,7 @@ TESTCASE(simple)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(scene);
+    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
@@ -148,7 +149,7 @@ TESTCASE(_2dCamera)
     auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene2D>(gui.get());
+    auto scene = std::make_shared<EGE::Scene2D>(&gameLoop);
 
     // add camera
     auto cam = std::make_shared<EGE::CameraObject2D>(scene.get());
@@ -188,7 +189,7 @@ TESTCASE(_2dCamera)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(scene);
+    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
@@ -213,7 +214,7 @@ TESTCASE(serializer)
     auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene2D>(gui.get());
+    auto scene = std::make_shared<EGE::Scene2D>(&gameLoop);
 
     // create some object
     auto myObject = std::make_shared<MyBackground>(scene.get(), "My Test");
@@ -230,7 +231,7 @@ TESTCASE(serializer)
     scene->addObject(myObject2);
 
     // assign scene to GUI
-    gui->addWidget(scene);
+    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(std::make_shared<MyResourceManager>());

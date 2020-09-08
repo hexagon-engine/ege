@@ -15,8 +15,8 @@ namespace EGE
 class SceneWidget : public Widget
 {
 public:
-    SceneWidget(Widget* parent)
-    : Widget(parent) {}
+    SceneWidget(Widget* parent, std::shared_ptr<Scene> initialScene = nullptr)
+    : Widget(parent), m_scene(initialScene) {}
 
     virtual void renderOnly(sf::RenderTarget& target);
 

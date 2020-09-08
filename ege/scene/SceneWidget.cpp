@@ -21,7 +21,12 @@ void SceneWidget::renderOnly(sf::RenderTarget& target)
 void SceneWidget::onResize(sf::Event::SizeEvent& event)
 {
     if(m_autoResizable)
-        setSize(sf::Vector2f(event.width, event.height));
+    {
+        m_size = sf::Vector2f(event.width, event.height);
+
+        if(m_scene)
+            m_scene->setSize(m_size);
+    }
 }
 
 void SceneWidget::onUpdate(long long tickCounter)
