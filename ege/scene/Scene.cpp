@@ -33,6 +33,9 @@ void Scene::onUpdate(long long tickCounter)
         object.second->onUpdate(tickCounter);
         if(object.second->isDead())
         {
+            if(m_removeObjectCallback)
+                m_removeObjectCallback(object.second);
+
             m_objects.erase(it);
 
             if(m_objects.empty())
@@ -45,8 +48,12 @@ void Scene::onUpdate(long long tickCounter)
 
 long long Scene::addObject(std::shared_ptr<SceneObject> object)
 {
-    object->setId(++m_greatestId);
+    object->setObjectId(++m_greatestId);
     m_objects.insert(std::make_pair(m_greatestId, object));
+
+    if(m_addObjectCallback)
+        m_addObjectCallback(object);
+
     return m_greatestId;
 }
 

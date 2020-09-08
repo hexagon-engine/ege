@@ -19,7 +19,7 @@ public:
     GameplayObject(std::string id)
     : m_id(id) {}
 
-    std::string getId()
+    std::string getId() const
     {
         return m_id;
     }

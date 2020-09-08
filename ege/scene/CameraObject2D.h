@@ -19,7 +19,7 @@ class CameraObject2D : public CameraObject<sf::Vector2f>, public SceneObject2D
 {
 public:
     CameraObject2D(Scene* parent)
-    : CameraObject(parent), SceneObject2D(parent, "Camera Object (2D)") {}
+    : CameraObject(parent), SceneObject2D(parent, "EGE::CameraObject2D") {}
 
     sf::Vector2f getEyePosition()
     {

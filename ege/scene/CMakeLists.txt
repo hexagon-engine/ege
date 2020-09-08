@@ -18,5 +18,6 @@ set(SOURCES
 )
 
 ege_add_module(scene)
+ege_depend_module(scene gpo)
 ege_depend_module(scene gui)
 ege_depend_module(scene util)

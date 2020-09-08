@@ -17,8 +17,8 @@ namespace EGE
 class TexturedObject2D : public SceneObject2D
 {
 public:
-    TexturedObject2D(Scene* owner, std::string name)
-    : SceneObject2D(owner, name) {}
+    TexturedObject2D(Scene* owner, std::string typeId)
+    : SceneObject2D(owner, typeId) {}
 
     void setTextureName(std::string name)
     {

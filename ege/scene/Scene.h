@@ -54,6 +54,16 @@ public:
         return m_size;
     }
 
+    void setAddObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func)
+    {
+        m_addObjectCallback = func;
+    }
+
+    void setRemoveObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func)
+    {
+        m_removeObjectCallback = func;
+    }
+
     // The Scene widget is set to be auto resizable if its size is not set
     // before first render. You can revert this behaviour by using setSize().
     virtual void setViewForWidget(sf::RenderTarget& target);
@@ -64,6 +74,8 @@ protected:
 private:
     bool m_autoResizable = false;
     long long m_greatestId = 0;
+    std::function<void(std::shared_ptr<SceneObject>)> m_addObjectCallback;
+    std::function<void(std::shared_ptr<SceneObject>)> m_removeObjectCallback;
 };
 
 }

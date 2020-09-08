@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <ege/gpo/GameplayObject.h>
 #include <ege/gui/Animatable.h>
 #include <ege/util/Serializable.h>
 
@@ -14,11 +15,11 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public Serializable
+class SceneObject : public Animatable, public GameplayObject
 {
 public:
-    SceneObject(Scene* owner, std::string name)
-    : m_owner(owner), m_name(name) {}
+    SceneObject(Scene* owner, std::string typeId)
+    : GameplayObject(typeId), m_owner(owner) {}
 
     virtual void onUpdate(long long tickCounter);
     virtual void render(sf::RenderTarget& target) const = 0;
@@ -27,15 +28,20 @@ public:
     {
         return m_dead;
     }
-    void setId(long long id)
+    void setObjectId(long long id)
     {
-        m_id = id;
+        if(!m_id)
+            m_id = id;
     }
     std::string getName() const
     {
         return m_name;
     }
-    long long getId() const
+    void setName(std::string name)
+    {
+        m_name = name;
+    }
+    long long getObjectId() const
     {
         return m_id;
     }
