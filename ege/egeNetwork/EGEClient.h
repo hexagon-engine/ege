@@ -56,8 +56,6 @@ public:
 
     virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
 
-    void setScene(std::shared_ptr<Scene> scene);
-
 private:
     std::map<long long, EGEPacket::Type> m_uidMap;
     sf::IpAddress m_ip;

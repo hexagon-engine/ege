@@ -25,16 +25,13 @@ public:
         bool clear();
         bool load();
 
-        GameplayObjectRegistry<std::string, std::function<std::shared_ptr<SceneObject>()>> sceneObjectCreators;
+        GameplayObjectRegistry<std::string, std::function<std::shared_ptr<SceneObject>(Scene*)>> sceneObjectCreators;
 
     private:
         EGEGame* m_game;
     };
 
-    void setScene(std::shared_ptr<Scene> scene)
-    {
-        m_scene = scene;
-    }
+    virtual void setScene(std::shared_ptr<Scene> scene);
 
     std::shared_ptr<Scene> getScene()
     {
@@ -52,8 +49,8 @@ public:
     virtual bool registerSceneObjectCreators(GPOM*) { return true; }
 
 private:
-    std::shared_ptr<Scene> m_scene;
     std::shared_ptr<GPOM> m_gameplayObjectManager;
+    std::shared_ptr<Scene> m_scene;
 };
 
 }

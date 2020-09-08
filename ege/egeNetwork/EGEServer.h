@@ -40,7 +40,7 @@ public:
 
     // Accept all logins by default, without doing anything with userData!
     // Arguments:                     client                userData
-    virtual EventResult onLogin(EGEClientConnection*, std::shared_ptr<ObjectMap>) { return EGE::EventResult::Success; };
+    virtual EventResult onLogin(EGEClientConnection*, std::shared_ptr<ObjectMap>);
 
     virtual EventResult onLoad();
     virtual void onTick(long long tickCount);
@@ -51,6 +51,8 @@ public:
     void kickClientWithReason(EGEClientConnection* client, std::string reason);
 
     virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket);
+
+    virtual void setScene(std::shared_ptr<Scene> scene);
 };
 
 }

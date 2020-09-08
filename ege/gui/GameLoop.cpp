@@ -14,8 +14,9 @@ int GameLoop::run()
 {
     auto result = onLoad();
 
-    if(getSubLoop())
-        getSubLoop()->onLoad(getTickCount());
+    auto subLoop = getSubGameLoop();
+    if(subLoop)
+        subLoop->onLoad();
 
     if(result == EventResult::Failure)
     {
@@ -27,19 +28,21 @@ int GameLoop::run()
     {
         onTick(getTickCount());
 
-        if(getSubLoop())
-            getSubLoop()->onTick(getTickCount());
+        auto subLoop = getSubGameLoop();
+        if(subLoop)
+            subLoop->onTick(getTickCount());
 
         onUpdate();
     }
 
     result = onFinish(m_exitCode);
 
-    if(getSubLoop())
+    subLoop = getSubGameLoop();
+    if(subLoop)
     {
-        auto result2 = getSubLoop()->onFinish(m_exitCode);
+        auto result2 = subLoop->onFinish(m_exitCode);
         if(result2 == EventResult::Failure)
-            return = EventResult::Failure;
+            result = EventResult::Failure;
     }
 
     if(result == EventResult::Failure)
@@ -51,7 +54,7 @@ int GameLoop::run()
     return m_exitCode;
 }
 
-void GameLoop::setSubLoop(std::shared_ptr<EventLoop> loop)
+void GameLoop::setSubLoop(std::shared_ptr<GameLoop> loop)
 {
     ASSERT(loop);
     loop->onLoad();
@@ -62,8 +65,17 @@ void GameLoop::exit(int exitCode)
 {
     EventLoop::exit(exitCode);
     onExit(exitCode);
-    if(getSubLoop())
-        getSubLoop()->onExit(exitCode);
+
+    auto subLoop = getSubGameLoop();
+    if(subLoop)
+    {
+        subLoop->onExit(m_exitCode);
+    }
+}
+
+GameLoop* GameLoop::getSubGameLoop()
+{
+    return std::dynamic_pointer_cast<GameLoop>(getSubLoop()).get();
 }
 
 }

@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacket.h"
 
 #include <ege/asyncLoop/AsyncTask.h>
+#include <ege/debug/Dump.h>
 #include <ege/network/ClientConnection.h>
 #include <iomanip>
 #include <iostream>
@@ -41,51 +42,16 @@ EventResult EGEServer::onClientDisconnect(ClientConnection* client)
     return EventResult::Success;
 }
 
-// START HEX DUMP
-struct HexDumpSettings
+void EGEServer::setScene(std::shared_ptr<Scene> scene)
 {
-    int width;
-};
+    scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
+                                    sendToAll(EGEPacket::generateSSceneObjectCreation(object, object->getId()));
+                                });
+    scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
 
-static void hexDump(const void* data, size_t size, HexDumpSettings settings)
-{
-    for(size_t s = 0; s < size / settings.width + 1; s++)
-    {
-        std::cerr << std::hex << std::setfill('0') << std::setw(8) << s * settings.width << "   ";
-
-        // data as HEX DUMP
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                std::cerr << std::hex << std::setfill('0') << std::setw(2) << (int)_data << " ";
-            }
-            else
-            {
-                std::cerr << "   ";
-            }
-        }
-
-        std::cerr << "  ";
-
-        // and as CHARACTERS
-        for(size_t t = 0; t < settings.width; t++)
-        {
-            size_t off = s * settings.width + t;
-            if(off < size)
-            {
-                unsigned char _data = ((unsigned char*)data)[off] & 0xFF;
-                if(_data < 32 || _data >= 127)
-                    _data = '.';
-                std::cerr << _data << " ";
-            }
-        }
-        std::cout << std::dec << std::endl;
-    }
+                                });
+    EGEGame::setScene(scene);
 }
-// END HEX DUMP
 
 EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packet> packet)
 {
@@ -182,7 +148,8 @@ void EGEServer::onExit(int exitCode)
 void EGEServer::onTick(long long tickCount)
 {
     sf::Lock lock(m_clientsAccessMutex);
-    //if(tickCount % 100000 == 0) std::cerr << std::endl;
+
+    // Check if clients are alive.
     for(auto it: *this)
     {
         EGEClientConnection* client = (EGEClientConnection*)it.second.get();
@@ -195,7 +162,7 @@ void EGEServer::onTick(long long tickCount)
 
             if constexpr(PING_DEBUG)
             {
-                std::cerr << "===== PING because of no recv in 1 second =====" << std::endl;
+                std::cerr << "===== PING because of no recv in 3 second =====" << std::endl;
             }
             DUMP(PING_DEBUG, client->wasPinged());
 
@@ -217,6 +184,23 @@ void EGEServer::onTick(long long tickCount)
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
         }
     }
+}
+
+EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<ObjectMap>)
+{
+    // Send SceneObject data to Client.
+    auto scene = getScene();
+    if(scene)
+    {
+        for(auto object: *scene)
+        {
+            bool success = client->send(EGEPacket::generateSSceneObjectCreation(object.second, object.second->getId()));
+            if(!success)
+                return EventResult::Failure;
+        }
+    }
+
+    return EventResult::Success;
 }
 
 void EGEServer::kickClientWithReason(EGEClientConnection* client, std::string reason)

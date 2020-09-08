@@ -67,8 +67,11 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSDisconnectReason(std::string mess
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectCreation(std::shared_ptr<SceneObject> object, std::string typeId)
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
+    data->addObject("object", object->serialize());
+    data->addObject("id", std::make_shared<ObjectInt>(object->getObjectId()));
+    data->addObject("typeId", std::make_shared<ObjectString>(object->getId()));
+    return std::make_shared<EGEPacket>(EGEPacket::Type::SSceneObjectCreation, data);
 }
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectUpdate_Main(std::shared_ptr<SceneObject> object)
