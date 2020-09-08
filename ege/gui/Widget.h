@@ -38,9 +38,9 @@ public:
     };
 
     Widget(Widget* parent)
-    : DefaultSystemEventHandler(parent->getWindow())
+    : DefaultSystemEventHandler(parent ? parent->getWindow() : std::weak_ptr<SFMLSystemWindow>())
     , m_parent(parent)
-    , m_gameLoop(parent->m_gameLoop) {}
+    , m_gameLoop(parent ? parent->m_gameLoop : nullptr) {}
 
     // for non-parented widgets, e.g. GUIScreen
     Widget(GUIGameLoop* gameLoop);

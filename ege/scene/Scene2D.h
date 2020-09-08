@@ -17,8 +17,8 @@ namespace EGE
 class Scene2D : public Scene
 {
 public:
-    Scene2D(Widget* parent)
-    : Scene(parent) {}
+    explicit Scene2D(GUIGameLoop* loop)
+    : Scene(loop) {}
 
     void setCamera(std::weak_ptr<CameraObject2D> camera);
     virtual void renderOnly(sf::RenderTarget& target);

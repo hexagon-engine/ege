@@ -12,21 +12,18 @@ namespace EGE
 
 void Scene::renderOnly(sf::RenderTarget& target)
 {
+    // The loop should NOT be specified for server-side
+    // since it's NOT necessary (Scene itself is an EventLoop)
+    ASSERT(m_loop);
     for(auto pr: *this)
     {
         pr.second->render(target);
     }
 }
 
-void Scene::onResize(sf::Event::SizeEvent& event)
-{
-    if(m_autoResizable)
-        m_size = sf::Vector2f(event.width, event.height);
-}
-
 void Scene::onUpdate(long long tickCounter)
 {
-    Widget::onUpdate(tickCounter);
+    EventLoop::onUpdate();
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
         auto object = *it;
@@ -79,18 +76,6 @@ SceneObject* Scene::getObject(long long id)
     if(it != m_objects.end())
         return it->second.get();
     return nullptr;
-}
-
-void Scene::setViewForWidget(sf::RenderTarget& target)
-{
-    // fill the window fully by default
-    if(m_size == sf::Vector2f())
-    {
-        m_size = sf::Vector2f(target.getSize());
-        m_autoResizable = true;
-    }
-
-    Widget::setViewForWidget(target);
 }
 
 }

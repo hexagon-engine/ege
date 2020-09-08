@@ -13,6 +13,8 @@ set(SOURCES
 	"Scene2D.h"
 	"SceneObject.cpp"
 	"SceneObject.h"
+	"SceneWidget.cpp"
+	"SceneWidget.h"
 	"TexturedObject2D.cpp"
 	"TexturedObject2D.h"
 )

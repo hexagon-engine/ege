@@ -62,6 +62,11 @@ public:
         return m_frameTime;
     }
 
+    std::shared_ptr<Profiler> getProfiler()
+    {
+        return m_profiler;
+    }
+
 protected:
     std::shared_ptr<Profiler> m_profiler;
 
