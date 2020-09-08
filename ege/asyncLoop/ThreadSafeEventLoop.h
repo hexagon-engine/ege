@@ -5,9 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <ege/asyncLoop/AsyncHandler.h>
+#include <ege/asyncLoop/AsyncLoop.h>
 #include <ege/loop/EventHandler.h>
-#include <ege/loop/EventLoop.h>
 #include <map>
 #include <memory>
 #include <SFML/System.hpp>
@@ -16,7 +15,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class ThreadSafeEventLoop : public EventLoop, public AsyncHandler
+class ThreadSafeEventLoop : public AsyncLoop
 {
 public:
     // from EVENT LOOP
