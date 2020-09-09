@@ -43,6 +43,12 @@ public:
     virtual void render();
 
     void setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
+
+    std::shared_ptr<GUIScreen> getCurrentGUIScreen()
+    {
+        return m_currentGui;
+    }
+
     std::weak_ptr<SFMLSystemWindow> getWindow();
     void setWindow(std::shared_ptr<SFMLSystemWindow> window);
     std::weak_ptr<ResourceManager> getResourceManager();

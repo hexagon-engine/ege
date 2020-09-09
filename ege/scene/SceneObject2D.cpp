@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SceneObject2D.h"
 
+#include <ege/scene/Scene.h>
 #include <ege/util/ObjectInt.h>
 
 namespace EGE
@@ -18,6 +19,7 @@ bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
         setPosition(pos);
     else
         m_position = pos;
+
 
     //DUMP(1, m_name);
     //DUMP(1, m_position.x);
@@ -125,10 +127,22 @@ void SceneObject2D::onUpdate(long long tickCounter)
 {
     SceneObject::onUpdate(tickCounter);
 
+    // Update position basing on object's motion.
     // Don't notify client because it already knows about the motion
     // and can update it on its side.
     // TODO: fps/tps scaling! m_motion should be in pxs/SECOND
-    moveTo(getPosition() + m_motion, false);
+    if(m_motion != sf::Vector2f())
+    {
+        moveTo(getPosition() + m_motion, false);
+        m_geometryChanged = true;
+    }
+
+    // Call updateGeometry if it's needed (only on client)
+    if(m_owner->getLoop() && m_geometryChanged)
+    {
+        updateGeometry();
+        m_geometryChanged = false;
+    }
 }
 
 }

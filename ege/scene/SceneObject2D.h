@@ -27,7 +27,10 @@ public:
     virtual void setPosition(sf::Vector2f position)
     {
         if(m_position != position)
+        {
             setMainChanged();
+            m_geometryChanged = true;
+        }
         m_position = position;
     }
     sf::Vector2f getPosition() const
@@ -37,7 +40,10 @@ public:
     virtual void setMotion(sf::Vector2f motion)
     {
         if(m_motion != motion)
+        {
             setMainChanged();
+            m_geometryChanged = true;
+        }
         m_motion = motion;
     }
     sf::Vector2f getMotion() const
@@ -63,10 +69,13 @@ public:
     virtual void deserializeMain(std::shared_ptr<ObjectMap>);
 
 protected:
+    virtual void updateGeometry() {}
+
     double m_rotation = 0.0;
     sf::Vector2f m_origin;
     sf::Vector2f m_motion;
     sf::Vector2f m_scale = sf::Vector2f(1, 1);
+    bool m_geometryChanged = true;
 
 private:
     sf::Vector2f m_position;

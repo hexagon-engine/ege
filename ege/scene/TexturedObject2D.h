@@ -50,12 +50,11 @@ public:
     virtual void render(sf::RenderTarget& target) const;
 
 private:
-    void updateGeometry();
+    virtual void updateGeometry();
 
     std::string m_texture;
     sf::FloatRect m_textureRect;
     sf::Sprite m_sprite;
-    bool m_geometryChanged = true;
     bool m_centered = false;
 };
 
