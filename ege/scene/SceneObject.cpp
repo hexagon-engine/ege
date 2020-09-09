@@ -41,8 +41,7 @@ void SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
         deserializeMain(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(m)));
     else if(!x.expired() && x.lock()->isMap())
         deserializeExtended(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(x)));
-    else
-        return; // NO DATA PROVIDED
+    // NO DATA PROVIDED
 }
 
 std::shared_ptr<ObjectMap> SceneObject::serializeMain()

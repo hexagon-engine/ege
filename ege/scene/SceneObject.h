@@ -68,14 +68,19 @@ public:
         m_extendedChanged = false;
     }
 
-    bool getMainChangedFlag()
+    bool getMainChangedFlag() const
     {
          return m_mainChanged;
     }
 
-    bool getExtendedChangedFlag()
+    bool getExtendedChangedFlag() const
     {
          return m_extendedChanged;
+    }
+
+    bool setDead()
+    {
+        m_dead = true;
     }
 
 protected:
