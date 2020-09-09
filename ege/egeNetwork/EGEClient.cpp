@@ -93,6 +93,30 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             return createSceneObjectFromData(object.lock()->asMap(), id.lock()->asInt(), typeId.lock()->asString());
         }
         break;
+    case EGEPacket::Type::SSceneObjectUpdate:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto object = args->getObject("object");
+            auto id = args->getObject("id");
+            ASSERT(!object.expired() && object.lock()->isMap());
+            ASSERT(!id.expired() && id.lock()->isInt());
+            return updateSceneObjectFromData(object.lock()->asMap(), id.lock()->asInt());
+        }
+        break;
+    case EGEPacket::Type::SSceneObjectDeletion:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto id = args->getObject("id");
+            ASSERT(!id.expired() && id.lock()->isInt());
+            auto scene = getScene();
+            if(!scene) //scene not created
+                return EventResult::Success;
+            auto sceneObject = scene->getObject(id.lock()->asInt());
+            if(!sceneObject) // Yay! We have predicted that the object will be removed! [or bugged server :)]
+                return EventResult::Success;
+            sceneObject->setDead();
+        }
+        break;
     default:
         std::cerr << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
         return EventResult::Failure;
@@ -116,11 +140,26 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
         return EventResult::Failure;
     }
 
+    // Call `func' that was registered by user.
     std::shared_ptr<SceneObject> sceneObject = (*func)(getScene().get());
     sceneObject->setObjectId(id); // Don't assign ID automatically!
     sceneObject->deserialize(object);
     getScene()->addObject(sceneObject);
 
+    return EventResult::Success;
+}
+
+EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id)
+{
+    if(!getScene()) //scene not created
+        return EventResult::Success;
+
+    auto sceneObject = getScene()->getObject(id);
+
+    if(!sceneObject)
+        return EventResult::Failure; //TODO: request for object data when object was not found!
+
+    sceneObject->deserialize(object);
     return EventResult::Success;
 }
 

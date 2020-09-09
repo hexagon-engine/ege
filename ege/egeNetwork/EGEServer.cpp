@@ -21,7 +21,6 @@ EventResult EGEServer::onClientConnect(ClientConnection* client)
 {
     sf::Lock lock(m_clientsAccessMutex);
     // FIXME: it should be asynchronous
-    bool success = true;
 
     if(!client->send(EGEPacket::generate_Ping()))
         return EventResult::Failure;
@@ -48,7 +47,7 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
                                     sendToAll(EGEPacket::generateSSceneObjectCreation(object, object->getId()));
                                 });
     scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
-
+                                    sendToAll(EGEPacket::generateSSceneObjectDeletion(object->getObjectId()));
                                 });
     EGEGame::setScene(scene);
 }
@@ -145,7 +144,7 @@ void EGEServer::onExit(int exitCode)
     close();
 }
 
-void EGEServer::onTick(long long tickCount)
+void EGEServer::onTick(long long)
 {
     sf::Lock lock(m_clientsAccessMutex);
 
@@ -188,6 +187,24 @@ void EGEServer::onTick(long long tickCount)
     // Update scene, because it's not done in GameLoop.
     if(getScene())
         getScene()->onUpdate(getTickCount());
+
+    // Send object updates to Client.
+    // TODO: It will be better to not check every object!
+    for(auto object: *getScene())
+    {
+        auto sceneObject = object.second;
+
+        if(sceneObject->getMainChangedFlag())
+        {
+            sceneObject->clearMainChangedFlag();
+            sendToAll(EGEPacket::generateSSceneObjectUpdate_Main(sceneObject));
+        }
+        if(sceneObject->getExtendedChangedFlag())
+        {
+            sceneObject->clearExtendedChangedFlag();
+            sendToAll(EGEPacket::generateSSceneObjectUpdate_Extended(sceneObject));
+        }
+    }
 }
 
 EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<ObjectMap>)

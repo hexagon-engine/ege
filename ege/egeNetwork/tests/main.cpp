@@ -53,6 +53,7 @@ public:
                            });
 
         addTimer("timer", timer);
+        m_motion = sf::Vector2f(rand() % 5 - 2, rand() % 5 - 2);
     }
 
     virtual void render(sf::RenderTarget& target) const
@@ -71,6 +72,8 @@ TESTCASE(server)
 
     auto serverThread = [PORT]() {
         EGE::EGEServer server(PORT);
+
+        server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
 
         // Set initialize handler for Server. It will be called before starting listening.
         server.setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
@@ -162,6 +165,7 @@ TESTCASE(client)
     // Create GameLoop and window.
     MyGameLoop loop(PORT);
     loop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
+    loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
 
     // Run main loop.
     loop.run();

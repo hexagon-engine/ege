@@ -70,46 +70,55 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectCreation(std::shared_p
     std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
     data->addObject("object", object->serialize());
     data->addObject("id", std::make_shared<ObjectInt>(object->getObjectId()));
-    data->addObject("typeId", std::make_shared<ObjectString>(object->getId()));
+    data->addObject("typeId", std::make_shared<ObjectString>(typeId));
     return std::make_shared<EGEPacket>(EGEPacket::Type::SSceneObjectCreation, data);
 }
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectUpdate_Main(std::shared_ptr<SceneObject> object)
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
+    std::shared_ptr<ObjectMap> objectData = std::make_shared<ObjectMap>();
+    objectData->addObject("m", object->serializeMain());
+    data->addObject("object", objectData);
+    data->addObject("id", std::make_shared<ObjectInt>(object->getObjectId()));
+    return std::make_shared<EGEPacket>(EGEPacket::Type::SSceneObjectUpdate, data);
 }
 
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectUpdate_Extended(std::shared_ptr<SceneObject> object)
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
+    std::shared_ptr<ObjectMap> objectData = std::make_shared<ObjectMap>();
+    objectData->addObject("x", object->serializeExtended());
+    data->addObject("object", objectData);
+    data->addObject("id", std::make_shared<ObjectInt>(object->getObjectId()));
+    return std::make_shared<EGEPacket>(EGEPacket::Type::SSceneObjectUpdate, data);
 }
 std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectDeletion(long long id)
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
+    data->addObject("id", std::make_shared<ObjectInt>(id));
+    return std::make_shared<EGEPacket>(EGEPacket::Type::SSceneObjectDeletion, data);
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateSSceneCreation(std::shared_ptr<ObjectMap> userData)
+std::shared_ptr<EGEPacket> EGEPacket::generateSSceneCreation(std::shared_ptr<ObjectMap>)
 {
     ASSERT(false); //TODO
     return nullptr;
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateSSceneDeletion(std::shared_ptr<ObjectMap> userData)
+std::shared_ptr<EGEPacket> EGEPacket::generateSSceneDeletion(std::shared_ptr<ObjectMap>)
 {
     ASSERT(false); //TODO
     return nullptr;
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(long long id, std::shared_ptr<ObjectMap> userData) //SResult
+std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(long long, std::shared_ptr<ObjectMap>) //SResult
 {
     ASSERT(false); //TODO
     return nullptr;
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(long long id, std::shared_ptr<ObjectMap> userData)
+std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(long long, std::shared_ptr<ObjectMap>)
 {
     ASSERT(false); //TODO
     return nullptr;

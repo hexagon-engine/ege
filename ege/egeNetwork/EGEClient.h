@@ -36,6 +36,7 @@ public:
 
     virtual EventResult onReceive(std::shared_ptr<Packet> packet);
     EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId);
+    EventResult updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id);
 
     virtual EventResult onLoad();
     virtual void onTick(long long tickCount);
