@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "GameLoop.h"
 
 #include <ege/loop/EventResult.h>
+#include <SFML/System.hpp>
 
 namespace EGE
 {
@@ -20,8 +21,11 @@ int GameLoop::run()
         return 0x0001;
     }
 
+    // TODO: maybe our own clocks?
+    sf::Clock tickClock;
     while(m_running)
     {
+        tickClock.restart();
         onTick(getTickCount());
 
         auto subLoop = getSubGameLoop();
@@ -29,6 +33,10 @@ int GameLoop::run()
             subLoop->onTick(getTickCount());
 
         onUpdate();
+
+        // Limit tick time / frame rate
+        if(m_minTickTime.getValue() > 0.0)
+            sf::sleep(sf::seconds(m_minTickTime.getValue()) - tickClock.getElapsedTime());
     }
 
     result = onFinish(m_exitCode);

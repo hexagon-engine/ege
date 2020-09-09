@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/loop/EventHandler.h>
 #include <ege/loop/EventResult.h>
+#include <ege/loop/Time.h>
 #include <ege/loop/Timer.h>
 
 #include <map>
@@ -33,8 +34,15 @@ public:
     // (and it creates threads, opens ports etc.)
     virtual void setSubLoop(std::shared_ptr<GameLoop> loop);
 
+    virtual void setMinimalTickTime(Time time)
+    {
+        m_minTickTime = time;
+    }
+
 private:
     virtual GameLoop* getSubGameLoop();
+
+    Time m_minTickTime = {0.0, Time::Unit::Seconds};
 };
 
 }
