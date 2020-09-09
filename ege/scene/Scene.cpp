@@ -66,9 +66,9 @@ std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> pr
     }
     return objects;
 }
-std::vector<SceneObject*> Scene::getObjects(std::string name)
+std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
-    return getObjects([name](SceneObject* object)->bool { return object->getName() == name; });
+    return getObjects([typeId](SceneObject* object)->bool { return object->getId() == typeId; });
 }
 SceneObject* Scene::getObject(long long id)
 {
