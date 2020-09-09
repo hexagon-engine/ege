@@ -78,7 +78,7 @@ public:
          return m_extendedChanged;
     }
 
-    bool setDead()
+    void setDead()
     {
         m_dead = true;
     }
