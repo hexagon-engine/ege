@@ -119,7 +119,7 @@ TESTCASE(simple)
 
     // set Test Object to be removed after 5 seconds
     removedObject->addTimer("makeTestObjectDead", &((new EGE::Timer(removedObject.get(), EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
-                                     ->setCallback([scene, removedObject](std::string, EGE::Timer* timer) {
+                                     ->setCallback([scene, removedObject](std::string, EGE::Timer*) {
                                                    removedObject->setDead();
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
@@ -157,7 +157,7 @@ TESTCASE(_2dCamera)
 
     // make camera animated
     auto timer = std::make_shared<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
-    timer->setCallback([cam, &b1](std::string name, EGE::Timer* timer) {
+    timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
                         cam->flyTo(b1 ? sf::Vector2f(0.f, 100.f) : sf::Vector2f(0.f, -100.f), 1.0);
                         b1 = !b1;
                        });
@@ -184,7 +184,7 @@ TESTCASE(_2dCamera)
 
     // set Test Object to be removed after 5 seconds
     removedObject->addTimer("makeTestObjectDead", &((new EGE::Timer(removedObject.get(), EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
-                                     ->setCallback([scene, removedObject](std::string, EGE::Timer* timer) {
+                                     ->setCallback([scene, removedObject](std::string, EGE::Timer*) {
                                                    removedObject->setDead();
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
