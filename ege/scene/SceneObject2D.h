@@ -26,8 +26,9 @@ public:
 
     virtual void setPosition(sf::Vector2f position)
     {
+        if(m_position != position)
+            setMainChanged();
         m_position = position;
-        setMainChanged();
     }
     sf::Vector2f getPosition() const
     {
@@ -35,8 +36,9 @@ public:
     }
     virtual void setMotion(sf::Vector2f motion)
     {
+        if(m_motion != motion)
+            setMainChanged();
         m_motion = motion;
-        setMainChanged();
     }
     sf::Vector2f getMotion() const
     {

@@ -27,7 +27,7 @@ bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(
     animation->setEasingFunction(easing);
     animation->addKeyframe(0,0);
     animation->addKeyframe(1,1);
-    animation->setCallback([this, toPos](std::string name, EGE::Timer* timer) {
+    animation->setCallback([this, toPos](std::string, EGE::Timer* timer) {
                     SceneObject2D* obj = (SceneObject2D*)timer->getLoop();
                     if(!obj->moveTo(toPos))
                     {
