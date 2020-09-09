@@ -54,6 +54,8 @@ public:
 
         addTimer("timer", timer);
         m_motion = sf::Vector2f(rand() % 5 - 2, rand() % 5 - 2);
+        m_rotation = rand() % 360;
+        m_scale = sf::Vector2f(rand() % 2 + 1, rand() % 2 + 1);
     }
 
     virtual void render(sf::RenderTarget& target) const
@@ -61,6 +63,9 @@ public:
         EGE::SceneObject2D::render(target);
         sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
         rs.setPosition(getPosition() - sf::Vector2f(5.f, 5.f));
+        rs.setRotation(m_rotation);
+        rs.setScale(m_scale);
+        rs.setOrigin(m_origin);
         target.draw(rs);
     }
 };
