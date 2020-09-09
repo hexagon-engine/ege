@@ -10,10 +10,15 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-bool SceneObject2D::moveTo(sf::Vector2f pos)
+bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
 {
     // TODO: collisions
-    setPosition(pos);
+
+    if(notify)
+        setPosition(pos);
+    else
+        m_position = pos;
+
     //DUMP(1, m_name);
     //DUMP(1, m_position.x);
     //DUMP(1, m_position.y);
@@ -119,7 +124,11 @@ void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 void SceneObject2D::onUpdate(long long tickCounter)
 {
     SceneObject::onUpdate(tickCounter);
-    moveTo(getPosition() + m_motion);
+
+    // Don't notify client because it already knows about the motion
+    // and can update it on its side.
+    // TODO: fps/tps scaling! m_motion should be in pxs/SECOND
+    moveTo(getPosition() + m_motion, false);
 }
 
 }

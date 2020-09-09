@@ -51,7 +51,7 @@ public:
     }
 
     // with collision check
-    virtual bool moveTo(sf::Vector2f pos);
+    virtual bool moveTo(sf::Vector2f pos, bool notify = true);
 
     // with collision check
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
