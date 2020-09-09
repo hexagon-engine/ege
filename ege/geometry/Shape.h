@@ -16,6 +16,8 @@ class ShapeSet;
 class Shape
 {
 public:
+    virtual ~Shape() {}
+
     virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const = 0;
     virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const = 0;
     virtual bool contains(std::shared_ptr<Point> other) const = 0;

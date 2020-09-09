@@ -11,6 +11,10 @@ set(SOURCES
 	"ObjectString.h"
 	"Serializable.cpp"
 	"Serializable.h"
+	"Vector.cpp"
+	"Vector.h"
+	"VectorOperations.cpp"
+	"VectorOperations.h"
 )
 
 ege_add_module(util)

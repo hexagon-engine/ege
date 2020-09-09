@@ -18,27 +18,27 @@ public:
     virtual EventResult handle(Event& event) override;
 
     virtual void onClose() {}
-    virtual void onResize(sf::Event::SizeEvent& event) {}
+    virtual void onResize(sf::Event::SizeEvent&) {}
     virtual void onLossFocus() {}
     virtual void onGainFocus() {}
-    virtual void onTextEnter(sf::Event::TextEvent& event) {}
-    virtual void onKeyPress(sf::Event::KeyEvent& event) {}
-    virtual void onKeyRelease(sf::Event::KeyEvent& event) {}
-    virtual void onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event) {}
-    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) {}
-    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) {}
-    virtual void onMouseMove(sf::Event::MouseMoveEvent& event) {}
+    virtual void onTextEnter(sf::Event::TextEvent&) {}
+    virtual void onKeyPress(sf::Event::KeyEvent&) {}
+    virtual void onKeyRelease(sf::Event::KeyEvent&) {}
+    virtual void onMouseWheelScroll(sf::Event::MouseWheelScrollEvent&) {}
+    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent&) {}
+    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent&) {}
+    virtual void onMouseMove(sf::Event::MouseMoveEvent&) {}
     virtual void onMouseEnter() {}
     virtual void onMouseLeave() {}
-    virtual void onJoystickButtonPress(sf::Event::JoystickButtonEvent& event) {}
-    virtual void onJoystickButtonRelease(sf::Event::JoystickButtonEvent& event) {}
-    virtual void onJoystickMove(sf::Event::JoystickMoveEvent& event) {}
-    virtual void onJoystickConnect(sf::Event::JoystickConnectEvent& event) {}
-    virtual void onJoystickDisconnect(sf::Event::JoystickConnectEvent& event) {}
-    virtual void onTouchBegin(sf::Event::TouchEvent& event) {}
-    virtual void onTouchMove(sf::Event::TouchEvent& event) {}
-    virtual void onTouchEnd(sf::Event::TouchEvent& event) {}
-    virtual void onSensorChange(sf::Event::SensorEvent& event) {}
+    virtual void onJoystickButtonPress(sf::Event::JoystickButtonEvent&) {}
+    virtual void onJoystickButtonRelease(sf::Event::JoystickButtonEvent&) {}
+    virtual void onJoystickMove(sf::Event::JoystickMoveEvent&) {}
+    virtual void onJoystickConnect(sf::Event::JoystickConnectEvent&) {}
+    virtual void onJoystickDisconnect(sf::Event::JoystickConnectEvent&) {}
+    virtual void onTouchBegin(sf::Event::TouchEvent&) {}
+    virtual void onTouchMove(sf::Event::TouchEvent&) {}
+    virtual void onTouchEnd(sf::Event::TouchEvent&) {}
+    virtual void onSensorChange(sf::Event::SensorEvent&) {}
 };
 
 }

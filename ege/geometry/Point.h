@@ -16,6 +16,8 @@ public:
     Point(double _x = 0, double _y = 0)
     : x(_x), y(_y) {}
 
+    virtual ~Point() {}
+
     virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const;
     virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const;
     virtual bool contains(std::shared_ptr<Point> other) const;

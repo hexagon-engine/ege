@@ -41,9 +41,9 @@ public:
     // accepts new clients, removes disconnected clients, etc.
     void select();
 
-    virtual EventResult onClientConnect(ClientConnection* client) { return EventResult::Failure; }
-    virtual EventResult onClientDisconnect(ClientConnection* client) { return EventResult::Failure; }
-    virtual EventResult onReceive(ClientConnection* client, std::shared_ptr<Packet> packet) { return EventResult::Failure; }
+    virtual EventResult onClientConnect(ClientConnection*) { return EventResult::Failure; }
+    virtual EventResult onClientDisconnect(ClientConnection*) { return EventResult::Failure; }
+    virtual EventResult onReceive(ClientConnection*, std::shared_ptr<Packet>) { return EventResult::Failure; }
 
     virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket) = 0;
 

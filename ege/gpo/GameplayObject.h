@@ -16,6 +16,8 @@ class GameplayObject : public Serializable
 {
     std::string m_id;
 public:
+    virtual ~GameplayObject() {}
+
     GameplayObject(std::string id)
     : m_id(id) {}
 

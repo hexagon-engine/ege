@@ -81,11 +81,11 @@ public:
 protected:
     void setMainChanged(bool flag = true)
     {
-        m_mainChanged = true;
+        m_mainChanged = flag;
     }
     void setExtendedChanged(bool flag = true)
     {
-        m_extendedChanged = true;
+        m_extendedChanged = flag;
     }
 
     Scene* m_owner;

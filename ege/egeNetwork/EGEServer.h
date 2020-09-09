@@ -36,7 +36,7 @@ public:
     // args: client, reason message
     virtual void onClientDisconnect(ClientConnection*, std::string) {}
 
-    virtual std::shared_ptr<ObjectMap> getLoginData(ClientConnection* client) { return nullptr; }
+    virtual std::shared_ptr<ObjectMap> getLoginData(ClientConnection*) { return nullptr; }
 
     // Accept all logins by default, without doing anything with userData!
     // Arguments:                     client                userData
@@ -46,7 +46,7 @@ public:
     virtual void onTick(long long tickCount);
 
     virtual void onExit(int exitCode);
-    virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
+    virtual EventResult onFinish(int) { return EventResult::Success; }
 
     void kickClientWithReason(EGEClientConnection* client, std::string reason);
 

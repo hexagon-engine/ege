@@ -16,6 +16,8 @@ class GameplayObjectManager : public Serializable
 {
 
 public:
+    virtual ~GameplayObjectManager() {}
+
     virtual bool reload();
 
     virtual bool clear() = 0;

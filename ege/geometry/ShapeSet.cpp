@@ -35,7 +35,6 @@ std::shared_ptr<ShapeSet> ShapeSet::sum(std::shared_ptr<Shape> other) const
 
 bool ShapeSet::contains(std::shared_ptr<Point> point) const
 {
-    bool b1 = false;
     for(auto shape: m_subShapes)
     {
         if(shape->contains(point))

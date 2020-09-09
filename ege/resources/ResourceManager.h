@@ -40,7 +40,7 @@ protected:
     void addFont(std::string name, std::shared_ptr<sf::Font> font = nullptr);
 
     // TODO
-    bool loadSystemFont(std::string fileName) { ASSERT(false); return false; }
+    bool loadSystemFont(std::string) { ASSERT(false); return false; }
 
     void setUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr);
 

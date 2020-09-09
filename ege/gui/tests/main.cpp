@@ -267,7 +267,7 @@ public:
         anim->addKeyframe(0.1, 5.0);
         anim->addKeyframe(0.5, -3.0);
         anim->addKeyframe(1.0, 6.0);
-        addAnimation(anim, [this](EGE::Animation* a, double val) {
+        addAnimation(anim, [this](EGE::Animation*, double val) {
                         graph->addVal(val);
                      });
 
@@ -283,7 +283,7 @@ public:
         anim2->addKeyframe(0.5, -3.0);
         anim2->addKeyframe(1.0, 6.0);
         anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
-        addAnimation(anim2, [this](EGE::Animation* a, double val) {
+        addAnimation(anim2, [this](EGE::Animation*, double val) {
                         graph2->addVal(val);
                      });
 
@@ -293,7 +293,7 @@ public:
         anim3->setEasingFunction([](double x)->double {
                                                 return ((x-0.5)*(x-0.5));
                                                 } );
-        addAnimation(anim3, [this](EGE::Animation* a, double val) {
+        addAnimation(anim3, [this](EGE::Animation*, double val) {
                         ball->setPosition(sf::Vector2f(300.f, 400.f + val * 40.0));
                      });
 
@@ -303,7 +303,7 @@ public:
         animLabel->addKeyframe(1.0, -1.0);
         animLabel->setEasingFunction(EGE::AnimationEasingFunctions::constant1);
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
-        addAnimation(animLabel, [this](EGE::Animation* a, double val) {
+        addAnimation(animLabel, [this](EGE::Animation*, double val) {
                         labelAnimated->setPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
                      });
     }
@@ -324,7 +324,7 @@ public:
                 addWidget(button2);
                 timerRunning = true;
                 addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback(
-                    [this](std::string name, EGE::Timer* timer) {
+                    [this](std::string, EGE::Timer*) {
                         removeWidget(button2.get());
                         timerRunning = false;
                     }

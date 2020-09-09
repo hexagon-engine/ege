@@ -84,7 +84,7 @@ TESTCASE(server)
         auto scene = std::make_shared<EGE::Scene2D>(nullptr);
 
         auto timer = std::make_shared<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
-        timer->setCallback([scene](std::string name, EGE::Timer* timer) {
+        timer->setCallback([scene](std::string, EGE::Timer*) {
                                 auto object = std::make_shared<MyObject>(scene.get());
                                 object->setPosition(sf::Vector2f(rand() % 50 - 25, rand() % 50 - 25));
                                 scene->addObject(object);

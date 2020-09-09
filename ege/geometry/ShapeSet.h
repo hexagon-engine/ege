@@ -17,6 +17,7 @@ class ShapeSet : public Shape
 public:
     ShapeSet() = default;
     ShapeSet(const ShapeSet& shapeSet);
+    virtual ~ShapeSet() {}
 
     virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const;
     virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const;

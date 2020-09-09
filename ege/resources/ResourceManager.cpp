@@ -122,7 +122,7 @@ std::shared_ptr<sf::Font> ResourceManager::getDefaultFont()
 bool ResourceManager::setDefaultFont(std::string name)
 {
     auto font = getFont(name);
-    if(font && font != getDefaultFont() || name.empty())
+    if((font && font != getDefaultFont()) || name.empty())
     {
         m_defaultFont = name;
         return true;

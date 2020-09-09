@@ -36,8 +36,8 @@ public:
     virtual size_t getEventHandlerCount() { return m_eventHandlers.size(); }
     virtual EventResult fireEvent(Event& event);
 
-    virtual void onTimerFinish(Timer* timer) {}
-    virtual void onTimerTick(Timer* timer) {}
+    virtual void onTimerFinish(Timer*) {}
+    virtual void onTimerTick(Timer*) {}
 
     void addTimer(const std::string& name, Timer* timer, TimerImmediateStart start = TimerImmediateStart::Yes)
     {

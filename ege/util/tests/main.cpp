@@ -4,6 +4,8 @@
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
+#include <ege/util/Vector.h>
+#include <ege/util/VectorOperations.h>
 #include <iostream>
 
 TESTCASE(object)
@@ -81,6 +83,23 @@ TESTCASE(merge)
     std::cerr << map2->toString() << std::endl;
 
     std::cerr << map1->merge(map2)->toString() << std::endl;
+}
+
+TESTCASE(vectors)
+{
+    EGE::Vec2d vec(4, 3);
+    double dist = EGE::VectorOperations::distanceTo({}, vec);
+    EXPECT_EQUAL(dist, 5);
+    double angle = EGE::VectorOperations::angleTo(vec, vec);
+    std::cerr << angle << std::endl;
+
+    EGE::Vec2i vec1(4, 3);
+    EGE::Vec2i vec2(3, 4);
+    EXPECT_EQUAL(EGE::VectorOperations::length(vec1), EGE::VectorOperations::length(vec2));
+    EXPECT(vec1 < vec2 * 2);
+    EXPECT(vec1 * 2 > vec2);
+    EXPECT(vec1 >= vec2);
+    EXPECT(vec1 <= vec2);
 }
 
 RUN_TESTS(util)

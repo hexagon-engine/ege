@@ -43,7 +43,7 @@ public:
     virtual void onExit(int) {}
     virtual EventResult onFinish(int exitCode);
 
-    virtual void onDisconnect(std::string reason) {}
+    virtual void onDisconnect(std::string) {}
 
     virtual bool send(std::shared_ptr<Packet> packet)
     {

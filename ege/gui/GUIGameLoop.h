@@ -29,8 +29,8 @@ public:
 
     virtual EventResult onLoad() override;
     virtual void onTick(long long tickCount) override;
-    virtual void onExit(int exitCode) override {}
-    virtual EventResult onFinish(int exitCode) override
+    virtual void onExit(int) override {}
+    virtual EventResult onFinish(int) override
     {
         // TODO: save it to file instead of std::cerr
         m_profiler->end();

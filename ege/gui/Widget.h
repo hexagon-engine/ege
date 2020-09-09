@@ -71,7 +71,7 @@ public:
 
     virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};
-    virtual void onCommand(const Command& command) {}
+    virtual void onCommand(const Command&) {}
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;

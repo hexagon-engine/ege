@@ -62,7 +62,7 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     }
     if(!timer->getCallback())
     {
-        timer->setCallback([this](std::string name, Timer* _timer) {
+        timer->setCallback([this](std::string, Timer* _timer) {
                                 TimerEvent event(TimerEvent::Tick, _timer);
                                 fireEvent(event);
                                 if(event.isCanceled())

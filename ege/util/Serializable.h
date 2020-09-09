@@ -16,6 +16,8 @@ namespace EGE
 class Serializable
 {
 public:
+    virtual ~Serializable() {}
+
     virtual std::shared_ptr<ObjectMap> serialize() = 0;
     virtual void deserialize(std::shared_ptr<ObjectMap>) = 0;
 };

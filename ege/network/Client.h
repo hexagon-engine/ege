@@ -17,7 +17,7 @@ public:
 
     bool connect(sf::IpAddress ip, unsigned short port);
     void update();
-    virtual EventResult onReceive(std::shared_ptr<Packet> packet) { return EventResult::Failure; }
+    virtual EventResult onReceive(std::shared_ptr<Packet>) { return EventResult::Failure; }
 };
 
 }

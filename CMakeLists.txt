@@ -5,7 +5,7 @@ set(EGE_LIB_ROOT ${CMAKE_SOURCE_DIR})
 include(${EGE_LIB_ROOT}/cmake/EGEUtils.cmake)
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/root")
-set(CMAKE_CXX_FLAGS -std=c++17)
+set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra")
 
 ### SFML ###
 
