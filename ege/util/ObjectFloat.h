@@ -7,13 +7,15 @@ Copyright (c) Sppmacd 2020
 
 #include "Object.h"
 
+#include <cmath>
+
 namespace EGE
 {
 
-class ObjectInt : public Object
+class ObjectFloat : public Object
 {
 public:
-    ObjectInt(long long num)
+    ObjectFloat(double num)
     : m_number(num) {}
 
     virtual std::string toString() const;
@@ -25,11 +27,11 @@ public:
     virtual double asFloat() const { return m_number; }
 
     virtual bool isString() const { return true; }
-    virtual bool isInt() const { return true; }
+    virtual bool isInt() const { return std::floor(m_number) == m_number; }
     virtual bool isBool() const { return true; }
     virtual bool isFloat() const { return true; }
 
-    void setNumber(long long number)
+    void setNumber(double number)
     {
         m_number = number;
     }
@@ -37,7 +39,7 @@ public:
     virtual std::shared_ptr<Object> copy() const;
 
 private:
-    long long m_number;
+    double m_number;
 };
 
 }

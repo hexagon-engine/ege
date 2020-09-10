@@ -1,7 +1,9 @@
 #include <testsuite/Tests.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Object.h>
+#include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectList.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/Vector.h>
@@ -11,10 +13,10 @@
 TESTCASE(object)
 {
     EGE::ObjectMap map;
-    map.addObject("test", std::make_shared<EGE::ObjectString>("test"));
-    map.addObject("test2", std::make_shared<EGE::ObjectString>("test"));
-    auto map2 = std::make_shared<EGE::ObjectMap>();
-    map2->addObject("test3", std::make_shared<EGE::ObjectString>("test44"));
+    map.addObject("test", make<EGE::ObjectString>("test"));
+    map.addObject("test2", make<EGE::ObjectString>("test"));
+    auto map2 = make<EGE::ObjectMap>();
+    map2->addObject("test3", make<EGE::ObjectString>("test44"));
     map.addObject("testObjects", map2);
     DEBUG_PRINT(map.getObject("test").lock()->toString().c_str());
     DEBUG_PRINT(((EGE::ObjectMap*)map.getObject("testObjects").lock().get())->getObject("test3").lock()->toString().c_str());
@@ -26,7 +28,7 @@ class MyConverter : public EGE::Converter<std::string>
 public:
     virtual bool in(std::string& input, EGE::ObjectMap& object) const
     {
-        object.addObject("myString", std::make_shared<EGE::ObjectString>(input));
+        object.addObject("myString", make<EGE::ObjectString>(input));
         return true;
     }
 
@@ -46,7 +48,7 @@ TESTCASE(converter)
     MyConverter converter;
     std::string myString;
     EGE::ObjectMap map, map2;
-    map.addObject("myString", std::make_shared<EGE::ObjectInt>(1234));
+    map.addObject("myString", make<EGE::ObjectInt>(1234));
     std::cerr << map.toString() << std::endl;
     myString << EGE::objectOut(map, converter);
     EXPECT_EQUAL(myString, "1234");
@@ -59,30 +61,43 @@ TESTCASE(converter)
 TESTCASE(merge)
 {
     // simple merge
-    auto map1 = std::make_shared<EGE::ObjectMap>();
-    map1->addObject("object1", std::make_shared<EGE::ObjectString>("value1"));
-    map1->addObject("object2", std::make_shared<EGE::ObjectString>("value2"));
+    auto map1 = make<EGE::ObjectMap>();
+    map1->addObject("object1", make<EGE::ObjectString>("value1"));
+    map1->addObject("object2", make<EGE::ObjectString>("value2"));
     std::cerr << map1->toString() << std::endl;
 
-    auto map2 = std::make_shared<EGE::ObjectMap>();
-    map2->addObject("object3", std::make_shared<EGE::ObjectString>("value3"));
-    map2->addObject("object4", std::make_shared<EGE::ObjectString>("value4"));
+    auto map2 = make<EGE::ObjectMap>();
+    map2->addObject("object3", make<EGE::ObjectString>("value3"));
+    map2->addObject("object4", make<EGE::ObjectString>("value4"));
     std::cerr << map2->toString() << std::endl;
 
     std::cerr << map1->merge(map2)->toString() << std::endl;
 
     // deep merge
-    auto subMap1 = std::make_shared<EGE::ObjectMap>();
-    subMap1->addObject("SubObject1", std::make_shared<EGE::ObjectString>("gggg"));
+    auto subMap1 = make<EGE::ObjectMap>();
+    subMap1->addObject("SubObject1", make<EGE::ObjectString>("gggg"));
     map1->addObject("sub", subMap1);
     std::cerr << map1->toString() << std::endl;
 
-    auto subMap2 = std::make_shared<EGE::ObjectMap>();
-    subMap2->addObject("SubObject2", std::make_shared<EGE::ObjectString>("gggg"));
+    auto subMap2 = make<EGE::ObjectMap>();
+    subMap2->addObject("SubObject2", make<EGE::ObjectString>("gggg"));
     map2->addObject("sub", subMap2);
     std::cerr << map2->toString() << std::endl;
 
     std::cerr << map1->merge(map2)->toString() << std::endl;
+}
+
+TESTCASE(lists)
+{
+    std::shared_ptr<EGE::ObjectMap> _mapFirst = make<EGE::ObjectMap>();
+    std::shared_ptr<EGE::ObjectList> _list = make<EGE::ObjectList>();
+    _list->addObject(make<EGE::ObjectFloat>(0.0));
+    _list->addObject(make<EGE::ObjectFloat>(154.0));
+    auto map = make<EGE::ObjectMap>();
+    map->addObject("test3", make<EGE::ObjectString>("test44"));
+    _list->addObject(map);
+    _mapFirst->addObject("Test", _list);
+    std::cerr << _mapFirst->toString() << std::endl;
 }
 
 TESTCASE(vectors)
