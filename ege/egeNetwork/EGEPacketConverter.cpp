@@ -6,7 +6,9 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacketConverter.h"
 
 #include <ege/main/Config.h>
+#include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectList.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
 #include <iostream>
@@ -35,6 +37,16 @@ static bool parseInt(sf::Packet& input, ObjectInt& object)
     return true;
 }
 
+static bool parseFloat(sf::Packet& input, ObjectFloat& object)
+{
+    double data;
+    if(!(input >> data))
+        return false;
+
+    object.setNumber(data);
+    return true;
+}
+
 static bool parseString(sf::Packet& input, ObjectString& object)
 {
     std::string data;
@@ -46,6 +58,7 @@ static bool parseString(sf::Packet& input, ObjectString& object)
 }
 
 static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object);
+static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object);
 
 static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
 {
@@ -61,10 +74,27 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
             return obj;
         }
         break;
+    case 'l':
+        {
+            std::shared_ptr<ObjectList> obj = std::make_shared<ObjectList>();
+            Internal::_ParseResult result = parseList(input, *obj);
+            if(!result.message.empty())
+                return nullptr;
+            return obj;
+        }
+        break;
     case 'i':
         {
             std::shared_ptr<ObjectInt> obj = std::make_shared<ObjectInt>(0);
             if(!parseInt(input, *obj))
+                return nullptr;
+            return obj;
+        }
+        break;
+    case 'f':
+        {
+            std::shared_ptr<ObjectFloat> obj = std::make_shared<ObjectFloat>(0.0);
+            if(!parseFloat(input, *obj))
                 return nullptr;
             return obj;
         }
@@ -126,6 +156,45 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
     return {"impossible error", input.getReadPosition()};
 }
 
+static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
+{
+    while(true)
+    {
+        // value
+        if(!input.endOfPacket())
+        {
+            // TODO: maybe peek() function?
+            size_t readPos = input.getReadPosition();
+            const void* data = input.getData();
+            unsigned char chr = ((unsigned char*)data)[readPos];
+            if(chr != '0')
+            {
+                // value type
+                sf::Uint8 type;
+                if(!(input >> type))
+                {
+                    return {};
+                }
+
+                // value
+                std::shared_ptr<Object> specific = parseSpecific(type, input);
+                if(!specific)
+                    return {"expected value", input.getReadPosition()};
+                object.addObject(specific);
+            }
+            else
+            {
+                // actually read the character.
+                input >> chr;
+                return {};
+            }
+        }
+    }
+
+    ASSERT(false);
+    return {"impossible error", input.getReadPosition()};
+}
+
 bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
 {
     // value type must be 'm'
@@ -160,9 +229,25 @@ static bool outputObject(sf::Packet& output, const Object& object)
         output << (sf::Uint8)'0';
         return success;
     }
+    else if(object.isList())
+    {
+        output << (sf::Uint8)'l';
+        bool success = true;
+        for(auto it: (ObjectList&)object)
+        {
+            success |= outputObject(output, *it);
+        }
+        output << (sf::Uint8)'0';
+        return success;
+    }
     else if(object.isInt())
     {
         output << (sf::Uint8)'i' << object.asInt();
+        return true;
+    }
+    else if(object.isFloat())
+    {
+        output << (sf::Uint8)'f' << object.asFloat();
         return true;
     }
     else if(object.isString())
