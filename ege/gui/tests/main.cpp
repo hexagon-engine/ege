@@ -282,7 +282,7 @@ public:
         anim2->addKeyframe(0.1, 5.0);
         anim2->addKeyframe(0.5, -3.0);
         anim2->addKeyframe(1.0, 6.0);
-        anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
+        anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutCirc);
         addAnimation(anim2, [this](EGE::Animation*, double val) {
                         graph2->addVal(val);
                      });
@@ -301,7 +301,7 @@ public:
         animLabel->addKeyframe(0.0, -1.0);
         animLabel->addKeyframe(0.5, 1.0);
         animLabel->addKeyframe(1.0, -1.0);
-        animLabel->setEasingFunction(EGE::AnimationEasingFunctions::constant1);
+        animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
         addAnimation(animLabel, [this](EGE::Animation*, double val) {
                         labelAnimated->setPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
