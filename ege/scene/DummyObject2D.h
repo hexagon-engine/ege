@@ -1,11 +1,11 @@
-#pragma once
-
-#include "SceneObject2D.h"
 /*
 EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
+#pragma once
+
+#include "SceneObject2D.h"
 #include "Scene.h"
 
 #include <SFML/Graphics.hpp>
