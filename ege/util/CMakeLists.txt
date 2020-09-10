@@ -1,6 +1,8 @@
 set(SOURCES
 	"Converter.cpp"
 	"Converter.h"
+	"Math.cpp"
+	"Math.h"
 	"Object.cpp"
 	"Object.h"
 	"ObjectInt.cpp"

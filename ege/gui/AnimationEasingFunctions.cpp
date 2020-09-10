@@ -4,7 +4,9 @@ Copyright (c) Sppmacd 2020
 */
 
 #include "AnimationEasingFunctions.h"
+
 #include <cmath>
+#include <ege/util/Math.h>
 
 namespace EGE
 {
@@ -16,8 +18,8 @@ namespace AnimationEasingFunctions
 static const double c1 = 1.70158;
 static const double c2 = c1 * 1.525;
 static const double c3 = c1 + 1;
-static const double c4 = (2 * M_PI) / 3;
-static const double c5 = (2 * M_PI) / 4.5;
+static const double c4 = (2 * pi()) / 3;
+static const double c5 = (2 * pi()) / 4.5;
 
 double constant1(double x)
 {

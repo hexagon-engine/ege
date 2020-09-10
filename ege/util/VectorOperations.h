@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Math.h"
 #include "Vector.h"
 
 #include <cmath>

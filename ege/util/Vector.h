@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+// 2D Vectors
 template<class T>
 class Vector2
 {
@@ -30,6 +31,7 @@ typedef Vector2<double> Vec2d;
 typedef Vector2<int> Vec2i;
 typedef Vector2<unsigned> Vec2u;
 
+// 3D Vectors
 template<class T>
 class Vector3
 {
@@ -51,11 +53,6 @@ typedef Vector3<float> Vec3f;
 typedef Vector3<double> Vec3d;
 typedef Vector3<int> Vec3i;
 typedef Vector3<unsigned> Vec3u;
-
-// Angle
-typedef double DegreeAngle;
-typedef double RadianAngle;
-typedef DegreeAngle Angle;
 
 // Polar and Spherical Vectors
 template<class T>
@@ -79,21 +76,5 @@ typedef PolarVector2<float> PolVec2f;
 typedef PolarVector2<double> PolVec2d;
 typedef PolarVector2<int> PolVec2i;
 typedef PolarVector2<unsigned> PolVec2u;
-
-// Radian <-> Degrees
-// TODO: move it to some Math.h file !
-DegreeAngle rad2deg(RadianAngle angle);
-RadianAngle deg2rad(DegreeAngle angle);
-
-// Constants
-inline double pi()
-{
-    return 3.141592653589793;
-}
-
-inline double e()
-{
-    return 2.718281828459045;
-}
 
 }
