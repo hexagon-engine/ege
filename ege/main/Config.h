@@ -16,7 +16,7 @@ namespace EGE
 template<typename T, typename... Args>
 inline std::shared_ptr<T> make(Args&&... args)
 {
-    return std::make_shared(std::forward<Args>(args));
+    return std::make_shared(std::forward<Args>(args)...);
 }
 
 }
@@ -63,4 +63,4 @@ void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
     }
 
 #define instanceof(pointer, clazz) \
-    (dynamic_cast<clazz*>(pointer))
+    (dynamic_cast<clazz*>(pointer) != nullptr)

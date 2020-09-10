@@ -81,7 +81,7 @@ public:
         return nullptr;
     }
 
-    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    virtual void deserialize(std::shared_ptr<EGE::ObjectMap>)
     {
         // TODO because of EGE::GameplayObjectRegistry
     }

@@ -164,7 +164,7 @@ Profiler::Section* Profiler::Section::findSubSection(std::string name)
 void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, long long rootTime)
 {
     // this section
-    for(size_t s = 0; s < m_depth; s++)
+    for(int s = 0; s < m_depth; s++)
     {
         if(s == m_depth - 1)
             info += "|- ";

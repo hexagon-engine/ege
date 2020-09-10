@@ -127,7 +127,6 @@ public:
     void onLoad()
     {
         DEBUG_PRINT("MyGuiScreen onLoad");
-        EGE::Game& game = EGE::Game::instance();
         size_t s = 0;
         for(auto& _color: MyGameplayObjectManager::instance->colors.arr())
         {

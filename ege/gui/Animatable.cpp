@@ -14,7 +14,7 @@ void Animatable::addAnimation(std::shared_ptr<Animation> animation, std::functio
 {
     if(!animation->getUpdateCallback())
     {
-        animation->setUpdateCallback([callback](std::string name, Timer* timer) {
+        animation->setUpdateCallback([callback](std::string, Timer* timer) {
                                     Animation* anim = (Animation*)timer;
                                     double time = (timer->getElapsedTime().getValue()) / (timer->getInterval().getValue());
                                     if(time < 0.0)

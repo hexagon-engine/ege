@@ -38,7 +38,7 @@ TESTCASE(simple)
         if(myTask->finished())
         {
             auto timer = std::make_shared<EGE::Timer>(&loop, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds));
-            timer->setCallback([&running](std::string name, EGE::Timer* timer) {
+            timer->setCallback([&running](std::string, EGE::Timer*) {
                                     running = false;
                                });
             loop.addTimer("exit", timer);
@@ -74,7 +74,7 @@ TESTCASE(threadSafeEventLoop)
         }
     }));
     auto timer = std::make_shared<EGE::Timer>(&loop, EGE::Timer::Mode::Infinite, EGE::Time(1.0, EGE::Time::Unit::Seconds));
-    timer->setCallback([&progress](std::string timer, EGE::Timer* _timer) {
+    timer->setCallback([&progress](std::string, EGE::Timer*) {
         std::cerr << "Loading progress: " << (int)(progress * 100) << "%" << std::endl;
     });
     loop.addTimer("displayProgress", timer);

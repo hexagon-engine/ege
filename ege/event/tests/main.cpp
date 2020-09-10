@@ -14,7 +14,7 @@ class MyGameLoop : public EGE::EventLoop
     std::shared_ptr<EGE::SFMLSystemWindow> m_window;
 public:
     virtual EGE::EventResult onLoad();
-    virtual void onTick(long long tickCount)
+    virtual void onTick(long long)
     {
         //DEBUG_PRINT("onTick");
         m_window->callEvents(this);

@@ -23,7 +23,7 @@ public:
 
     typedef std::map<std::string, std::shared_ptr<Object>> InternalMap;
 
-    std::shared_ptr<Object>& addObject(std::string name, std::shared_ptr<Object> subObject);
+    const std::shared_ptr<Object>& addObject(std::string name, const std::shared_ptr<Object>& subObject);
     std::weak_ptr<Object> getObject(std::string name) const;
     bool hasObject(std::string name) const;
 

@@ -35,7 +35,7 @@ std::shared_ptr<ShapeSet> Point::sum(std::shared_ptr<Shape> other) const
 
 bool Point::contains(std::shared_ptr<Point> other) const
 {
-    ASSERT(other)
+    ASSERT(other);
     return other->x == x && other->y == y;
 }
 

@@ -18,7 +18,7 @@ ObjectMap::ObjectMap(const ObjectMap& map)
     }
 }
 
-std::shared_ptr<Object>& ObjectMap::addObject(std::string name, std::shared_ptr<Object> subObject)
+const std::shared_ptr<Object>& ObjectMap::addObject(std::string name, const std::shared_ptr<Object>& subObject)
 {
     if(!subObject)
         return subObject;
