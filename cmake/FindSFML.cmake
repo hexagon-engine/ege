@@ -81,7 +81,7 @@ set(FIND_SFML_PATHS
           PATHS ${FIND_SFML_PATHS}) 
 ]]
 # ``EGE``
-set(SFML_INCLUDE_DIR ${SFML_ROOT}/include)
+set(SFML_INCLUDE_DIR ${SFML_ROOT}/root/include)
 
 # check the version number
 set(SFML_VERSION_OK TRUE)

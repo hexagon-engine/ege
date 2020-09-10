@@ -1,0 +1,13 @@
+language: cpp
+os: linux
+dist: bionic
+compiler:
+- gcc
+before_install:
+- sudo apt update
+- sudo apt install g++ make cmake git libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libflac-dev libogg-dev libvorbis-dev libopenal-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
+script:
+- export EGE_ROOT="$PWD"
+- bash -x scripts/configure.sh
+- cd build
+- make install -j2
