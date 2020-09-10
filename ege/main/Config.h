@@ -6,15 +6,28 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <stdlib.h>
+#include <utility>
 
-void _ege_assertion_failed(const char* expr, const char* file, size_t line);
+namespace EGE
+{
+
+template<typename T, typename... Args>
+inline std::shared_ptr<T> make(Args&&... args)
+{
+    return std::make_shared(std::forward<Args>(args));
+}
+
+}
+
+extern "C"
+void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
 
 #define ASSERT(expr) \
-    if(!(expr)) \
-    { \
-        _ege_assertion_failed(#expr, __FILE__, __LINE__); \
-    }
+    if(!(expr)) _ege_assertion_failed(#expr, __FILE__, __LINE__)
+
+#define CRASH() ASSERT(false)
 
 #define EGE_ENUM_YES_NO(X) \
     enum class X : bool \
@@ -51,4 +64,3 @@ void _ege_assertion_failed(const char* expr, const char* file, size_t line);
 
 #define instanceof(pointer, clazz) \
     (dynamic_cast<clazz*>(pointer))
-
