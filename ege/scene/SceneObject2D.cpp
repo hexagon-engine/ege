@@ -6,7 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "SceneObject2D.h"
 
 #include <ege/scene/Scene.h>
-#include <ege/util/ObjectInt.h>
+#include <ege/util/ObjectFloat.h>
 
 namespace EGE
 {
@@ -75,19 +75,19 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain()
     std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
 
     // TODO: change it to floats!
-    data->addObject("pX", std::make_shared<ObjectInt>(m_position.x));
-    data->addObject("pY", std::make_shared<ObjectInt>(m_position.y));
+    data->addObject("pX", std::make_shared<ObjectFloat>(m_position.x));
+    data->addObject("pY", std::make_shared<ObjectFloat>(m_position.y));
 
-    data->addObject("oX", std::make_shared<ObjectInt>(m_origin.x));
-    data->addObject("oY", std::make_shared<ObjectInt>(m_origin.y));
+    data->addObject("oX", std::make_shared<ObjectFloat>(m_origin.x));
+    data->addObject("oY", std::make_shared<ObjectFloat>(m_origin.y));
 
-    data->addObject("sX", std::make_shared<ObjectInt>(m_scale.x));
-    data->addObject("sY", std::make_shared<ObjectInt>(m_scale.y));
+    data->addObject("sX", std::make_shared<ObjectFloat>(m_scale.x));
+    data->addObject("sY", std::make_shared<ObjectFloat>(m_scale.y));
 
-    data->addObject("mX", std::make_shared<ObjectInt>(m_motion.x));
-    data->addObject("mY", std::make_shared<ObjectInt>(m_motion.y));
+    data->addObject("mX", std::make_shared<ObjectFloat>(m_motion.x));
+    data->addObject("mY", std::make_shared<ObjectFloat>(m_motion.y));
 
-    data->addObject("rot", std::make_shared<ObjectInt>(m_rotation));
+    data->addObject("rot", std::make_shared<ObjectFloat>(m_rotation));
 
     auto superData = SceneObject::serializeMain();
 
@@ -106,19 +106,19 @@ if(!tmp.expired() && tmp.lock()->is##type()) \
 
 void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 {
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "pX", m_position.x, Int);
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "pY", m_position.y, Int);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "pX", m_position.x, Float);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "pY", m_position.y, Float);
 
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "oX", m_origin.x, Int);
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "oY", m_origin.y, Int);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "oX", m_origin.x, Float);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "oY", m_origin.y, Float);
 
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "sX", m_scale.x, Int);
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "sY", m_scale.y, Int);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "sX", m_scale.x, Float);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "sY", m_scale.y, Float);
 
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "mX", m_motion.x, Int);
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "mY", m_motion.y, Int);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "mX", m_motion.x, Float);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "mY", m_motion.y, Float);
 
-    DESERIALIZE_OBJECT_WITH_CHECK(object, "rot", m_rotation, Int);
+    DESERIALIZE_OBJECT_WITH_CHECK(object, "rot", m_rotation, Float);
 
     SceneObject::deserializeMain(object);
 }
