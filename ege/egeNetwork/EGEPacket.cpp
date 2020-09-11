@@ -34,6 +34,7 @@ std::string EGEPacket::typeString(Type type)
         case EGEPacket::Type::SSceneDeletion: return "SSceneDeletion";
         case EGEPacket::Type::CSceneObjectControl: return "CSceneObjectControl";
         case EGEPacket::Type::SSceneObjectControl: return "SSceneObjectControl";
+        case EGEPacket::Type::CSceneObjectRequest: return "CSceneObjectRequest";
         default: return "<unknown>";
     }
 }

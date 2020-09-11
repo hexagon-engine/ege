@@ -45,13 +45,15 @@ void Scene::onUpdate(long long tickCounter)
 
 long long Scene::addObject(std::shared_ptr<SceneObject> object)
 {
-    object->setObjectId(++m_greatestId);
-    m_objects.insert(std::make_pair(m_greatestId, object));
+    if(!object->getObjectId())
+        object->setObjectId(++m_greatestId);
+
+    m_objects.insert(std::make_pair(object->getObjectId(), object));
 
     if(m_addObjectCallback)
         m_addObjectCallback(object);
 
-    return m_greatestId;
+    return object->getObjectId();
 }
 
 std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> predicate)
@@ -70,11 +72,11 @@ std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
     return getObjects([typeId](SceneObject* object)->bool { return object->getId() == typeId; });
 }
-SceneObject* Scene::getObject(long long id)
+std::shared_ptr<SceneObject> Scene::getObject(long long id)
 {
     auto it = m_objects.find(id);
     if(it != m_objects.end())
-        return it->second.get();
+        return it->second;
     return nullptr;
 }
 

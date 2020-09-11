@@ -1,4 +1,5 @@
 add_subdirectory(asyncLoop)
+add_subdirectory(controller)
 add_subdirectory(debug)
 add_subdirectory(egeNetwork)
 add_subdirectory(event)

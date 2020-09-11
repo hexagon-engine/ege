@@ -16,7 +16,7 @@ bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> 
     if(!packet || !endpoint)
         return true;
 
-    sf::Lock lock(endpoint->getMutex());
+    //sf::Lock lock(endpoint->getMutex());
     SFMLPacket* packet2 = (SFMLPacket*)packet.get();
 
     sf::Packet sfPacket = packet2->toSFMLPacket();
@@ -36,7 +36,7 @@ std::shared_ptr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
     if(!endpoint)
         return nullptr;
 
-    sf::Lock lock(endpoint->getMutex());
+    //sf::Lock lock(endpoint->getMutex());
 
     sf::Packet sfPacket;
     sf::Socket::Status status = endpoint->getSocket().lock()->receive(sfPacket);

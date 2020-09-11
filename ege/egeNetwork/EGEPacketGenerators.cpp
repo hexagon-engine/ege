@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "EGEPacket.h"
 
+#include <ege/main/Config.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectString.h>
 
@@ -112,16 +113,32 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSSceneDeletion(std::shared_ptr<Obj
     return nullptr;
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(long long, std::shared_ptr<ObjectMap>) //SResult
+std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data) //SResult
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    args->addObject("id", make<ObjectInt>(object->getObjectId()));
+    std::shared_ptr<ObjectMap> args_data = make<ObjectMap>();
+    args_data->addObject("type", make<ObjectString>(data.getType()));
+    args_data->addObject("args", data.getArgs());
+    args->addObject("data", args_data);
+    return make<EGEPacket>(EGEPacket::Type::CSceneObjectControl, args);
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(long long, std::shared_ptr<ObjectMap>)
+std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(std::shared_ptr<SceneObject> object)
 {
-    ASSERT(false); //TODO
-    return nullptr;
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    if(!object)
+        args->addObject("id", make<ObjectInt>(0));
+    else
+        args->addObject("id", make<ObjectInt>(object->getObjectId()));
+    return make<EGEPacket>(EGEPacket::Type::SSceneObjectControl, args);
+}
+
+std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectRequest(long long id)
+{
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    args->addObject("id", make<ObjectInt>(id));
+    return make<EGEPacket>(EGEPacket::Type::CSceneObjectRequest, args);
 }
 
 }

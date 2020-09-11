@@ -3,6 +3,8 @@
 #include <ege/egeNetwork/EGEClient.h>
 #include <ege/egeNetwork/EGEPacket.h>
 #include <ege/egeNetwork/EGEServer.h>
+#include <ege/egeNetwork/ServerNetworkController.h>
+#include <ege/event/SystemEventHandler.h>
 #include <ege/event/SystemWindow.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/GUIScreen.h>
@@ -43,17 +45,21 @@ TESTCASE(converter)
 class MyObject : public EGE::SceneObject2D
 {
 public:
-    MyObject(EGE::Scene* owner)
+    MyObject(EGE::Scene* owner, bool playerControlled = false)
     : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
     {
-        auto timer = std::make_shared<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
-        timer->setCallback([this](std::string, EGE::Timer*) {
-                                std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
-                                m_dead = true;
-                           });
+        // only server side!
+        if(!playerControlled && !owner->getLoop())
+        {
+            auto timer = std::make_shared<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+            timer->setCallback([this](std::string, EGE::Timer*) {
+                                    std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
+                                    m_dead = true;
+                               });
 
-        addTimer("timer", timer);
-        m_motion = sf::Vector2f(rand() % 5 - 2, rand() % 5 - 2);
+            addTimer("timer", timer);
+            m_motion = sf::Vector2f(rand() % 5 - 2, rand() % 5 - 2);
+        }
         m_rotation = rand() % 360;
         m_scale = sf::Vector2f(rand() % 2 + 1, rand() % 2 + 1);
     }
@@ -68,15 +74,137 @@ public:
         rs.setOrigin(m_origin);
         target.draw(rs);
     }
+
+    virtual void move(bool moving, int dir)
+    {
+        if(moving)
+        {
+            switch(dir)
+            {
+                case 0: m_motion.x = -5.f; break; // a
+                case 1: m_motion.y = 5.f; break; // s
+                case 2: m_motion.x = 5.f; break; // d
+                case 3: m_motion.y = -5.f; break; // w
+            }
+        }
+        else
+        {
+            switch(dir)
+            {
+                case 0: if(m_motion.x == -5.f) m_motion.x = 0.f; break; // a
+                case 1: if(m_motion.y == 5.f) m_motion.y = 0.f; break; // s
+                case 2: if(m_motion.x == 5.f) m_motion.x = 0.f; break; // d
+                case 3: if(m_motion.y == -5.f) m_motion.y = 0.f; break; // w
+            }
+        }
+        setMainChanged();
+    }
+};
+
+class MyObjectServerController : public EGE::ServerNetworkController
+{
+public:
+    MyObjectServerController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEServer* server)
+    : EGE::ServerNetworkController(object, server) {}
+
+    virtual void handleRequest(const EGE::ControlObject& data) override
+    {
+        std::string type = data.getType();
+        MyObject* object = (MyObject*)getObject().get();
+        bool moving = data.getArgs()->getObject("moving").lock()->asInt();
+        int dir = data.getArgs()->getObject("dir").lock()->asInt();
+
+        if(type == "move")
+            object->move(moving, dir);
+    }
+};
+
+class MyObjectClientController : public EGE::ClientNetworkController
+{
+public:
+    MyObjectClientController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEClient* client)
+    : EGE::ClientNetworkController(object, client) {}
+
+    virtual void handleRequest(const EGE::ControlObject& data) override
+    {
+        std::string type = data.getType();
+        MyObject* object = (MyObject*)getObject().get();
+        bool moving = data.getArgs()->getObject("moving").lock()->asInt();
+        int dir = data.getArgs()->getObject("dir").lock()->asInt();
+
+        if(type == "move")
+            object->move(moving, dir);
+    }
+};
+
+class MyServer : public EGE::EGEServer
+{
+public:
+    MyServer()
+    : EGE::EGEServer(rand() % 63536 + 2000) {}
+
+    virtual std::shared_ptr<EGE::ServerNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
+    {
+        if(object->getId() == "test-egeNetwork:MyObject")
+        {
+            // MyObject is controlled by MyObjectServerController
+            return make<MyObjectServerController>(object, this);
+        }
+
+        // object cannot be controlled
+        return nullptr;
+    }
+
+    virtual EGE::EventResult onLogin(EGE::EGEClientConnection* client, std::shared_ptr<EGE::ObjectMap> data)
+    {
+        // Synchronize client with server.
+        EGE::EGEServer::onLogin(client, data);
+
+        // Spawn SceneObject that will be controlled by this client.
+        auto sceneObject = make<MyObject>(getScene().get(), true);
+        std::cerr << "Adding Object to Scene" << std::endl;
+        getScene()->addObject(sceneObject);
+
+        // Set SceneObject to be controlled by this Client.
+        setDefaultController(client, sceneObject);
+
+        return EGE::EventResult::Success;
+    }
+};
+
+class MyClient : public EGE::EGEClient
+{
+public:
+    MyClient(unsigned short port)
+    : EGE::EGEClient(sf::IpAddress::LocalHost, port) {}
+
+    virtual std::shared_ptr<EGE::ClientNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
+    {
+        if(object->getId() == "test-egeNetwork:MyObject")
+        {
+            // MyObject is controlled by MyObjectClientController
+            return make<MyObjectClientController>(object, this);
+        }
+
+        // object cannot be controlled
+        return nullptr;
+    }
+
+    void move(bool moving, int dir)
+    {
+        std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
+        _map->addObject("moving", make<EGE::ObjectInt>(moving));
+        _map->addObject("dir", make<EGE::ObjectInt>(dir));
+        requestControl(nullptr, EGE::ControlObject("move", _map));
+    }
 };
 
 TESTCASE(server)
 {
     srand(time(nullptr));
-    int PORT = rand() % 63536 + 2000;
 
-    auto serverThread = [PORT]() {
-        EGE::EGEServer server(PORT);
+    auto serverThread = []() {
+        MyServer server;
 
         server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
 
@@ -107,9 +235,57 @@ TESTCASE(server)
     thread1.launch();
 }
 
+class MySystemEventHandler : public EGE::DefaultSystemEventHandler
+{
+public:
+    MySystemEventHandler(std::weak_ptr<EGE::SFMLSystemWindow> window, std::shared_ptr<MyClient> client)
+    : EGE::DefaultSystemEventHandler(window), m_client(client) {}
+
+    void onKeyPress(sf::Event::KeyEvent& event)
+    {
+        switch(event.code)
+        {
+        case sf::Keyboard::A: m_client->move(true, 0);
+            break;
+        case sf::Keyboard::S: m_client->move(true, 1);
+            break;
+        case sf::Keyboard::D: m_client->move(true, 2);
+            break;
+        case sf::Keyboard::W: m_client->move(true, 3);
+            break;
+        default:
+            break;
+        }
+    }
+
+    void onKeyRelease(sf::Event::KeyEvent& event)
+    {
+        switch(event.code)
+        {
+        case sf::Keyboard::A: m_client->move(false, 0);
+            break;
+        case sf::Keyboard::S: m_client->move(false, 1);
+            break;
+        case sf::Keyboard::D: m_client->move(false, 2);
+            break;
+        case sf::Keyboard::W: m_client->move(false, 3);
+            break;
+        default:
+            break;
+        }
+    }
+
+    // It's done by GUIScreen.
+    virtual void onClose() {}
+
+private:
+    std::shared_ptr<MyClient> m_client;
+};
+
 class MyGameLoop : public EGE::GUIGameLoop
 {
-    std::shared_ptr<EGE::EGEClient> m_client;
+    std::shared_ptr<MyClient> m_client;
+    std::shared_ptr<EGE::CameraObject2D> m_camera;
     int m_port;
 
 public:
@@ -127,7 +303,7 @@ public:
         setCurrentGUIScreen(gui);
 
         // Create client - define server IP and port.
-        m_client = std::make_shared<EGE::EGEClient>(sf::IpAddress::LocalHost, m_port);
+        m_client = std::make_shared<MyClient>(m_port);
 
         // Create scene and assign it to client.
         auto scene = std::make_shared<EGE::Scene2D>(this);
@@ -151,10 +327,31 @@ public:
                                     exit(retVal);
                                  });
 
+        // Add keybind handler. It will pass keyboard events to Controller.
+        addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(getWindow(), m_client));
+
+        // Initialize Camera.
+        m_camera = make<EGE::CameraObject2D>(scene.get());
+        m_camera->setScalingMode(EGE::ScalingMode::Centered);
+        scene->setCamera(m_camera);
+
         // Set our Client as sub-loop. It will automatically connect to server now.
         setSubLoop(m_client);
 
         return EGE::EventResult::Success;
+    }
+
+    void onTick(long long tick)
+    {
+        EGE::GUIGameLoop::onTick(tick);
+        // Get currently controlled object
+        auto controller = m_client->getDefaultController();
+        if(controller)
+        {
+            EGE::SceneObject2D* obj = (EGE::SceneObject2D*)controller->getObject().get();
+            if(obj)
+                m_camera->setPosition(obj->getPosition());
+        }
     }
 };
 
@@ -170,6 +367,7 @@ TESTCASE(client)
     // Create GameLoop and window.
     MyGameLoop loop(PORT);
     loop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
+    loop.getWindow().lock()->setKeyRepeatEnabled(false);
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
 
     // Run main loop.

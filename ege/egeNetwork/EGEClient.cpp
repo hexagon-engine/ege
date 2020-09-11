@@ -39,11 +39,11 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
     }*/
 
-    if constexpr(EGECLIENT_DEBUG)
+    /*if constexpr(EGECLIENT_DEBUG)
     {
-        std::cerr << "Client: Received EGEPacket, type=" << EGEPacket::typeString(egePacket->getType()) << std::endl;
-        std::cerr << "args=" << egePacket->getArgs()->toString() << std::endl;
-    }
+        std::cerr << "Client: EGEPacket(" << EGEPacket::typeString(egePacket->getType()) << ") ";
+        std::cerr << egePacket->getArgs()->toString() << std::endl;
+    }*/
 
     switch(egePacket->getType())
     {
@@ -90,6 +90,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             ASSERT(!object.expired() && object.lock()->isMap());
             ASSERT(!id.expired() && id.lock()->isInt());
             ASSERT(!typeId.expired() && typeId.lock()->isString());
+            std::cerr << "SSceneObjectCreation " << id.lock()->asInt() << std::endl;
             return createSceneObjectFromData(object.lock()->asMap(), id.lock()->asInt(), typeId.lock()->asString());
         }
         break;
@@ -114,7 +115,34 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             auto sceneObject = scene->getObject(id.lock()->asInt());
             if(!sceneObject) // Yay! We have predicted that the object will be removed! [or bugged server :)]
                 return EventResult::Success;
+            std::cerr << "SSceneObjectDeletion " << id.lock()->asInt() << std::endl;
             sceneObject->setDead();
+        }
+        break;
+    case EGEPacket::Type::SSceneObjectControl:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto id = args->getObject("id");
+            ASSERT(!id.expired() && id.lock()->isInt());
+            auto scene = getScene();
+            if(!scene) //scene not created
+                return EventResult::Success;
+            long long _id = id.lock()->asInt();
+            if(_id)
+            {
+                std::cerr << "SSceneObjectControl " << _id << std::endl;
+                auto sceneObject = scene->getObject(_id);
+                if(!sceneObject) // Object was not yet created on client :(
+                {
+                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SSceneObjectControl handler" << std::endl;
+                    DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(_id));
+                    if(!m_requestedObjects.count(_id))
+                        requestObject(_id);
+                    return EventResult::Success;
+                }
+                m_defaultController = getController(_id);
+                ASSERT(m_defaultController);
+            }
         }
         break;
     default:
@@ -144,6 +172,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     std::shared_ptr<SceneObject> sceneObject = (*func)(getScene().get());
     sceneObject->setObjectId(id); // Don't assign ID automatically!
     sceneObject->deserialize(object);
+    //m_requestedObjects.erase(id);
     getScene()->addObject(sceneObject);
 
     return EventResult::Success;
@@ -157,10 +186,38 @@ EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     auto sceneObject = getScene()->getObject(id);
 
     if(!sceneObject)
-        return EventResult::Failure; //TODO: request for object data when object was not found!
+    {
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from update" << std::endl;
+        DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
+        if(!m_requestedObjects.count(id))
+            requestObject(id);
+        return EventResult::Success;
+    }
 
     sceneObject->deserialize(object);
     return EventResult::Success;
+}
+
+void EGEClient::setScene(std::shared_ptr<Scene> scene)
+{
+    if(!scene)
+    {
+        m_controllersForObjects.clear();
+        EGEGame::setScene(scene);
+        return;
+    }
+
+    scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
+                                   // Add controller to controller map.
+                                   m_controllersForObjects[object->getObjectId()] = makeController(object);
+                                });
+    scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
+                                   // Remove controller from controller map.
+                                   auto it = m_controllersForObjects.find(object->getObjectId());
+                                   if(it != m_controllersForObjects.end())
+                                        m_controllersForObjects.erase(it);
+                                });
+    EGEGame::setScene(scene);
 }
 
 EventResult EGEClient::onLoad()
@@ -230,6 +287,63 @@ void EGEClient::disconnect()
         // We don't need the task anymore.
         m_clientTask = std::shared_ptr<AsyncTask>();
     }*/
+}
+
+std::shared_ptr<ClientNetworkController> EGEClient::getController(long long objectId)
+{
+    return m_controllersForObjects[objectId];
+}
+
+void EGEClient::control(std::shared_ptr<SceneObject> object, const ControlObject& data)
+{
+    if(!object)
+    {
+        if(m_defaultController)
+            m_defaultController->handleRequest(data);
+
+        return;
+    }
+
+    auto controller = getController(object->getObjectId());
+    DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
+    if(!controller && !m_requestedObjects.count(object->getObjectId()))
+    {
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from control" << std::endl;
+        requestObject(object->getObjectId());
+    }
+    controller->handleRequest(data);
+}
+
+void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data)
+{
+    if(!object)
+    {
+        if(m_defaultController)
+            m_defaultController->sendRequest(data);
+
+        return;
+    }
+
+    auto controller = getController(object->getObjectId());
+    DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
+    if(!controller && !m_requestedObjects.count(object->getObjectId()))
+    {
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from requestControl" << std::endl;
+        requestObject(object->getObjectId());
+    }
+    controller->sendRequest(data);
+
+    // try to do it also on client...
+    controller->handleRequest(data);
+}
+
+void EGEClient::requestObject(long long id)
+{
+    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Requesting object " << id << " from server" << std::endl;
+    DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
+    m_requestedObjects.insert(id);
+    DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
+    send(EGEPacket::generateCSceneObjectRequest(id));
 }
 
 }

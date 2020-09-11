@@ -51,7 +51,17 @@ public:
         m_pinged = ping;
     }
 
+    long long getControlledSceneObject()
+    {
+        return m_controlledSceneObjectId;
+    }
+    void setControlledSceneObject(long long id)
+    {
+        m_controlledSceneObjectId = id;
+    }
+
 private:
+    long long m_controlledSceneObjectId = 0;
     Time m_lastRecv;
     bool m_pinged = false;
 };

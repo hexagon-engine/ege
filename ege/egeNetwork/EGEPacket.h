@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/controller/ControlObject.h>
 #include <ege/main/Config.h>
 #include <ege/network/SFMLPacket.h>
 #include <ege/scene/SceneObject.h>
@@ -41,7 +42,8 @@ public:
         SSceneCreation = 0x0b,
         SSceneDeletion = 0x0c,
         CSceneObjectControl = 0x0d,
-        SSceneObjectControl = 0x0e
+        SSceneObjectControl = 0x0e,
+        CSceneObjectRequest = 0x0f
     };
 
     static std::string typeString(Type type);
@@ -88,8 +90,9 @@ public:
     static std::shared_ptr<EGEPacket> generateSSceneObjectDeletion(long long id);
     static std::shared_ptr<EGEPacket> generateSSceneCreation(std::shared_ptr<ObjectMap> userData = nullptr);
     static std::shared_ptr<EGEPacket> generateSSceneDeletion(std::shared_ptr<ObjectMap> userData = nullptr);
-    static std::shared_ptr<EGEPacket> generateCSceneObjectControl(long long id, std::shared_ptr<ObjectMap> userData = nullptr); //SResult
-    static std::shared_ptr<EGEPacket> generateSSceneObjectControl(long long id, std::shared_ptr<ObjectMap> userData = nullptr);
+    static std::shared_ptr<EGEPacket> generateCSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data); //SResult
+    static std::shared_ptr<EGEPacket> generateSSceneObjectControl(std::shared_ptr<SceneObject> object);
+    static std::shared_ptr<EGEPacket> generateCSceneObjectRequest(long long id);
 
 private:
     Type m_type;
