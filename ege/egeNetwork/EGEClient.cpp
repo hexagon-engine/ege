@@ -252,7 +252,7 @@ EventResult EGEClient::onLoad()
     };
 
     m_clientTask = std::make_shared<AsyncTask>(clientNetworkWorker, clientNetworkCallback);
-    addAsyncTask(m_clientTask, "EGEServer network task");
+    addAsyncTask(m_clientTask, "EGEClient network task");
 
     return EventResult::Success;
 }
