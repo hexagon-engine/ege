@@ -16,8 +16,11 @@ void NetworkEndpoint::disconnect()
         return;
     m_connected = false;
 
-    std::cerr << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort() << std::endl;
-    m_socket->disconnect();
+    if(m_socket)
+    {
+        std::cerr << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort() << std::endl;
+        m_socket->disconnect();
+    }
 }
 
 }
