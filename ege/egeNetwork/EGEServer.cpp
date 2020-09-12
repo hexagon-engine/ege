@@ -258,19 +258,22 @@ void EGEServer::onTick(long long)
 
     // Send object updates to Client.
     // TODO: It will be better to not check every object!
-    for(auto object: *getScene())
+    if(getScene())
     {
-        auto sceneObject = object.second;
+        for(auto object: *getScene())
+        {
+            auto sceneObject = object.second;
 
-        if(sceneObject->getMainChangedFlag())
-        {
-            sceneObject->clearMainChangedFlag();
-            sendToAll(EGEPacket::generateSSceneObjectUpdate_Main(sceneObject));
-        }
-        if(sceneObject->getExtendedChangedFlag())
-        {
-            sceneObject->clearExtendedChangedFlag();
-            sendToAll(EGEPacket::generateSSceneObjectUpdate_Extended(sceneObject));
+            if(sceneObject->getMainChangedFlag())
+            {
+                sceneObject->clearMainChangedFlag();
+                sendToAll(EGEPacket::generateSSceneObjectUpdate_Main(sceneObject));
+            }
+            if(sceneObject->getExtendedChangedFlag())
+            {
+                sceneObject->clearExtendedChangedFlag();
+                sendToAll(EGEPacket::generateSSceneObjectUpdate_Extended(sceneObject));
+            }
         }
     }
 }
