@@ -50,7 +50,10 @@ public:
         if(m_handler)
             return m_handler(gpom);
         else
+        {
+            std::cerr << "EGEGame: GPOM handler not registered!" << std::endl;
             return false;
+        }
     }
 
     void setInitializeHandler(std::function<bool(GPOM*)> handler)
