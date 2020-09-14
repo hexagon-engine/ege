@@ -5,14 +5,15 @@ Copyright (c) Sppmacd 2020
 
 #include "ServerNetworkController.h"
 
-#include <ege/egeNetwork/EGEServer.h>
+#include "EGEPacket.h"
+#include "EGEServer.h"
 
 namespace EGE
 {
 
-void ServerNetworkController::sendRequest(const ControlObject&)
+void ServerNetworkController::sendRequest(const ControlObject& data)
 {
-    // not implemented
+    m_server->sendToAll(EGEPacket::generateSSceneObjectControl(getObject(), data));
 }
 
 }

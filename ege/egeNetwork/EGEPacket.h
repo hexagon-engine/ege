@@ -42,8 +42,9 @@ public:
         SSceneCreation = 0x0b,
         SSceneDeletion = 0x0c,
         CSceneObjectControl = 0x0d,
-        SSceneObjectControl = 0x0e,
-        CSceneObjectRequest = 0x0f
+        SDefaultControllerId = 0x0e,
+        CSceneObjectRequest = 0x0f,
+        SSceneObjectControl = 0x10
     };
 
     static std::string typeString(Type type);
@@ -91,8 +92,9 @@ public:
     static std::shared_ptr<EGEPacket> generateSSceneCreation(std::shared_ptr<ObjectMap> userData = nullptr);
     static std::shared_ptr<EGEPacket> generateSSceneDeletion(std::shared_ptr<ObjectMap> userData = nullptr);
     static std::shared_ptr<EGEPacket> generateCSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data); //SResult
-    static std::shared_ptr<EGEPacket> generateSSceneObjectControl(std::shared_ptr<SceneObject> object);
+    static std::shared_ptr<EGEPacket> generateSDefaultControllerId(std::shared_ptr<SceneObject> object);
     static std::shared_ptr<EGEPacket> generateCSceneObjectRequest(long long id);
+    static std::shared_ptr<EGEPacket> generateSSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
 
 private:
     Type m_type;

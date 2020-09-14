@@ -124,14 +124,14 @@ std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(std::shared_pt
     return make<EGEPacket>(EGEPacket::Type::CSceneObjectControl, args);
 }
 
-std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(std::shared_ptr<SceneObject> object)
+std::shared_ptr<EGEPacket> EGEPacket::generateSDefaultControllerId(std::shared_ptr<SceneObject> object)
 {
     std::shared_ptr<ObjectMap> args = make<ObjectMap>();
     if(!object)
         args->addObject("id", make<ObjectInt>(0));
     else
         args->addObject("id", make<ObjectInt>(object->getObjectId()));
-    return make<EGEPacket>(EGEPacket::Type::SSceneObjectControl, args);
+    return make<EGEPacket>(EGEPacket::Type::SDefaultControllerId, args);
 }
 
 std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectRequest(long long id)
@@ -139,6 +139,17 @@ std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectRequest(long long id)
     std::shared_ptr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(id));
     return make<EGEPacket>(EGEPacket::Type::CSceneObjectRequest, args);
+}
+
+std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data)
+{
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    args->addObject("id", make<ObjectInt>(object->getObjectId()));
+    std::shared_ptr<ObjectMap> args_data = make<ObjectMap>();
+    args_data->addObject("type", make<ObjectString>(data.getType()));
+    args_data->addObject("args", data.getArgs());
+    args->addObject("data", args_data);
+    return make<EGEPacket>(EGEPacket::Type::SSceneObjectControl, args);
 }
 
 }

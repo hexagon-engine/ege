@@ -65,7 +65,7 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
                                     sendToAll(EGEPacket::generateSSceneObjectDeletion(object->getObjectId()));
 
                                     // Notify players that were controlling the object that object was removed.
-                                    sendTo(EGEPacket::generateSSceneObjectControl(nullptr), [object](ClientConnection* client)->bool {
+                                    sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [object](ClientConnection* client)->bool {
                                             EGEClientConnection* egeClient = (EGEClientConnection*)client;
                                             if(egeClient->getControlledSceneObject() == object->getObjectId())
                                             {
@@ -167,7 +167,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             std::cerr << "so request " << id.lock()->asInt() << std::endl;
             egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
             if(egeClient->getControlledSceneObject() == id.lock()->asInt())
-                egeClient->send(EGEPacket::generateSSceneObjectControl(sceneObject));
+                egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
         }
         break;
     default:
@@ -314,7 +314,7 @@ void EGEServer::setDefaultController(EGEClientConnection* client, std::shared_pt
     ASSERT(sceneObject);
     std::cerr << "EGEServer: Setting default controller for " << client << ": " << sceneObject->getObjectId() << std::endl;
     client->setControlledSceneObject(sceneObject->getObjectId());
-    client->send(EGEPacket::generateSSceneObjectControl(sceneObject));
+    client->send(EGEPacket::generateSDefaultControllerId(sceneObject));
 }
 
 std::shared_ptr<ServerNetworkController> EGEServer::getController(long long objectId)

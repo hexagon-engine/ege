@@ -119,7 +119,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             sceneObject->setDead();
         }
         break;
-    case EGEPacket::Type::SSceneObjectControl:
+    case EGEPacket::Type::SDefaultControllerId:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
             auto id = args->getObject("id");
@@ -130,11 +130,11 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             long long _id = id.lock()->asInt();
             if(_id)
             {
-                std::cerr << "SSceneObjectControl " << _id << std::endl;
+                std::cerr << "SDefaultControllerId " << _id << std::endl;
                 auto sceneObject = scene->getObject(_id);
                 if(!sceneObject) // Object was not yet created on client :(
                 {
-                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SSceneObjectControl handler" << std::endl;
+                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SDefaultControllerId handler" << std::endl;
                     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(_id));
                     if(!m_requestedObjects.count(_id))
                         requestObject(_id);
@@ -143,6 +143,26 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                 m_defaultController = getController(_id);
                 ASSERT(m_defaultController);
             }
+        }
+        break;
+    case EGEPacket::Type::SSceneObjectControl:
+        {
+            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            auto id = args->getObject("id");
+            ASSERT(!id.expired() && id.lock()->isInt());
+            auto data = args->getObject("data");
+            ASSERT(!data.expired() && data.lock()->isMap());
+            auto data_map = data.lock()->asMap();
+            auto data_name = data_map->getObject("type");
+            ASSERT(!data_name.expired() && data_name.lock()->isString());
+            auto data_args = data_map->getObject("args");
+            ASSERT(!data_args.expired() && data_args.lock()->isMap());
+
+            if(!getScene()) // cannot control object when no scene is created!
+                return EventResult::Failure;
+
+            auto controller = getController(id.lock()->asInt());
+            controller->handleRequest(ControlObject(data_name.lock()->asString(), data_args.lock()->asMap()));
         }
         break;
     default:
