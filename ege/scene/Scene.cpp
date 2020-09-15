@@ -46,7 +46,14 @@ void Scene::onUpdate(long long tickCounter)
 long long Scene::addObject(std::shared_ptr<SceneObject> object)
 {
     if(!object->getObjectId())
-        object->setObjectId(++m_greatestId);
+    {
+        // On server, give entities negative IDs to separate client and server objects.
+        if(!getLoop())
+            --m_greatestId;
+        else
+            ++m_greatestId;
+        object->setObjectId(m_greatestId);
+    }
 
     m_objects.insert(std::make_pair(object->getObjectId(), object));
 
