@@ -83,6 +83,11 @@ public:
         m_dead = true;
     }
 
+    Scene* getOwner()
+    {
+        return m_owner;
+    }
+
 protected:
     void setMainChanged(bool flag = true)
     {
