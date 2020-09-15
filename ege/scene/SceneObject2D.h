@@ -12,7 +12,7 @@ Copyright (c) Sppmacd 2020
 #include <functional>
 #include <SFML/Graphics.hpp>
 
-#define SCENEOBJECT2D_DEBUG 1
+#define SCENEOBJECT2D_DEBUG 0
 
 namespace EGE
 {
@@ -54,6 +54,15 @@ public:
     virtual sf::FloatRect getBoundingBox() const
     {
         return sf::FloatRect(m_position, sf::Vector2f(0.f, 0.f));
+    }
+
+    sf::FloatRect getBoundingBox(sf::Vector2f pos)
+    {
+        sf::Vector2f tmp = m_position;
+        m_position = pos;
+        sf::FloatRect rect = getBoundingBox();
+        m_position = tmp;
+        return rect;
     }
 
     // with collision check

@@ -31,7 +31,12 @@ public:
         m_geometryChanged = true;
     }
 
-    sf::FloatRect getBoundingBox() const;
+    virtual sf::FloatRect getBoundingBox() const;
+
+    sf::FloatRect getBoundingBox(sf::Vector2f pos)
+    {
+        return SceneObject2D::getBoundingBox(pos);
+    }
 
     void setPosition(sf::Vector2f position)
     {
