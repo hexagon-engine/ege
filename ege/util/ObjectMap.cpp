@@ -88,18 +88,21 @@ std::shared_ptr<ObjectMap> ObjectMap::merge(std::shared_ptr<ObjectMap> other)
 {
     auto me = std::dynamic_pointer_cast<ObjectMap>(copy());
 
-    for(auto it: *other)
+    if(other)
     {
-        auto eo1 = me->getObject(it.first);
-        auto existingObject = !eo1.expired() ? std::dynamic_pointer_cast<ObjectMap>((std::shared_ptr<Object>)eo1) : nullptr;
-        if(it.second->isMap() && existingObject)
+        for(auto it: *other)
         {
-            me->addObject(it.first, existingObject->merge(std::dynamic_pointer_cast<ObjectMap>(it.second->copy())));
-        }
-        else if(!existingObject)
-        {
-            // Take only first object.
-            me->addObject(it.first, it.second->copy());
+            auto eo1 = me->getObject(it.first);
+            auto existingObject = !eo1.expired() ? std::dynamic_pointer_cast<ObjectMap>((std::shared_ptr<Object>)eo1) : nullptr;
+            if(it.second->isMap() && existingObject)
+            {
+                me->addObject(it.first, existingObject->merge(std::dynamic_pointer_cast<ObjectMap>(it.second->copy())));
+            }
+            else if(!existingObject)
+            {
+                // Take only first object.
+                me->addObject(it.first, it.second->copy());
+            }
         }
     }
 
