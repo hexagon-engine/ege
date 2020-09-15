@@ -21,6 +21,9 @@ public:
     // send request to SERVER.
     virtual void sendRequest(const ControlObject& data);
 
+    // Called when this controller is set as default on Client.
+    virtual void onSetDefault() {}
+
 private:
     EGEClient* m_client;
 };

@@ -141,6 +141,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                     return EventResult::Success;
                 }
                 m_defaultController = getController(_id);
+                m_defaultController->onSetDefault();
                 ASSERT(m_defaultController);
             }
         }
