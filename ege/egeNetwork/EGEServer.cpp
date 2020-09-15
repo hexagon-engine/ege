@@ -146,7 +146,10 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 return EventResult::Failure;
 
             auto controller = getController(id.lock()->asInt());
-            controller->handleRequest(ControlObject(data_name.lock()->asString(), data_args.lock()->asMap()));
+            if(controller)
+                controller->handleRequest(ControlObject(data_name.lock()->asString(), data_args.lock()->asMap()));
+            else
+                return EventResult::Failure; // kick f*****g cheaters
         }
         break;
     case EGEPacket::Type::CSceneObjectRequest:
