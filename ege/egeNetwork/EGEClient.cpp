@@ -90,7 +90,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             ASSERT(!object.expired() && object.lock()->isMap());
             ASSERT(!id.expired() && id.lock()->isInt());
             ASSERT(!typeId.expired() && typeId.lock()->isString());
-            std::cerr << "SSceneObjectCreation " << id.lock()->asInt() << std::endl;
+            //std::cerr << "SSceneObjectCreation " << id.lock()->asInt() << std::endl;
             return createSceneObjectFromData(object.lock()->asMap(), id.lock()->asInt(), typeId.lock()->asString());
         }
         break;
@@ -115,7 +115,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             auto sceneObject = scene->getObject(id.lock()->asInt());
             if(!sceneObject) // Yay! We have predicted that the object will be removed! [or bugged server :)]
                 return EventResult::Success;
-            std::cerr << "SSceneObjectDeletion " << id.lock()->asInt() << std::endl;
+            //std::cerr << "SSceneObjectDeletion " << id.lock()->asInt() << std::endl;
             sceneObject->setDead();
         }
         break;
@@ -130,7 +130,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             long long _id = id.lock()->asInt();
             if(_id)
             {
-                std::cerr << "SDefaultControllerId " << _id << std::endl;
+                //std::cerr << "SDefaultControllerId " << _id << std::endl;
                 auto sceneObject = scene->getObject(_id);
                 if(!sceneObject) // Object was not yet created on client :(
                 {
