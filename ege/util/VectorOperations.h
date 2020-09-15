@@ -42,7 +42,7 @@ double length(Vector2<T> vector)
 template<class T>
 Vector2<T> fromPolar(PolarVector2<T> polar)
 {
-    return Vector2<T>(polar.length * std::sin(polar.angle), polar.length * std::cos(polar.angle));
+    return Vector2<T>(polar.length * std::sin(deg2rad(polar.angle)), polar.length * std::cos(deg2rad(polar.angle)));
 }
 
 template<class T>
