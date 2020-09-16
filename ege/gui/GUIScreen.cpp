@@ -270,6 +270,9 @@ void GUIScreen::removeWidget(Widget* widget)
         {
             if(it->get() == widget)
             {
+                if(widget == m_focusedWidget.get())
+                    m_focusedWidget = nullptr;
+
                 m_childWidgets.erase(it);
                 return;
             }
