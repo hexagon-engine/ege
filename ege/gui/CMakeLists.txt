@@ -15,6 +15,8 @@ set(SOURCES
 	"GUIScreen.h"
 	"Label.cpp"
 	"Label.h"
+	"TextBox.cpp"
+	"TextBox.h"
 	"Widget.cpp"
 	"Widget.h"
 )

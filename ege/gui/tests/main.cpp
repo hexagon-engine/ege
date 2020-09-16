@@ -4,6 +4,7 @@
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
 #include <ege/gui/Label.h>
+#include <ege/gui/TextBox.h>
 #include <cmath>
 
 class MyGameLoop : public EGE::GUIGameLoop
@@ -196,6 +197,9 @@ public:
     std::shared_ptr<EGE::Label> labelRight;
     std::shared_ptr<EGE::Label> labelAnimated;
     std::shared_ptr<EGE::Label> labelFPS;
+
+    std::shared_ptr<EGE::TextBox> myTextBox;
+
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
     std::shared_ptr<EGE::Label> ball;
@@ -255,6 +259,11 @@ public:
         labelFPS->setPosition(sf::Vector2f(10.f, 10.f));
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelFPS);
+
+        myTextBox = std::make_shared<EGE::TextBox>(this);
+        myTextBox->setPosition(sf::Vector2f(50.f, 400.f));
+        myTextBox->setSize(sf::Vector2f(400.f, 25.f));
+        addWidget(myTextBox);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
@@ -366,6 +375,7 @@ TESTCASE(_widgets)
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(500, 500), "EGE GUI Test (widgets)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen2>(&gameLoop));
+    gameLoop.setBackgroundColor(sf::Color(127, 127, 127));
     gameLoop.run();
 }
 
