@@ -92,10 +92,15 @@ void Button::renderOnly(sf::RenderTarget& target)
     target.draw(text);
 }
 
-void Button::handleClick(sf::Vector2f)
+void Button::handleClick(sf::Vector2f position)
 {
     if(m_leftClicked)
-        m_parent->onCommand(Command(this));
+        onClick(position);
+}
+
+void Button::onClick(sf::Vector2f)
+{
+    m_parent->onCommand(Command(this));
 }
 
 }

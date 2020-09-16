@@ -3,6 +3,7 @@
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
+#include <ege/gui/CheckBox.h>
 #include <ege/gui/Frame.h>
 #include <ege/gui/Label.h>
 #include <ege/gui/TextBox.h>
@@ -200,8 +201,8 @@ public:
     std::shared_ptr<EGE::Label> labelFPS;
 
     std::shared_ptr<EGE::TextBox> myTextBox;
-
     std::shared_ptr<EGE::Frame> myFrame;
+    std::shared_ptr<EGE::CheckBox> checkBox;
 
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
@@ -273,6 +274,11 @@ public:
         myFrame->setPosition(sf::Vector2f(10.f, 20.f));
         myFrame->setLabel("Widget test");
         addWidget(myFrame);
+
+        checkBox = std::make_shared<EGE::CheckBox>(this);
+        checkBox->setPosition(sf::Vector2f(20.f, 450.f));
+        checkBox->setLabel("CheckBox");
+        addWidget(checkBox);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
@@ -384,7 +390,7 @@ TESTCASE(_widgets)
     gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(500, 500), "EGE GUI Test (widgets)"));
     gameLoop.setResourceManager(std::make_shared<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(std::make_shared<MyGuiScreen2>(&gameLoop));
-    gameLoop.setBackgroundColor(sf::Color(127, 127, 127));
+    gameLoop.setBackgroundColor(sf::Color(209, 200, 192));
     gameLoop.run();
 }
 

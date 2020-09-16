@@ -32,7 +32,7 @@ public:
     Button(Widget* parent)
     : Widget(parent) {}
 
-    void setLabel(sf::String label)
+    virtual void setLabel(sf::String label)
     {
         m_label = label;
     }
@@ -41,9 +41,17 @@ public:
         m_size = size;
     }
 
+    sf::String getLabel()
+    {
+        return m_label;
+    }
+
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
     virtual void renderOnly(sf::RenderTarget& target) override;
+
+protected:
+    virtual void onClick(sf::Vector2f position);
 
 private:
     // position may be needed for some animations

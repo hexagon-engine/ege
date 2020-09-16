@@ -7,6 +7,8 @@ set(SOURCES
 	"AnimationEasingFunctions.h"
 	"Button.cpp"
 	"Button.h"
+	"CheckBox.cpp"
+	"CheckBox.h"
 	"Frame.cpp"
 	"Frame.h"
 	"GameLoop.cpp"
