@@ -53,8 +53,8 @@ void TextBox::renderOnly(sf::RenderTarget& target)
     // caret
     if(hasFocus() && m_caretShown)
     {
-        sf::RectangleShape rsCaret(sf::Vector2f(1.f, m_size.y - 10.f));
-        rsCaret.setPosition(text.findCharacterPos(m_caretPos).x, 5.f);
+        sf::RectangleShape rsCaret(sf::Vector2f(1.f, m_size.y - 6.f));
+        rsCaret.setPosition(text.findCharacterPos(m_caretPos).x, 3.f);
         rsCaret.setFillColor(sf::Color::Black);
         target.draw(rsCaret);
     }
