@@ -3,6 +3,7 @@
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Button.h>
+#include <ege/gui/Frame.h>
 #include <ege/gui/Label.h>
 #include <ege/gui/TextBox.h>
 #include <cmath>
@@ -200,6 +201,8 @@ public:
 
     std::shared_ptr<EGE::TextBox> myTextBox;
 
+    std::shared_ptr<EGE::Frame> myFrame;
+
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
     std::shared_ptr<EGE::Label> ball;
@@ -264,6 +267,12 @@ public:
         myTextBox->setPosition(sf::Vector2f(50.f, 400.f));
         myTextBox->setSize(sf::Vector2f(400.f, 25.f));
         addWidget(myTextBox);
+
+        myFrame = std::make_shared<EGE::Frame>(this);
+        myFrame->setSize(sf::Vector2f(480.f, 470.f));
+        myFrame->setPosition(sf::Vector2f(10.f, 20.f));
+        myFrame->setLabel("Widget test");
+        addWidget(myFrame);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
