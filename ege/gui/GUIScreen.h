@@ -53,6 +53,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<Widget>> m_childWidgets;
+    std::shared_ptr<Widget> m_focusedWidget;
 };
 
 }

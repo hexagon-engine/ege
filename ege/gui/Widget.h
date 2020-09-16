@@ -75,10 +75,16 @@ public:
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
+    virtual void onLossFocus() override;
+    virtual void onGainFocus() override;
 
     virtual bool isMouseOver(sf::Vector2f position);
-
     virtual void setViewForWidget(sf::RenderTarget& target);
+
+    bool hasFocus()
+    {
+        return m_hasFocus;
+    }
 
 protected:
     sf::Vector2f m_size;
@@ -89,6 +95,7 @@ protected:
 
 private:
     sf::Vector2f m_position;
+    bool m_hasFocus = false;
 };
 
 // TODO: move it to another file

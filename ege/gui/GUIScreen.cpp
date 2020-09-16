@@ -33,21 +33,11 @@ void GUIScreen::onResize(sf::Event::SizeEvent& event)
 void GUIScreen::onLossFocus()
 {
     DefaultSystemEventHandler::onLossFocus();
-    // TODO: change meaning of these events to be widget-relative?
-    /*for(auto widget: m_childWidgets)
-    {
-        widget->onLossFocus();
-    }*/
 }
 
 void GUIScreen::onGainFocus()
 {
     DefaultSystemEventHandler::onGainFocus();
-    // TODO: change meaning of these events to be widget-relative?
-    /*for(auto widget: m_childWidgets)
-    {
-        widget->onGainFocus();
-    }*/
 }
 
 void GUIScreen::onTextEnter(sf::Event::TextEvent& event)
@@ -93,10 +83,22 @@ void GUIScreen::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 void GUIScreen::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     DefaultSystemEventHandler::onMouseButtonPress(event);
+    sf::Vector2f position(event.x, event.y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
-        widget->onMouseButtonPress(event);
+
+        // Change focused widget.
+        if(widget->isMouseOver(position) && event.button == sf::Mouse::Left)
+        {
+            if(m_focusedWidget)
+                m_focusedWidget->onLossFocus();
+
+            m_focusedWidget = widget;
+            m_focusedWidget->onGainFocus();
+
+            widget->onMouseButtonPress(event);
+        }
     }
 }
 

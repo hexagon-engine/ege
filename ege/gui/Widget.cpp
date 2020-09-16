@@ -72,7 +72,16 @@ void Widget::renderOnly(sf::RenderTarget& target)
         sf::RectangleShape rs(m_size - sf::Vector2f(2.f, 2.f));
         rs.setPosition(sf::Vector2f(1.f, 1.f));
         rs.setOutlineColor(sf::Color::Cyan);
-        rs.setOutlineThickness(1.f);
+
+        if(hasFocus())
+        {
+            rs.setOutlineThickness(2.f);
+            rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
+            rs.setPosition(sf::Vector2f(2.f, 2.f));
+        }
+        else
+            rs.setOutlineThickness(1.f);
+
         rs.setFillColor(sf::Color::Transparent);
         if(m_mouseOver)
             rs.setOutlineColor(sf::Color::Red);
@@ -92,7 +101,7 @@ void Widget::onMouseMove(sf::Event::MouseMoveEvent& event)
 
 void Widget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
-    if(isMouseOver(sf::Vector2f(event.x, event.y)) && event.button == sf::Mouse::Left)
+    if(event.button == sf::Mouse::Left)
     {
         m_leftClicked = true;
     }
@@ -104,6 +113,16 @@ void Widget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     {
         m_leftClicked = false;
     }
+}
+
+void Widget::onLossFocus()
+{
+    m_hasFocus = false;
+}
+
+void Widget::onGainFocus()
+{
+    m_hasFocus = true;
 }
 
 bool Widget::isMouseOver(sf::Vector2f position)
