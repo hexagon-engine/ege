@@ -38,7 +38,14 @@ EventResult GUIGameLoop::onLoad()
         else
         {
             std::cerr << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager" << std::endl;
-            // TODO: implement GUIResourceManager
+            m_resourceManager = make<ResourceManager>();
+
+            bool success = m_resourceManager->reload();
+            success &= !m_resourceManager->isError();
+            if(!success)
+            {
+                return EventResult::Failure;
+            }
         }
         return EventResult::Success;
     }
