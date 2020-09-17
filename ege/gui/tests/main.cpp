@@ -6,6 +6,7 @@
 #include <ege/gui/CheckBox.h>
 #include <ege/gui/Frame.h>
 #include <ege/gui/Label.h>
+#include <ege/gui/RadioButton.h>
 #include <ege/gui/TextBox.h>
 #include <cmath>
 
@@ -203,6 +204,7 @@ public:
     std::shared_ptr<EGE::TextBox> myTextBox;
     std::shared_ptr<EGE::Frame> myFrame;
     std::shared_ptr<EGE::CheckBox> checkBox;
+    std::shared_ptr<EGE::RadioButton> radioButton;
 
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
@@ -265,8 +267,8 @@ public:
         addWidget(labelFPS);
 
         myTextBox = std::make_shared<EGE::TextBox>(this);
-        myTextBox->setPosition(sf::Vector2f(50.f, 400.f));
-        myTextBox->setSize(sf::Vector2f(400.f, 25.f));
+        myTextBox->setPosition(sf::Vector2f(20.f, 400.f));
+        myTextBox->setSize(sf::Vector2f(460.f, 25.f));
         addWidget(myTextBox);
 
         myFrame = std::make_shared<EGE::Frame>(this);
@@ -276,9 +278,14 @@ public:
         addWidget(myFrame);
 
         checkBox = std::make_shared<EGE::CheckBox>(this);
-        checkBox->setPosition(sf::Vector2f(20.f, 450.f));
+        checkBox->setPosition(sf::Vector2f(20.f, 440.f));
         checkBox->setLabel("CheckBox");
         addWidget(checkBox);
+
+        radioButton = std::make_shared<EGE::RadioButton>(this);
+        radioButton->setPosition(sf::Vector2f(20.f, 460.f));
+        radioButton->setLabel("RadioButton");
+        addWidget(radioButton);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
