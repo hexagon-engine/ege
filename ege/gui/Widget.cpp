@@ -93,9 +93,19 @@ void Widget::renderOnly(sf::RenderTarget& target)
 
 void Widget::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
-    m_mouseOver = isMouseOver(sf::Vector2f(event.x, event.y));
-    if(!m_mouseOver)
+    bool mouseOver = isMouseOver(sf::Vector2f(event.x, event.y));
+    if(mouseOver)
+    {
+        if(!m_mouseOver)
+            onMouseEnter();
+    }
+    else
+    {
         m_leftClicked = false;
+        if(m_mouseOver)
+            onMouseLeave();
+    }
+    m_mouseOver = mouseOver;
 }
 
 
