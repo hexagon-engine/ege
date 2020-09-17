@@ -19,13 +19,13 @@ namespace EGE
 TextBox::TextBox(Widget* parent)
 : Widget(parent)
 {
-    auto anim = make<Animation>(this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
-    anim->addKeyframe(0.0, 1.0);
-    anim->addKeyframe(0.5, 0.0);
-    anim->addKeyframe(1.0, 1.0);
-    anim->setEasingFunction(AnimationEasingFunctions::constant1);
-    addAnimation(anim, [this](Animation*, double val) {
-                    m_caretShown = (val > 0.0);
+    m_caretAnimation = make<Animation>(this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
+    m_caretAnimation->addKeyframe(0.0, 1.0);
+    m_caretAnimation->addKeyframe(0.5, 0.0);
+    m_caretAnimation->addKeyframe(1.0, 1.0);
+    m_caretAnimation->setEasingFunction(AnimationEasingFunctions::constant1);
+    addAnimation(m_caretAnimation, [this](Animation*, double val) {
+                    m_caretShown = (val == 0.0);
                  });
 }
 
@@ -75,17 +75,24 @@ void TextBox::renderOnly(sf::RenderTarget& target)
 void TextBox::onMouseEnter()
 {
     Widget::onMouseEnter();
-    auto cursor = *getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Text);
+    auto cursor = getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Text);
     ASSERT(cursor);
-    getWindow().lock()->setMouseCursor(cursor);
+    getWindow().lock()->setMouseCursor(*cursor);
 }
 
 void TextBox::onMouseLeave()
 {
     Widget::onMouseLeave();
-    auto cursor = *getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
+    auto cursor = getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
     ASSERT(cursor);
-    getWindow().lock()->setMouseCursor(cursor);
+    getWindow().lock()->setMouseCursor(*cursor);
+}
+
+void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
+{
+    Widget::onMouseButtonPress(event);
+    if(event.button == sf::Mouse::Left)
+        m_caretAnimation->restart();
 }
 
 void TextBox::onTextEnter(sf::Event::TextEvent& event)
