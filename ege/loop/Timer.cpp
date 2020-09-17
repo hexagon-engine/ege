@@ -18,6 +18,8 @@ void Timer::start()
 {
     m_startTime = m_loop->time(m_interval.getUnit());
     m_started = true;
+    m_iterations = 0;
+    m_remainingIterations = m_iterations + 1;
 }
 void Timer::stop()
 {
@@ -63,6 +65,10 @@ Timer::Finished Timer::update()
 Time Timer::getElapsedTime()
 {
     return Time(m_loop->time(m_interval.getUnit()) - m_startTime, m_interval.getUnit());
+}
+void Timer::restart()
+{
+    start();
 }
 
 }

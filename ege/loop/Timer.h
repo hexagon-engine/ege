@@ -89,6 +89,8 @@ public:
         return m_updateCallback;
     }
 
+    void restart();
+
 protected:
     bool m_started = false;
     double m_startTime = 0.f;
