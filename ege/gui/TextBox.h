@@ -21,6 +21,8 @@ public:
         m_text = text;
     }
 
+    virtual void onMouseEnter();
+    virtual void onMouseLeave();
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
     virtual void renderOnly(sf::RenderTarget& target) override;

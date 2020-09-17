@@ -72,6 +72,22 @@ void TextBox::renderOnly(sf::RenderTarget& target)
     target.draw(rs);
 }
 
+void TextBox::onMouseEnter()
+{
+    Widget::onMouseEnter();
+    auto cursor = *getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Text);
+    ASSERT(cursor);
+    getWindow().lock()->setMouseCursor(cursor);
+}
+
+void TextBox::onMouseLeave()
+{
+    Widget::onMouseLeave();
+    auto cursor = *getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
+    ASSERT(cursor);
+    getWindow().lock()->setMouseCursor(cursor);
+}
+
 void TextBox::onTextEnter(sf::Event::TextEvent& event)
 {
     if(hasFocus())
