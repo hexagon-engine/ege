@@ -42,6 +42,9 @@ protected:
     sf::Vector2f m_textPosition;
     std::shared_ptr<sf::Font> m_font;
     bool m_geometryChanged = true;
+
+private:
+    virtual void setSize(sf::Vector2f) {}
 };
 
 }

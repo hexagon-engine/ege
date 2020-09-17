@@ -36,10 +36,6 @@ public:
     {
         m_label = label;
     }
-    void setSize(sf::Vector2f size)
-    {
-        m_size = size;
-    }
 
     sf::String getLabel()
     {

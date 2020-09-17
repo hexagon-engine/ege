@@ -21,10 +21,6 @@ public:
     {
         m_label = label;
     }
-    void setSize(sf::Vector2f size)
-    {
-        m_size = size;
-    }
 
     virtual void renderOnly(sf::RenderTarget& target) override;
     virtual sf::FloatRect getBoundingBox()

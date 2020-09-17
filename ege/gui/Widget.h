@@ -57,6 +57,10 @@ public:
     {
         return m_gameLoop;
     }
+    virtual void setSize(sf::Vector2f size)
+    {
+        m_size = size;
+    }
     sf::Vector2f getSize() const
     {
         return m_size;

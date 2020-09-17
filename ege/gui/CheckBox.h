@@ -35,6 +35,8 @@ public:
     virtual void renderOnly(sf::RenderTarget& target);
 
 private:
+    virtual void setSize(sf::Vector2f) {}
+
     virtual void onClick(sf::Vector2f);
 
     bool m_checked = false;

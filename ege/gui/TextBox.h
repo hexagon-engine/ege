@@ -20,10 +20,6 @@ public:
     {
         m_text = text;
     }
-    void setSize(sf::Vector2f size)
-    {
-        m_size = size;
-    }
 
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
