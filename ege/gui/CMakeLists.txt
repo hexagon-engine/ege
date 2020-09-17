@@ -9,6 +9,8 @@ set(SOURCES
 	"Button.h"
 	"CheckBox.cpp"
 	"CheckBox.h"
+	"CompoundWidget.cpp"
+	"CompoundWidget.h"
 	"Frame.cpp"
 	"Frame.h"
 	"GameLoop.cpp"
