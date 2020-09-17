@@ -46,6 +46,12 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
     return font;
 }
 
+std::shared_ptr<sf::Cursor> ResourceManager::loadCursorFromFile(std::string)
+{
+    // TODO
+    return nullptr;
+}
+
 void ResourceManager::addTexture(std::string name, std::shared_ptr<sf::Texture> texture)
 {
     auto it = m_loadedTextures.find(name);
@@ -69,6 +75,19 @@ void ResourceManager::addFont(std::string name, std::shared_ptr<sf::Font> font)
     else if(font != nullptr)
     {
         it->second = font;
+    }
+}
+
+void ResourceManager::addCursor(std::string name, std::shared_ptr<sf::Cursor> cursor)
+{
+    auto it = m_loadedCursors.find(name);
+    if(it == m_loadedCursors.end())
+    {
+        m_loadedCursors.insert(std::make_pair(name, cursor));
+    }
+    else if(cursor != nullptr)
+    {
+        it->second = cursor;
     }
 }
 
@@ -113,6 +132,51 @@ std::shared_ptr<sf::Font> ResourceManager::getFont(std::string name)
         return loadFontFromFile(name);
     }
     return it->second;
+}
+
+std::shared_ptr<sf::Cursor> ResourceManager::getCursor(std::string name)
+{
+    auto it = m_loadedCursors.find(name);
+    if(it == m_loadedCursors.end())
+    {
+        std::cerr << "0023 EGE/resources: invalid CURSOR requested: " << name << std::endl;
+        return nullptr;
+    }
+    if(!it->second)
+    {
+        // TODO: call some user handler to allow him
+        // to change texture settings after loading
+        return loadCursorFromFile(name);
+    }
+    return it->second;
+}
+
+std::shared_ptr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
+{
+    auto cursor = getCursor("/EGE::System::/ /_" + std::to_string((int)type));
+    if(!cursor)
+    {
+        std::cerr << "0025 EGE/resources: invalid SYSTEM CURSOR requested: " << (int)type << std::endl;
+        if(!m_systemCursorError)
+            return loadSystemCursor(type);
+        else
+            return nullptr;
+    }
+    return cursor;
+}
+
+std::shared_ptr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
+{
+    std::shared_ptr<sf::Cursor> cursor(new sf::Cursor);
+    if(!cursor->loadFromSystem(type))
+    {
+        std::cerr << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type << std::endl;
+        m_error = true;
+        m_systemCursorError = true;
+        return nullptr;
+    }
+    addCursor("/EGE::System::/ /_" + std::to_string((int)type), cursor);
+    return cursor;
 }
 
 std::shared_ptr<sf::Font> ResourceManager::getDefaultFont()

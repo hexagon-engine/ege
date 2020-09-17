@@ -6,9 +6,9 @@
 	>> exit(1234)
 ### 0004 EGE/main: debug: %s
 ### 0005 EGE/resources: could not load resource: TEXTURE %s
-	>> ResourceManager::loadTexturefromFile() return false
+	>> ResourceManager::loadTexturefromFile() return nullptr
 ### 0006 EGE/resources: could not load resource: FONT %s
-	>> ResourceManager::loadFontfromFile() return false
+	>> ResourceManager::loadFontfromFile() return nullptr
 ### 0007 EGE/resources: could not open resource directory: %s
 	>> ResourceManager::setResourcePath() return false
 ### 0008 EGE/resources: invalid TEXTURE requested: %s, falling back to unknown texture
@@ -17,7 +17,7 @@
 	>> ResourceManager::getFont() return nullptr
 ### 000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager
 ### 000B EGE/resources: invalid FONT requested to be default: %s
-	>> ResourceManager::setDefaultFont() return false
+	>> ResourceManager::setDefaultFont() return nullptr
 ### 000C EGE/gpo: std::exception caught in GameplayObjectRegistry::%s: %s
 	>> GameplayObjectRegistry::%s return RegistryError::Unknown
 ### 000D EGE/gpo: unknown exception caught in GameplayObjectRegistry::%s: %s
@@ -43,3 +43,11 @@
 ### 0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required %d, got %d)
 ### 0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required %d, got %d)
 ### 0022 EGE/egeNetwork: Unimplemented packet handler: %s
+### 0023 EGE/resources: invalid CURSOR requested: %s
+	>> ResourceManager::getCursor() return nullptr
+### 0024 EGE/resources: could not load resource: CURSOR %s
+	>> ResourceManager::loadCursorfromFile() return nullptr
+### 0025 EGE/resources: invalid SYSTEM CURSOR requested: %s
+  >> ResourceManager::getCursor() return nullptr
+### 0026 EGE/resources: could not load resource: SYSTEM CURSOR
+	>> ResourceManager::loadSystemCursor() return nullptr
