@@ -192,15 +192,9 @@ public:
 class MyGuiScreen2 : public EGE::GUIScreen
 {
 public:
-    std::shared_ptr<EGE::Button> button;
-    std::shared_ptr<EGE::Button> button2;
-
     std::shared_ptr<EGE::Label> labelAnimated;
     std::shared_ptr<EGE::Label> labelFPS;
-
-    std::shared_ptr<EGE::TextBox> myTextBox;
-    std::shared_ptr<EGE::CheckBox> checkBox;
-    std::shared_ptr<EGE::RadioButton> radioButton;
+    std::shared_ptr<EGE::Button> button2;
 
     std::shared_ptr<AnimationGraphWidget> graph;
     std::shared_ptr<AnimationGraphWidget> graph2;
@@ -216,10 +210,23 @@ public:
         getWindow().lock()->setFramerateLimit(60);
         DEBUG_PRINT("MyResourceManager onLoad");
 
-        button = std::make_shared<EGE::Button>(this);
+        auto button = std::make_shared<EGE::Button>(this);
         button->setLabel("T.e.s.t&");
         button->setPosition(sf::Vector2f(50.f, 50.f));
         button->setSize(sf::Vector2f(200.f, 40.f));
+        button->setCallback([this]() {
+            if(!timerRunning)
+            {
+                DEBUG_PRINT("clicked");
+
+                addWidget(button2);
+                timerRunning = true;
+                addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback([this](std::string, EGE::Timer*) {
+                    removeWidget(button2.get());
+                    timerRunning = false;
+                }));
+            }
+        });
         addWidget(button);
 
         button2 = std::make_shared<EGE::Button>(this);
@@ -262,7 +269,7 @@ public:
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelFPS);
 
-        myTextBox = std::make_shared<EGE::TextBox>(this);
+        auto myTextBox = std::make_shared<EGE::TextBox>(this);
         myTextBox->setPosition(sf::Vector2f(20.f, 400.f));
         myTextBox->setSize(sf::Vector2f(460.f, 25.f));
         addWidget(myTextBox);
@@ -273,12 +280,12 @@ public:
         myFrame->setLabel("Widget test");
         addWidget(myFrame);
 
-        checkBox = std::make_shared<EGE::CheckBox>(this);
+        auto checkBox = std::make_shared<EGE::CheckBox>(this);
         checkBox->setPosition(sf::Vector2f(20.f, 440.f));
         checkBox->setLabel("CheckBox");
         addWidget(checkBox);
 
-        radioButton = std::make_shared<EGE::RadioButton>(this);
+        auto radioButton = std::make_shared<EGE::RadioButton>(this);
         radioButton->setPosition(sf::Vector2f(20.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
@@ -338,26 +345,6 @@ public:
     virtual void onResize(sf::Event::SizeEvent& event)
     {
         labelFPS->setPosition(sf::Vector2f(event.width / 2.f, 10.f));
-    }
-
-    virtual void onCommand(const EGE::Widget::Command& command) override
-    {
-        if(command.getId() == "EGE::Button::Command")
-        {
-            EGE::Button::Command* bCommand = (EGE::Button::Command*)&command;
-            if(bCommand->getButton() == button.get() && !timerRunning)
-            {
-                DEBUG_PRINT("clicked");
-                addWidget(button2);
-                timerRunning = true;
-                addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback(
-                    [this](std::string, EGE::Timer*) {
-                        removeWidget(button2.get());
-                        timerRunning = false;
-                    }
-                ));
-            }
-        }
     }
 
     virtual void onUpdate(long long tickCounter)

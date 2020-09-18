@@ -95,7 +95,11 @@ void Button::renderOnly(sf::RenderTarget& target)
 void Button::handleClick(sf::Vector2f position)
 {
     if(m_leftClicked)
+    {
         onClick(position);
+        if(m_callback)
+            m_callback();
+    }
 }
 
 void Button::onClick(sf::Vector2f)

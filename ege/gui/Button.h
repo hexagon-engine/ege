@@ -46,8 +46,14 @@ public:
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
     virtual void renderOnly(sf::RenderTarget& target) override;
 
+    void setCallback(std::function<void()> callback)
+    {
+        m_callback = callback;
+    }
+
 protected:
     virtual void onClick(sf::Vector2f position);
+    std::function<void()> m_callback;
 
 private:
     // position may be needed for some animations
