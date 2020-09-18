@@ -195,14 +195,10 @@ public:
     std::shared_ptr<EGE::Button> button;
     std::shared_ptr<EGE::Button> button2;
 
-    std::shared_ptr<EGE::Label> labelLeft;
-    std::shared_ptr<EGE::Label> labelCenter;
-    std::shared_ptr<EGE::Label> labelRight;
     std::shared_ptr<EGE::Label> labelAnimated;
     std::shared_ptr<EGE::Label> labelFPS;
 
     std::shared_ptr<EGE::TextBox> myTextBox;
-    std::shared_ptr<EGE::Frame> myFrame;
     std::shared_ptr<EGE::CheckBox> checkBox;
     std::shared_ptr<EGE::RadioButton> radioButton;
 
@@ -231,18 +227,18 @@ public:
         button2->setPosition(sf::Vector2f(50.f, 100.f));
         button2->setSize(sf::Vector2f(200.f, 40.f));
 
-        labelLeft = std::make_shared<EGE::Label>(this);
+        auto labelLeft = std::make_shared<EGE::Label>(this);
         labelLeft->setString("Label Left");
         labelLeft->setPosition(sf::Vector2f(10.f, 150.f));
         addWidget(labelLeft);
 
-        labelCenter = std::make_shared<EGE::Label>(this);
+        auto labelCenter = std::make_shared<EGE::Label>(this);
         labelCenter->setString("Label Center");
         labelCenter->setPosition(sf::Vector2f(150.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
-        labelRight = std::make_shared<EGE::Label>(this);
+        auto labelRight = std::make_shared<EGE::Label>(this);
         labelRight->setString("Label Right");
         labelRight->setPosition(sf::Vector2f(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
@@ -271,7 +267,7 @@ public:
         myTextBox->setSize(sf::Vector2f(460.f, 25.f));
         addWidget(myTextBox);
 
-        myFrame = std::make_shared<EGE::Frame>(this);
+        auto myFrame = std::make_shared<EGE::Frame>(this);
         myFrame->setSize(sf::Vector2f(480.f, 470.f));
         myFrame->setPosition(sf::Vector2f(10.f, 20.f));
         myFrame->setLabel("Widget test");

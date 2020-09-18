@@ -93,6 +93,22 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     Widget::onMouseButtonPress(event);
     if(event.button == sf::Mouse::Left)
         m_caretAnimation->restart();
+
+    // Find character to set caret next to.
+    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    ASSERT(font);
+    sf::Text text(m_text, *font, m_size.y / 2.f);
+    text.setFillColor(sf::Color::Black);
+    float overflow = std::max(0.f, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
+    text.setPosition(10.f - overflow, m_size.y / 4.f);
+
+    for(size_t s = 0; s <= m_text.getSize(); s++)
+    {
+        if(text.findCharacterPos(s).x < event.x - getPosition().x + text.getCharacterSize() / 3.91f)
+        {
+            m_caretPos = s;
+        }
+    }
 }
 
 void TextBox::onTextEnter(sf::Event::TextEvent& event)
@@ -131,6 +147,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
             m_caretPos++;
         }
     }
+    m_caretAnimation->restart();
 }
 
 void TextBox::onKeyPress(sf::Event::KeyEvent& event)
@@ -148,6 +165,7 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
     default:
         break;
     }
+    m_caretAnimation->restart();
 }
 
 }
