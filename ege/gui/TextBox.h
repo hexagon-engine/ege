@@ -21,6 +21,11 @@ public:
         m_text = text;
     }
 
+    sf::String getText()
+    {
+        return m_text;
+    }
+
     virtual void onMouseEnter();
     virtual void onMouseLeave();
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
