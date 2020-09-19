@@ -102,6 +102,10 @@ int Server::addClient(std::shared_ptr<ClientConnection> client)
 
 void Server::kickClient(ClientConnection* client)
 {
+    // Don't kick already kicked clients!
+    if(!client || client->getSocket().expired())
+        return;
+
     std::cerr << "001B EGE/network: Kicking client (" << client->getSocket().lock()->getRemoteAddress() << ":" << client->getSocket().lock()->getRemotePort() << ")" << std::endl;
     onClientDisconnect(client);
 
