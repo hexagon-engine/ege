@@ -17,6 +17,7 @@ void Scene::renderOnly(sf::RenderTarget& target)
     ASSERT(m_loop);
     for(auto pr: *this)
     {
+        pr.second->preRenderUpdate();
         pr.second->render(target);
     }
 }

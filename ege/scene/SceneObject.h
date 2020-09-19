@@ -23,6 +23,7 @@ public:
 
     virtual void onUpdate(long long tickCounter);
     virtual void render(sf::RenderTarget& target) const = 0;
+    virtual void preRenderUpdate() {}
 
     bool isDead() const
     {

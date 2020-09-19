@@ -12,7 +12,7 @@ Copyright (c) Sppmacd 2020
 #include <functional>
 #include <SFML/Graphics.hpp>
 
-#define SCENEOBJECT2D_DEBUG 0
+#define SCENEOBJECT2D_DEBUG 1
 
 namespace EGE
 {
@@ -72,6 +72,7 @@ public:
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
     virtual void render(sf::RenderTarget& target) const;
+    virtual void preRenderUpdate();
     virtual void onUpdate(long long tickCounter);
 
     virtual std::shared_ptr<ObjectMap> serializeMain();

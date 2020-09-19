@@ -20,6 +20,8 @@ void TexturedObject2D::updateGeometry()
         m_textureRect = sf::FloatRect(0.f, 0.f, texture->getSize().x, texture->getSize().y);
     m_sprite.setTextureRect((sf::IntRect)m_textureRect);
     m_sprite.setPosition(getPosition());
+    DUMP(SCENE_DEBUG, getPosition().x);
+    DUMP(SCENE_DEBUG, getPosition().y);
     if(m_centered)
         m_origin = m_textureRect.getSize() / 2.f;
     m_sprite.setOrigin(m_origin);
@@ -45,6 +47,7 @@ void TexturedObject2D::onUpdate(long long tickCounter)
 {
     // TODO: it should be in render phase (it's not necessary on server)
     // maybe void renderUpdate() ??
+    m_geometryChanged = true;
     SceneObject2D::onUpdate(tickCounter);
 }
 
