@@ -23,6 +23,8 @@ set(SOURCES
 	"Label.h"
 	"RadioButton.cpp"
 	"RadioButton.h"
+	"ScrollBar.cpp"
+	"ScrollBar.h"
 	"TextBox.cpp"
 	"TextBox.h"
 	"Widget.cpp"

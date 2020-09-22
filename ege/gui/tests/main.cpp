@@ -7,6 +7,7 @@
 #include <ege/gui/Frame.h>
 #include <ege/gui/Label.h>
 #include <ege/gui/RadioButton.h>
+#include <ege/gui/ScrollBar.h>
 #include <ege/gui/TextBox.h>
 #include <cmath>
 
@@ -289,6 +290,15 @@ public:
         radioButton->setPosition(sf::Vector2f(20.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
+
+        auto scrollBar = std::make_shared<EGE::ScrollBar>(this);
+        scrollBar->setPosition(sf::Vector2f(0.f, 0.f));
+        scrollBar->setType(EGE::ScrollBar::Type::Vertical);
+        scrollBar->setLength(500.f);
+        scrollBar->setUpdateCallback([](double val) {
+                                        std::cerr << "scrollbar.value=" << val << std::endl;
+                                     });
+        addWidget(scrollBar);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
         graph->setPosition(sf::Vector2f(300.f, 100.f));
