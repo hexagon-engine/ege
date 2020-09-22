@@ -28,57 +28,57 @@ void Button::renderOnly(sf::RenderTarget& target)
     if(m_leftClicked)
     {
         sf::RectangleShape rs;
-        rs.setFillColor(sf::Color::Transparent);
         rs.setOutlineThickness(1.f);
 
+        rs.setFillColor(sf::Color(192, 192, 192));
         rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
-        rs.setPosition(1.f, 1.f);
-        rs.setOutlineColor(sf::Color(103, 103, 103));
-        target.draw(rs);
-
-        rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
         rs.setPosition(2.f, 2.f);
-        rs.setOutlineColor(sf::Color(176, 176, 176));
+        rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
 
-        rs.setSize(m_size - sf::Vector2f(5.f, 5.f));
-        rs.setPosition(3.f, 3.f);
-        rs.setFillColor(sf::Color(150, 150, 150));
-        rs.setOutlineColor(sf::Color(103, 103, 103));
+        rs.setFillColor(sf::Color::Transparent);
+        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setPosition(1.f, 1.f);
+        rs.setOutlineColor(sf::Color(200, 200, 200));
+        target.draw(rs);
+
+        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setPosition(0.f, 0.f);
+        rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
     }
     else if(m_mouseOver)
     {
         sf::RectangleShape rs;
-        rs.setFillColor(sf::Color::Transparent);
         rs.setOutlineThickness(1.f);
 
+        rs.setFillColor(sf::Color(210, 210, 210));
         rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
-        rs.setOutlineColor(sf::Color(112, 112, 112));
+        rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
-        rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
-        rs.setPosition(2.f, 2.f);
-        rs.setFillColor(sf::Color(216, 216, 216));
-        rs.setOutlineColor(sf::Color(176, 176, 176));
+        rs.setFillColor(sf::Color::Transparent);
+        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setPosition(0.f, 0.f);
+        rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
     }
     else
     {
         sf::RectangleShape rs;
-        rs.setFillColor(sf::Color::Transparent);
         rs.setOutlineThickness(1.f);
 
+        rs.setFillColor(sf::Color(200, 200, 200));
         rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
-        rs.setOutlineColor(sf::Color(82, 82, 82));
+        rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
-        rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
-        rs.setPosition(2.f, 2.f);
-        rs.setFillColor(sf::Color(164, 164, 164));
-        rs.setOutlineColor(sf::Color(117, 117, 117));
+        rs.setFillColor(sf::Color::Transparent);
+        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setPosition(0.f, 0.f);
+        rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
     }
 
