@@ -94,6 +94,15 @@ void CompoundWidget::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
+void CompoundWidget::onMouseLeave()
+{
+    // generate some event outside the window
+    sf::Event::MouseMoveEvent event;
+    event.x = -10;
+    event.y = -10;
+    onMouseMove(event);
+}
+
 void CompoundWidget::onJoystickButtonPress(sf::Event::JoystickButtonEvent& event)
 {
     for(auto widget: m_childWidgets)

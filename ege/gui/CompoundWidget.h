@@ -28,6 +28,7 @@ public:
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
+    virtual void onMouseLeave() override;
     virtual void onJoystickButtonPress(sf::Event::JoystickButtonEvent& event) override;
     virtual void onJoystickButtonRelease(sf::Event::JoystickButtonEvent& event) override;
     virtual void onJoystickMove(sf::Event::JoystickMoveEvent& event) override;
