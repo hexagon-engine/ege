@@ -237,12 +237,12 @@ public:
 
         auto labelLeft = std::make_shared<EGE::Label>(this);
         labelLeft->setString("Label Left");
-        labelLeft->setPosition(sf::Vector2f(10.f, 150.f));
+        labelLeft->setPosition(sf::Vector2f(40.f, 150.f));
         addWidget(labelLeft);
 
         auto labelCenter = std::make_shared<EGE::Label>(this);
         labelCenter->setString("Label Center");
-        labelCenter->setPosition(sf::Vector2f(150.f, 200.f));
+        labelCenter->setPosition(sf::Vector2f(165.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
@@ -271,23 +271,23 @@ public:
         addWidget(labelFPS);
 
         auto myTextBox = std::make_shared<EGE::TextBox>(this);
-        myTextBox->setPosition(sf::Vector2f(20.f, 400.f));
-        myTextBox->setSize(sf::Vector2f(460.f, 25.f));
+        myTextBox->setPosition(sf::Vector2f(40.f, 400.f));
+        myTextBox->setSize(sf::Vector2f(440.f, 25.f));
         addWidget(myTextBox);
 
         auto myFrame = std::make_shared<EGE::Frame>(this);
-        myFrame->setSize(sf::Vector2f(480.f, 470.f));
-        myFrame->setPosition(sf::Vector2f(10.f, 20.f));
+        myFrame->setSize(sf::Vector2f(460.f, 470.f));
+        myFrame->setPosition(sf::Vector2f(30.f, 20.f));
         myFrame->setLabel("Widget test");
         addWidget(myFrame);
 
         auto checkBox = std::make_shared<EGE::CheckBox>(this);
-        checkBox->setPosition(sf::Vector2f(20.f, 440.f));
+        checkBox->setPosition(sf::Vector2f(40.f, 440.f));
         checkBox->setLabel("CheckBox");
         addWidget(checkBox);
 
         auto radioButton = std::make_shared<EGE::RadioButton>(this);
-        radioButton->setPosition(sf::Vector2f(20.f, 460.f));
+        radioButton->setPosition(sf::Vector2f(40.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
 
