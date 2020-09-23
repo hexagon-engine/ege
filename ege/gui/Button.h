@@ -52,14 +52,14 @@ public:
     }
 
 protected:
-    virtual void onClick(sf::Vector2f position);
+    virtual void onClick(EGE::Vec2d position);
     std::function<void()> m_callback;
 
 private:
     // position may be needed for some animations
-    void handleClick(sf::Vector2f position);
+    void handleClick(EGE::Vec2d position);
 
-    sf::Vector2f m_lastClickPos;
+    EGE::Vec2d m_lastClickPos;
     sf::String m_label;
 };
 

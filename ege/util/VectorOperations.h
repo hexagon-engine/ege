@@ -3,10 +3,12 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
-#pragma once
+// It should be included only from Vector.h!
+#if !defined(VECTOR_H) || defined(VECTOR_H_END)
+#error "VectorOperations should not be included directly"
+#endif
 
 #include "Math.h"
-#include "Vector.h"
 
 #include <cmath>
 #include <ege/main/Config.h>
@@ -55,6 +57,7 @@ PolarVector2<T> toPolar(Vector2<T> cartesian)
 
 } // namespace EGE
 
+// Operations
 template<class T>
 EGE::Vector2<T> operator+(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
@@ -80,7 +83,7 @@ EGE::Vector2<T> operator/(EGE::Vector2<T> _1, T _2)
     return EGE::Vector2<T>(_1.x / _2, _1.y / _2);
 }
 
-// Equal
+// Equal / Not equal
 template<class T>
 bool operator==(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
@@ -93,7 +96,7 @@ bool operator!=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
     return !(_1 == _2);
 }
 
-// Less
+// Less / Not less
 template<class T>
 bool operator<(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
@@ -106,7 +109,7 @@ bool operator>=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
     return !(_1 < _2);
 }
 
-// Greater
+// Greater / Not greater
 template<class T>
 bool operator>(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
@@ -117,4 +120,38 @@ template<class T>
 bool operator<=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
     return !(_1 > _2);
+}
+
+// Operations
+template<class T>
+EGE::Vector2<T>& operator+=(EGE::Vector2<T>& _1, EGE::Vector2<T> _2)
+{
+    _1.x += _2.x;
+    _1.y += _2.y;
+    return _1;
+}
+
+template<class T>
+EGE::Vector2<T>& operator-=(EGE::Vector2<T>& _1, EGE::Vector2<T> _2)
+{
+    _1.x -= _2.x;
+    _1.y -= _2.y;
+    return _1;
+}
+
+template<class T>
+EGE::Vector2<T>& operator*=(EGE::Vector2<T>& _1, T _2)
+{
+    _1.x *= _2;
+    _1.y *= _2;
+    return _1;
+}
+
+template<class T>
+EGE::Vector2<T>& operator/=(EGE::Vector2<T>& _1, T _2)
+{
+    ASSERT(_2 != 0);
+    _1.x /= _2;
+    _1.y /= _2;
+    return _1;
 }

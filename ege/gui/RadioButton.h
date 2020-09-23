@@ -21,7 +21,7 @@ public:
     virtual void renderOnly(sf::RenderTarget& target);
 
 private:
-    virtual void onClick(sf::Vector2f);
+    virtual void onClick(EGE::Vec2d);
 };
 
 }

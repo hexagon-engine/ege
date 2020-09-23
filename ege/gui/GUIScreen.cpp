@@ -145,8 +145,9 @@ void GUIScreen::onSensorChange(sf::Event::SensorEvent& event)
 void GUIScreen::render(sf::RenderTarget& target)
 {
     // Ensure that GUI is resized to cover entire target
-    setPosition(sf::Vector2f());
-    m_size = sf::Vector2f(target.getSize());
+    setPosition(EGE::Vec2d());
+    auto size = target.getSize();
+    m_size = EGE::Vec2d(size.x, size.y);
 
     // Actually draw child widgets
     CompoundWidget::render(target);

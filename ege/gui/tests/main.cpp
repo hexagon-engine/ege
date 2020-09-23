@@ -47,13 +47,13 @@ TESTCASE(widget)
     auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     auto widget = new EGE::DummyWidget(gui.get());
-    widget->setPosition(sf::Vector2f(50.f, 50.f));
-    widget->setSize(sf::Vector2f(50.f, 50.f));
+    widget->setPosition(EGE::Vec2d(50.f, 50.f));
+    widget->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
 
     auto widget2 = new EGE::DummyWidget(gui.get());
-    widget2->setPosition(sf::Vector2f(150.f, 50.f));
-    widget2->setSize(sf::Vector2f(50.f, 50.f));
+    widget2->setPosition(EGE::Vec2d(150.f, 50.f));
+    widget2->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
 
     gameLoop.setCurrentGUIScreen(gui);
@@ -68,25 +68,25 @@ TESTCASE(guiChange)
     auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     auto widget = new EGE::DummyWidget(gui.get());
-    widget->setPosition(sf::Vector2f(50.f, 50.f));
-    widget->setSize(sf::Vector2f(50.f, 50.f));
+    widget->setPosition(EGE::Vec2d(50.f, 50.f));
+    widget->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
 
     auto widget2 = new EGE::DummyWidget(gui.get());
-    widget2->setPosition(sf::Vector2f(150.f, 50.f));
-    widget2->setSize(sf::Vector2f(50.f, 50.f));
+    widget2->setPosition(EGE::Vec2d(150.f, 50.f));
+    widget2->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
 
     auto gui2 = std::make_shared<EGE::GUIScreen>(&gameLoop);
 
     auto widget3 = new EGE::DummyWidget(gui.get());
-    widget3->setPosition(sf::Vector2f(50.f, 150.f));
-    widget3->setSize(sf::Vector2f(50.f, 50.f));
+    widget3->setPosition(EGE::Vec2d(50.f, 150.f));
+    widget3->setSize(EGE::Vec2d(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget3));
 
     auto widget4 = new EGE::DummyWidget(gui.get());
-    widget4->setPosition(sf::Vector2f(150.f, 150.f));
-    widget4->setSize(sf::Vector2f(50.f, 50.f));
+    widget4->setPosition(EGE::Vec2d(150.f, 150.f));
+    widget4->setSize(EGE::Vec2d(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
 
     gameLoop.setCurrentGUIScreen(gui);
@@ -112,8 +112,8 @@ public:
         EGE::GUIScreen::onLoad();
         DEBUG_PRINT("MyResourceManager onLoad");
         widget1 = std::make_shared<EGE::DummyWidget>(this);
-        widget1->setPosition(sf::Vector2f(50.f, 50.f));
-        widget1->setSize(sf::Vector2f(50.f, 50.f));
+        widget1->setPosition(EGE::Vec2d(50.f, 50.f));
+        widget1->setSize(EGE::Vec2d(50.f, 50.f));
         addWidget(widget1);
         font = &*m_gameLoop->getResourceManager().lock()->getFont("font.ttf");
         texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
@@ -163,7 +163,7 @@ public:
         m_vals.push_back(val);
     }
 
-    void setSize(sf::Vector2f size)
+    void setSize(EGE::Vec2d size)
     {
         m_size = size;
     }
@@ -172,7 +172,7 @@ public:
     {
         Widget::render(target);
 
-        sf::RectangleShape rs(m_size - sf::Vector2f(2.f, 2.f));
+        sf::RectangleShape rs(sf::Vector2f(m_size.x - 2.f, m_size.y - 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineThickness(1.f);
         rs.setOutlineColor(sf::Color::White);
@@ -213,8 +213,8 @@ public:
 
         auto button = std::make_shared<EGE::Button>(this);
         button->setLabel("T.e.s.t&");
-        button->setPosition(sf::Vector2f(50.f, 50.f));
-        button->setSize(sf::Vector2f(200.f, 40.f));
+        button->setPosition(EGE::Vec2d(50.f, 50.f));
+        button->setSize(EGE::Vec2d(200.f, 40.f));
         button->setCallback([this]() {
             if(!timerRunning)
             {
@@ -232,67 +232,67 @@ public:
 
         button2 = std::make_shared<EGE::Button>(this);
         button2->setLabel("T.e.s.t&:2");
-        button2->setPosition(sf::Vector2f(50.f, 100.f));
-        button2->setSize(sf::Vector2f(200.f, 40.f));
+        button2->setPosition(EGE::Vec2d(50.f, 100.f));
+        button2->setSize(EGE::Vec2d(200.f, 40.f));
 
         auto labelLeft = std::make_shared<EGE::Label>(this);
         labelLeft->setString("Label Left");
-        labelLeft->setPosition(sf::Vector2f(40.f, 150.f));
+        labelLeft->setPosition(EGE::Vec2d(40.f, 150.f));
         addWidget(labelLeft);
 
         auto labelCenter = std::make_shared<EGE::Label>(this);
         labelCenter->setString("Label Center");
-        labelCenter->setPosition(sf::Vector2f(165.f, 200.f));
+        labelCenter->setPosition(EGE::Vec2d(165.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
         auto labelRight = std::make_shared<EGE::Label>(this);
         labelRight->setString("Label Right");
-        labelRight->setPosition(sf::Vector2f(290.f, 250.f));
+        labelRight->setPosition(EGE::Vec2d(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
 
         labelAnimated = std::make_shared<EGE::Label>(this);
         labelAnimated->setString("Animation");
-        labelAnimated->setPosition(sf::Vector2f(150.f, 300.f));
+        labelAnimated->setPosition(EGE::Vec2d(150.f, 300.f));
         labelAnimated->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelAnimated);
 
         ball = std::make_shared<EGE::Label>(this);
         ball->setString("O");
-        ball->setPosition(sf::Vector2f(0.f, 0.f));
+        ball->setPosition(EGE::Vec2d(0.f, 0.f));
         ball->setTextAlign(EGE::Label::Align::Center);
         addWidget(ball);
 
         labelFPS = std::make_shared<EGE::Label>(this);
         labelFPS->setString("FPS: 0.0");
-        labelFPS->setPosition(sf::Vector2f(10.f, 10.f));
+        labelFPS->setPosition(EGE::Vec2d(10.f, 10.f));
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelFPS);
 
         auto myTextBox = std::make_shared<EGE::TextBox>(this);
-        myTextBox->setPosition(sf::Vector2f(40.f, 400.f));
-        myTextBox->setSize(sf::Vector2f(440.f, 25.f));
+        myTextBox->setPosition(EGE::Vec2d(40.f, 400.f));
+        myTextBox->setSize(EGE::Vec2d(440.f, 25.f));
         addWidget(myTextBox);
 
         auto myFrame = std::make_shared<EGE::Frame>(this);
-        myFrame->setSize(sf::Vector2f(460.f, 470.f));
-        myFrame->setPosition(sf::Vector2f(30.f, 20.f));
+        myFrame->setSize(EGE::Vec2d(460.f, 470.f));
+        myFrame->setPosition(EGE::Vec2d(30.f, 20.f));
         myFrame->setLabel("Widget test");
         addWidget(myFrame);
 
         auto checkBox = std::make_shared<EGE::CheckBox>(this);
-        checkBox->setPosition(sf::Vector2f(40.f, 440.f));
+        checkBox->setPosition(EGE::Vec2d(40.f, 440.f));
         checkBox->setLabel("CheckBox");
         addWidget(checkBox);
 
         auto radioButton = std::make_shared<EGE::RadioButton>(this);
-        radioButton->setPosition(sf::Vector2f(40.f, 460.f));
+        radioButton->setPosition(EGE::Vec2d(40.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
 
         auto scrollBar = std::make_shared<EGE::ScrollBar>(this);
-        scrollBar->setPosition(sf::Vector2f(0.f, 0.f));
+        scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
         scrollBar->setType(EGE::ScrollBar::Type::Vertical);
         scrollBar->setLength(500.f);
         scrollBar->setUpdateCallback([](double val) {
@@ -301,8 +301,8 @@ public:
         addWidget(scrollBar);
 
         graph = std::make_shared<AnimationGraphWidget>(this);
-        graph->setPosition(sf::Vector2f(300.f, 100.f));
-        graph->setSize(sf::Vector2f(100.f, 100.f));
+        graph->setPosition(EGE::Vec2d(300.f, 100.f));
+        graph->setSize(EGE::Vec2d(100.f, 100.f));
         graph->setMax(600.f);
         addWidget(graph);
 
@@ -316,8 +316,8 @@ public:
                      });
 
         graph2 = std::make_shared<AnimationGraphWidget>(this);
-        graph2->setPosition(sf::Vector2f(300.f, 210.f));
-        graph2->setSize(sf::Vector2f(100.f, 100.f));
+        graph2->setPosition(EGE::Vec2d(300.f, 210.f));
+        graph2->setSize(EGE::Vec2d(100.f, 100.f));
         graph2->setMax(600.f);
         addWidget(graph2);
 
@@ -338,7 +338,7 @@ public:
                                                 return ((x-0.5)*(x-0.5));
                                                 } );
         addAnimation(anim3, [this](EGE::Animation*, double val) {
-                        ball->setPosition(sf::Vector2f(300.f, 400.f + val * 40.0));
+                        ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
                      });
 
         auto animLabel = std::make_shared<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
@@ -348,13 +348,13 @@ public:
         animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
         addAnimation(animLabel, [this](EGE::Animation*, double val) {
-                        labelAnimated->setPosition(sf::Vector2f(150.f + val * 30.f, 300.f));
+                        labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
                      });
     }
 
     virtual void onResize(sf::Event::SizeEvent& event)
     {
-        labelFPS->setPosition(sf::Vector2f(event.width / 2.f, 10.f));
+        labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
     }
 
     virtual void onUpdate(long long tickCounter)

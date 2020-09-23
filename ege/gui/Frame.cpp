@@ -13,14 +13,14 @@ namespace EGE
 void Frame::renderOnly(sf::RenderTarget& target)
 {
     // Frame (generate)
-    sf::RectangleShape rsFrame(m_size - sf::Vector2f(2.f, 2.f));
+    sf::RectangleShape rsFrame(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
     rsFrame.setPosition(1.f, 1.f);
     rsFrame.setOutlineColor(sf::Color(164, 164, 164));
     rsFrame.setOutlineThickness(1.f);
     rsFrame.setFillColor(sf::Color::Transparent);
 
     // Frame 2 (generate)
-    sf::RectangleShape rsFrame2(m_size - sf::Vector2f(4.f, 4.f));
+    sf::RectangleShape rsFrame2(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
     rsFrame2.setPosition(2.f, 2.f);
     rsFrame2.setOutlineColor(sf::Color(64, 64, 64));
     rsFrame2.setOutlineThickness(1.f);

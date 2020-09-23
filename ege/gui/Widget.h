@@ -8,8 +8,8 @@ Copyright (c) Sppmacd 2020
 #include "Animatable.h"
 #include "Animation.h"
 
-#include <SFML/System.hpp>
 #include <ege/event/DefaultSystemEventHandler.h>
+#include <ege/util/Vector.h>
 
 #define WIDGET_DEBUG 0
 
@@ -45,11 +45,11 @@ public:
     // for non-parented widgets, e.g. GUIScreen
     Widget(GUIGameLoop* gameLoop);
 
-    virtual void setPosition(sf::Vector2f position)
+    virtual void setPosition(EGE::Vec2d position)
     {
         m_position = position;
     }
-    sf::Vector2f getPosition() const
+    EGE::Vec2d getPosition() const
     {
         return m_position;
     }
@@ -57,11 +57,11 @@ public:
     {
         return m_gameLoop;
     }
-    virtual void setSize(sf::Vector2f size)
+    virtual void setSize(EGE::Vec2d size)
     {
         m_size = size;
     }
-    sf::Vector2f getSize() const
+    EGE::Vec2d getSize() const
     {
         return m_size;
     }
@@ -82,7 +82,7 @@ public:
     virtual void onLossFocus() override;
     virtual void onGainFocus() override;
 
-    virtual bool isMouseOver(sf::Vector2f position);
+    virtual bool isMouseOver(EGE::Vec2d position);
     virtual void setViewForWidget(sf::RenderTarget& target);
 
     bool hasFocus()
@@ -91,14 +91,14 @@ public:
     }
 
 protected:
-    sf::Vector2f m_size;
+    EGE::Vec2d m_size;
     Widget* m_parent;
     bool m_mouseOver = false;
     bool m_leftClicked = false;
     GUIGameLoop* m_gameLoop = nullptr;
 
 private:
-    sf::Vector2f m_position;
+    EGE::Vec2d m_position;
     bool m_hasFocus = false;
 };
 
@@ -109,7 +109,7 @@ public:
     DummyWidget(Widget* parent)
     : Widget(parent) {}
 
-    void setSize(sf::Vector2f size)
+    void setSize(EGE::Vec2d size)
     {
         m_size = size;
     }

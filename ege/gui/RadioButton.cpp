@@ -61,7 +61,7 @@ void RadioButton::renderOnly(sf::RenderTarget& target)
     if(m_geometryUpdate)
     {
         m_geometryUpdate = false;
-        m_size = sf::Vector2f(text.getLocalBounds().width + 25.f, 25.f);
+        m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
     }
 
     // label
@@ -70,7 +70,7 @@ void RadioButton::renderOnly(sf::RenderTarget& target)
     target.draw(text);
 }
 
-void RadioButton::onClick(sf::Vector2f pos)
+void RadioButton::onClick(EGE::Vec2d pos)
 {
     CheckBox::onClick(pos);
     /*

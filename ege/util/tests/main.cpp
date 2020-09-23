@@ -7,7 +7,6 @@
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/Vector.h>
-#include <ege/util/VectorOperations.h>
 #include <iostream>
 
 TESTCASE(object)

@@ -91,7 +91,7 @@ public:
     void onResize(sf::Event::SizeEvent& event)
     {
         EGE::Widget::onResize(event);
-        m_size = sf::Vector2f(event.width - 80.f, 32.f);
+        m_size = EGE::Vec2d(event.width - 80.f, 32.f);
     }
 
     void render(sf::RenderTarget& target)
@@ -110,7 +110,7 @@ public:
 
         EGE::Label label(this);
         label.setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
-        label.setPosition(sf::Vector2f(40.f, 0.f));
+        label.setPosition(EGE::Vec2d(40.f, 0.f));
         label.setFontSize(15);
         label.render(target);
     }
@@ -133,7 +133,7 @@ public:
             DEBUG_PRINT(_color.first.baseId.c_str());
             DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
             auto widget = std::make_shared<ColorWidget>(this, _color.first, _color.second);
-            widget->setPosition(sf::Vector2f(40.f, 40.f * s + 40.f));
+            widget->setPosition(EGE::Vec2d(40.f, 40.f * s + 40.f));
             m_widgets.push_back(widget);
             addWidget(widget);
             s++;

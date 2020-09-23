@@ -20,16 +20,16 @@ Widget::Widget(GUIGameLoop* gameLoop)
 
 sf::FloatRect Widget::getBoundingBox()
 {
-    return sf::FloatRect(m_position, m_size);
+    return sf::FloatRect(m_position.x, m_position.y, m_size.x, m_size.y);
 }
 sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
 {
-    sf::Vector2f parentPosition;
+    EGE::Vec2d parentPosition;
 
     DUMP(0, m_parent);
     if(m_parent)
     {
-        parentPosition = (sf::Vector2f)m_parent->getPosition();
+        parentPosition = (EGE::Vec2d)m_parent->getPosition();
     }
 
     DUMP(0, m_size.x);
@@ -38,7 +38,7 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
     sf::Vector2u windowSize;
     windowSize = target.getSize();
 
-    sf::Vector2f widgetPosition = parentPosition + getPosition();
+    EGE::Vec2d widgetPosition = parentPosition + getPosition();
 
     DUMP(0, parentPosition.x);
     DUMP(0, parentPosition.y);
@@ -69,14 +69,14 @@ void Widget::renderOnly(sf::RenderTarget& target)
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
     {
-        sf::RectangleShape rs(m_size - sf::Vector2f(2.f, 2.f));
+        sf::RectangleShape rs(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(sf::Vector2f(1.f, 1.f));
         rs.setOutlineColor(sf::Color::Cyan);
 
         if(hasFocus())
         {
             rs.setOutlineThickness(2.f);
-            rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
+            rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
             rs.setPosition(sf::Vector2f(2.f, 2.f));
         }
         else
@@ -93,7 +93,7 @@ void Widget::renderOnly(sf::RenderTarget& target)
 
 void Widget::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
-    bool mouseOver = isMouseOver(sf::Vector2f(event.x, event.y));
+    bool mouseOver = isMouseOver(EGE::Vec2d(event.x, event.y));
     if(mouseOver)
     {
         if(!m_mouseOver)
@@ -135,9 +135,9 @@ void Widget::onGainFocus()
     m_hasFocus = true;
 }
 
-bool Widget::isMouseOver(sf::Vector2f position)
+bool Widget::isMouseOver(EGE::Vec2d position)
 {
-    return getBoundingBox().contains(position);
+    return getBoundingBox().contains(sf::Vector2f(position.x, position.y));
 }
 
 void Widget::setViewForWidget(sf::RenderTarget& target)

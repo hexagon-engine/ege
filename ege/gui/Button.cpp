@@ -12,13 +12,13 @@ namespace EGE
 
 void Button::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 {
-    handleClick(sf::Vector2f(event.x, event.y));
+    handleClick(EGE::Vec2d(event.x, event.y));
     Widget::onMouseButtonRelease(event); //it removes m_leftClicked state
 }
 
 void Button::onTouchEnd(sf::Event::TouchEvent& event)
 {
-    handleClick(sf::Vector2f(event.x, event.y));
+    handleClick(EGE::Vec2d(event.x, event.y));
     Widget::onTouchEnd(event); //it removes m_leftClicked state
 }
 
@@ -31,18 +31,18 @@ void Button::renderOnly(sf::RenderTarget& target)
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(192, 192, 192));
-        rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(2.f, 2.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(200, 200, 200));
         target.draw(rs);
 
-        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
@@ -53,13 +53,13 @@ void Button::renderOnly(sf::RenderTarget& target)
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(210, 210, 210));
-        rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
@@ -70,13 +70,13 @@ void Button::renderOnly(sf::RenderTarget& target)
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(200, 200, 200));
-        rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(m_size - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
@@ -92,7 +92,7 @@ void Button::renderOnly(sf::RenderTarget& target)
     target.draw(text);
 }
 
-void Button::handleClick(sf::Vector2f position)
+void Button::handleClick(EGE::Vec2d position)
 {
     if(m_leftClicked)
     {
@@ -102,7 +102,7 @@ void Button::handleClick(sf::Vector2f position)
     }
 }
 
-void Button::onClick(sf::Vector2f)
+void Button::onClick(EGE::Vec2d)
 {
     m_parent->onCommand(Command(this));
 }

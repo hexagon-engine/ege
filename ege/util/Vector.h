@@ -78,3 +78,9 @@ typedef PolarVector2<int> PolVec2i;
 typedef PolarVector2<unsigned> PolVec2u;
 
 }
+
+#define VECTOR_H
+
+#include "VectorOperations.h"
+
+#define VECTOR_H_END

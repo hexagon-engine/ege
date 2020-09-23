@@ -27,14 +27,14 @@ void Label::setFontSize(int size)
     m_geometryChanged = true;
 }
 
-void Label::setPosition(sf::Vector2f position)
+void Label::setPosition(EGE::Vec2d position)
 {
     setPositionInternal(position);
     m_textPosition = position;
     m_geometryChanged = true;
 };
 
-void Label::setPositionInternal(sf::Vector2f position)
+void Label::setPositionInternal(EGE::Vec2d position)
 {
     Widget::setPosition(position);
 }
@@ -53,22 +53,22 @@ void Label::updateGeometry()
         sf::FloatRect bounds = text.getLocalBounds();
         bounds.height += 7.f * m_fontSize / 15.f; //SFML text bounds bug??
         bounds.width += 1.f * m_fontSize / 15.f;
-        m_size = sf::Vector2f(bounds.width, bounds.height);
+        m_size = EGE::Vec2d(bounds.width, bounds.height);
         switch(m_align)
         {
             case Align::Left:
                 text.setOrigin(0.f, 0.f);
-                setPositionInternal(sf::Vector2f(m_textPosition.x, m_textPosition.y));
+                setPositionInternal(EGE::Vec2d(m_textPosition.x, m_textPosition.y));
                 break;
             case Align::Center:
                 text.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-                setPositionInternal(sf::Vector2f(m_textPosition.x - bounds.width / 2.f, m_textPosition.y - bounds.height / 2.f));
+                setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width / 2.f, m_textPosition.y - bounds.height / 2.f));
                 break;
             case Align::Right:
                 text.setOrigin(bounds.width, bounds.height);
-                setPositionInternal(sf::Vector2f(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
+                setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
         }
-        text.setPosition(m_textPosition - getPosition());
+        text.setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y) - sf::Vector2f(getPosition().x, getPosition().y));
         m_text = text;
         m_geometryChanged = false;
     }

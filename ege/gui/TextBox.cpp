@@ -38,7 +38,7 @@ void TextBox::renderOnly(sf::RenderTarget& target)
     // background
     rs.setPosition(2.f, 2.f);
     rs.setOutlineColor(sf::Color(60, 60, 60));
-    rs.setSize(m_size - sf::Vector2f(4.f, 4.f));
+    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
     target.draw(rs);
 
     // label
@@ -46,7 +46,7 @@ void TextBox::renderOnly(sf::RenderTarget& target)
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);
-    float overflow = std::max(0.f, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
+    float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
     target.draw(text);
 
@@ -60,13 +60,13 @@ void TextBox::renderOnly(sf::RenderTarget& target)
     }
 
     // border
-    rs.setSize(m_size - sf::Vector2f(3.f, 3.f));
+    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(3.f, 3.f));
     rs.setPosition(1.f, 1.f);
     rs.setFillColor(sf::Color::Transparent);
     rs.setOutlineColor(sf::Color(173, 173, 173));
     target.draw(rs);
 
-    rs.setSize(m_size - sf::Vector2f(2.f, 2.f));
+    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
     rs.setPosition(1.f, 1.f);
     rs.setOutlineColor(sf::Color(210, 210, 210));
     target.draw(rs);
@@ -99,7 +99,7 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);
-    float overflow = std::max(0.f, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
+    float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
 
     for(size_t s = 0; s <= m_text.getSize(); s++)

@@ -22,10 +22,10 @@ void SceneWidget::onResize(sf::Event::SizeEvent& event)
 {
     if(m_autoResizable)
     {
-        m_size = sf::Vector2f(event.width, event.height);
+        m_size = EGE::Vec2d(event.width, event.height);
 
         if(m_scene)
-            m_scene->setSize(m_size);
+            m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
     }
 }
 
@@ -43,11 +43,12 @@ void SceneWidget::onUpdate(long long tickCounter)
 void SceneWidget::setViewForWidget(sf::RenderTarget& target)
 {
     // fill the window fully by default
-    if(m_size == sf::Vector2f())
+    if(m_size == EGE::Vec2d())
     {
-        m_size = sf::Vector2f(target.getSize());
+        auto size = target.getSize();
+        m_size = EGE::Vec2d(size.x, size.y);
         if(m_scene)
-            m_scene->setSize(m_size);
+            m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
 
         m_autoResizable = true;
     }

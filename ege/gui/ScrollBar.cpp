@@ -13,10 +13,11 @@ namespace EGE
 void ScrollBar::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     Widget::onMouseButtonPress(event);
-    sf::Vector2f tmp1 = sf::Vector2f(event.x - getPosition().x, event.y - getPosition().y);
-    m_dragPos = tmp1 - getKnobBounds().getPosition();
+    EGE::Vec2d tmp1(event.x - getPosition().x, event.y - getPosition().y);
+    auto bounds = getKnobBounds();
+    m_dragPos = tmp1 - EGE::Vec2d(bounds.getPosition().x, bounds.getPosition().y);
     m_dragValue = m_value;
-    if(getKnobBounds().contains(tmp1))
+    if(getKnobBounds().contains(sf::Vector2f(tmp1.x, tmp1.y)))
         m_knobDragged = true;
 }
 
@@ -32,7 +33,7 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     if(m_knobDragged)
     {
         // calculate relative mouse position
-        sf::Vector2f rel(event.x, event.y);
+        EGE::Vec2d rel(event.x, event.y);
         rel -= getPosition();
 
         // save value relatively to sb type and starting drag pos
@@ -65,8 +66,8 @@ void ScrollBar::render(sf::RenderTarget& target)
     {
         switch(m_type)
         {
-            case Type::Horizontal: m_size = sf::Vector2f(m_length, 20.f); break;
-            case Type::Vertical: m_size = sf::Vector2f(20.f, m_length); break;
+            case Type::Horizontal: m_size = EGE::Vec2d(m_length, 20.f); break;
+            case Type::Vertical: m_size = EGE::Vec2d(20.f, m_length); break;
             default: CRASH(); break;
         }
 
@@ -91,44 +92,44 @@ sf::FloatRect ScrollBar::getKnobBounds()
     return rect;
 }
 
-void drawButtonLike(sf::RenderTarget& target, sf::Vector2f position, sf::Vector2f size)
+void drawButtonLike(sf::RenderTarget& target, EGE::Vec2d position, EGE::Vec2d size)
 {
     sf::RectangleShape rs;
     rs.setOutlineThickness(1.f);
 
     rs.setFillColor(sf::Color(209, 209, 209));
-    rs.setSize(size - sf::Vector2f(2.f, 2.f));
-    rs.setPosition(position + sf::Vector2f(1.f, 1.f));
+    rs.setSize(sf::Vector2f(size.x - 2.f, size.y - 2.f));
+    rs.setPosition(sf::Vector2f(position.x + 1.f, position.y + 1.f));
     rs.setOutlineColor(sf::Color(255, 255, 255));
     target.draw(rs);
 
     rs.setFillColor(sf::Color::Transparent);
-    rs.setSize(size - sf::Vector2f(1.f, 1.f));
-    rs.setPosition(position);
+    rs.setSize(sf::Vector2f(size.x - 1.f, size.y - 1.f));
+    rs.setPosition(sf::Vector2f(position.x, position.y));
     rs.setOutlineColor(sf::Color(60, 60, 60));
     target.draw(rs);
 }
 
-void drawRect(sf::RenderTarget& target, sf::Vector2f position, sf::Vector2f size, sf::Color color)
+void drawRect(sf::RenderTarget& target, EGE::Vec2d position, EGE::Vec2d size, sf::Color color)
 {
-    sf::RectangleShape rs(size);
+    sf::RectangleShape rs(sf::Vector2f(size.x, size.y));
     rs.setFillColor(color);
-    rs.setPosition(position);
+    rs.setPosition(sf::Vector2f(position.x, position.y));
     target.draw(rs);
 }
 
 void ScrollBar::renderOnly(sf::RenderTarget& target)
 {
     // background
-    drawRect(target, sf::Vector2f(0.f, 20.f), m_size - sf::Vector2f(0.f, 40.f), sf::Color(175, 175, 175));
+    drawRect(target, EGE::Vec2d(0.f, 20.f), m_size - EGE::Vec2d(0.f, 40.f), sf::Color(175, 175, 175));
 
     // scroll buttons
-    drawButtonLike(target, sf::Vector2f(0.f, 0.f), sf::Vector2f(20.f, 20.f));
-    drawButtonLike(target, sf::Vector2f(0.f, m_size.y - 20.f), sf::Vector2f(20.f, 20.f));
+    drawButtonLike(target, EGE::Vec2d(0.f, 0.f), EGE::Vec2d(20.f, 20.f));
+    drawButtonLike(target, EGE::Vec2d(0.f, m_size.y - 20.f), EGE::Vec2d(20.f, 20.f));
 
     // knob
     sf::FloatRect rect = getKnobBounds();
-    drawButtonLike(target, rect.getPosition(), rect.getSize());
+    drawButtonLike(target, EGE::Vec2d(rect.left, rect.top), EGE::Vec2d(rect.width, rect.height));
 }
 
 }

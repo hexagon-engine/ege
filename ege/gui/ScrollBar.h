@@ -81,7 +81,7 @@ protected:
     double m_value = 0.0;
     double m_maxValue = 1.0;
     double m_length = 0.0;
-    sf::Vector2f m_dragPos;
+    EGE::Vec2d m_dragPos;
     double m_dragValue = 0.0;
     Type m_type;
 };

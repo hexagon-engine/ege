@@ -57,7 +57,7 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 
 void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
-    sf::Vector2f position(event.x, event.y);
+    EGE::Vec2d position(event.x, event.y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);

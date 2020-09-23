@@ -38,8 +38,8 @@ protected:
     bool m_geometryUpdate = true;
     bool m_checked = false;
 
-    virtual void setSize(sf::Vector2f) {}
-    virtual void onClick(sf::Vector2f);
+    virtual void setSize(EGE::Vec2d) {}
+    virtual void onClick(EGE::Vec2d);
 };
 
 }

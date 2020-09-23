@@ -26,25 +26,25 @@ public:
 
     void setString(sf::String str);
     void setTextAlign(Align align);
-    virtual void setPosition(sf::Vector2f position);
+    virtual void setPosition(EGE::Vec2d position) override;
     void setFontSize(int size);
     virtual void render(sf::RenderTarget& target) override;
     virtual void renderOnly(sf::RenderTarget& target) override;
 
 protected:
-    void setPositionInternal(sf::Vector2f position);
+    void setPositionInternal(EGE::Vec2d position);
     void updateGeometry();
 
     sf::String m_string;
     Align m_align = Align::Left;
     int m_fontSize = 15;
     sf::Text m_text;
-    sf::Vector2f m_textPosition;
+    EGE::Vec2d m_textPosition;
     std::shared_ptr<sf::Font> m_font;
     bool m_geometryChanged = true;
 
 private:
-    virtual void setSize(sf::Vector2f) {}
+    virtual void setSize(EGE::Vec2d) {}
 };
 
 }

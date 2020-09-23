@@ -23,15 +23,15 @@ public:
     virtual void onUpdate(long long tickCounter);
     virtual void onResize(sf::Event::SizeEvent& event);
 
-    void setSize(sf::Vector2f size)
+    void setSize(EGE::Vec2d size)
     {
         m_size = size;
         if(m_scene)
-            m_scene->setSize(size);
+            m_scene->setSize(sf::Vector2f(size.x, size.y));
 
         m_autoResizable = false;
     }
-    sf::Vector2f getSize()
+    EGE::Vec2d getSize()
     {
         return m_size;
     }
@@ -40,7 +40,7 @@ public:
     {
         ASSERT(scene);
         m_scene = scene;
-        m_scene->setSize(m_size);
+        m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
     }
 
     std::shared_ptr<Scene> getScene()
