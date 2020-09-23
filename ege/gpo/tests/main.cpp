@@ -33,9 +33,9 @@ public:
 
     virtual std::shared_ptr<EGE::ObjectMap> serialize()
     {
-        std::shared_ptr<EGE::ObjectMap> map = std::make_shared<EGE::ObjectMap>();
-        map->addObject("int", std::make_shared<EGE::ObjectInt>(m_int));
-        map->addObject("string", std::make_shared<EGE::ObjectString>(m_string));
+        std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+        map->addObject("int", make<EGE::ObjectInt>(m_int));
+        map->addObject("string", make<EGE::ObjectString>(m_string));
         return map;
     }
 

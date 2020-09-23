@@ -273,7 +273,7 @@ EventResult EGEClient::onLoad()
             m_exitHandler(state.returnCode);
     };
 
-    m_clientTask = std::make_shared<AsyncTask>(clientNetworkWorker, clientNetworkCallback);
+    m_clientTask = make<AsyncTask>(clientNetworkWorker, clientNetworkCallback);
     addAsyncTask(m_clientTask, "EGEClient network task");
 
     return EventResult::Success;
@@ -294,7 +294,7 @@ void EGEClient::onTick(long long tickCount)
 
 std::shared_ptr<SFMLPacket> EGEClient::makePacket(sf::Packet& packet)
 {
-    return std::make_shared<EGEPacket>(packet);
+    return make<EGEPacket>(packet);
 }
 
 void EGEClient::disconnect()

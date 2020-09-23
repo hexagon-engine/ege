@@ -21,7 +21,7 @@ public:
         setPosition(pos);
 
         // make object animated (it can be done now by flyTo())
-        auto anim = std::make_shared<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        auto anim = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, -1.0);
         anim->addKeyframe(0.5, 1.0);
         anim->addKeyframe(1.0, -1.0);
@@ -101,20 +101,20 @@ TESTCASE(simple)
 {
     // create loop and window
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
+    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
 
     // limit window framerate to 10
     gameLoop.getWindow().lock()->setFramerateLimit(60);
 
     // create main GUI
-    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene>(&gameLoop);
+    auto scene = make<EGE::Scene>(&gameLoop);
 
     // add some objects to scene
-    scene->addObject(std::make_shared<MyObject>(scene.get(), "My Object", sf::Vector2f(200.f, 200.f)));
-    auto removedObject = std::make_shared<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyObject>(scene.get(), "My Object", sf::Vector2f(200.f, 200.f)));
+    auto removedObject = make<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
     // set Test Object to be removed after 5 seconds
@@ -124,10 +124,10 @@ TESTCASE(simple)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
-    gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
+    gameLoop.setResourceManager(make<MyResourceManager>());
 
     // assign GUI to loop
     gameLoop.setCurrentGUIScreen(gui);
@@ -140,23 +140,23 @@ TESTCASE(_2dCamera)
 {
     // create loop and window
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
+    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
 
     // limit window framerate to 10
     gameLoop.getWindow().lock()->setFramerateLimit(60);
 
     // create main GUI
-    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene2D>(&gameLoop);
+    auto scene = make<EGE::Scene2D>(&gameLoop);
 
     // add camera
-    auto cam = std::make_shared<EGE::CameraObject2D>(scene.get());
+    auto cam = make<EGE::CameraObject2D>(scene.get());
     bool b1 = false;
 
     // make camera animated
-    auto timer = std::make_shared<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
+    auto timer = make<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
     timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
                         cam->flyTo(b1 ? sf::Vector2f(0.f, 100.f) : sf::Vector2f(0.f, -100.f), 1.0);
                         b1 = !b1;
@@ -171,12 +171,12 @@ TESTCASE(_2dCamera)
     scene->addObject(cam);
 
     // add some objects to scene
-    scene->addObject(std::make_shared<MyBackground>(scene.get(), "bg"));
-    scene->addObject(std::make_shared<MyObject>(scene.get(), "My Object", sf::Vector2f(-100.f, -100.f)));
-    auto removedObject = std::make_shared<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyBackground>(scene.get(), "bg"));
+    scene->addObject(make<MyObject>(scene.get(), "My Object", sf::Vector2f(-100.f, -100.f)));
+    auto removedObject = make<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
-    auto texturedObject = std::make_shared<EGE::SceneObject2D>(scene.get(), "Textured Object");
+    auto texturedObject = make<EGE::SceneObject2D>(scene.get(), "Textured Object");
     auto renderer = make<EGE::TexturedRenderer2D>(scene);
     renderer->setTextureName("texture.png");
     renderer->center();
@@ -192,10 +192,10 @@ TESTCASE(_2dCamera)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
-    gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
+    gameLoop.setResourceManager(make<MyResourceManager>());
 
     // assign GUI to loop
     gameLoop.setCurrentGUIScreen(gui);
@@ -208,19 +208,19 @@ TESTCASE(serializer)
 {
     // create loop
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Serializer Test"));
+    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Serializer Test"));
 
     // limit window framerate to 10
     gameLoop.getWindow().lock()->setFramerateLimit(60);
 
     // create main GUI
-    auto gui = std::make_shared<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(&gameLoop);
 
     // create scene
-    auto scene = std::make_shared<EGE::Scene2D>(&gameLoop);
+    auto scene = make<EGE::Scene2D>(&gameLoop);
 
     // create some object
-    auto myObject = std::make_shared<MyBackground>(scene.get(), "My Test");
+    auto myObject = make<MyBackground>(scene.get(), "My Test");
     myObject->setPosition(sf::Vector2f(0.f, 0.f));
 
     // serialize object
@@ -228,16 +228,16 @@ TESTCASE(serializer)
     std::cerr << data->toString() << std::endl;
 
     // deserialize object and add result
-    auto myObject2 = std::make_shared<MyBackground>(scene.get(), "My Object 5555");
+    auto myObject2 = make<MyBackground>(scene.get(), "My Object 5555");
     myObject2->setPosition(sf::Vector2f(-100.f, -100.f));
     myObject2->deserialize(data);
     scene->addObject(myObject2);
 
     // assign scene to GUI
-    gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
 
     // assign an instance of MyResourceManager to game loop
-    gameLoop.setResourceManager(std::make_shared<MyResourceManager>());
+    gameLoop.setResourceManager(make<MyResourceManager>());
 
     // assign GUI to loop
     gameLoop.setCurrentGUIScreen(gui);

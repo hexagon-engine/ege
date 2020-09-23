@@ -5,12 +5,14 @@ Copyright (c) Sppmacd 2020
 
 #include "ObjectString.h"
 
+#include <ege/main/Config.h>
+
 namespace EGE
 {
 
 std::shared_ptr<Object> ObjectString::copy() const
 {
-    return std::make_shared<ObjectString>(*this);
+    return make<ObjectString>(*this);
 }
 
 std::string ObjectString::toString() const

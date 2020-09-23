@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "ShapeSet.h"
 
+#include <ege/main/Config.h>
+
 namespace EGE
 {
 
@@ -18,7 +20,7 @@ ShapeSet::ShapeSet(const ShapeSet& shapeSet)
 
 std::shared_ptr<ShapeSet> ShapeSet::intersection(std::shared_ptr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = std::make_shared<ShapeSet>();
+    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
     for(auto shape: m_subShapes)
     {
         shapeSet->append(shape->intersection(other));
@@ -28,7 +30,7 @@ std::shared_ptr<ShapeSet> ShapeSet::intersection(std::shared_ptr<Shape> other) c
 
 std::shared_ptr<ShapeSet> ShapeSet::sum(std::shared_ptr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = std::make_shared<ShapeSet>(*this);
+    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>(*this);
     shapeSet->append(other);
     return shapeSet;
 }
@@ -50,7 +52,7 @@ bool ShapeSet::isEmpty() const
 
 std::shared_ptr<Shape> ShapeSet::copy() const
 {
-    return std::make_shared<ShapeSet>(*this);
+    return make<ShapeSet>(*this);
 }
 
 void ShapeSet::append(std::shared_ptr<Shape> shape)

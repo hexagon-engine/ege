@@ -12,7 +12,7 @@ namespace EGE
 
 GUIGameLoop::GUIGameLoop()
 {
-    m_profiler = std::make_shared<Profiler>();
+    m_profiler = make<Profiler>();
 }
 
 GUIGameLoop::~GUIGameLoop()

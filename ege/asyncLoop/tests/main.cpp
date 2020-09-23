@@ -24,7 +24,7 @@ void myCallback(EGE::AsyncTask::State state)
 TESTCASE(simple)
 {
     EGE::AsyncLoop loop;
-    auto myTask = std::make_shared<EGE::AsyncTask>(myWorker, myCallback);
+    auto myTask = make<EGE::AsyncTask>(myWorker, myCallback);
     loop.addAsyncTask(myTask, "myTask");
 
     bool running = true;
@@ -37,7 +37,7 @@ TESTCASE(simple)
 
         if(myTask->finished())
         {
-            auto timer = std::make_shared<EGE::Timer>(&loop, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds));
+            auto timer = make<EGE::Timer>(&loop, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds));
             timer->setCallback([&running](std::string, EGE::Timer*) {
                                     running = false;
                                });
@@ -67,13 +67,13 @@ TESTCASE(threadSafeEventLoop)
         }
         return 0;
     };
-    loop.addAsyncTask(std::make_shared<EGE::AsyncTask>(loadingWorker, [&running](EGE::AsyncTask::State state) {
+    loop.addAsyncTask(make<EGE::AsyncTask>(loadingWorker, [&running](EGE::AsyncTask::State state) {
         if(state.finished)
         {
             running = false;
         }
     }));
-    auto timer = std::make_shared<EGE::Timer>(&loop, EGE::Timer::Mode::Infinite, EGE::Time(1.0, EGE::Time::Unit::Seconds));
+    auto timer = make<EGE::Timer>(&loop, EGE::Timer::Mode::Infinite, EGE::Time(1.0, EGE::Time::Unit::Seconds));
     timer->setCallback([&progress](std::string, EGE::Timer*) {
         std::cerr << "Loading progress: " << (int)(progress * 100) << "%" << std::endl;
     });

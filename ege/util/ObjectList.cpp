@@ -12,7 +12,7 @@ namespace EGE
 
 std::shared_ptr<Object> ObjectList::copy() const
 {
-    return std::make_shared<ObjectList>(*this);
+    return make<ObjectList>(*this);
 }
 
 std::string ObjectList::toString() const

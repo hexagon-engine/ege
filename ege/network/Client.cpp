@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Client.h"
 
+#include <ege/main/Config.h>
 #include <iostream>
 
 namespace EGE
@@ -14,7 +15,7 @@ bool Client::connect(sf::IpAddress ip, unsigned short port)
 {
     sf::Lock lock(m_accessMutex);
 
-    m_socket = std::make_shared<sf::TcpSocket>();
+    m_socket = make<sf::TcpSocket>();
     sf::Socket::Status status = m_socket->connect(ip, port, sf::seconds(1.f));
     if(status != sf::Socket::Done)
     {

@@ -20,8 +20,8 @@ void SceneObject::onUpdate(long long tickCounter)
 
 std::shared_ptr<ObjectMap> SceneObject::serialize()
 {
-    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
-    data->addObject("name", std::make_shared<ObjectString>(m_name));
+    std::shared_ptr<ObjectMap> data = make<ObjectMap>();
+    data->addObject("name", make<ObjectString>(m_name));
     data->addObject("m", serializeMain());
     data->addObject("x", serializeExtended());
     return data;

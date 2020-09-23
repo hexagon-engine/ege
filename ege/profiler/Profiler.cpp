@@ -198,10 +198,10 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
 
 std::shared_ptr<ObjectMap> Profiler::Section::serialize()
 {
-    std::shared_ptr<ObjectMap> map = std::make_shared<ObjectMap>();
+    std::shared_ptr<ObjectMap> map = make<ObjectMap>();
 
     // this section
-    map->addObject("time", std::make_shared<ObjectInt>(m_time));
+    map->addObject("time", make<ObjectInt>(m_time));
 
     // sub sections
     std::vector<Profiler::Section*> sections;
@@ -209,7 +209,7 @@ std::shared_ptr<ObjectMap> Profiler::Section::serialize()
         sections.push_back(it.second.get());
 
     std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
-    std::shared_ptr<ObjectMap>& sectionMap = (std::shared_ptr<ObjectMap>&)map->addObject("sections", std::make_shared<ObjectMap>());
+    std::shared_ptr<ObjectMap>& sectionMap = (std::shared_ptr<ObjectMap>&)map->addObject("sections", make<ObjectMap>());
 
     for(auto section: sections)
     {
@@ -227,7 +227,7 @@ void Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
 
 std::shared_ptr<ObjectMap> Profiler::serialize()
 {
-    std::shared_ptr<ObjectMap> map = std::make_shared<ObjectMap>();
+    std::shared_ptr<ObjectMap> map = make<ObjectMap>();
     map->addObject("root", m_root.serialize());
     return map;
 }

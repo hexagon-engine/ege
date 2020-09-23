@@ -14,21 +14,21 @@ namespace EGE
 
 std::shared_ptr<ShapeSet> Point::intersection(std::shared_ptr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = std::make_shared<ShapeSet>();
+    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
 
-    if(other->contains(std::make_shared<Point>(*this)))
-        shapeSet->append(std::make_shared<Point>(*this));
+    if(other->contains(make<Point>(*this)))
+        shapeSet->append(make<Point>(*this));
 
     return shapeSet;
 }
 
 std::shared_ptr<ShapeSet> Point::sum(std::shared_ptr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = std::make_shared<ShapeSet>();
+    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
     shapeSet->append(other);
 
-    if(!other->contains(std::make_shared<Point>(*this)))
-        shapeSet->append(std::make_shared<Point>(*this));
+    if(!other->contains(make<Point>(*this)))
+        shapeSet->append(make<Point>(*this));
 
     return shapeSet;
 }
@@ -46,7 +46,7 @@ bool Point::isEmpty() const
 
 std::shared_ptr<Shape> Point::copy() const
 {
-    return std::make_shared<Point>(*this);
+    return make<Point>(*this);
 }
 
 }

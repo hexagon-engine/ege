@@ -128,7 +128,7 @@ void Server::select()
     {
         if(m_selector.isReady(m_listener))
         {
-            std::shared_ptr<sf::TcpSocket> socket = std::make_shared<sf::TcpSocket>();
+            std::shared_ptr<sf::TcpSocket> socket = make<sf::TcpSocket>();
             sf::Socket::Status status2 = m_listener.accept(*socket);
 
             if(status2 == sf::Socket::Done)

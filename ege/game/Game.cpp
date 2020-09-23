@@ -10,8 +10,8 @@ namespace EGE
 
 Game::Game()
 {
-    m_gameLoop = std::make_shared<GUIGameLoop>();
-    m_profiler = std::make_shared<Profiler>();
+    m_gameLoop = make<GUIGameLoop>();
+    m_profiler = make<Profiler>();
 }
 
 int Game::run()

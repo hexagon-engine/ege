@@ -81,7 +81,7 @@ size_t ObjectMap::size() const
 
 std::shared_ptr<ObjectMap> ObjectMap::asMap() const
 {
-    return std::make_shared<ObjectMap>(*this);
+    return make<ObjectMap>(*this);
 }
 
 std::shared_ptr<ObjectMap> ObjectMap::merge(std::shared_ptr<ObjectMap> other)

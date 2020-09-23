@@ -62,7 +62,7 @@ public:
 
     std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
-        return std::make_shared<MyPacket>(packet);
+        return make<MyPacket>(packet);
     }
 
     virtual bool send(std::shared_ptr<EGE::Packet> packet)
@@ -84,7 +84,7 @@ public:
 
     std::shared_ptr<EGE::ClientConnection> makeClient(EGE::Server* server, std::shared_ptr<sf::TcpSocket> socket)
     {
-        return std::make_shared<MyClientConnection>(server, socket);
+        return make<MyClientConnection>(server, socket);
     }
 
     virtual EGE::EventResult onClientConnect(EGE::ClientConnection* client)
@@ -92,9 +92,9 @@ public:
         if(client->getSocket().expired())
             return EGE::EventResult::Failure;
 
-        client->send(std::make_shared<MyPacket>("Hello, " + client->getSocket().lock()->getRemoteAddress().toString()));
-        client->send(std::make_shared<MyPacket>("please login"));
-        sendToAll(std::make_shared<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " connected to server"));
+        client->send(make<MyPacket>("Hello, " + client->getSocket().lock()->getRemoteAddress().toString()));
+        client->send(make<MyPacket>("please login"));
+        sendToAll(make<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " connected to server"));
         return EGE::EventResult::Success;
     }
 
@@ -103,7 +103,7 @@ public:
         if(client->getSocket().expired())
             return EGE::EventResult::Failure;
 
-        sendToAll(std::make_shared<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " disconnected from server"));
+        sendToAll(make<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " disconnected from server"));
         return EGE::EventResult::Success;
     }
 
@@ -122,7 +122,7 @@ class MyClient : public EGE::Client, public EGE::SFMLNetworkImpl
 public:
     std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
-        return std::make_shared<MyPacket>(packet);
+        return make<MyPacket>(packet);
     }
 
     virtual EGE::EventResult onReceive(std::shared_ptr<EGE::Packet> packet)
@@ -131,7 +131,7 @@ public:
         std::string msg = mypacket->getString();
 
         if(msg == "please login")
-            send(std::make_shared<MyPacket>("yes, here you are: login 1234 password 1234."));
+            send(make<MyPacket>("yes, here you are: login 1234 password 1234."));
 
         std::cerr << "Server sent message: " << mypacket->getString() << std::endl;
         return EGE::EventResult::Success;
@@ -188,7 +188,7 @@ TESTCASE(abstract)
         }
 
         std::cerr << "Client 1 is running! :)" << std::endl;
-        client1.send(std::make_shared<MyPacket>("hello, Server! I'm Client ONE"));
+        client1.send(make<MyPacket>("hello, Server! I'm Client ONE"));
         while(client1.isConnected())
             client1.update();
         std::cerr << "Client 1 finished! :)" << std::endl;
@@ -210,7 +210,7 @@ TESTCASE(abstract)
         }
 
         std::cerr << "Client 2 is running! :)" << std::endl;
-        client2.send(std::make_shared<MyPacket>("hello, Server! I'm Client TWO"));
+        client2.send(make<MyPacket>("hello, Server! I'm Client TWO"));
         while(client2.isConnected())
             client2.update();
         std::cerr << "Client 2 finished! :)" << std::endl;

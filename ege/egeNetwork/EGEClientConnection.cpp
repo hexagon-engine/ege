@@ -12,7 +12,7 @@ namespace EGE
 
 std::shared_ptr<SFMLPacket> EGEClientConnection::makePacket(sf::Packet& packet)
 {
-    return std::make_shared<EGEPacket>(packet);
+    return make<EGEPacket>(packet);
 }
 
 void EGEClientConnection::setLastRecvTime(Time t)

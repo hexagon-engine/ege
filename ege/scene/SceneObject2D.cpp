@@ -34,7 +34,7 @@ bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
 bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(double)> easing)
 {
     // TODO: collisions
-    auto animation = std::make_shared<Animation>(this, EGE::Time(time, EGE::Time::Unit::Seconds));
+    auto animation = make<Animation>(this, EGE::Time(time, EGE::Time::Unit::Seconds));
     animation->setEasingFunction(easing);
     animation->addKeyframe(0,0);
     animation->addKeyframe(1,1);
@@ -76,22 +76,22 @@ void SceneObject2D::render(sf::RenderTarget& target) const
 
 std::shared_ptr<ObjectMap> SceneObject2D::serializeMain()
 {
-    std::shared_ptr<ObjectMap> data = std::make_shared<ObjectMap>();
+    std::shared_ptr<ObjectMap> data = make<ObjectMap>();
 
     // TODO: change it to floats!
-    data->addObject("pX", std::make_shared<ObjectFloat>(m_position.x));
-    data->addObject("pY", std::make_shared<ObjectFloat>(m_position.y));
+    data->addObject("pX", make<ObjectFloat>(m_position.x));
+    data->addObject("pY", make<ObjectFloat>(m_position.y));
 
-    data->addObject("oX", std::make_shared<ObjectFloat>(m_origin.x));
-    data->addObject("oY", std::make_shared<ObjectFloat>(m_origin.y));
+    data->addObject("oX", make<ObjectFloat>(m_origin.x));
+    data->addObject("oY", make<ObjectFloat>(m_origin.y));
 
-    data->addObject("sX", std::make_shared<ObjectFloat>(m_scale.x));
-    data->addObject("sY", std::make_shared<ObjectFloat>(m_scale.y));
+    data->addObject("sX", make<ObjectFloat>(m_scale.x));
+    data->addObject("sY", make<ObjectFloat>(m_scale.y));
 
-    data->addObject("mX", std::make_shared<ObjectFloat>(m_motion.x));
-    data->addObject("mY", std::make_shared<ObjectFloat>(m_motion.y));
+    data->addObject("mX", make<ObjectFloat>(m_motion.x));
+    data->addObject("mY", make<ObjectFloat>(m_motion.y));
 
-    data->addObject("rot", std::make_shared<ObjectFloat>(m_rotation));
+    data->addObject("rot", make<ObjectFloat>(m_rotation));
 
     auto superData = SceneObject::serializeMain();
 

@@ -21,12 +21,12 @@
 
 TESTCASE(converter)
 {
-    std::shared_ptr<EGE::ObjectMap> map = std::make_shared<EGE::ObjectMap>();
-    map->addObject("packetTestInt", std::make_shared<EGE::ObjectInt>(62452));
-    map->addObject("String", std::make_shared<EGE::ObjectString>("test"));
-    map->addObject("IntAsString", std::make_shared<EGE::ObjectString>("543"));
-    std::shared_ptr<EGE::ObjectMap> subMap = std::make_shared<EGE::ObjectMap>();
-    subMap->addObject("MapTest", std::make_shared<EGE::ObjectString>("YYYTEST555??"));
+    std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+    map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
+    map->addObject("String", make<EGE::ObjectString>("test"));
+    map->addObject("IntAsString", make<EGE::ObjectString>("543"));
+    std::shared_ptr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
+    subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
     map->addObject("SubMapTest", subMap);
 
     std::cerr << "Object: " << map->toString() << std::endl;
@@ -51,7 +51,7 @@ public:
         // only server side!
         if(!playerControlled && !owner->getLoop())
         {
-            auto timer = std::make_shared<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+            auto timer = make<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
             timer->setCallback([this](std::string, EGE::Timer*) {
                                     std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
                                     m_dead = true;
@@ -212,16 +212,16 @@ TESTCASE(server)
         server.setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
                                 gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
                                                                 [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
-                                                                    return std::make_shared<MyObject>(scene);
+                                                                    return make<MyObject>(scene);
                                                                 }));
                                 return true;
                             });
 
-        auto scene = std::make_shared<EGE::Scene2D>(nullptr);
+        auto scene = make<EGE::Scene2D>(nullptr);
 
-        auto timer = std::make_shared<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
+        auto timer = make<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
         timer->setCallback([scene](std::string, EGE::Timer*) {
-                                auto object = std::make_shared<MyObject>(scene.get());
+                                auto object = make<MyObject>(scene.get());
                                 object->setPosition(sf::Vector2f(rand() % 50 - 25, rand() % 50 - 25));
                                 scene->addObject(object);
                            });
@@ -299,24 +299,24 @@ public:
             return EGE::EventResult::Failure;
 
         // Create GUI and assign it to client.
-        auto gui = std::make_shared<EGE::GUIScreen>(this);
+        auto gui = make<EGE::GUIScreen>(this);
         setCurrentGUIScreen(gui);
 
         // Create client - define server IP and port.
-        m_client = std::make_shared<MyClient>(m_port);
+        m_client = make<MyClient>(m_port);
 
         // Create scene and assign it to client.
-        auto scene = std::make_shared<EGE::Scene2D>(this);
+        auto scene = make<EGE::Scene2D>(this);
         m_client->setScene(scene);
 
         // Create SceneWidget to be displayed in the window.
-        gui->addWidget(std::make_shared<EGE::SceneWidget>(gui.get(), scene));
+        gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
 
         // Set initialize handler for Client. It will be called before connecting.
         m_client->setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
                                 gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
                                                                 [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
-                                                                    return std::make_shared<MyObject>(scene);
+                                                                    return make<MyObject>(scene);
                                                                 }));
                                 return true;
                             });
@@ -366,7 +366,7 @@ TESTCASE(client)
 
     // Create GameLoop and window.
     MyGameLoop loop(PORT);
-    loop.setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
+    loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
     loop.getWindow().lock()->setKeyRepeatEnabled(false);
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
 

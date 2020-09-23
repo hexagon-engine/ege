@@ -18,11 +18,11 @@ public:
 
     virtual std::shared_ptr<EGE::ObjectMap> serialize()
     {
-        std::shared_ptr<EGE::ObjectMap> map = std::make_shared<EGE::ObjectMap>();
-        map->addObject("r", std::make_shared<EGE::ObjectInt>(m_color.r));
-        map->addObject("g", std::make_shared<EGE::ObjectInt>(m_color.g));
-        map->addObject("b", std::make_shared<EGE::ObjectInt>(m_color.b));
-        map->addObject("a", std::make_shared<EGE::ObjectInt>(m_color.a));
+        std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+        map->addObject("r", make<EGE::ObjectInt>(m_color.r));
+        map->addObject("g", make<EGE::ObjectInt>(m_color.g));
+        map->addObject("b", make<EGE::ObjectInt>(m_color.b));
+        map->addObject("a", make<EGE::ObjectInt>(m_color.a));
         return map;
     }
 
@@ -132,7 +132,7 @@ public:
         {
             DEBUG_PRINT(_color.first.baseId.c_str());
             DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
-            auto widget = std::make_shared<ColorWidget>(this, _color.first, _color.second);
+            auto widget = make<ColorWidget>(this, _color.first, _color.second);
             widget->setPosition(EGE::Vec2d(40.f, 40.f * s + 40.f));
             m_widgets.push_back(widget);
             addWidget(widget);
@@ -155,11 +155,11 @@ public:
 TESTCASE(simple)
 {
     auto game = EGE::Game::instance();
-    auto gpom = std::make_shared<MyGameplayObjectManager>();
+    auto gpom = make<MyGameplayObjectManager>();
     game.setGameplayObjectManager(gpom);
-    game.getLoop()->setWindow(std::make_shared<EGE::SFMLSystemWindow>(sf::VideoMode(400, 400), "EGE::Game"));
-    game.getLoop()->setResourceManager(std::make_shared<MyResourceManager>());
-    game.getLoop()->setCurrentGUIScreen(std::make_shared<MyGuiScreen>(game.getLoop().get()));
+    game.getLoop()->setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(400, 400), "EGE::Game"));
+    game.getLoop()->setResourceManager(make<MyResourceManager>());
+    game.getLoop()->setCurrentGUIScreen(make<MyGuiScreen>(game.getLoop().get()));
     game.getLoop()->setBackgroundColor(sf::Color(127, 127, 127));
     DUMP(1, game.run());
 }
