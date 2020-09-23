@@ -67,7 +67,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
     {
     case 'm':
         {
-            std::shared_ptr<ObjectMap> obj = std::make_shared<ObjectMap>();
+            std::shared_ptr<ObjectMap> obj = make<ObjectMap>();
             Internal::_ParseResult result = parseMap(input, *obj);
             if(!result.message.empty())
                 return nullptr;
@@ -76,7 +76,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'l':
         {
-            std::shared_ptr<ObjectList> obj = std::make_shared<ObjectList>();
+            std::shared_ptr<ObjectList> obj = make<ObjectList>();
             Internal::_ParseResult result = parseList(input, *obj);
             if(!result.message.empty())
                 return nullptr;
@@ -85,7 +85,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'i':
         {
-            std::shared_ptr<ObjectInt> obj = std::make_shared<ObjectInt>(0);
+            std::shared_ptr<ObjectInt> obj = make<ObjectInt>(0);
             if(!parseInt(input, *obj))
                 return nullptr;
             return obj;
@@ -93,7 +93,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'f':
         {
-            std::shared_ptr<ObjectFloat> obj = std::make_shared<ObjectFloat>(0.0);
+            std::shared_ptr<ObjectFloat> obj = make<ObjectFloat>(0.0);
             if(!parseFloat(input, *obj))
                 return nullptr;
             return obj;
@@ -101,7 +101,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 's':
         {
-            std::shared_ptr<ObjectString> obj = std::make_shared<ObjectString>("");
+            std::shared_ptr<ObjectString> obj = make<ObjectString>("");
             if(!parseString(input, *obj))
                 return nullptr;
             return obj;
@@ -203,8 +203,6 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
     {
         return false;
     }
-
-    ASSERT(instanceof(&object, ObjectMap));
 
     Internal::_ParseResult result = parseMap(input, (ObjectMap&)object);
     if(!result.message.empty())
