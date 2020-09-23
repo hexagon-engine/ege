@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Renderer.h"
+
 #include <SFML/Graphics.hpp>
 #include <ege/gpo/GameplayObject.h>
 #include <ege/gui/Animatable.h>
@@ -22,8 +24,17 @@ public:
     : GameplayObject(typeId), m_owner(owner) {}
 
     virtual void onUpdate(long long tickCounter);
-    virtual void render(sf::RenderTarget& target) const = 0;
-    virtual void preRenderUpdate() {}
+
+    virtual void render(sf::RenderTarget& target) const
+    {
+        if(m_renderer)
+            m_renderer->render(*this, target);
+    }
+    virtual void preRenderUpdate(sf::RenderTarget& target)
+    {
+        if(m_renderer)
+            m_renderer->preRender(*this, target);
+    }
 
     bool isDead() const
     {
@@ -89,6 +100,12 @@ public:
         return m_owner;
     }
 
+    template<class T>
+    void setRenderer(std::shared_ptr<Renderer> renderer)
+    {
+        m_renderer = std::static_pointer_cast<Renderer>(renderer);
+    }
+
 protected:
     void setMainChanged(bool flag = true)
     {
@@ -105,6 +122,9 @@ protected:
     std::string m_name;
     bool m_mainChanged = true;
     bool m_extendedChanged = true;
+    std::shared_ptr<Renderer> m_renderer;
+
+    friend class Renderer;
 };
 
 }

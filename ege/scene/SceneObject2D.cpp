@@ -18,7 +18,11 @@ bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
     if(notify)
         setPosition(pos);
     else
+    {
         m_position = pos;
+        if(m_renderer)
+            m_renderer->setGeometryNeedUpdate();
+    }
 
 
     //DUMP(1, m_name);
@@ -123,18 +127,6 @@ void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
     SceneObject::deserializeMain(object);
 }
 
-void SceneObject2D::preRenderUpdate()
-{
-    SceneObject::preRenderUpdate();
-
-    // Call updateGeometry if it's needed (only on client)
-    if(m_owner->getLoop() && m_geometryChanged)
-    {
-        updateGeometry();
-        m_geometryChanged = false;
-    }
-}
-
 void SceneObject2D::onUpdate(long long tickCounter)
 {
     SceneObject::onUpdate(tickCounter);
@@ -146,7 +138,8 @@ void SceneObject2D::onUpdate(long long tickCounter)
     if(m_motion != sf::Vector2f())
     {
         moveTo(getPosition() + m_motion, false);
-        m_geometryChanged = true;
+        if(m_renderer)
+            m_renderer->setGeometryNeedUpdate();
     }
 }
 

@@ -29,7 +29,8 @@ public:
         if(m_position != position)
         {
             setMainChanged();
-            m_geometryChanged = true;
+            if(m_renderer)
+                m_renderer->setGeometryNeedUpdate();
         }
         m_position = position;
     }
@@ -42,7 +43,8 @@ public:
         if(m_motion != motion)
         {
             setMainChanged();
-            m_geometryChanged = true;
+            if(m_renderer)
+                m_renderer->setGeometryNeedUpdate();
         }
         m_motion = motion;
     }
@@ -65,6 +67,33 @@ public:
         return rect;
     }
 
+    double getRotation() const
+    {
+        return m_rotation;
+    }
+    void setRotation(double rotation)
+    {
+        m_rotation = rotation;
+    }
+
+    sf::Vector2f getOrigin() const
+    {
+        return m_origin;
+    }
+    void setOrigin(sf::Vector2f origin)
+    {
+        m_origin = origin;
+    }
+
+    sf::Vector2f getScale() const
+    {
+        return m_scale;
+    }
+    void setScale(sf::Vector2f scale)
+    {
+        m_scale = scale;
+    }
+
     // with collision check
     virtual bool moveTo(sf::Vector2f pos, bool notify = true);
 
@@ -72,20 +101,16 @@ public:
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
     virtual void render(sf::RenderTarget& target) const;
-    virtual void preRenderUpdate();
     virtual void onUpdate(long long tickCounter);
 
     virtual std::shared_ptr<ObjectMap> serializeMain();
     virtual void deserializeMain(std::shared_ptr<ObjectMap>);
 
 protected:
-    virtual void updateGeometry() {}
-
     double m_rotation = 0.0;
     sf::Vector2f m_origin;
     sf::Vector2f m_motion;
     sf::Vector2f m_scale = sf::Vector2f(1, 1);
-    bool m_geometryChanged = true;
 
 private:
     sf::Vector2f m_position;

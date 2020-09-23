@@ -2,7 +2,7 @@
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/SceneObject2D.h>
 #include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedObject2D.h>
+#include <ege/scene/TexturedRenderer2D.h>
 #include <ege/gui/Animation.h>
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
@@ -176,10 +176,13 @@ TESTCASE(_2dCamera)
     auto removedObject = std::make_shared<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
-    auto texturedObject = std::make_shared<EGE::TexturedObject2D>(scene.get(), "Textured Object");
+    auto texturedObject = std::make_shared<EGE::SceneObject2D>(scene.get(), "Textured Object");
+    auto renderer = make<EGE::TexturedRenderer2D>(scene);
+    renderer->setTextureName("texture.png");
+    renderer->center();
+    texturedObject->setRenderer<EGE::TexturedRenderer2D>(renderer);
+
     texturedObject->setPosition(sf::Vector2f(100.f, 100.f));
-    texturedObject->setTextureName("texture.png");
-    texturedObject->center();
     scene->addObject(texturedObject);
 
     // set Test Object to be removed after 5 seconds

@@ -10,7 +10,7 @@
 #include <ege/gui/GUIScreen.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedObject2D.h>
+#include <ege/scene/TexturedRenderer2D.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>

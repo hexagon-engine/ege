@@ -5,6 +5,8 @@ set(SOURCES
 	"CameraObject2D.h"
 	"DummyObject2D.cpp"
 	"DummyObject2D.h"
+	"Renderer.cpp"
+	"Renderer.h"
 	"SceneObject2D.cpp"
 	"SceneObject2D.h"
 	"Scene.cpp"
@@ -15,8 +17,8 @@ set(SOURCES
 	"SceneObject.h"
 	"SceneWidget.cpp"
 	"SceneWidget.h"
-	"TexturedObject2D.cpp"
-	"TexturedObject2D.h"
+	"TexturedRenderer2D.cpp"
+	"TexturedRenderer2D.h"
 )
 
 ege_add_module(scene)
