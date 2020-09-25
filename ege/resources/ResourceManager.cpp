@@ -15,6 +15,7 @@ void ResourceManager::clear()
     // Reset ResourceManager like the constructor
     m_loadedFonts.clear();
     m_loadedTextures.clear();
+    m_loadedCursors.clear();
     m_unknownTexture = nullptr;
     m_resourcePath = "res";
     m_defaultFont = "";
