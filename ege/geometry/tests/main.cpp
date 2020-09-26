@@ -3,6 +3,7 @@
 #include <ege/geometry/Shape.h>
 #include <ege/geometry/ShapeSet.h>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 
 TESTCASE(simple)
 {

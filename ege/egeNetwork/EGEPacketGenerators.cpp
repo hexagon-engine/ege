@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacket.h"
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectString.h>
 

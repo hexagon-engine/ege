@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/event/SystemWindow.h>
 #include <ege/gui/GameLoop.h>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/profiler/Profiler.h>
 #include <ege/resources/ResourceManager.h>
 #include <memory>

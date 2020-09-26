@@ -7,6 +7,7 @@
 #include <ege/util/ObjectList.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/util/Vector.h>
 #include <iostream>
 

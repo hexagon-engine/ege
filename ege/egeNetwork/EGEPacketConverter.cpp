@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "EGEPacketConverter.h"
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectList.h>

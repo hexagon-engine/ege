@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/resources/ResourceManager.h>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 
 class MyResourceManager : public EGE::ResourceManager
 {

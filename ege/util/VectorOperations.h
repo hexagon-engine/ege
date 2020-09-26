@@ -12,6 +12,7 @@ Copyright (c) Sppmacd 2020
 
 #include <cmath>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 
 namespace EGE
 {

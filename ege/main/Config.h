@@ -5,23 +5,11 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <cxxabi.h>
 #include <iostream>
 #include <memory>
 #include <stdlib.h>
 #include <utility>
-
-namespace EGE
-{
-
-template<typename T, typename... Args>
-inline std::shared_ptr<T> make(Args&&... args)
-{
-    return std::make_shared<T>(std::forward<Args>(args)...);
-}
-
-}
-
-using EGE::make;
 
 extern "C"
 void _ege_assertion_failed(const char* expr, const char* file, unsigned line);

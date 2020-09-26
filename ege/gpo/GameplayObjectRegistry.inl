@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 // because THIS file is included by GameplayObjectRegistry.h
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 
 namespace EGE
 {

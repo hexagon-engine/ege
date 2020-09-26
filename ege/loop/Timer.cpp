@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 
 #include <iostream>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <time.h>
 
 namespace EGE

@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "AsyncTask.h"
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 
 namespace EGE
 {

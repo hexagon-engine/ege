@@ -11,8 +11,10 @@ Copyright (c) Sppmacd 2020
 #include "ObjectMap.h"
 #include "ObjectString.h"
 #include "ObjectInt.h"
+#include "PointerUtils.h"
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <memory>
 #include <sstream>
 

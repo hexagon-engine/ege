@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/main/Config.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
+#include <ege/util/PointerUtils.h>
 #include <vector>
 
 namespace EGE

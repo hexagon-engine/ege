@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/util/ObjectMap.h>
 #include <memory>
 #include <string>

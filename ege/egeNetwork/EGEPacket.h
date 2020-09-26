@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/controller/ControlObject.h>
 #include <ege/main/Config.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/network/SFMLPacket.h>
 #include <ege/scene/SceneObject.h>
 #include <ege/util/ObjectMap.h>
