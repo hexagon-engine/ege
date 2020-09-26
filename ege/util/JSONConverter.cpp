@@ -13,7 +13,6 @@ Copyright (c) Sppmacd 2020
 #include "ObjectInt.h"
 
 #include <ege/main/Config.h>
-#include <iostream>
 #include <memory>
 #include <sstream>
 
@@ -33,14 +32,57 @@ size_t ignoreWhitespace(std::istringstream& input)
 
 bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object);
 
-bool parseString(std::istringstream& input, std::string& object)
+bool consumeStringWithEscapes(std::istringstream& input, std::string& object)
 {
+    // Starting '"'
     char c = input.peek();
     if(c != '"')
         return false;
     input.ignore(1);
 
-    std::getline(input, object, '"');
+    bool escape = false;
+    while(true)
+    {
+        c = input.peek();
+        if(escape)
+        {
+            switch(c)
+            {
+                case '\\': object += "\\"; break;
+                case 'n': object += "\n"; break;
+                case 't': object += "\t"; break;
+                case '"': object += "\""; break;
+                case '\n': break;
+                default: return false;
+            }
+            escape = false;
+            input.ignore(1);
+            continue;
+        }
+
+        if(c == '"' && !escape)
+        {
+            input.ignore(1);
+            return true;
+        }
+        else if(c == '\\' && !escape)
+        {
+            escape = true;
+            input.ignore(1);
+            continue;
+        }
+        else
+        {
+            object += c;
+            input.ignore(1);
+        }
+    }
+}
+
+bool parseString(std::istringstream& input, std::string& object)
+{
+    if(!consumeStringWithEscapes(input, object))
+        return false;
 
     if(input.eof())
         return false;
@@ -55,7 +97,6 @@ bool parsePair(std::istringstream& input, ObjectMap& object)
     {
         return false;
     }
-    DUMP(1, name);
 
     // potential whitespace
     ignoreWhitespace(input);

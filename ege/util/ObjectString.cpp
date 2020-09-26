@@ -17,7 +17,35 @@ std::shared_ptr<Object> ObjectString::copy() const
 
 std::string ObjectString::toString() const
 {
-    return "\"" + m_string + "\"";
+    std::string str;
+
+    // escape string
+    if(!m_string.empty())
+    {
+        for(size_t s = 0; s < m_string.size(); s++)
+        {
+            const char c = m_string[s];
+            switch(c)
+            {
+            case '\n':
+                str += "\\n";
+                break;
+            case '\t':
+                str += "\\t";
+                break;
+            case '\\':
+            case '"':
+                str += "\\";
+                str += c;
+                break;
+            default:
+                str += c;
+                break;
+            }
+        }
+    }
+
+    return "\"" + str + "\"";
 }
 
 }
