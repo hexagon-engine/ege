@@ -191,7 +191,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     }
 
     // Call `func' that was registered by user.
-    std::shared_ptr<SceneObject> sceneObject = (*func)(getScene().get());
+    std::shared_ptr<SceneObject> sceneObject = (*func)(getScene());
     sceneObject->setObjectId(id); // Don't assign ID automatically!
     sceneObject->deserialize(object);
     //m_requestedObjects.erase(id);
@@ -251,7 +251,10 @@ EventResult EGEClient::onLoad()
     auto clientNetworkWorker = [this]()->int {
         std::cerr << "001E EGE/egeNetwork: Starting client" << std::endl;
         if(!connect(m_ip, m_port))
+        {
+            onDisconnect("Failed to connect to server");
             return 1;
+        }
 
         send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
 
@@ -267,7 +270,7 @@ EventResult EGEClient::onLoad()
     auto clientNetworkCallback = [this](AsyncTask::State state) {
         std::cerr << "001F EGE/egeNetwork: Closing client" << std::endl;
 
-        exit(state.returnCode); // << FIXME: segfault sometimes here from AsyncLoop destructor
+        exit(state.returnCode);
 
         if(m_exitHandler)
             m_exitHandler(state.returnCode);

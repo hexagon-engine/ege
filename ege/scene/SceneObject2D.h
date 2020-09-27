@@ -22,7 +22,7 @@ class SceneObject2D : public SceneObject
 {
 
 public:
-    SceneObject2D(EGE::Scene* owner, std::string typeId)
+    SceneObject2D(std::shared_ptr<EGE::Scene> owner, std::string typeId)
     : SceneObject(owner, typeId) {}
 
     virtual void setPosition(sf::Vector2f position)

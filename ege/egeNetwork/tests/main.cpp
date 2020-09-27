@@ -45,7 +45,7 @@ TESTCASE(converter)
 class MyObject : public EGE::SceneObject2D
 {
 public:
-    MyObject(EGE::Scene* owner, bool playerControlled = false)
+    MyObject(std::shared_ptr<EGE::Scene> owner, bool playerControlled = false)
     : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
     {
         // only server side!
@@ -161,7 +161,7 @@ public:
         EGE::EGEServer::onLogin(client, data);
 
         // Spawn SceneObject that will be controlled by this client.
-        auto sceneObject = make<MyObject>(getScene().get(), true);
+        auto sceneObject = make<MyObject>(getScene(), true);
         std::cerr << "Adding Object to Scene" << std::endl;
         getScene()->addObject(sceneObject);
 
@@ -211,7 +211,7 @@ TESTCASE(server)
         // Set initialize handler for Server. It will be called before starting listening.
         server.setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
                                 gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
-                                                                [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
+                                                                [](std::shared_ptr<EGE::Scene> scene)->std::shared_ptr<EGE::SceneObject> {
                                                                     return make<MyObject>(scene);
                                                                 }));
                                 return true;
@@ -221,7 +221,7 @@ TESTCASE(server)
 
         auto timer = make<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
         timer->setCallback([scene](std::string, EGE::Timer*) {
-                                auto object = make<MyObject>(scene.get());
+                                auto object = make<MyObject>(scene);
                                 object->setPosition(sf::Vector2f(rand() % 50 - 25, rand() % 50 - 25));
                                 scene->addObject(object);
                            });
@@ -315,7 +315,7 @@ public:
         // Set initialize handler for Client. It will be called before connecting.
         m_client->setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
                                 gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
-                                                                [](EGE::Scene* scene)->std::shared_ptr<EGE::SceneObject> {
+                                                                [](std::shared_ptr<EGE::Scene> scene)->std::shared_ptr<EGE::SceneObject> {
                                                                     return make<MyObject>(scene);
                                                                 }));
                                 return true;
@@ -331,7 +331,7 @@ public:
         addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(getWindow(), m_client));
 
         // Initialize Camera.
-        m_camera = make<EGE::CameraObject2D>(scene.get());
+        m_camera = make<EGE::CameraObject2D>(scene);
         m_camera->setScalingMode(EGE::ScalingMode::Centered);
         scene->setCamera(m_camera);
 

@@ -14,7 +14,7 @@ class MyObject : public EGE::SceneObject2D
     std::shared_ptr<sf::Font> m_font;
 
 public:
-    MyObject(EGE::Scene* owner, std::string name, sf::Vector2f pos)
+    MyObject(std::shared_ptr<EGE::Scene> owner, std::string name, sf::Vector2f pos)
     : EGE::SceneObject2D(owner, name), m_initialPosition(pos)
     {
         // set position from constructor
@@ -66,7 +66,7 @@ private:
 class MyBackground : public EGE::SceneObject2D
 {
 public:
-    MyBackground(EGE::Scene* owner, std::string name)
+    MyBackground(std::shared_ptr<EGE::Scene> owner, std::string name)
     : EGE::SceneObject2D(owner, name) {}
 
     void render(sf::RenderTarget& target) const
@@ -113,8 +113,8 @@ TESTCASE(simple)
     auto scene = make<EGE::Scene>(&gameLoop);
 
     // add some objects to scene
-    scene->addObject(make<MyObject>(scene.get(), "My Object", sf::Vector2f(200.f, 200.f)));
-    auto removedObject = make<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyObject>(scene, "My Object", sf::Vector2f(200.f, 200.f)));
+    auto removedObject = make<MyObject>(scene, "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
     // set Test Object to be removed after 5 seconds
@@ -152,7 +152,7 @@ TESTCASE(_2dCamera)
     auto scene = make<EGE::Scene2D>(&gameLoop);
 
     // add camera
-    auto cam = make<EGE::CameraObject2D>(scene.get());
+    auto cam = make<EGE::CameraObject2D>(scene);
     bool b1 = false;
 
     // make camera animated
@@ -171,12 +171,12 @@ TESTCASE(_2dCamera)
     scene->addObject(cam);
 
     // add some objects to scene
-    scene->addObject(make<MyBackground>(scene.get(), "bg"));
-    scene->addObject(make<MyObject>(scene.get(), "My Object", sf::Vector2f(-100.f, -100.f)));
-    auto removedObject = make<MyObject>(scene.get(), "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyBackground>(scene, "bg"));
+    scene->addObject(make<MyObject>(scene, "My Object", sf::Vector2f(-100.f, -100.f)));
+    auto removedObject = make<MyObject>(scene, "Test Object", sf::Vector2f(100.f, 100.f));
     scene->addObject(removedObject);
 
-    auto texturedObject = make<EGE::SceneObject2D>(scene.get(), "Textured Object");
+    auto texturedObject = make<EGE::SceneObject2D>(scene, "Textured Object");
     auto renderer = make<EGE::TexturedRenderer2D>(scene);
     renderer->setTextureName("texture.png");
     renderer->center();
@@ -220,7 +220,7 @@ TESTCASE(serializer)
     auto scene = make<EGE::Scene2D>(&gameLoop);
 
     // create some object
-    auto myObject = make<MyBackground>(scene.get(), "My Test");
+    auto myObject = make<MyBackground>(scene, "My Test");
     myObject->setPosition(sf::Vector2f(0.f, 0.f));
 
     // serialize object
@@ -228,7 +228,7 @@ TESTCASE(serializer)
     std::cerr << data->toString() << std::endl;
 
     // deserialize object and add result
-    auto myObject2 = make<MyBackground>(scene.get(), "My Object 5555");
+    auto myObject2 = make<MyBackground>(scene, "My Object 5555");
     myObject2->setPosition(sf::Vector2f(-100.f, -100.f));
     myObject2->deserialize(data);
     scene->addObject(myObject2);

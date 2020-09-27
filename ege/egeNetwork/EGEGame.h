@@ -25,7 +25,7 @@ public:
         bool clear();
         bool load();
 
-        GameplayObjectRegistry<std::string, std::function<std::shared_ptr<SceneObject>(Scene*)>> sceneObjectCreators;
+        GameplayObjectRegistry<std::string, std::function<std::shared_ptr<SceneObject>(std::shared_ptr<EGE::Scene>)>> sceneObjectCreators;
 
     private:
         EGEGame* m_game;

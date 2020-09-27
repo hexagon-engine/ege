@@ -18,8 +18,8 @@ namespace EGE
 class CameraObject2D : public CameraObject<sf::Vector2f>, public SceneObject2D
 {
 public:
-    CameraObject2D(Scene* parent)
-    : CameraObject(parent), SceneObject2D(parent, "EGE::CameraObject2D") {}
+    CameraObject2D(std::shared_ptr<EGE::Scene> owner)
+    : CameraObject(owner), SceneObject2D(owner, "EGE::CameraObject2D") {}
 
     sf::Vector2f getEyePosition()
     {
