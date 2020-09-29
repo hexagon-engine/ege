@@ -14,10 +14,10 @@ namespace EGE
 class Scene;
 class SceneObject;
 
-class Renderer
+class ObjectRenderer
 {
 public:
-    Renderer(std::shared_ptr<Scene> scene)
+    ObjectRenderer(std::shared_ptr<Scene> scene)
     : m_scene(scene) {}
 
     virtual void render(const SceneObject& object, sf::RenderTarget& target) const = 0;

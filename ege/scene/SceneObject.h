@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include "Renderer.h"
+#include "ObjectRenderer.h"
 
 #include <SFML/Graphics.hpp>
 #include <ege/gpo/GameplayObject.h>
@@ -100,10 +100,9 @@ public:
         return m_owner;
     }
 
-    template<class T>
-    void setRenderer(std::shared_ptr<Renderer> renderer)
+    void setRenderer(std::shared_ptr<ObjectRenderer> renderer)
     {
-        m_renderer = std::static_pointer_cast<Renderer>(renderer);
+        m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer);
     }
 
 protected:
@@ -122,9 +121,9 @@ protected:
     std::string m_name;
     bool m_mainChanged = true;
     bool m_extendedChanged = true;
-    std::shared_ptr<Renderer> m_renderer;
+    std::shared_ptr<ObjectRenderer> m_renderer;
 
-    friend class Renderer;
+    friend class ObjectRenderer;
 };
 
 }

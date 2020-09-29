@@ -180,7 +180,7 @@ TESTCASE(_2dCamera)
     auto renderer = make<EGE::TexturedRenderer2D>(scene);
     renderer->setTextureName("texture.png");
     renderer->center();
-    texturedObject->setRenderer<EGE::TexturedRenderer2D>(renderer);
+    texturedObject->setRenderer(renderer);
 
     texturedObject->setPosition(sf::Vector2f(100.f, 100.f));
     scene->addObject(texturedObject);

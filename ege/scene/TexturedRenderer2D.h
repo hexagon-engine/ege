@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include "Renderer.h"
+#include "ObjectRenderer.h"
 #include "SceneObject2D.h"
 
 #include <ege/gui/GUIGameLoop.h>
@@ -14,11 +14,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class TexturedRenderer2D : public Renderer
+class TexturedRenderer2D : public ObjectRenderer
 {
 public:
     TexturedRenderer2D(std::shared_ptr<Scene> scene)
-    : Renderer(scene) {}
+    : ObjectRenderer(scene) {}
 
     void setTextureName(std::string name)
     {
