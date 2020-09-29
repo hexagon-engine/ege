@@ -20,8 +20,8 @@ public:
 
     virtual std::string toString() const;
 
-    virtual std::vector<std::shared_ptr<Object>> asList() { return m_objects; }
-    virtual bool isList() const { return false; }
+    virtual std::vector<std::shared_ptr<Object>> asList() const { return m_objects; }
+    virtual bool isList() const { return true; }
 
     virtual std::shared_ptr<Object> copy() const;
 
