@@ -51,4 +51,155 @@ void hexDump(const void* data, size_t size, HexDumpSettings settings)
     }
 }
 
+enum class IntendMode
+{
+    None,
+    Normal,
+    Object,
+    LastObject
+};
+
+static void _intend(std::vector<IntendMode> modes)
+{
+    for(IntendMode mode: modes)
+    {
+        switch(mode)
+        {
+            case IntendMode::None:
+                std::cerr << "   ";
+                break;
+            case IntendMode::Normal:
+                std::cerr << "\u2502  ";
+                break;
+            case IntendMode::Object:
+                std::cerr << "\u251c\u2500 ";
+                break;
+            case IntendMode::LastObject:
+                std::cerr << "\u2514\u2500 ";
+                break;
+        }
+    }
+}
+
+static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast);
+
+static void _printName(std::string name)
+{
+    std::cerr << "\e[1;32m" << name << "\e[m";
+}
+
+static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
+{
+    if(object->isInt())
+    {
+        std::cerr << " = \e[35m" << object->asInt() << "\e[m" << std::endl;
+    }
+    else if(object->isFloat())
+    {
+        std::cerr << " = \e[95m" << object->asFloat() << "\e[m" << std::endl;
+    }
+    else if(object->isString())
+    {
+        std::cerr << " = \e[33m" << object->toString() << "\e[m" << std::endl;
+    }
+    else if(object->isList())
+    {
+        auto _vector = object->asList();
+        if(!_vector.empty())
+        {
+            std::cerr << std::endl;
+            size_t counter = 0;
+            for(auto pr: _vector)
+            {
+                std::vector<IntendMode> depth2 = depth;
+
+                if(counter == _vector.size() - 1)
+                {
+                    if(!depth2.empty())
+                    {
+                        if(isLast)
+                            depth2.back() = IntendMode::None;
+                        else
+                            depth2.back() = IntendMode::Normal;
+                    }
+                    depth2.push_back(IntendMode::LastObject);
+                }
+                else
+                {
+                    if(!depth2.empty())
+                    {
+                        if(isLast)
+                            depth2.back() = IntendMode::None;
+                        else
+                            depth2.back() = IntendMode::Normal;
+                    }
+                    depth2.push_back(IntendMode::Object);
+                }
+
+                _printPair("\e[0;94m[" + std::to_string(counter) + "]", pr, depth2, counter == _vector.size() - 1);
+                counter++;
+            }
+        }
+        else
+        {
+            std::cerr << " \e[91m<Empty List>\e[m" << std::endl;
+        }
+    }
+    else if(object->isMap())
+    {
+        auto _map = object->asMap();
+        if(!_map.empty())
+        {
+            std::cerr << std::endl;
+            size_t counter = 0;
+            for(auto pr: _map)
+            {
+                std::vector<IntendMode> depth2 = depth;
+
+                if(counter == _map.size() - 1)
+                {
+                    if(!depth2.empty())
+                    {
+                        if(isLast)
+                            depth2.back() = IntendMode::None;
+                        else
+                            depth2.back() = IntendMode::Normal;
+                    }
+                    depth2.push_back(IntendMode::LastObject);
+                }
+                else
+                {
+                    if(!depth2.empty())
+                    {
+                        if(isLast)
+                            depth2.back() = IntendMode::None;
+                        else
+                            depth2.back() = IntendMode::Normal;
+                    }
+                    depth2.push_back(IntendMode::Object);
+                }
+
+                _printPair(pr.first, pr.second, depth2, counter == _map.size() - 1);
+                counter++;
+            }
+        }
+        else
+        {
+            std::cerr << " \e[91m<Empty Map>\e[m" << std::endl;
+        }
+    }
+}
+
+static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
+{
+    _intend(depth);
+    _printName(name);
+    _printValue(object, depth, isLast);
+}
+
+void printObject(std::shared_ptr<Object> object)
+{
+    _printPair("root", object, {}, true);
+}
+
 }
