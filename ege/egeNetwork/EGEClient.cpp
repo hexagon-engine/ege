@@ -186,7 +186,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     auto func = gpom->sceneObjectCreators.findById(typeId);
     if(!func) //game version mismatch?
     {
-        std::cerr << "Not found '" << typeId << "' in GPOM! Did you forgot to add SceneObjectCreator?" << std::endl;
+        std::cerr << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?" << std::endl;
         return EventResult::Failure;
     }
 
