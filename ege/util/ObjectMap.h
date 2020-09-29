@@ -5,12 +5,16 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Object.h"
+#include "ObjectFloat.h"
+#include "ObjectInt.h"
+#include "ObjectList.h"
+#include "ObjectString.h"
+
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "Object.h"
 
 namespace EGE
 {
@@ -21,26 +25,31 @@ public:
     ObjectMap() = default;
     ObjectMap(const ObjectMap& map);
 
-    typedef std::map<std::string, std::shared_ptr<Object>> InternalMap;
+    typedef std::map<std::string, std::shared_ptr<Object>> ValueType;
 
     const std::shared_ptr<Object>& addObject(std::string name, const std::shared_ptr<Object>& subObject);
+    const std::shared_ptr<Object>& addFloat(std::string name, ObjectFloat::ValueType value = 0.0);
+    const std::shared_ptr<Object>& addInt(std::string name, ObjectInt::ValueType value = 0);
+    const std::shared_ptr<Object>& addList(std::string name, ObjectList::ValueType value = {});
+    const std::shared_ptr<Object>& addString(std::string name, ObjectString::ValueType value = "");
+
     std::weak_ptr<Object> getObject(std::string name) const;
     bool hasObject(std::string name) const;
 
     virtual std::string toString() const;
 
-    InternalMap::const_iterator begin() const;
-    InternalMap::const_iterator end() const;
+    ValueType::const_iterator begin() const;
+    ValueType::const_iterator end() const;
     size_t size() const;
 
-    virtual std::shared_ptr<ObjectMap> asMap() const;
+    virtual std::map<std::string, std::shared_ptr<Object>> asMap() const;
     virtual bool isMap() const { return true; }
 
-    virtual std::shared_ptr<Object> copy() const { return asMap(); }
+    virtual std::shared_ptr<Object> copy() const;
     std::shared_ptr<ObjectMap> merge(std::shared_ptr<ObjectMap> other);
 
 private:
-     InternalMap m_subObjects;
+     ValueType m_subObjects;
 };
 
 }

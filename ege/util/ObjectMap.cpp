@@ -4,10 +4,10 @@ Copyright (c) Sppmacd 2020
 */
 
 #include "ObjectMap.h"
+
 #include "PointerUtils.h"
 
 #include <ege/main/Config.h>
-#include <ege/util/PointerUtils.h>
 
 namespace EGE
 {
@@ -20,6 +20,11 @@ ObjectMap::ObjectMap(const ObjectMap& map)
     }
 }
 
+std::shared_ptr<Object> ObjectMap::copy() const
+{
+    return make<ObjectMap>(*this);
+}
+
 const std::shared_ptr<Object>& ObjectMap::addObject(std::string name, const std::shared_ptr<Object>& subObject)
 {
     if(!subObject)
@@ -28,6 +33,26 @@ const std::shared_ptr<Object>& ObjectMap::addObject(std::string name, const std:
     auto& ref = m_subObjects[name];
     ref = subObject;
     return ref;
+}
+
+const std::shared_ptr<Object>& ObjectMap::addFloat(std::string name, ObjectFloat::ValueType value)
+{
+    return addObject(name, make<ObjectFloat>(value));
+}
+
+const std::shared_ptr<Object>& ObjectMap::addInt(std::string name, ObjectInt::ValueType value)
+{
+    return addObject(name, make<ObjectInt>(value));
+}
+
+const std::shared_ptr<Object>& ObjectMap::addList(std::string name, ObjectList::ValueType value)
+{
+    return addObject(name, make<ObjectList>(value));
+}
+
+const std::shared_ptr<Object>& ObjectMap::addString(std::string name, ObjectString::ValueType value)
+{
+    return addObject(name, make<ObjectString>(value));
 }
 
 std::weak_ptr<Object> ObjectMap::getObject(std::string name) const
@@ -66,12 +91,12 @@ std::string ObjectMap::toString() const
     return str;
 }
 
-ObjectMap::InternalMap::const_iterator ObjectMap::begin() const
+ObjectMap::ValueType::const_iterator ObjectMap::begin() const
 {
     return m_subObjects.begin();
 }
 
-ObjectMap::InternalMap::const_iterator ObjectMap::end() const
+ObjectMap::ValueType::const_iterator ObjectMap::end() const
 {
     return m_subObjects.end();
 }
@@ -81,9 +106,9 @@ size_t ObjectMap::size() const
     return m_subObjects.size();
 }
 
-std::shared_ptr<ObjectMap> ObjectMap::asMap() const
+std::map<std::string, std::shared_ptr<Object>> ObjectMap::asMap() const
 {
-    return make<ObjectMap>(*this);
+    return m_subObjects;
 }
 
 std::shared_ptr<ObjectMap> ObjectMap::merge(std::shared_ptr<ObjectMap> other)
