@@ -99,6 +99,7 @@ void EventLoop::onUpdate()
         m_subLoop->onUpdate();
 
     updateTimers();
+    callDeferredInvokes();
     m_ticks++;
 }
 
@@ -127,13 +128,16 @@ void EventLoop::updateTimers()
 
 void EventLoop::deferredInvoke(std::function<void()> func)
 {
-    addTimer("EGE::GameLoop::deferredInvoke() helper timer", &(new Timer(this, Timer::Mode::Limited, Time(0, Time::Unit::Ticks)))->setCallback(
-        [func](std::string timerName, Timer* timer) {
-            (void) timerName;
-            (void) timer;
-            func();
-        }
-    ));
+    m_deferredInvokes.push(func);
+}
+
+void EventLoop::callDeferredInvokes()
+{
+    while(!m_deferredInvokes.empty())
+    {
+        m_deferredInvokes.front()();
+        m_deferredInvokes.pop();
+    }
 }
 
 double EventLoop::time(Time::Unit unit)

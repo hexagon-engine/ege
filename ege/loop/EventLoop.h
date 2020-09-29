@@ -11,6 +11,7 @@ Copyright (c) Sppmacd 2020
 
 #include <map>
 #include <memory>
+#include <queue>
 #include <vector>
 
 namespace EGE
@@ -71,6 +72,7 @@ public:
 
 protected:
     virtual void updateTimers();
+    virtual void callDeferredInvokes();
     bool m_running = true;
     int m_exitCode = 0;
 
@@ -79,6 +81,7 @@ private:
     std::multimap<std::string, std::shared_ptr<Timer>> m_timers;
     std::multimap<Event::EventType, std::shared_ptr<EventHandler>> m_eventHandlers;
     std::shared_ptr<EventLoop> m_subLoop;
+    std::queue<std::function<void()>> m_deferredInvokes;
 };
 
 }
