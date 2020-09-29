@@ -251,10 +251,7 @@ EventResult EGEClient::onLoad()
     auto clientNetworkWorker = [this]()->int {
         std::cerr << "001E EGE/egeNetwork: Starting client" << std::endl;
         if(!connect(m_ip, m_port))
-        {
-            onDisconnect("Failed to connect to server");
             return 1;
-        }
 
         send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
 

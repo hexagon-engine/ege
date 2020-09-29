@@ -196,9 +196,9 @@ void CompoundWidget::render(sf::RenderTarget& target)
 
 void CompoundWidget::addWidget(std::shared_ptr<Widget> widget)
 {
-    DUMP(GUI_DEBUG, "addWidget");
     // deferredInvoke to allow adding and removing widgets inside event handlers
-    getLoop()->deferredInvoke([this,widget]() {
+    deferredInvoke([this,widget]() {
+        DUMP(GUI_DEBUG, "addWidget");
         DUMP(GUI_DEBUG, widget.get());
         ASSERT(widget.get());
         widget->onLoad();
@@ -215,7 +215,7 @@ void CompoundWidget::addWidget(std::shared_ptr<Widget> widget)
 void CompoundWidget::removeWidget(Widget* widget)
 {
     // deferredInvoke to allow adding and removing widgets inside event handlers
-    getLoop()->deferredInvoke([this,widget]() {
+    deferredInvoke([this,widget]() {
         for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
         {
             if(it->get() == widget)
