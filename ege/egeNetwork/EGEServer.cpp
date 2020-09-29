@@ -136,7 +136,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             ASSERT(!id.expired() && id.lock()->isInt());
             auto data = args->getObject("data");
             ASSERT(!data.expired() && data.lock()->isMap());
-            auto data_map = data.lock()->asMap();
+            auto data_map = std::dynamic_pointer_cast<ObjectMap>(data.lock());
             auto data_name = data_map->getObject("type");
             ASSERT(!data_name.expired() && data_name.lock()->isString());
             auto data_args = data_map->getObject("args");
@@ -147,7 +147,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
             auto controller = getController(id.lock()->asInt());
             if(controller)
-                controller->handleRequest(ControlObject(data_name.lock()->asString(), data_args.lock()->asMap()));
+                controller->handleRequest(ControlObject(data_name.lock()->asString(), std::dynamic_pointer_cast<ObjectMap>(data_args.lock())));
             else
                 return EventResult::Failure; // kick f*****g cheaters
         }
