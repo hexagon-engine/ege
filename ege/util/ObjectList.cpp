@@ -53,12 +53,12 @@ std::weak_ptr<Object> ObjectList::getObject(size_t offset) const
     return m_objects[offset];
 }
 
-ObjectList::InternalVector::const_iterator ObjectList::begin() const
+ObjectList::ValueType::const_iterator ObjectList::begin() const
 {
     return m_objects.begin();
 }
 
-ObjectList::InternalVector::const_iterator ObjectList::end() const
+ObjectList::ValueType::const_iterator ObjectList::end() const
 {
     return m_objects.end();
 }

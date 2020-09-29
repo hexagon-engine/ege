@@ -13,7 +13,9 @@ namespace EGE
 class ObjectInt : public Object
 {
 public:
-    ObjectInt(long long num)
+    typedef long long ValueType;
+
+    ObjectInt(ValueType num = 0)
     : m_number(num) {}
 
     virtual std::string toString() const;
@@ -29,7 +31,7 @@ public:
     virtual bool isBool() const { return true; }
     virtual bool isFloat() const { return true; }
 
-    void setNumber(long long number)
+    void setNumber(ValueType number)
     {
         m_number = number;
     }
@@ -37,7 +39,7 @@ public:
     virtual std::shared_ptr<Object> copy() const;
 
 private:
-    long long m_number;
+    ValueType m_number;
 };
 
 }

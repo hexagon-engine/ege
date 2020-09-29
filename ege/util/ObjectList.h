@@ -13,7 +13,10 @@ namespace EGE
 class ObjectList : public Object
 {
 public:
-    typedef std::vector<std::shared_ptr<Object>> InternalVector;
+    typedef std::vector<std::shared_ptr<Object>> ValueType;
+
+    ObjectList(ValueType objects = {})
+    : m_objects(objects) {}
 
     virtual std::string toString() const;
 
@@ -26,14 +29,14 @@ public:
     const std::shared_ptr<Object>& insertObject(size_t position, const std::shared_ptr<Object>& subObject);
     std::weak_ptr<Object> getObject(size_t offset) const;
 
-    InternalVector::const_iterator begin() const;
-    InternalVector::const_iterator end() const;
+    ValueType::const_iterator begin() const;
+    ValueType::const_iterator end() const;
     size_t size() const;
 
     std::shared_ptr<ObjectList> merge(std::shared_ptr<ObjectList> other);
 
 private:
-    InternalVector m_objects;
+    ValueType m_objects;
 };
 
 }

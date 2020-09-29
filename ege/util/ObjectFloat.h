@@ -15,7 +15,9 @@ namespace EGE
 class ObjectFloat : public Object
 {
 public:
-    ObjectFloat(double num)
+    typedef double ValueType;
+
+    ObjectFloat(ValueType num = 0.0)
     : m_number(num) {}
 
     virtual std::string toString() const;

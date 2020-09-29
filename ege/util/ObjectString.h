@@ -13,7 +13,9 @@ namespace EGE
 class ObjectString : public Object
 {
 public:
-    ObjectString(std::string str)
+    typedef std::string ValueType;
+
+    ObjectString(ValueType str = "")
     : m_string(str) {}
 
     virtual std::string toString() const;
@@ -27,7 +29,7 @@ public:
 
     virtual std::shared_ptr<Object> copy() const;
 
-    void setString(std::string str)
+    void setString(ValueType str)
     {
         m_string = str;
     }
@@ -38,7 +40,7 @@ public:
     }
 
 private:
-    std::string m_string;
+    ValueType m_string;
 };
 
 }
