@@ -216,6 +216,13 @@ bool parseList(std::istringstream& input, ObjectList& object)
         // potential whitespace
         ignoreWhitespace(input);
 
+        // potential ']'
+        if(input.peek() == ']')
+        {
+            input.ignore(1);
+            return true;
+        }
+
         // value
         std::shared_ptr<Object> subObject;
         if(!parseValue(input, subObject))
