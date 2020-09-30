@@ -134,7 +134,7 @@ bool parsePair(std::istringstream& input, ObjectMap& object)
     bool result = parseValue(input, value);
     if(!result || !value)
     {
-        std::cerr << "json: expected value" << std::endl;
+        std::cerr << "json: expected value for pair" << std::endl;
         return false;
     }
     object.addObject(name, value);
@@ -230,7 +230,7 @@ bool parseList(std::istringstream& input, ObjectList& object)
         std::shared_ptr<Object> subObject;
         if(!parseValue(input, subObject))
         {
-            std::cerr << "json: expected value" << std::endl;
+            std::cerr << "json: expected value for list" << std::endl;
             return false;
         }
         if(!subObject)
@@ -288,7 +288,12 @@ bool parseMap(std::istringstream& input, ObjectMap& object)
         }
         else if(c == '"')
         {
-            parsePair(input, object);
+            bool result = parsePair(input, object);
+            if(!result)
+            {
+                std::cerr << "json: expected key-value pair for map" << std::endl;
+                return false;
+            }
         }
         else
         {
@@ -355,7 +360,6 @@ bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object)
 
 bool JSONConverter::in(std::istringstream& input, ObjectMap& object) const
 {
-    input.clear();
     ignoreWhitespace(input);
     bool b = parseMap(input, object);
     ignoreWhitespace(input);
