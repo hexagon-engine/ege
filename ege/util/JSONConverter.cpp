@@ -53,6 +53,7 @@ bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string
             switch(c)
             {
                 case '\\': object += "\\"; break;
+                case '/': object += "/"; break;
                 case 'n': object += "\n"; break;
                 case 't': object += "\t"; break;
                 case '"': object += "\""; break;
