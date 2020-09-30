@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "ResourceManager.h"
 
+#include <ege/debug/Logger.h>
 #include <sys/stat.h>
 
 namespace EGE
@@ -26,7 +27,7 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTextureFromFile(std::string fi
     std::shared_ptr<sf::Texture> texture(new sf::Texture);
     if(!texture->loadFromFile(m_resourcePath + "/" + fileName))
     {
-        std::cerr << "0005 EGE/resources: could not load resource: TEXTURE " << fileName << std::endl;
+        err(LogLevel::Error) << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
         m_error = true;
         return nullptr;
     }
@@ -39,7 +40,7 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
     std::shared_ptr<sf::Font> font(new sf::Font);
     if(!font->loadFromFile(m_resourcePath + "/" + fileName))
     {
-        std::cerr << "0006 EGE/resources: could not load resource: FONT " << fileName << std::endl;
+        err(LogLevel::Error) << "0006 EGE/resources: could not load resource: FONT " << fileName;
         m_error = true;
         return nullptr;
     }
@@ -97,7 +98,7 @@ std::shared_ptr<sf::Texture> ResourceManager::getTexture(std::string name)
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
     {
-        std::cerr << "0008 EGE/resources: invalid TEXTURE requested: " << name << ", falling back to unknown texture" << std::endl;
+        err(LogLevel::Error) << "0008 EGE/resources: invalid TEXTURE requested: " << name << ", falling back to unknown texture";
         m_loadedTextures[name] = m_unknownTexture;
         return m_unknownTexture;
     }
@@ -115,7 +116,7 @@ std::shared_ptr<sf::Font> ResourceManager::getFont(std::string name)
     auto it = m_loadedFonts.find(name);
     if(it == m_loadedFonts.end())
     {
-        std::cerr << "0009 EGE/resources: invalid FONT requested: " << name << std::endl;
+        err(LogLevel::Error) << "0009 EGE/resources: invalid FONT requested: " << name;
         if(name != m_defaultFont && !m_defaultFont.empty())
         {
             auto font = getDefaultFont();
@@ -140,7 +141,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::getCursor(std::string name)
     auto it = m_loadedCursors.find(name);
     if(it == m_loadedCursors.end())
     {
-        std::cerr << "0023 EGE/resources: invalid CURSOR requested: " << name << std::endl;
+        err(LogLevel::Error) << "0023 EGE/resources: invalid CURSOR requested: " << name;
         return nullptr;
     }
     if(!it->second)
@@ -157,7 +158,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
     auto cursor = getCursor("/EGE::System::/ /_" + std::to_string((int)type));
     if(!cursor)
     {
-        std::cerr << "0025 EGE/resources: invalid SYSTEM CURSOR requested: " << (int)type << std::endl;
+        err(LogLevel::Error) << "0025 EGE/resources: invalid SYSTEM CURSOR requested: " << (int)type;
         if(!m_systemCursorError)
             return loadSystemCursor(type);
         else
@@ -171,7 +172,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type t
     std::shared_ptr<sf::Cursor> cursor(new sf::Cursor);
     if(!cursor->loadFromSystem(type))
     {
-        std::cerr << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type << std::endl;
+        err(LogLevel::Error) << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type;
         m_error = true;
         m_systemCursorError = true;
         return nullptr;
@@ -196,7 +197,7 @@ bool ResourceManager::setDefaultFont(std::string name)
     {
         if(!loadFontFromFile(name))
         {
-            std::cerr << "000B EGE/resources: invalid FONT requested to be default: " << name << std::endl;
+            err() << "000B EGE/resources: invalid FONT requested to be default: " << name;
             return false;
         }
         m_defaultFont = name;
@@ -214,7 +215,7 @@ bool ResourceManager::setResourcePath(std::string path)
     struct stat _s;
     if(stat(path.c_str(), &_s) < 0)
     {
-        std::cerr << "0007 EGE/resources: could not open resource directory: " << path << std::endl;
+        err() << "0007 EGE/resources: could not open resource directory: " << path;
         return false;
     }
     m_resourcePath = path;

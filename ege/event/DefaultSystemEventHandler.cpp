@@ -5,13 +5,15 @@ Copyright (c) Sppmacd 2020
 
 #include "DefaultSystemEventHandler.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
     void DefaultSystemEventHandler::onClose()
     {
         if(m_window.expired())
         {
-            std::cerr << "000E EGE/syswindow: window already removed, close skipped" << std::endl;
+            err(LogLevel::Verbose) << "000E EGE/syswindow: window already removed, close skipped";
             return;
         }
         m_window.lock()->close();

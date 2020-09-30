@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/debug/Logger.h>
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
 #include <ege/scene/Scene.h>
@@ -51,7 +52,7 @@ public:
             return m_handler(gpom);
         else
         {
-            std::cerr << "EGEGame: GPOM handler not registered!" << std::endl;
+            err(LogLevel::Error) << "EGEGame: GPOM handler not registered!";
             return false;
         }
     }

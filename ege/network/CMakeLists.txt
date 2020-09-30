@@ -16,6 +16,7 @@ set(SOURCES
 )
 
 ege_add_module(network)
+ege_depend_module(network debug)
 ege_depend_module(network loop)
 ege_depend_module(network sfml)
 

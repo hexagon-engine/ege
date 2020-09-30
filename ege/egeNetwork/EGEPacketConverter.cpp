@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "EGEPacketConverter.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/ObjectFloat.h>
@@ -208,7 +209,7 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
     Internal::_ParseResult result = parseMap(input, (ObjectMap&)object);
     if(!result.message.empty())
     {
-        std::cerr << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message << std::endl;
+        err(LogLevel::Verbose) << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
         return false;
     }
     return true;

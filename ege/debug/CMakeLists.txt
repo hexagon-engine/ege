@@ -1,6 +1,8 @@
 set(SOURCES
 	"Dump.cpp"
 	"Dump.h"
+	"Logger.cpp"
+	"Logger.h"
 )
 
 ege_add_module(debug)

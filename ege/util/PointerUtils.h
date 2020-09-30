@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-//#include "StringUtils.h"
+#include <memory>
 
 namespace EGE
 {

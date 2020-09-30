@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "GameLoop.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/loop/EventResult.h>
 #include <SFML/System.hpp>
 
@@ -17,7 +18,7 @@ int GameLoop::run()
 
     if(result == EventResult::Failure)
     {
-        std::cerr << "0001 EGE/loop: load failed" << std::endl;
+        err(LogLevel::Critical) << "0001 EGE/gui: load failed";
         return 0x0001;
     }
 
@@ -51,7 +52,7 @@ int GameLoop::run()
 
     if(result == EventResult::Failure)
     {
-        std::cerr << "0002 EGE/loop: finish failed" << std::endl;
+        err(LogLevel::Critical) << "0002 EGE/gui: finish failed";
         return 0x0002;
     }
 

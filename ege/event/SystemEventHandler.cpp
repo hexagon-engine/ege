@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SystemEventHandler.h"
 
+#include <ege/debug/Logger.h>
 #include <iostream>
 
 namespace EGE
@@ -109,7 +110,7 @@ EventResult SystemEventHandler::handle(Event& event)
             onSensorChange(sfEvent.sensor);
         } break;
     default:
-        std::cerr << "SystemEventHandler: invalid event type: " << sfEvent.type << std::endl;
+        CRASH();
         return EventResult::Failure;
     }
     return EventResult::Success;

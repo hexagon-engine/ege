@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "AnimationEasingFunctions.h"
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <iomanip>
@@ -138,7 +139,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                 } break;
             case '\r':
                 {
-                    std::cerr << "New line" << std::endl;
+                    err(LogLevel::Debug) << "New line";
                 } break;
             }
         }

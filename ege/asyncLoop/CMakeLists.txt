@@ -10,6 +10,6 @@ set(SOURCES
 )
 
 ege_add_module(asyncLoop)
+ege_depend_module(asyncLoop debug)
 ege_depend_module(asyncLoop loop)
-ege_depend_module(asyncLoop main)
 ege_depend_module(asyncLoop sfml)

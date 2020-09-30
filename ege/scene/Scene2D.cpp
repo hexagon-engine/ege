@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "Scene2D.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
@@ -77,7 +79,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
         if(!warned)
         {
             warned = true;
-            std::cerr << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform." << std::endl;
+            err(LogLevel::Warning) << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform.";
         }
 
         sf::View view = target.getView();

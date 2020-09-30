@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Server.h"
 
+#include <ege/debug/Logger.h>
 #include <iostream>
 
 namespace EGE
@@ -15,17 +16,17 @@ bool Server::start()
     sf::Socket::Status status = m_listener.listen(m_serverPort);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "0011 EGE/network: Failed to start server on " << m_serverPort << std::endl;
+        err(LogLevel::Error) << "0011 EGE/network: Failed to start server on " << m_serverPort;
         return false;
     }
     m_selector.add(m_listener);
-    std::cerr << "0010 EGE/network: Server listening on " << m_serverPort << std::endl;
+    err(LogLevel::Info) << "0010 EGE/network: Server listening on " << m_serverPort;
     return true;
 }
 
 void Server::close()
 {
-    std::cerr << "0012 EGE/network: Closing server" << std::endl;
+    err(LogLevel::Info) << "0012 EGE/network: Closing server";
     m_selector.clear();
     {
         sf::Lock lock(m_clientsAccessMutex);
@@ -86,7 +87,7 @@ int Server::addClient(std::shared_ptr<ClientConnection> client)
     EventResult result = onClientConnect(client.get());
     if(result == EventResult::Failure)
     {
-        std::cerr << "0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)" << std::endl;
+        err(LogLevel::Error) << "0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)";
         return 0;
     }
 
@@ -106,7 +107,7 @@ void Server::kickClient(ClientConnection* client)
     if(!client || client->getSocket().expired())
         return;
 
-    std::cerr << "001B EGE/network: Kicking client (" << client->getSocket().lock()->getRemoteAddress() << ":" << client->getSocket().lock()->getRemotePort() << ")" << std::endl;
+    err(LogLevel::Info) << "001B EGE/network: Kicking client (" << client->getSocket().lock()->getRemoteAddress() << ":" << client->getSocket().lock()->getRemotePort() << ")";
     onClientDisconnect(client);
 
     // close socket etc.
@@ -140,7 +141,7 @@ void Server::select()
                     if(id)
                     {
                         // TODO: onClientSuccessfulConnect()
-                        std::cerr << "0013 EGE/network: Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")" << std::endl;
+                        err(LogLevel::Info) << "0013 EGE/network: Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")";
                     }
                 }
             }
@@ -161,7 +162,7 @@ void Server::select()
                             EventResult result = onReceive(pr.second.get(), packet);
                             if(result == EventResult::Failure)
                             {
-                                std::cerr << "0014 EGE/network: Event Receive failed (rejected by EventHandler)" << std::endl;
+                                err(LogLevel::Error) << "0014 EGE/network: Event Receive failed (rejected by EventHandler)";
                                 kickClient(pr.second.get());
 
                                 // FIXME: update `it' instead of giving up on one client !! :)
@@ -189,7 +190,7 @@ void Server::select()
                 {
                     if(!pr.second->isConnected())
                     {
-                        std::cerr << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect" << std::endl;
+                        err(LogLevel::Info) << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect";
                         kickClient(pr.second.get());
 
                         // FIXME: update `it' instead of giving up on one client !! :)

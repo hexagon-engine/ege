@@ -11,6 +11,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/asyncLoop/AsyncTask.h>
 #include <ege/controller/ControlObject.h>
 #include <ege/debug/Dump.h>
+#include <ege/debug/Logger.h>
 #include <ege/network/ClientConnection.h>
 #include <iomanip>
 #include <iostream>
@@ -69,7 +70,7 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
                                             EGEClientConnection* egeClient = (EGEClientConnection*)client;
                                             if(egeClient->getControlledSceneObject() == object->getObjectId())
                                             {
-                                                std::cerr << "EGEServer: Notifying " << egeClient << " about deletion of controller for " << object->getObjectId() << std::endl;
+                                                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient << " about deletion of controller for " << object->getObjectId();
                                                 return true;
                                             }
                                             return false;
@@ -117,8 +118,8 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             int value = egePacket->getArgs()->getObject("value").lock()->asInt();
             if(value != EGE_PROTOCOL_VERSION)
             {
-                std::cerr << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
-                    << EGE_PROTOCOL_VERSION << ", got " << value << ")" << std::endl;
+                err(LogLevel::Error) << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
+                    << EGE_PROTOCOL_VERSION << ", got " << value << ")";
                 return EventResult::Failure;
             }
             egeClient->send(EGEPacket::generate_Pong());
@@ -167,14 +168,14 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             if(!sceneObject) // object doesn't exist
                 return EventResult::Failure;
 
-            std::cerr << "so request " << id.lock()->asInt() << std::endl;
+            err(LogLevel::Debug) << "so request " << id.lock()->asInt();
             egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
             if(egeClient->getControlledSceneObject() == id.lock()->asInt())
                 egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
         }
         break;
     default:
-        std::cerr << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
+        err(LogLevel::Error) << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
     }
 
@@ -188,7 +189,7 @@ EventResult EGEServer::onLoad()
 
     // Run server thread
     auto serverNetworkWorker = [this]()->int {
-        std::cerr << "001E EGE/egeNetwork: Starting server" << std::endl;
+        err(LogLevel::Info) << "001E EGE/egeNetwork: Starting server";
         if(!start())
             return 1;
 
@@ -198,7 +199,7 @@ EventResult EGEServer::onLoad()
         return 0;
     };
     auto serverNetworkCallback = [this](AsyncTask::State state) {
-        std::cerr << "001F EGE/egeNetwork: Closing server" << std::endl;
+        err(LogLevel::Info) << "001F EGE/egeNetwork: Closing server";
         exit(state.returnCode);
     };
 
@@ -315,7 +316,7 @@ void EGEServer::setDefaultController(EGEClientConnection* client, std::shared_pt
 {
     ASSERT(client);
     ASSERT(sceneObject);
-    std::cerr << "EGEServer: Setting default controller for " << client << ": " << sceneObject->getObjectId() << std::endl;
+    err(LogLevel::Verbose) << "EGEServer: Setting default controller for " << client << ": " << sceneObject->getObjectId();
     client->setControlledSceneObject(sceneObject->getObjectId());
     client->send(EGEPacket::generateSDefaultControllerId(sceneObject));
 }

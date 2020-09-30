@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SFMLNetworkImpl.h"
 
+#include <ege/debug/Logger.h>
 #include <iostream>
 
 namespace EGE
@@ -23,7 +24,7 @@ bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> 
     sf::Socket::Status status = endpoint->getSocket().lock()->send(sfPacket);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")" << std::endl;
+        err(LogLevel::Error) << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
         //endpoint->disconnect();
         return false;
     }
@@ -42,7 +43,7 @@ std::shared_ptr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
     sf::Socket::Status status = endpoint->getSocket().lock()->receive(sfPacket);
     if(status != sf::Socket::Done)
     {
-        std::cerr << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")" << std::endl;
+        err(LogLevel::Error) << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
         //endpoint->disconnect();
         return nullptr;
     }

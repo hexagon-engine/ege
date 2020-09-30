@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "NetworkEndpoint.h"
 
+#include <ege/debug/Logger.h>
 #include <iostream>
 
 namespace EGE
@@ -18,7 +19,7 @@ void NetworkEndpoint::disconnect()
 
     if(m_socket)
     {
-        std::cerr << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort() << std::endl;
+        err(LogLevel::Info) << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort();
         m_socket->disconnect();
     }
 }

@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/asyncLoop/AsyncTask.h>
 #include <ege/debug/Dump.h>
+#include <ege/debug/Logger.h>
 #include <iomanip>
 #include <iostream>
 
@@ -58,8 +59,8 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             int value = egePacket->getArgs()->getObject("value").lock()->asInt();
             if(value != EGE_PROTOCOL_VERSION)
             {
-                std::cerr << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
-                    << EGE_PROTOCOL_VERSION << ", got " << value << ")" << std::endl;
+                err(LogLevel::Error) << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
+                    << EGE_PROTOCOL_VERSION << ", got " << value << ")";
                 return EventResult::Failure;
             }
             send(EGEPacket::generate_Pong());
@@ -134,7 +135,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                 auto sceneObject = scene->getObject(_id);
                 if(!sceneObject) // Object was not yet created on client :(
                 {
-                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SDefaultControllerId handler" << std::endl;
+                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SDefaultControllerId handler";
                     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(_id));
                     if(!m_requestedObjects.count(_id))
                         requestObject(_id);
@@ -168,7 +169,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         }
         break;
     default:
-        std::cerr << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType()) << std::endl;
+        err(LogLevel::Error) << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
     }
 
@@ -186,7 +187,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     auto func = gpom->sceneObjectCreators.findById(typeId);
     if(!func) //game version mismatch?
     {
-        std::cerr << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?" << std::endl;
+        err(LogLevel::Error) << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?";
         return EventResult::Failure;
     }
 
@@ -209,7 +210,7 @@ EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> obje
 
     if(!sceneObject)
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from update" << std::endl;
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from update";
         DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
         if(!m_requestedObjects.count(id))
             requestObject(id);
@@ -249,7 +250,7 @@ EventResult EGEClient::onLoad()
 
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
-        std::cerr << "001E EGE/egeNetwork: Starting client" << std::endl;
+        err(LogLevel::Info) << "001E EGE/egeNetwork: Starting client";
         if(!connect(m_ip, m_port))
             return 1;
 
@@ -265,7 +266,7 @@ EventResult EGEClient::onLoad()
         return 0;
     };
     auto clientNetworkCallback = [this](AsyncTask::State state) {
-        std::cerr << "001F EGE/egeNetwork: Closing client" << std::endl;
+        err(LogLevel::Info) << "001F EGE/egeNetwork: Closing client";
 
         exit(state.returnCode);
 
@@ -330,7 +331,7 @@ void EGEClient::control(std::shared_ptr<SceneObject> object, const ControlObject
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
     if(!controller && !m_requestedObjects.count(object->getObjectId()))
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from control" << std::endl;
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from control";
         requestObject(object->getObjectId());
     }
     controller->handleRequest(data);
@@ -350,7 +351,7 @@ void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const Contro
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
     if(!controller && !m_requestedObjects.count(object->getObjectId()))
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from requestControl" << std::endl;
+        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from requestControl";
         requestObject(object->getObjectId());
     }
     controller->sendRequest(data);
@@ -361,7 +362,7 @@ void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const Contro
 
 void EGEClient::requestObject(long long id)
 {
-    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Requesting object " << id << " from server" << std::endl;
+    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Requesting object " << id << " from server";
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
     m_requestedObjects.insert(id);
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));

@@ -5,9 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <cxxabi.h>
 #include <iostream>
-#include <memory>
 #include <stdlib.h>
 #include <utility>
 
@@ -43,13 +41,13 @@ void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
 #define DBG(run,txt) \
     if constexpr(run) \
     { \
-        std::cerr << "0004 EGE/main: debug: " << (txt) << std::endl; \
+        std::cerr << "DBG  " << (txt) << std::endl; \
     }
 
 #define DUMP(run,var) \
     if constexpr(run) \
     { \
-        std::cerr << #var << "= " << (var) << std::endl; \
+        std::cerr << "DUMP  '" << #var << "' = [" << (var) << "]" << std::endl; \
     }
 
 #define instanceof(pointer, clazz) \

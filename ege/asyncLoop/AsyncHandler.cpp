@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "AsyncHandler.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
@@ -50,7 +52,7 @@ void AsyncHandler::updateAsyncTasks()
         if(state.finished)
         {
             if(state.returnCode != 0)
-                std::cerr << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!" << std::endl;
+                err(LogLevel::Warning) << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
 
             m_asyncTasks.erase(it);
             if(m_asyncTasks.empty())
