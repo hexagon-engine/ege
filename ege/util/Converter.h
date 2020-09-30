@@ -10,10 +10,13 @@ namespace EGE
 
 class ObjectMap;
 
-template<class InputStreamType, class OutputStreamType = InputStreamType>
+template<class I, class O = I>
 class Converter
 {
 public:
+    typedef I InputStreamType;
+    typedef O OutputStreamType;
+
     virtual bool in(InputStreamType& input, ObjectMap& object) const = 0;
     virtual bool out(OutputStreamType& output, const ObjectMap& object) const = 0;
 };
