@@ -66,16 +66,16 @@ static void _intend(std::vector<IntendMode> modes)
         switch(mode)
         {
             case IntendMode::None:
-                std::cerr << "   ";
+                std::cerr << "   "; // "   "
                 break;
             case IntendMode::Normal:
-                std::cerr << "\u2502  ";
+                std::cerr << "\u2502  "; // "|  "
                 break;
             case IntendMode::Object:
-                std::cerr << "\u251c\u2500 ";
+                std::cerr << "\u251c\u2500 "; // "|--"
                 break;
             case IntendMode::LastObject:
-                std::cerr << "\u2514\u2500 ";
+                std::cerr << "\u2514\u2500 "; // "L--"
                 break;
         }
     }
@@ -85,35 +85,47 @@ static void _printPair(std::string name, std::shared_ptr<Object> object, std::ve
 
 static void _printName(std::string name)
 {
-    std::cerr << "\e[1;32m" << name << "\e[m";
+    std::cerr << "\e[1;32m" << name << "\e[m = ";
 }
 
 static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
 {
+    if(depth.size() > 10)
+    {
+        std::cerr << "\e[31m...\e[m " << std::endl;
+        return;
+    }
+
+    if(!object)
+    {
+        std::cerr << "\e[31m<Empty>\e[m " << std::endl;
+        return;
+    }
+
     if(object->isInt())
     {
-        std::cerr << " = \e[35m" << object->asInt() << "\e[m" << std::endl;
+        std::cerr << "\e[35m" << object->asInt() << "\e[m" << std::endl;
     }
     else if(object->isFloat())
     {
-        std::cerr << " = \e[95m" << object->asFloat() << "\e[m" << std::endl;
+        std::cerr << "\e[95m" << object->asFloat() << "\e[m" << std::endl;
     }
     else if(object->isString())
     {
-        std::cerr << " = \e[33m" << object->toString() << "\e[m" << std::endl;
+        std::cerr << "\e[33m" << object->toString() << "\e[m" << std::endl;
     }
     else if(object->isList())
     {
         auto _vector = object->asList();
         if(!_vector.empty())
         {
-            std::cerr << std::endl;
+            std::cerr << "\e[32m<List: " << _vector.size() << " entries>\e[m" << std::endl;
             size_t counter = 0;
             for(auto pr: _vector)
             {
                 std::vector<IntendMode> depth2 = depth;
 
-                if(counter == _vector.size() - 1)
+                if(counter == _vector.size() - 1 || counter >= 10)
                 {
                     if(!depth2.empty())
                     {
@@ -123,6 +135,12 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
                             depth2.back() = IntendMode::Normal;
                     }
                     depth2.push_back(IntendMode::LastObject);
+                    if(counter >= 10)
+                    {
+                        _intend(depth2);
+                        std::cerr << "\e[31m...\e[m (" << _vector.size() - 10 << " remaining)" << std::endl;
+                        break;
+                    }
                 }
                 else
                 {
@@ -136,13 +154,14 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
                     depth2.push_back(IntendMode::Object);
                 }
 
-                _printPair("\e[0;94m[" + std::to_string(counter) + "]", pr, depth2, counter == _vector.size() - 1);
+                _intend(depth2);
+                _printValue(pr, depth2, counter == _vector.size() - 1);
                 counter++;
             }
         }
         else
         {
-            std::cerr << " \e[91m<Empty List>\e[m" << std::endl;
+            std::cerr << "\e[91m<Empty List>\e[m" << std::endl;
         }
     }
     else if(object->isMap())
@@ -150,13 +169,13 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
         auto _map = object->asMap();
         if(!_map.empty())
         {
-            std::cerr << std::endl;
+            std::cerr << "\e[32m<Map: " << _map.size() << " entries>\e[m" << std::endl;
             size_t counter = 0;
             for(auto pr: _map)
             {
                 std::vector<IntendMode> depth2 = depth;
 
-                if(counter == _map.size() - 1)
+                if(counter == _map.size() - 1 || counter > 10)
                 {
                     if(!depth2.empty())
                     {
@@ -166,6 +185,12 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
                             depth2.back() = IntendMode::Normal;
                     }
                     depth2.push_back(IntendMode::LastObject);
+                    if(counter > 10)
+                    {
+                        _intend(depth2);
+                        std::cerr << "\e[31m...\e[m (" << _map.size() - 10 << " remaining)" << std::endl;
+                        break;
+                    }
                 }
                 else
                 {
@@ -185,7 +210,7 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
         }
         else
         {
-            std::cerr << " \e[91m<Empty Map>\e[m" << std::endl;
+            std::cerr << "\e[91m<Empty Map>\e[m" << std::endl;
         }
     }
 }
