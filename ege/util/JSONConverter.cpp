@@ -132,7 +132,7 @@ bool parsePair(std::istringstream& input, ObjectMap& object)
     // value
     std::shared_ptr<Object> value;
     bool result = parseValue(input, value);
-    if(!result)
+    if(!result || !value)
     {
         std::cerr << "json: expected value" << std::endl;
         return false;
@@ -186,7 +186,10 @@ bool parseFloat(std::istringstream& input, double& object)
 {
     std::string str;
     if(!consumeNumber(input, str))
+    {
+        std::cerr << "json: expected number" << std::endl;
         return false;
+    }
 
     try
     {
@@ -231,7 +234,10 @@ bool parseList(std::istringstream& input, ObjectList& object)
             return false;
         }
         if(!subObject)
+        {
+            std::cerr << "json: invalid subObject" << std::endl;
             return false;
+        }
         object.addObject(subObject);
 
         // potential whitespace
@@ -343,14 +349,22 @@ bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object)
         object = object2;
         return true;
     }
+    std::cerr << "json: expected '\"', number, '[' or '{'" << std::endl;
     return false;
 }
 
 bool JSONConverter::in(std::istringstream& input, ObjectMap& object) const
 {
+    input.clear();
+    ignoreWhitespace(input);
     bool b = parseMap(input, object);
-    char c = input.peek();
-    if(!b || c != -1)
+    ignoreWhitespace(input);
+    if(!input.eof())
+    {
+        std::cerr << "json: expected EOF" << std::endl;
+        b = false;
+    }
+    if(!b)
         input.setstate(std::ios_base::failbit);
     return b;
 }
