@@ -7,16 +7,16 @@ Copyright (c) Sppmacd 2020
 
 #include "Converter.h"
 
-#include <sstream>
+#include <iostream>
 
 namespace EGE
 {
 
-class JSONConverter : public Converter<std::istringstream, std::ostringstream>
+class JSONConverter : public Converter<std::istream, std::ostream>
 {
 public:
-    virtual bool in(std::istringstream& input, ObjectMap& object) const;
-    virtual bool out(std::ostringstream& output, const ObjectMap& object) const;
+    virtual bool in(InputStreamType& input, ObjectMap& object) const;
+    virtual bool out(OutputStreamType& output, const ObjectMap& object) const;
 };
 
 }

@@ -10,6 +10,7 @@
 #include <ege/util/PointerUtils.h>
 #include <ege/util/Vector.h>
 #include <iostream>
+#include <sstream>
 
 TESTCASE(object)
 {

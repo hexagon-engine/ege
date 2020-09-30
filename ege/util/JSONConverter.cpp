@@ -16,12 +16,11 @@ Copyright (c) Sppmacd 2020
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <memory>
-#include <sstream>
 
 namespace EGE
 {
 
-size_t ignoreWhitespace(std::istringstream& input)
+size_t ignoreWhitespace(JSONConverter::InputStreamType& input)
 {
     size_t counter = 0;
     while(isspace(input.peek()))
@@ -32,9 +31,9 @@ size_t ignoreWhitespace(std::istringstream& input)
     return counter;
 }
 
-bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object);
+bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object);
 
-bool consumeStringWithEscapes(std::istringstream& input, std::string& object)
+bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string& object)
 {
     // Starting '"'
     char c = input.peek();
@@ -88,7 +87,7 @@ bool consumeStringWithEscapes(std::istringstream& input, std::string& object)
     }
 }
 
-bool parseString(std::istringstream& input, std::string& object)
+bool parseString(JSONConverter::InputStreamType& input, std::string& object)
 {
     if(!consumeStringWithEscapes(input, object))
     {
@@ -104,7 +103,7 @@ bool parseString(std::istringstream& input, std::string& object)
     return true;
 }
 
-bool parsePair(std::istringstream& input, ObjectMap& object)
+bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
 {
     // name
     std::string name;
@@ -162,7 +161,7 @@ bool parsePair(std::istringstream& input, ObjectMap& object)
     return true;
 }
 
-bool consumeNumber(std::istringstream& input, std::string& object)
+bool consumeNumber(JSONConverter::InputStreamType& input, std::string& object)
 {
     char c = 0;
     c = input.peek();
@@ -182,7 +181,7 @@ bool consumeNumber(std::istringstream& input, std::string& object)
     return true;
 }
 
-bool parseFloat(std::istringstream& input, double& object)
+bool parseFloat(JSONConverter::InputStreamType& input, double& object)
 {
     std::string str;
     if(!consumeNumber(input, str))
@@ -203,7 +202,7 @@ bool parseFloat(std::istringstream& input, double& object)
     }
 }
 
-bool parseList(std::istringstream& input, ObjectList& object)
+bool parseList(JSONConverter::InputStreamType& input, ObjectList& object)
 {
     // starting '['
     char c = input.peek();
@@ -264,7 +263,7 @@ bool parseList(std::istringstream& input, ObjectList& object)
     return true;
 }
 
-bool parseMap(std::istringstream& input, ObjectMap& object)
+bool parseMap(JSONConverter::InputStreamType& input, ObjectMap& object)
 {
     // find first '{'
     char c = input.peek();
@@ -303,7 +302,7 @@ bool parseMap(std::istringstream& input, ObjectMap& object)
     }
 }
 
-bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object)
+bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object)
 {
     char c = input.peek();
     if(c == '"')
@@ -358,7 +357,7 @@ bool parseValue(std::istringstream& input, std::shared_ptr<Object>& object)
     return false;
 }
 
-bool JSONConverter::in(std::istringstream& input, ObjectMap& object) const
+bool JSONConverter::in(JSONConverter::InputStreamType& input, ObjectMap& object) const
 {
     ignoreWhitespace(input);
     bool b = parseMap(input, object);
@@ -373,7 +372,7 @@ bool JSONConverter::in(std::istringstream& input, ObjectMap& object) const
     return b;
 }
 
-bool JSONConverter::out(std::ostringstream& output, const ObjectMap& object) const
+bool JSONConverter::out(JSONConverter::OutputStreamType& output, const ObjectMap& object) const
 {
     output << object.toString();
     return true;

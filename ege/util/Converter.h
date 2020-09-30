@@ -70,15 +70,15 @@ O convertTo(const I& input, const Converter<I, O>& inputConverter, const Convert
 
 } //namespace EGE
 
-template<class I, class O>
-I& operator>>(I& stream, const EGE::Internal::_ConverterInput<I, O>& in)
+template<class I, class _I, class O>
+I& operator>>(_I& stream, const EGE::Internal::_ConverterInput<I, O>& in)
 {
     in.converter.in(stream, in.object);
     return stream;
 }
 
-template<class I, class O>
-O& operator<<(O& stream, const EGE::Internal::_ConverterOutput<I, O>& out)
+template<class I, class _O, class O>
+O& operator<<(_O& stream, const EGE::Internal::_ConverterOutput<I, O>& out)
 {
     out.converter.out(stream, out.object);
     return stream;
