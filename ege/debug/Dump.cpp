@@ -119,7 +119,7 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
         auto _vector = object->asList();
         if(!_vector.empty())
         {
-            std::cerr << "\e[32m<List: " << _vector.size() << " entries>\e[m" << std::endl;
+            std::cerr << "\e[94m<List: " << _vector.size() << " entries>\e[m" << std::endl;
             size_t counter = 0;
             for(auto pr: _vector)
             {
@@ -169,7 +169,7 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
         auto _map = object->asMap();
         if(!_map.empty())
         {
-            std::cerr << "\e[32m<Map: " << _map.size() << " entries>\e[m" << std::endl;
+            std::cerr << "\e[94m<Map: " << _map.size() << " entries>\e[m" << std::endl;
             size_t counter = 0;
             for(auto pr: _map)
             {
