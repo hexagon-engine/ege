@@ -12,6 +12,10 @@ Copyright (c) Sppmacd 2020
 #include <iostream>
 #include <string.h>
 
+#ifdef WIN32
+    #include <windows.h>
+#endif // WIN32
+
 namespace EGE
 {
 
@@ -146,14 +150,18 @@ double EventLoop::time(Time::Unit unit)
         return m_ticks;
     else if(unit == Time::Unit::Seconds)
     {
-        timespec _ts;
-        if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
-            return 0.0;
+        #if defined(__linux__)
+            timespec _ts;
+            if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
+                return 0.0;
 
-        // TODO: assume nobody will run our program longer than 1000000 seconds (~11 days)
-        double time = (long long)(_ts.tv_sec) + _ts.tv_nsec / 1000000000.0;
-        DUMP(TIMER_DEBUG, time);
-        return time;
+            // TODO: assume nobody will run our program longer than 1000000 seconds (~11 days)
+            double time = (long long)(_ts.tv_sec) + _ts.tv_nsec / 1000000000.0;
+            DUMP(TIMER_DEBUG, time);
+            return time;
+        #elif defined(WIN32)
+            return GetTickCount() / 1000.0;
+        #endif
     }
     ASSERT(false);
     return 0.0;
