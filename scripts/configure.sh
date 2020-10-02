@@ -6,6 +6,13 @@ function ege_echo() {
 	printf "\n\e[37mEGE_BUILD_SYSTEM \e[0;1;36m%s\e[0;35m : %s\e[0m\n\n" "$1" "$2"
 }
 
+set BUILD_DIR="build"
+
+if [ -z "$1" ]; then
+else
+	set BUILD_DIR=$1
+fi
+
 # check dependencies
 ege_echo INFO "Checking dependencies..."
 git --version && \
@@ -15,8 +22,8 @@ make --version || exit 1
 
 # download and build sfml
 ege_echo INFO "Downloading SFML..."
-mkdir build
-cd build
+mkdir $1
+cd $1
 git clone https://github.com/sfml/SFML.git
 cd SFML
 mkdir build
