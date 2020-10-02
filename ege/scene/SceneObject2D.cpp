@@ -61,6 +61,8 @@ bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(
 
 void SceneObject2D::render(sf::RenderTarget& target) const
 {
+    SceneObject::render(target);
+
     // debug shape
     if constexpr(SCENEOBJECT2D_DEBUG)
     {
