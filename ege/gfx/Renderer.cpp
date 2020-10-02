@@ -16,4 +16,19 @@ void Renderer::renderRectangle(double x, double y, double width, double height, 
     getTarget().draw(rs);
 }
 
+void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size)
+{
+    sf::Text text(str, font, size);
+    text.setPosition(x, y);
+    getTarget().draw(text);
+}
+
+void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size)
+{
+    sf::Text text(str, font, size);
+    text.setPosition(x, y);
+    text.setOrigin(text.getLocalBounds().getSize() / 2.f);
+    getTarget().draw(text);
+}
+
 }

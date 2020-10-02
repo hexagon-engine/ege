@@ -20,6 +20,8 @@ public:
     // For more advanced shapes, use SFML sf::Drawables.
 
     void renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor = sf::Color::Transparent);
+    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16);
+    void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
 
     sf::RenderTarget& getTarget()
     {
