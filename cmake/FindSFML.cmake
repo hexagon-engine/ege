@@ -81,7 +81,7 @@ set(FIND_SFML_PATHS
           PATHS ${FIND_SFML_PATHS}) 
 ]]
 # ``EGE``
-set(SFML_INCLUDE_DIR ${SFML_ROOT}/root/include)
+set(SFML_INCLUDE_DIR ${SFML_ROOT}/include)
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -317,10 +317,10 @@ if(SFML_STATIC_LIBRARIES)
 
         # find libraries
         find_sfml_dependency(FREETYPE_LIBRARY "FreeType" freetype)
-        find_sfml_dependency(JPEG_LIBRARY "libjpeg" jpeg)
+        #find_sfml_dependency(JPEG_LIBRARY "libjpeg" jpeg)
 
         # update the list
-        set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
+        set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY})
         set(SFML_DEPENDENCIES ${SFML_GRAPHICS_DEPENDENCIES} ${SFML_DEPENDENCIES})
     endif()
 

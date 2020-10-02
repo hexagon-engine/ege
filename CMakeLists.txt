@@ -12,7 +12,11 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra")
 # SFML preparation
 set(CMAKE_MODULE_PATH "${EGE_LIB_ROOT}/cmake" ${CMAKE_MODULE_PATH})
 set(SFML_STATIC_LIBRARIES TRUE)
-set(EGE_SFML_ROOT "${EGE_LIB_ROOT}/build/SFML/build")
+
+if(NOT DEFINED EGE_SFML_ROOT)
+  set(EGE_SFML_ROOT "${CMAKE_BINARY_DIR}/SFML/build/root")
+endif()
+
 ege_message("INFO" "SFML root is '${EGE_SFML_ROOT}'")
 set(SFML_ROOT ${EGE_SFML_ROOT})
 cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
