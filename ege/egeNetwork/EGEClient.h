@@ -35,6 +35,7 @@ public:
     virtual ~EGEClient();
 
     virtual std::shared_ptr<ObjectMap> getLoginData(std::shared_ptr<ObjectMap>) { return nullptr; }
+    virtual void onData(std::shared_ptr<ObjectMap>) {}
 
     virtual EventResult onReceive(std::shared_ptr<Packet> packet);
     EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId);

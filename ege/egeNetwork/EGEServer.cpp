@@ -107,6 +107,9 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
     switch(egePacket->getType())
     {
+    case EGEPacket::Type::_Data:
+        onData(egeClient, egePacket->getArgs());
+        break;
     case EGEPacket::Type::_Ping:
         egeClient->send(EGEPacket::generate_Pong());
         break;

@@ -42,6 +42,7 @@ public:
     // Accept all logins by default, without doing anything with userData!
     // Arguments:                     client                userData
     virtual EventResult onLogin(EGEClientConnection*, std::shared_ptr<ObjectMap>);
+    virtual void onData(EGEClientConnection*, std::shared_ptr<ObjectMap>) {}
 
     virtual EventResult onLoad();
     virtual void onTick(long long tickCount);
