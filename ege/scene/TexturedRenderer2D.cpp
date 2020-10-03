@@ -24,8 +24,6 @@ void TexturedRenderer2D::updateGeometry(SceneObject& object)
         m_textureRect = sf::FloatRect(0.f, 0.f, texture->getSize().x, texture->getSize().y);
     m_sprite.setTextureRect((sf::IntRect)m_textureRect);
     m_sprite.setPosition(sceneObject.getPosition());
-    DUMP(SCENE_DEBUG, sceneObject.getPosition().x);
-    DUMP(SCENE_DEBUG, sceneObject.getPosition().y);
     if(m_centered)
         sceneObject.setOrigin(m_textureRect.getSize() / 2.f);
     m_sprite.setOrigin(sceneObject.getOrigin());
