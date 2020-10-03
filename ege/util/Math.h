@@ -14,7 +14,6 @@ typedef double RadianAngle;
 typedef DegreeAngle Angle;
 
 // Radian <-> Degrees
-// TODO: move it to some Math.h file !
 DegreeAngle rad2deg(RadianAngle angle);
 RadianAngle deg2rad(DegreeAngle angle);
 
