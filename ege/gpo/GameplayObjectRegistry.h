@@ -91,6 +91,15 @@ public:
     // iterating on elements.
     virtual const ArrayType& arr() const;
 
+    virtual ArrayType::iterator begin()
+    {
+        return m_objects.begin();
+    }
+    virtual ArrayType::iterator end()
+    {
+        return m_objects.end();
+    }
+
 private:
     ArrayType m_objects;
     size_t m_greatestNumericId;
@@ -121,6 +130,15 @@ public:
     // Removes (but not deallocates) object with the same pointer
     // that specified.
     virtual void remove(void* obj);
+
+    virtual ArrayType::iterator begin()
+    {
+        return m_objects.begin();
+    }
+    virtual ArrayType::iterator end()
+    {
+        return m_objects.end();
+    }
 
 private:
     ArrayType m_objects;
