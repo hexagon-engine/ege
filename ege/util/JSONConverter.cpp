@@ -20,6 +20,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+std::string logIndex(size_t i)
+{
+    return " (at i=" + std::to_string(i) +  ")";
+}
+
 size_t ignoreWhitespace(JSONConverter::InputStreamType& input)
 {
     size_t counter = 0;
@@ -39,7 +44,7 @@ bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string
     char c = input.peek();
     if(c != '"')
     {
-        std::cerr << "json: expected '\"'" << std::endl;
+        std::cerr << "json: expected '\"'" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     input.ignore(1);
@@ -60,7 +65,7 @@ bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string
                 case '\n': break;
                 default:
                 {
-                    std::cerr << "json: invalid escape character: " << c << std::endl;
+                    std::cerr << "json: invalid escape character: " << c << logIndex(input.tellg()) << std::endl;
                     return false;
                 }
             }
@@ -92,13 +97,13 @@ bool parseString(JSONConverter::InputStreamType& input, std::string& object)
 {
     if(!consumeStringWithEscapes(input, object))
     {
-        std::cerr << "json: invalid string" << std::endl;
+        std::cerr << "json: invalid string" << logIndex(input.tellg()) << std::endl;
         return false;
     }
 
     if(input.eof())
     {
-        std::cerr << "json: unexpected EOF" << std::endl;
+        std::cerr << "json: unexpected EOF" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     return true;
@@ -110,7 +115,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
     std::string name;
     if(!parseString(input, name))
     {
-        std::cerr << "json: expected name" << std::endl;
+        std::cerr << "json: expected name" << logIndex(input.tellg()) << std::endl;
         return false;
     }
 
@@ -121,7 +126,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
     char c = input.peek();
     if(c != ':')
     {
-        std::cerr << "json: expected ':'" << std::endl;
+        std::cerr << "json: expected ':'" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     input.ignore(1);
@@ -134,7 +139,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
     bool result = parseValue(input, value);
     if(!result || !value)
     {
-        std::cerr << "json: expected value for pair" << std::endl;
+        std::cerr << "json: expected value for pair" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     object.addObject(name, value);
@@ -151,7 +156,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
             ignoreWhitespace(input);
             return true;
         }
-        std::cerr << "json: expected ',' or '}'" << std::endl;
+        std::cerr << "json: expected ',' or '}'" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     input.ignore(1);
@@ -170,7 +175,7 @@ bool consumeNumber(JSONConverter::InputStreamType& input, std::string& object)
     {
         if(input.eof())
         {
-            std::cerr << "json: unexpected EOF while parsing number" << std::endl;
+            std::cerr << "json: unexpected EOF while parsing number" << logIndex(input.tellg()) << std::endl;
             return false;
         }
 
@@ -187,7 +192,7 @@ bool parseFloat(JSONConverter::InputStreamType& input, double& object)
     std::string str;
     if(!consumeNumber(input, str))
     {
-        std::cerr << "json: expected number" << std::endl;
+        std::cerr << "json: expected number" << logIndex(input.tellg()) << std::endl;
         return false;
     }
 
@@ -198,7 +203,7 @@ bool parseFloat(JSONConverter::InputStreamType& input, double& object)
     }
     catch(...)
     {
-        std::cerr << "json: invalid number" << std::endl;
+        std::cerr << "json: invalid number" << logIndex(input.tellg()) << std::endl;
         return false;
     }
 }
@@ -209,7 +214,7 @@ bool parseList(JSONConverter::InputStreamType& input, ObjectList& object)
     char c = input.peek();
     if(c != '[')
     {
-        std::cerr << "json: expected '['" << std::endl;
+        std::cerr << "json: expected '['" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     input.ignore(1);
@@ -230,12 +235,12 @@ bool parseList(JSONConverter::InputStreamType& input, ObjectList& object)
         std::shared_ptr<Object> subObject;
         if(!parseValue(input, subObject))
         {
-            std::cerr << "json: expected value for list" << std::endl;
+            std::cerr << "json: expected value for list" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         if(!subObject)
         {
-            std::cerr << "json: invalid subObject" << std::endl;
+            std::cerr << "json: invalid subObject" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         object.addObject(subObject);
@@ -252,7 +257,7 @@ bool parseList(JSONConverter::InputStreamType& input, ObjectList& object)
                 input.ignore(1);
                 return true;
             }
-            std::cerr << "json: expected ',' or ']'" << std::endl;
+            std::cerr << "json: expected ',' or ']'" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         input.ignore(1);
@@ -270,7 +275,7 @@ bool parseMap(JSONConverter::InputStreamType& input, ObjectMap& object)
     char c = input.peek();
     if(c != '{')
     {
-        std::cerr << "json: expected '{'" << std::endl;
+        std::cerr << "json: expected '{'" << logIndex(input.tellg()) << std::endl;
         return false;
     }
     input.ignore(1);
@@ -291,13 +296,13 @@ bool parseMap(JSONConverter::InputStreamType& input, ObjectMap& object)
             bool result = parsePair(input, object);
             if(!result)
             {
-                std::cerr << "json: expected key-value pair for map" << std::endl;
+                std::cerr << "json: expected key-value pair for map" << logIndex(input.tellg()) << std::endl;
                 return false;
             }
         }
         else
         {
-            std::cerr << "json: expected '}' or ','" << std::endl;
+            std::cerr << "json: expected '}' or ','" << logIndex(input.tellg()) << std::endl;
             return false;
         }
     }
@@ -312,7 +317,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         std::string value;
         if(!parseString(input, value))
         {
-            std::cerr << "json: expected string" << std::endl;
+            std::cerr << "json: expected string" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         object2->setString(value);
@@ -325,7 +330,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         double value;
         if(!parseFloat(input, value))
         {
-            std::cerr << "json: expected number" << std::endl;
+            std::cerr << "json: expected number" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         object2->setNumber(value);
@@ -337,7 +342,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         std::shared_ptr<ObjectList> object2 = make<ObjectList>();
         if(!parseList(input, *object2))
         {
-            std::cerr << "json: expected list" << std::endl;
+            std::cerr << "json: expected list" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         object = object2;
@@ -348,13 +353,13 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         std::shared_ptr<ObjectMap> object2 = make<ObjectMap>();
         if(!parseMap(input, *object2))
         {
-            std::cerr << "json: expected map" << std::endl;
+            std::cerr << "json: expected map" << logIndex(input.tellg()) << std::endl;
             return false;
         }
         object = object2;
         return true;
     }
-    std::cerr << "json: expected '\"', number, '[' or '{'" << std::endl;
+    std::cerr << "json: expected '\"', number, '[' or '{'" << logIndex(input.tellg()) << std::endl;
     return false;
 }
 
@@ -365,7 +370,7 @@ bool JSONConverter::in(JSONConverter::InputStreamType& input, ObjectMap& object)
     ignoreWhitespace(input);
     if(!input.eof())
     {
-        std::cerr << "json: expected EOF" << std::endl;
+        std::cerr << "json: expected EOF" << logIndex(input.tellg()) << std::endl;
         b = false;
     }
     if(!b)
