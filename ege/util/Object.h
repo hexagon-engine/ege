@@ -22,7 +22,7 @@ public:
 
     virtual std::string asString() const { return ""; }
     virtual long long asInt() const { return 0; }
-    virtual unsigned long long asUnsignedInt() const { return 0; }
+    virtual unsigned long long asUnsignedInt() const { return asInt(); }
     virtual bool asBool() const { return false; }
     virtual std::map<std::string, std::shared_ptr<Object>> asMap() const { return {}; }
     virtual double asFloat() const { return 0.0; }
