@@ -10,10 +10,10 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class ObjectInt : public Object
+class ObjectUnsignedInt : public Object
 {
 public:
-    typedef long long ValueType;
+    typedef unsigned long long ValueType;
 
     enum class Type
     {
@@ -23,21 +23,21 @@ public:
         Long   // 8B
     };
 
-    ObjectInt(ValueType num = 0, Type type = Type::Long)
+    ObjectUnsignedInt(ValueType num = 0, Type type = Type::Long)
     : m_number(num), m_type(type) {}
 
     virtual std::string toString() const;
 
     // TODO: int representations
     virtual std::string asString() const { return std::to_string(m_number); }
-    virtual long long asInt() const;
-    virtual unsigned long long asUnsignedInt() { return std::max(0LL, asInt()); }
+    virtual long long asInt() const { return asUnsignedInt(); }
+    virtual unsigned long long asUnsignedInt() const;
     virtual bool asBool() const { return m_number; }
     virtual double asFloat() const { return asInt(); }
 
     virtual bool isString() const { return true; }
     virtual bool isInt() const { return true; }
-    virtual bool isUnsignedInt() const { return m_number >= 0; }
+    virtual bool isUnsignedInt() const { return true; }
     virtual bool isBool() const { return true; }
     virtual bool isFloat() const { return true; }
 

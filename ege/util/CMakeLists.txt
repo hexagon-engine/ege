@@ -17,6 +17,8 @@ set(SOURCES
 	"ObjectMap.h"
 	"ObjectString.cpp"
 	"ObjectString.h"
+	"ObjectUnsignedInt.cpp"
+	"ObjectUnsignedInt.h"
 	"PointerUtils.h"
 	"Serializable.cpp"
 	"Serializable.h"

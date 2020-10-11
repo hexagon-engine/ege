@@ -3,7 +3,7 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
-#include "ObjectInt.h"
+#include "ObjectUnsignedInt.h"
 #include "PointerUtils.h"
 
 #include <ege/main/Config.h>
@@ -12,12 +12,12 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectInt::copy() const
+std::shared_ptr<Object> ObjectUnsignedInt::copy() const
 {
-    return make<ObjectInt>(*this);
+    return make<ObjectUnsignedInt>(*this);
 }
 
-long long ObjectInt::asInt() const
+unsigned long long ObjectUnsignedInt::asUnsignedInt() const
 {
     switch(m_type)
     {
@@ -34,23 +34,23 @@ long long ObjectInt::asInt() const
     }
 }
 
-std::string ObjectInt::toString() const
+std::string ObjectUnsignedInt::toString() const
 {
     return asString() + suffix();
 }
 
-std::string ObjectInt::suffix() const
+std::string ObjectUnsignedInt::suffix() const
 {
     switch(m_type)
     {
     case Type::Byte:
-        return "b";
+        return "ub";
     case Type::Short:
-        return "s";
+        return "us";
     case Type::Int:
-        return "l";
+        return "ul";
     case Type::Long:
-        return "ll";
+        return "ull";
     }
     CRASH();
 }

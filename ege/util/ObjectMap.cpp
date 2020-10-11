@@ -40,9 +40,14 @@ const std::shared_ptr<Object>& ObjectMap::addFloat(std::string name, ObjectFloat
     return addObject(name, make<ObjectFloat>(value));
 }
 
-const std::shared_ptr<Object>& ObjectMap::addInt(std::string name, ObjectInt::ValueType value)
+const std::shared_ptr<Object>& ObjectMap::addInt(std::string name, ObjectInt::ValueType value, ObjectInt::Type type)
 {
-    return addObject(name, make<ObjectInt>(value));
+    return addObject(name, make<ObjectInt>(value, type));
+}
+
+const std::shared_ptr<Object>& ObjectMap::addUnsignedInt(std::string name, ObjectUnsignedInt::ValueType value, ObjectUnsignedInt::Type type)
+{
+    return addObject(name, make<ObjectUnsignedInt>(value, type));
 }
 
 const std::shared_ptr<Object>& ObjectMap::addList(std::string name, ObjectList::ValueType value)

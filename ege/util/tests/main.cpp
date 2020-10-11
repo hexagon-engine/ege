@@ -138,4 +138,31 @@ TESTCASE(json)
     std::cerr << "generated=" << str2.str() << std::endl;
 }
 
+TESTCASE(objectIntTypes)
+{
+    std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+    long long signedNumber = 0xFEDCBA9876543210;
+    long long number    =    0xFEDCBA9876543210;
+
+    map->addInt("b", number, EGE::ObjectInt::Type::Byte);  // 0x10
+    map->addInt("s", number, EGE::ObjectInt::Type::Short); // 0x3210
+    map->addInt("i", number, EGE::ObjectInt::Type::Int);   // 0x76543210
+    map->addInt("l", number, EGE::ObjectInt::Type::Long);  // 0xFEDCBA9876543210
+
+    map->addUnsignedInt("ub", number, EGE::ObjectUnsignedInt::Type::Byte);  // 0x10
+    map->addUnsignedInt("us", number, EGE::ObjectUnsignedInt::Type::Short); // 0x3210
+    map->addUnsignedInt("ui", number, EGE::ObjectUnsignedInt::Type::Int);   // 0x76543210
+    map->addUnsignedInt("ul", number, EGE::ObjectUnsignedInt::Type::Long);  // 0xFEDCBA9876543210
+
+    EXPECT_EQUAL(map->getObject("b").lock()->asInt(), 0x10);
+    EXPECT_EQUAL(map->getObject("s").lock()->asInt(), 0x3210);
+    EXPECT_EQUAL(map->getObject("i").lock()->asInt(), 0x76543210);
+    EXPECT_EQUAL(map->getObject("l").lock()->asInt(), 0xFEDCBA9876543210);
+
+    EXPECT_EQUAL(map->getObject("ub").lock()->asUnsignedInt(), 0x10);
+    EXPECT_EQUAL(map->getObject("us").lock()->asUnsignedInt(), 0x3210);
+    EXPECT_EQUAL(map->getObject("ui").lock()->asUnsignedInt(), 0x76543210);
+    EXPECT_EQUAL(map->getObject("ul").lock()->asUnsignedInt(), 0xFEDCBA9876543210);
+}
+
 RUN_TESTS(util)

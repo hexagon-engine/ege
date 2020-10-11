@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 #include "ObjectInt.h"
 #include "ObjectList.h"
 #include "ObjectString.h"
+#include "ObjectUnsignedInt.h"
 
 #include <map>
 #include <memory>
@@ -29,7 +30,8 @@ public:
 
     const std::shared_ptr<Object>& addObject(std::string name, const std::shared_ptr<Object>& subObject);
     const std::shared_ptr<Object>& addFloat(std::string name, ObjectFloat::ValueType value = 0.0);
-    const std::shared_ptr<Object>& addInt(std::string name, ObjectInt::ValueType value = 0);
+    const std::shared_ptr<Object>& addInt(std::string name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
+    const std::shared_ptr<Object>& addUnsignedInt(std::string name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
     const std::shared_ptr<Object>& addList(std::string name, ObjectList::ValueType value = {});
     const std::shared_ptr<Object>& addString(std::string name, ObjectString::ValueType value = "");
 
