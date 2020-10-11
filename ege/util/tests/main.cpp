@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/util/Converter.h>
 #include <ege/util/JSONConverter.h>
+#include <ege/util/Math.h>
 #include <ege/util/Object.h>
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectInt.h>
@@ -163,6 +164,20 @@ TESTCASE(objectIntTypes)
     EXPECT_EQUAL(map->getObject("us").lock()->asUnsignedInt(), 0x3210);
     EXPECT_EQUAL(map->getObject("ui").lock()->asUnsignedInt(), 0x76543210);
     EXPECT_EQUAL(map->getObject("ul").lock()->asUnsignedInt(), 0xFEDCBA9876543210);
+}
+
+TESTCASE(equations)
+{
+    EXPECT_EQUAL(EGE::Math::Equation::linear(0, 0), EGE::Math::Equation::Result::Infinite);
+    EXPECT_EQUAL(EGE::Math::Equation::linear(0, 1), EGE::Math::Equation::Result::None);
+    EXPECT_EQUAL(EGE::Math::Equation::linear(1, 1), -1);
+    EXPECT_EQUAL(EGE::Math::Equation::linear(5, 8), -1.6);
+    EXPECT_EQUAL(EGE::Math::Equation::square(0, 0, 0), EGE::Math::Equation::Result::Infinite);
+    EXPECT_EQUAL(EGE::Math::Equation::square(0, 0, 1), EGE::Math::Equation::Result::None);
+    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, 0), 0);
+    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, 1), EGE::Math::Equation::Result::None);
+    std::vector<double> array1 = {-1, 1};
+    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, -1), array1);
 }
 
 RUN_TESTS(util)
