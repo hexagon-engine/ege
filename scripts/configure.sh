@@ -21,8 +21,8 @@ make --version || exit 1
 
 # download and build sfml
 ege_echo INFO "Downloading SFML..."
-mkdir $1
-cd $1
+mkdir ${BUILD_DIR}
+cd ${BUILD_DIR}
 git clone https://github.com/sfml/SFML.git
 cd SFML
 mkdir build
