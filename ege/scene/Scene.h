@@ -70,6 +70,12 @@ public:
         return m_loop;
     }
 
+    bool isHeadless()
+    {
+        // We don't have GUI on servers!
+        return !getLoop();
+    }
+
 protected:
     ObjectMap m_objects;
 
