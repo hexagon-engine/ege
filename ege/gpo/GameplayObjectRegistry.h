@@ -91,11 +91,11 @@ public:
     // iterating on elements.
     virtual const ArrayType& arr() const;
 
-    virtual ArrayType::iterator begin()
+    virtual typename ArrayType::iterator begin()
     {
         return m_objects.begin();
     }
-    virtual ArrayType::iterator end()
+    virtual typename ArrayType::iterator end()
     {
         return m_objects.end();
     }
@@ -131,11 +131,11 @@ public:
     // that specified.
     virtual void remove(void* obj);
 
-    virtual ArrayType::iterator begin()
+    virtual typename ArrayType::iterator begin()
     {
         return m_objects.begin();
     }
-    virtual ArrayType::iterator end()
+    virtual typename ArrayType::iterator end()
     {
         return m_objects.end();
     }
