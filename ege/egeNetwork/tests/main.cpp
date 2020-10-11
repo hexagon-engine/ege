@@ -49,7 +49,7 @@ public:
     : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
     {
         // only server side!
-        if(!playerControlled && !owner->getLoop())
+        if(!playerControlled && owner->isHeadless())
         {
             auto timer = make<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
             timer->setCallback([this](std::string, EGE::Timer*) {
@@ -207,15 +207,6 @@ TESTCASE(server)
         MyServer server;
 
         server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
-
-        // Set initialize handler for Server. It will be called before starting listening.
-        server.setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
-                                gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
-                                                                [](std::shared_ptr<EGE::Scene> scene)->std::shared_ptr<EGE::SceneObject> {
-                                                                    return make<MyObject>(scene);
-                                                                }));
-                                return true;
-                            });
 
         auto scene = make<EGE::Scene2D>(nullptr);
 
