@@ -6,11 +6,10 @@ function ege_echo() {
 	printf "\n\e[37mEGE_BUILD_SYSTEM \e[0;1;36m%s\e[0;35m : %s\e[0m\n\n" "$1" "$2"
 }
 
-set BUILD_DIR="build"
+export BUILD_DIR="build"
 
-if [ -z "$1" ]; then
-else
-	set BUILD_DIR=$1
+if [ -n "$1" ]; then
+	export BUILD_DIR=$1
 fi
 
 # check dependencies
