@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <utility>
 
 extern "C"
-void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
+[[noreturn]] void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
 
 #define ASSERT(expr) \
     if(!(expr)) _ege_assertion_failed(#expr, __FILE__, __LINE__)
