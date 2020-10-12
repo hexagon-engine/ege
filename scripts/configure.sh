@@ -35,4 +35,4 @@ cd ../..
 
 # run cmake
 ege_echo INFO "Creating build system..."
-cmake -B . -S .. -DEGE_SFML_ROOT="SFML/build"
+cmake -B . -S ..
