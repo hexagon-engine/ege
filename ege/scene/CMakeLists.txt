@@ -7,6 +7,8 @@ set(SOURCES
 	"DummyObject2D.h"
 	"ObjectRenderer.cpp"
 	"ObjectRenderer.h"
+	"ParticleSystem2D.cpp"
+	"ParticleSystem2D.h"
 	"SceneObject2D.cpp"
 	"SceneObject2D.h"
 	"Scene.cpp"
@@ -22,6 +24,7 @@ set(SOURCES
 )
 
 ege_add_module(scene)
+ege_depend_module(scene gfx)
 ege_depend_module(scene gpo)
 ege_depend_module(scene gui)
 ege_depend_module(scene util)
