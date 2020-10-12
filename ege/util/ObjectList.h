@@ -15,7 +15,7 @@ class ObjectList : public Object
 public:
     typedef std::vector<std::shared_ptr<Object>> ValueType;
 
-    ObjectList(ValueType objects = {})
+    explicit ObjectList(ValueType objects = {})
     : m_objects(objects) {}
 
     virtual std::string toString() const;

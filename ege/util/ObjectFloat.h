@@ -17,7 +17,7 @@ class ObjectFloat : public Object
 public:
     typedef double ValueType;
 
-    ObjectFloat(ValueType num = 0.0)
+    explicit ObjectFloat(ValueType num = 0.0)
     : m_number(num) {}
 
     virtual std::string toString() const;

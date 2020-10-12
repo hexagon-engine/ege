@@ -15,7 +15,7 @@ class ObjectString : public Object
 public:
     typedef std::string ValueType;
 
-    ObjectString(ValueType str = "")
+    explicit ObjectString(ValueType str = "")
     : m_string(str) {}
 
     virtual std::string toString() const;

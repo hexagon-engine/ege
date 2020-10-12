@@ -23,7 +23,7 @@ public:
         Long   // 8B
     };
 
-    ObjectInt(ValueType num = 0, Type type = Type::Long)
+    explicit ObjectInt(ValueType num = 0, Type type = Type::Long)
     : m_number(num), m_type(type) {}
 
     virtual std::string toString() const;
