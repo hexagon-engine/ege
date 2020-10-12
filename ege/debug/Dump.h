@@ -15,7 +15,7 @@ namespace EGE
 
 struct HexDumpSettings
 {
-    int width = 16;
+    size_t width = 16;
     std::ostream& stream = std::cerr;
 };
 
