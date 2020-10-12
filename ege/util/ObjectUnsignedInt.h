@@ -51,6 +51,11 @@ public:
         m_type = type;
     }
 
+    Type getType() const
+    {
+        return m_type;
+    }
+
     virtual std::shared_ptr<Object> copy() const;
 
 private:
