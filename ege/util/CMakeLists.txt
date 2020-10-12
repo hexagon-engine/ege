@@ -7,6 +7,8 @@ set(SOURCES
 	"Math.h"
 	"Object.cpp"
 	"Object.h"
+	"ObjectArray.cpp"
+	"ObjectArray.h"
 	"ObjectFloat.cpp"
 	"ObjectFloat.h"
 	"ObjectInt.cpp"
