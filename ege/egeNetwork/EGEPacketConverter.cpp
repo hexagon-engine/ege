@@ -29,14 +29,84 @@ namespace Internal
     };
 }
 
-static bool parseInt(sf::Packet& input, ObjectInt& object)
+static bool parseUnsignedInt(sf::Packet& input, ObjectUnsignedInt& object)
 {
-    long long data;
-    if(!(input >> data))
+    int8_t type;
+    if(!(input >> type))
         return false;
 
-    object.setNumber(data);
-    return true;
+    switch(type)
+    {
+    case 'b':
+        {
+            sf::Uint8 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectUnsignedInt::Type::Byte);
+        } return true;
+    case 's':
+        {
+            sf::Uint16 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectUnsignedInt::Type::Short);
+        } return true;
+    case 'i':
+        {
+            sf::Uint32 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectUnsignedInt::Type::Int);
+        } return true;
+    case 'l':
+        {
+            sf::Uint64 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectUnsignedInt::Type::Long);
+        } return true;
+    }
+    return false;
+}
+
+static bool parseInt(sf::Packet& input, ObjectInt& object)
+{
+    int8_t type;
+    if(!(input >> type))
+        return false;
+
+    switch(type)
+    {
+    case 'b':
+        {
+            sf::Int8 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectInt::Type::Byte);
+        } return true;
+    case 's':
+        {
+            sf::Int16 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectInt::Type::Short);
+        } return true;
+    case 'i':
+        {
+            sf::Int32 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectInt::Type::Int);
+        } return true;
+    case 'l':
+        {
+            sf::Int64 val;
+            input >> val;
+            object.setNumber(val);
+            object.setType(ObjectInt::Type::Long);
+        } return true;
+    }
+    return false;
 }
 
 static bool parseFloat(sf::Packet& input, ObjectFloat& object)
@@ -81,6 +151,14 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
             std::shared_ptr<ObjectList> obj = make<ObjectList>();
             Internal::_ParseResult result = parseList(input, *obj);
             if(!result.message.empty())
+                return nullptr;
+            return obj;
+        }
+        break;
+    case 'u':
+        {
+            std::shared_ptr<ObjectUnsignedInt> obj = make<ObjectUnsignedInt>(0);
+            if(!parseUnsignedInt(input, *obj))
                 return nullptr;
             return obj;
         }
@@ -215,6 +293,44 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
     return true;
 }
 
+static bool outputInt(sf::Packet& output, const ObjectInt& object)
+{
+    output << 'i';
+    switch(object.getType())
+    {
+    case ObjectInt::Type::Byte:
+        output << 'b' << (sf::Int8)object.asInt(); break;
+    case ObjectInt::Type::Short:
+        output << 's' << (sf::Int16)object.asInt(); break;
+    case ObjectInt::Type::Int:
+        output << 'i' << (sf::Int32)object.asInt(); break;
+    case ObjectInt::Type::Long:
+        output << 'l' << (sf::Int64)object.asInt(); break;
+    default:
+        return false;
+    }
+    return true;
+}
+
+static bool outputUnsignedInt(sf::Packet& output, const ObjectUnsignedInt& object)
+{
+    output << 'u';
+    switch(object.getType())
+    {
+    case ObjectUnsignedInt::Type::Byte:
+        output << 'b' << (sf::Uint8)object.asUnsignedInt(); break;
+    case ObjectUnsignedInt::Type::Short:
+        output << 's' << (sf::Uint16)object.asUnsignedInt(); break;
+    case ObjectUnsignedInt::Type::Int:
+        output << 'i' << (sf::Uint32)object.asUnsignedInt(); break;
+    case ObjectUnsignedInt::Type::Long:
+        output << 'l' << (sf::Uint64)object.asUnsignedInt(); break;
+    default:
+        return false;
+    }
+    return true;
+}
+
 static bool outputObject(sf::Packet& output, const Object& object)
 {
     if(object.isMap())
@@ -240,10 +356,13 @@ static bool outputObject(sf::Packet& output, const Object& object)
         output << (sf::Uint8)'0';
         return success;
     }
+    else if(object.isUnsignedInt())
+    {
+        return outputUnsignedInt(output, (ObjectUnsignedInt&)object);
+    }
     else if(object.isInt())
     {
-        output << (sf::Uint8)'i' << object.asInt();
-        return true;
+        return outputInt(output, (ObjectInt&)object);
     }
     else if(object.isFloat())
     {
