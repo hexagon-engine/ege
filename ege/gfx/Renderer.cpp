@@ -35,7 +35,7 @@ void Renderer::renderTexturedRectangle(double x, double y, double width, double 
 {
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
-    rs.setTexture(texture);
+    rs.setTexture(&texture);
     getTarget().draw(rs);
 }
 
