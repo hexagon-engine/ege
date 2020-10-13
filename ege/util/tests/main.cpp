@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Equation.h>
+#include <ege/util/EquationSystem.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Math.h>
 #include <ege/util/Object.h>
@@ -184,4 +185,53 @@ TESTCASE(equations)
     EXPECT_EQUAL(EGE::LinearEquation(pA, pB).a(), 2);
 }
 
+TESTCASE(equationSystems)
+{
+    // 2 solutions
+    {
+        // Normal
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{1, 1}, {1, -2}}, {3, 0});
+        EXPECT_EQUAL(result.resultFor(0), 2);
+        EXPECT_EQUAL(result.resultFor(1), 1);
+    }
+
+    {
+        // No solutions
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{1, -1}, {2, -2}}, {1, -3});
+        EXPECT_EQUAL(result.resultFor(0), EGE::EquationResult::None);
+        EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::None);
+    }
+
+    {
+        // Infinite solutions
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{1, 1}, {3, 3}}, {2, 6});
+        EXPECT_EQUAL(result.resultFor(0), EGE::EquationResult::Infinite);
+        EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::Infinite);
+    }
+
+    // 3 solutions
+    {
+        // Normal
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{2, -2, -2}, {5, 2, 3}, {-1, 3, 4}}, {-2, 8, 4});
+        EXPECT_EQUAL(result.resultFor(0), 1);
+        EXPECT_EQUAL(result.resultFor(1), 3);
+        EXPECT_EQUAL(result.resultFor(2), -1);
+    }
+
+    {
+        // No solutions
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{1, 1, 1}, {2, 2, 2}, {4, 5, 4}}, {2, 5, 8});
+        EXPECT_EQUAL(result.resultFor(0), EGE::EquationResult::None);
+        EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::None);
+        EXPECT_EQUAL(result.resultFor(2), EGE::EquationResult::None);
+    }
+
+    {
+        // Infinite solutions
+        EGE::EquationSystemResult result = EGE::EquationSystem::linear({{1, 1, 1}, {2, 2, 2}, {4, 4, 4}}, {2, 4, 8});
+        EXPECT_EQUAL(result.resultFor(0), EGE::EquationResult::Infinite);
+        EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::Infinite);
+        EXPECT_EQUAL(result.resultFor(2), EGE::EquationResult::Infinite);
+    }
+}
 RUN_TESTS(util)

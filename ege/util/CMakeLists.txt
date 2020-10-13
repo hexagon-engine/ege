@@ -3,6 +3,8 @@ set(SOURCES
 	"Converter.h"
 	"Equation.cpp"
 	"Equation.h"
+	"EquationSystem.cpp"
+	"EquationSystem.h"
 	"JSONConverter.cpp"
 	"JSONConverter.h"
 	"Math.cpp"
