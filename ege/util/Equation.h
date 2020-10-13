@@ -31,18 +31,18 @@ struct EquationResult
     EquationResult(double _result)
     : results({_result}), resultCount(Discrete) {}
 
-    bool operator==(Count _count)
+    bool operator==(Count _count) const
     {
         return resultCount == _count;
     }
 
     // slow
-    bool operator==(std::vector<double> _results)
+    bool operator==(std::vector<double> _results) const
     {
         return results == _results;
     }
 
-    bool operator==(double _result)
+    bool operator==(double _result) const
     {
         return results.size() == 1 && results.back() == _result;
     }
@@ -51,7 +51,7 @@ struct EquationResult
 class GenericEquation
 {
 public:
-    virtual EquationResult solve() = 0;
+    virtual EquationResult solve() const = 0;
 };
 
 class LinearEquation : public GenericEquation
@@ -62,10 +62,10 @@ public:
 
     LinearEquation(Vec2d pa, Vec2d pb);
 
-    virtual EquationResult solve();
+    virtual EquationResult solve() const;
 
-    double a() { return m_a; }
-    double b() { return m_b; }
+    double a() const { return m_a; }
+    double b() const { return m_b; }
 
 private:
     double m_a = 0.0;
@@ -78,13 +78,13 @@ public:
     SquareEquation(double a, double b, double c)
     : m_a(a), m_b(b), m_c(c) {}
 
-    virtual EquationResult solve();
+    virtual EquationResult solve() const;
 
-    double delta();
+    double delta() const;
 
-    double a() { return m_a; }
-    double b() { return m_b; }
-    double c() { return m_c; }
+    double a() const { return m_a; }
+    double b() const { return m_b; }
+    double c() const { return m_c; }
 
 private:
     double m_a = 0.0;

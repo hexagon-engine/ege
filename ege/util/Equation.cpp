@@ -11,7 +11,7 @@ LinearEquation::LinearEquation(Vec2d pa, Vec2d pb)
     m_b = (pa.x * pb.y - pa.y * pb.x) / (pa.x - pb.x);
 }
 
-EquationResult LinearEquation::solve()
+EquationResult LinearEquation::solve() const
 {
     if(m_a == 0)
     {
@@ -29,7 +29,7 @@ EquationResult LinearEquation::solve()
     }
 }
 
-EquationResult SquareEquation::solve()
+EquationResult SquareEquation::solve() const
 {
     if(m_a == 0)
     {
@@ -53,7 +53,7 @@ EquationResult SquareEquation::solve()
     }
 }
 
-double SquareEquation::delta()
+double SquareEquation::delta() const
 {
     return m_b * m_b - 4 * m_a * m_c;
 }

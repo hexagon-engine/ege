@@ -43,15 +43,22 @@ public:
         return m_values[y][x];
     }
 
-    inline size_t size()
+    inline const double& value(size_t x, size_t y) const
+    {
+        ASSERT(y < m_values.size());
+        ASSERT(x < m_values[y].size());
+        return m_values[y][x];
+    }
+
+    inline size_t size() const
     {
         return m_values.size();
     }
 
     void setColumn(size_t column, const std::vector<double>& values);
-    double det();
+    double det() const;
 
-    std::string toString();
+    std::string toString() const;
 
 private:
     void init(const std::vector<std::vector<double>>& values);
@@ -67,7 +74,7 @@ public:
         m_results.resize(size);
     }
 
-    EquationResult resultFor(size_t variable);
+    EquationResult resultFor(size_t variable) const;
     void setResult(size_t variable, const EquationResult& result);
 
 private:
@@ -77,7 +84,7 @@ private:
 class GenericEquationSystem
 {
 public:
-    virtual EquationSystemResult solve() = 0;
+    virtual EquationSystemResult solve() const = 0;
 };
 
 class LinearEquationSystem : GenericEquationSystem
@@ -95,10 +102,10 @@ public:
     LinearEquationSystem(const SquareMatrix& as, const std::vector<double>& bs)
     : m_as(as), m_bs(bs) { ASSERT(m_as.size() == m_bs.size()); ASSERT(m_as.size() != 0); }
 
-    virtual EquationSystemResult solve();
+    virtual EquationSystemResult solve() const;
 
     // They should be the same.
-    inline size_t solutions() { return m_as.size(); }
+    inline size_t solutions() const { return m_as.size(); }
 
 private:
     SquareMatrix m_as;

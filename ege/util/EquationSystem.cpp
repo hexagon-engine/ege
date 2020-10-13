@@ -45,7 +45,7 @@ void SquareMatrix::setColumn(size_t column, const std::vector<double>& values)
     }
 }
 
-double SquareMatrix::det()
+double SquareMatrix::det() const
 {
     if(size() == 1)
     {
@@ -58,12 +58,13 @@ double SquareMatrix::det()
     }
     else if(size() == 3)
     {
-        return value(0, 0) * value(1, 1) * value(2, 2)
-             + value(1, 0) * value(2, 1) * value(0, 2)
-             + value(2, 0) * value(0, 1) * value(1, 2)
-             - value(0, 2) * value(1, 1) * value(2, 0)
-             - value(1, 2) * value(2, 1) * value(0, 0)
-             - value(2, 2) * value(0, 1) * value(1, 0);
+        double v1 = value(0, 0) * value(1, 1) * value(2, 2);
+        double v2 = value(1, 0) * value(2, 1) * value(0, 2);
+        double v3 = value(2, 0) * value(0, 1) * value(1, 2);
+        double v4 = value(0, 2) * value(1, 1) * value(2, 0);
+        double v5 = value(1, 2) * value(2, 1) * value(0, 0);
+        double v6 = value(2, 2) * value(0, 1) * value(1, 0);
+        return v1 +v2 +v3 -v4 -v5 -v6;
     }
     else
     {
@@ -72,10 +73,10 @@ double SquareMatrix::det()
     }
 }
 
-std::string SquareMatrix::toString()
+std::string SquareMatrix::toString() const
 {
     std::ostringstream oss;
-    for(std::vector<double>& vals: m_values)
+    for(const std::vector<double>& vals: m_values)
     {
         oss << "\u2502 "; // |
         for(double val: vals)
@@ -87,7 +88,7 @@ std::string SquareMatrix::toString()
     return oss.str();
 }
 
-EquationResult EquationSystemResult::resultFor(size_t variable)
+EquationResult EquationSystemResult::resultFor(size_t variable) const
 {
     ASSERT(variable < m_results.size());
     return m_results[variable];
@@ -99,7 +100,7 @@ void EquationSystemResult::setResult(size_t variable, const EquationResult& resu
     m_results[variable] = result;
 }
 
-EquationSystemResult LinearEquationSystem::solve()
+EquationSystemResult LinearEquationSystem::solve() const
 {
     if(solutions() == 1)
     {
