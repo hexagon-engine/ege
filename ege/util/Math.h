@@ -33,54 +33,6 @@ constexpr double e()
     return 2.718281828459045;
 }
 
-namespace Equation
-{
-
-struct Result
-{
-    enum Count
-    {
-        None,
-        Discrete,
-        Infinite
-    };
-    std::vector<double> results;
-    Count resultCount;
-
-    Result(Count _count = None)
-    : resultCount(_count) {}
-
-    Result(std::vector<double> _results)
-    : results(_results), resultCount(Discrete) {}
-
-    Result(double _result)
-    : results({_result}), resultCount(Discrete) {}
-
-    bool operator==(Count _count)
-    {
-        return resultCount == _count;
-    }
-
-    // slow
-    bool operator==(std::vector<double> _results)
-    {
-        return results == _results;
-    }
-
-    bool operator==(double _result)
-    {
-        return results.size() == 1 && results.back() == _result;
-    }
-};
-
-// Solve equation ax+b=0
-Result linear(double a, double b);
-
-// Solve equation ax^2+bx+c=0
-Result square(double a, double b, double c);
-
-}
-
 } // Math
 
 using Math::DegreeAngle;

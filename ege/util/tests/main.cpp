@@ -1,5 +1,6 @@
 #include <testsuite/Tests.h>
 #include <ege/util/Converter.h>
+#include <ege/util/Equation.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Math.h>
 #include <ege/util/Object.h>
@@ -142,7 +143,6 @@ TESTCASE(json)
 TESTCASE(objectIntTypes)
 {
     std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-    long long signedNumber = 0xFEDCBA9876543210;
     long long number    =    0xFEDCBA9876543210;
 
     map->addInt("b", number, EGE::ObjectInt::Type::Byte);  // 0x10
@@ -168,16 +168,20 @@ TESTCASE(objectIntTypes)
 
 TESTCASE(equations)
 {
-    EXPECT_EQUAL(EGE::Math::Equation::linear(0, 0), EGE::Math::Equation::Result::Infinite);
-    EXPECT_EQUAL(EGE::Math::Equation::linear(0, 1), EGE::Math::Equation::Result::None);
-    EXPECT_EQUAL(EGE::Math::Equation::linear(1, 1), -1);
-    EXPECT_EQUAL(EGE::Math::Equation::linear(5, 8), -1.6);
-    EXPECT_EQUAL(EGE::Math::Equation::square(0, 0, 0), EGE::Math::Equation::Result::Infinite);
-    EXPECT_EQUAL(EGE::Math::Equation::square(0, 0, 1), EGE::Math::Equation::Result::None);
-    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, 0), 0);
-    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, 1), EGE::Math::Equation::Result::None);
+    EXPECT_EQUAL(EGE::Equation::linear(0, 0), EGE::EquationResult::Infinite);
+    EXPECT_EQUAL(EGE::Equation::linear(0, 1), EGE::EquationResult::None);
+    EXPECT_EQUAL(EGE::Equation::linear(1, 1), -1);
+    EXPECT_EQUAL(EGE::Equation::linear(5, 8), -1.6);
+    EXPECT_EQUAL(EGE::Equation::square(0, 0, 0), EGE::EquationResult::Infinite);
+    EXPECT_EQUAL(EGE::Equation::square(0, 0, 1), EGE::EquationResult::None);
+    EXPECT_EQUAL(EGE::Equation::square(1, 0, 0), 0);
+    EXPECT_EQUAL(EGE::Equation::square(1, 0, 1), EGE::EquationResult::None);
     std::vector<double> array1 = {-1, 1};
-    EXPECT_EQUAL(EGE::Math::Equation::square(1, 0, -1), array1);
+    EXPECT_EQUAL(EGE::Equation::square(1, 0, -1), array1);
+    EGE::Vec2d pA = {1, 3};
+    EGE::Vec2d pB = {3, 7};
+    EXPECT_EQUAL(EGE::LinearEquation(pA, pB).b(), 1);
+    EXPECT_EQUAL(EGE::LinearEquation(pA, pB).a(), 2);
 }
 
 RUN_TESTS(util)
