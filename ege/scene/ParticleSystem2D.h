@@ -55,8 +55,13 @@ public:
     void setParticleRenderer(std::function<void(const std::vector<Particle>, sf::RenderTarget&)> func) { m_particleRenderer = func; }
 
     // Chance that the particle will be spawned in current onUpdate call.
-    void setSpawnChance(double val) { m_spawnChance = val; }
+    // If val == 1, particle will be spawned every tick.
+    // If val > 1, 'val' particles will be spawned.
+    // If val <= 0, CRASH().
+    void setSpawnChance(double val) { ASSERT(val >= 0); m_spawnChance = val; }
     void setParticleLifeTime(unsigned ttl) { m_particleTTL = ttl; }
+
+    void spawnParticle();
 
 private:
     sf::Vector2f randomPosition();

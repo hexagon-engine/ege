@@ -35,13 +35,18 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     }
 
     // spawn new particles
-    double val = rand() % 1024 / 1024.0;
-    if(val < m_spawnChance)
+    if(m_spawnChance == 1)
+        spawnParticle();
+    else if(m_spawnChance > 1)
     {
-        Particle particle(this);
-        particle.position = randomPosition();
-        particle.ttl = m_particleTTL;
-        m_particles.push_back(particle);
+        for(size_t s = 0; s < m_spawnChance; s++)
+            spawnParticle();
+    }
+    else
+    {
+        double val = rand() % 1024 / 1024.0;
+        if(val < m_spawnChance)
+            spawnParticle();
     }
 }
 
@@ -67,6 +72,14 @@ void ParticleSystem2D::Particle::update()
 
     if(system->m_particleUpdater)
         system->m_particleUpdater(*this);
+}
+
+void ParticleSystem2D::spawnParticle()
+{
+    Particle particle(this);
+    particle.position = randomPosition();
+    particle.ttl = m_particleTTL;
+    m_particles.push_back(particle);
 }
 
 }
