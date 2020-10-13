@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "Renderer.h"
 
+#include <SFML/OpenGL.hpp>
+
 namespace EGE
 {
 
@@ -42,6 +44,32 @@ void Renderer::renderTexturedRectangle(double x, double y, double width, double 
     rs.setPosition(x, y);
     rs.setTexture(&texture);
     getTarget().draw(rs);
+}
+
+void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
+{
+    if(points.empty())
+        return;
+
+    getTarget().pushGLStates();
+
+    // TODO: Maybe make it Renderer-local?
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glVertexPointer(3, GL_DOUBLE, sizeof(EGE::Vertex), (char*)points.data());
+    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(double) * 3);
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex), (char*)points.data() + sizeof(double) * 3 + sizeof(char) * 4);
+
+    glPointSize(pointSize);
+    glDrawArrays(GL_POINTS, 0, points.size());
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    getTarget().popGLStates();
 }
 
 }

@@ -5,10 +5,24 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/util/Vector.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
 {
+
+// TODO: move it to another file
+struct Vertex
+{
+    double x = 0, y = 0, z = 0;
+    char r = -128, g = -128, b = -128, a = 127;
+    double texX = 0, texY = 0;
+
+    static inline Vertex make(EGE::Vec3d coords, sf::Color color = sf::Color::White, EGE::Vec2f texCoords = EGE::Vec2d())
+    {
+        return Vertex{coords.x, coords.y, coords.z, (char)((short)color.r - 128), (char)((short)color.g - 128), (char)((short)color.b - 128), (char)((short)color.a - 128), texCoords.x, texCoords.y};
+    }
+};
 
 class Renderer
 {
@@ -23,6 +37,7 @@ public:
     void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16);
     void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
     void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture);
+    void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
 
     sf::RenderTarget& getTarget()
     {
