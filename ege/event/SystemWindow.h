@@ -34,6 +34,13 @@ public:
     {}
 
     virtual void callEvents(EventLoop* loop, WaitForEvents wait = WaitForEvents::No);
+
+    bool areGLExtensionsEnabled() { return m_glExtensions; }
+
+private:
+    void initialize();
+
+    bool m_glExtensions = false;
 };
 
 }
