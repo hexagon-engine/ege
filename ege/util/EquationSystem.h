@@ -31,7 +31,7 @@ public:
         std::vector<std::vector<double>> vals;
         for(const std::initializer_list<double> initlist : values)
         {
-            vals.push_back(std::vector(initlist.begin(), initlist.end()));
+            vals.push_back(std::vector<double>(initlist.begin(), initlist.end()));
         }
         init(vals);
     }
