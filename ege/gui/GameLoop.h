@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/loop/EventResult.h>
 #include <ege/loop/Time.h>
 #include <ege/loop/Timer.h>
+#include <ege/profiler/Profiler.h>
 
 #include <map>
 #include <memory>
@@ -38,6 +39,14 @@ public:
     {
         m_minTickTime = time;
     }
+
+    std::shared_ptr<Profiler> getProfiler()
+    {
+        return m_profiler;
+    }
+
+protected:
+    std::shared_ptr<Profiler> m_profiler;
 
 private:
     virtual GameLoop* getSubGameLoop();

@@ -14,7 +14,6 @@ namespace EGE
 
 GUIGameLoop::GUIGameLoop()
 {
-    m_profiler = make<Profiler>();
 }
 
 GUIGameLoop::~GUIGameLoop()
@@ -23,40 +22,34 @@ GUIGameLoop::~GUIGameLoop()
 
 EventResult GUIGameLoop::onLoad()
 {
-    ASSERT(m_profiler);
+    if(m_resourceManager)
     {
-        m_profiler->start();
-        ProfilerSectionStarter starter(*m_profiler, "load");
-        if(m_resourceManager)
+        bool success = m_resourceManager->reload();
+        success &= !m_resourceManager->isError();
+        if(!success)
         {
-            ProfilerSectionStarter starter2(*m_profiler, "resourceManager");
-            bool success = m_resourceManager->reload();
-            success &= !m_resourceManager->isError();
-            if(!success)
-            {
-                return EventResult::Failure;
-            }
+            return EventResult::Failure;
         }
-        else
-        {
-            err(LogLevel::Warning) << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager";
-            m_resourceManager = make<ResourceManager>();
-
-            bool success = m_resourceManager->reload();
-            success &= !m_resourceManager->isError();
-            if(!success)
-            {
-                return EventResult::Failure;
-            }
-        }
-        return EventResult::Success;
     }
+    else
+    {
+        err(LogLevel::Warning) << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager";
+        m_resourceManager = make<ResourceManager>();
+
+        bool success = m_resourceManager->reload();
+        success &= !m_resourceManager->isError();
+        if(!success)
+        {
+            return EventResult::Failure;
+        }
+    }
+    return EventResult::Success;
     m_fpsClock.restart();
 }
 
 void GUIGameLoop::onTick(long long tickCount)
 {
-    m_profiler->startSection("tick");
+    m_profiler->startSection("guiTick");
 
     // Initialize pending GUI
     m_profiler->startSection("initPendingGUI");
@@ -98,6 +91,7 @@ void GUIGameLoop::onTick(long long tickCount)
 
     // TODO: tick rate limit?
     m_frameTime = m_fpsClock.restart();
+
     m_profiler->endSection();
 }
 

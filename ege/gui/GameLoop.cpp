@@ -26,22 +26,35 @@ int GameLoop::run()
     sf::Clock tickClock;
     while(m_running)
     {
+        m_profiler = make<Profiler>();
+        m_profiler->start();
+        m_profiler->startSection("tick");
+
         tickClock.restart();
         onTick(getTickCount());
 
+        m_profiler->endStartSection("subLoopTick");
         auto subLoop = getSubGameLoop();
         if(subLoop)
             subLoop->onTick(getTickCount());
 
+        m_profiler->endStartSection("update");
         onUpdate();
 
         // Limit tick time / frame rate
+        m_profiler->endStartSection("tickLimit");
         if(m_minTickTime.getValue() > 0.0)
             sf::sleep(sf::seconds(m_minTickTime.getValue()) - tickClock.getElapsedTime());
+
+        m_profiler->endSection();
+        m_profiler->end();
+        std::cerr << "TPS: " << 1.f / tickClock.getElapsedTime().asSeconds() << std::endl;
     }
 
+    //m_profiler->endStartSection("finish");
     result = onFinish(m_exitCode);
 
+    //m_profiler->endStartSection("subLoopFinish");
     auto subLoop = getSubGameLoop();
     if(subLoop)
     {

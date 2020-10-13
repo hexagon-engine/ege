@@ -11,7 +11,6 @@ Copyright (c) Sppmacd 2020
 #include <ege/gui/GameLoop.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
-#include <ege/profiler/Profiler.h>
 #include <ege/resources/ResourceManager.h>
 #include <memory>
 
@@ -31,13 +30,12 @@ public:
     virtual EventResult onLoad() override;
     virtual void onTick(long long tickCount) override;
     virtual void onExit(int) override {}
+
     virtual EventResult onFinish(int) override
     {
-        // TODO: save it to file instead of std::cerr
-        m_profiler->end();
-        std::cerr << m_profiler->toString() << std::endl;
         return EventResult::Success;
     }
+
     virtual void logicTick(long long tickCount) {(void) tickCount;}
 
     // NOTE: it's double-buffered and OpenGL-backed by default!
@@ -68,14 +66,6 @@ public:
     {
         return m_frameTime;
     }
-
-    std::shared_ptr<Profiler> getProfiler()
-    {
-        return m_profiler;
-    }
-
-protected:
-    std::shared_ptr<Profiler> m_profiler;
 
 private:
     std::shared_ptr<GUIScreen> m_currentGui = nullptr;
