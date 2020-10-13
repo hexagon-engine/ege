@@ -13,11 +13,8 @@ namespace EGE
 void ParticleSystem2D::render(sf::RenderTarget& target) const
 {
     SceneObject2D::render(target);
-    for(auto& particle: m_particles)
-    {
-        if(m_particleRenderer)
-            m_particleRenderer(particle, target);
-    }
+    if(m_particleRenderer)
+        m_particleRenderer(m_particles, target);
 }
 
 void ParticleSystem2D::onUpdate(long long tickCounter)
@@ -34,7 +31,6 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
         {
             m_particles.erase(m_particles.begin() + i);
             i--;
-            break;
         }
     }
 

@@ -52,7 +52,7 @@ public:
     virtual void onUpdate(long long tickCounter);
 
     void setParticleUpdater(std::function<void(Particle&)> func) { m_particleUpdater = func; }
-    void setParticleRenderer(std::function<void(const Particle&, sf::RenderTarget&)> func) { m_particleRenderer = func; }
+    void setParticleRenderer(std::function<void(const std::vector<Particle>, sf::RenderTarget&)> func) { m_particleRenderer = func; }
 
     // Chance that the particle will be spawned in current onUpdate call.
     void setSpawnChance(double val) { m_spawnChance = val; }
@@ -65,7 +65,7 @@ private:
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
     std::function<void(Particle&)> m_particleUpdater;
-    std::function<void(const Particle&, sf::RenderTarget&)> m_particleRenderer;
+    std::function<void(const std::vector<Particle>, sf::RenderTarget&)> m_particleRenderer;
 
     std::vector<Particle> m_particles;
 };

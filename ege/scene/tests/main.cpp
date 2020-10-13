@@ -1,4 +1,5 @@
 #include <testsuite/Tests.h>
+#include <ege/debug/Logger.h>
 #include <ege/scene/ParticleSystem2D.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/SceneObject2D.h>
@@ -254,21 +255,31 @@ TESTCASE(particleSystem)
     loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "Particle System"));
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
+    EGE::Renderer renderer(*loop.getWindow().lock());
+
     // create scene
     std::shared_ptr<EGE::Scene> scene = make<EGE::Scene>(&loop);
 
     // create particle system
     std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(scene, sf::FloatRect(125.f, 125.f, 50.f, 50.f));
-    particleSystem->setSpawnChance(1 / 10.0);
-    particleSystem->setParticleLifeTime(70);
+    particleSystem->setSpawnChance(1.0);
+    particleSystem->setParticleLifeTime(700000);
     particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
                                             // Move particle a bit.
-                                            particle.position.x += 1.6f;
+                                            //particle.position.x += 1.6f;
                                         });
-    particleSystem->setParticleRenderer([](const EGE::ParticleSystem2D::Particle& particle, sf::RenderTarget& target) {
-                                            EGE::Renderer renderer(target);
-                                            // FIXME: it's the worst way to render particles
-                                            renderer.renderRectangle(particle.position.x - 2.f, particle.position.y - 2.f, 4.f, 4.f, sf::Color::White);
+    particleSystem->setParticleRenderer([&renderer](const std::vector<EGE::ParticleSystem2D::Particle> particles, sf::RenderTarget&) {
+                                            log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
+
+                                            // Generate vertexes.
+                                            std::vector<EGE::Vertex> vertexes;
+                                            for(const EGE::ParticleSystem2D::Particle& particle: particles)
+                                            {
+                                                vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), sf::Color::White));
+                                            }
+
+                                            // Actually render them.
+                                            renderer.renderPoints(vertexes, 4.0);
                                         });
 
     // assign particle system to scene
