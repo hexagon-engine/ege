@@ -1,9 +1,8 @@
 # build files
-build
-build-win32
 .vscode
 .cmake
 .cache
 CMakeLists.txt.user
 EGE.*
 *.swp
+build*

@@ -7,6 +7,7 @@
 #include <ege/util/PointerUtils.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Types.h>
+#include <ege/util/system.h>
 #include <fstream>
 #include <iostream>
 
@@ -50,12 +51,7 @@ TESTCASE(logger)
 
 void sleep(float secs)
 {
-    timespec _tsReq;
-    _tsReq.tv_nsec = (secs - (long long)secs) * 1000000000;
-    _tsReq.tv_sec = (long long)secs;
-
-    timespec _tsRem;
-    EXPECT(nanosleep(&_tsReq, &_tsRem) <= 0);
+    EGE::System::sleep(EGE::System::ExactTime::fromSeconds(secs));
 }
 
 TESTCASE(profilerSimple)

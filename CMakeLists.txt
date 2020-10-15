@@ -8,6 +8,12 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/root")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+### mingw_stdthreads
+if(${MINGW})
+    option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
+    add_subdirectory("${CMAKE_BINARY_DIR}/mingw-std-threads")
+endif()
+
 ### SFML ###
 
 # SFML preparation
@@ -45,10 +51,13 @@ macro(ege_add_all_tests_for targetname)
         ege_message("INFO" "Adding test for module: ${target_name}")
         add_executable(${target_name} ${testfile})
         target_compile_options(${target_name} PUBLIC -Wall -Wextra)
+
+        # Sanitizers
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
             target_compile_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
             target_link_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
         endif()
+
         set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
         target_link_libraries(${target_name} PUBLIC "ege-${targetname}")
         install(TARGETS ${target_name} RUNTIME DESTINATION tests)
@@ -65,10 +74,19 @@ macro(ege_add_module targetname)
     set(target_name "ege-${targetname}")
     add_library(${target_name} STATIC ${SOURCES})
     target_compile_options(${target_name} PUBLIC -Wall -Wextra -Werror)
+
+    # Sanitizers
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
         target_link_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
     endif()
+
+    # Link mingw_stdthreads + stdlib on mingw
+    if(${MINGW})
+        target_link_libraries(${target_name} PUBLIC mingw_stdthreads)
+        target_link_options(${target_name} PUBLIC -static-libgcc -static-libstdc++)
+    endif()
+
     install(TARGETS ${target_name} ARCHIVE DESTINATION modules)
     
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")

@@ -69,6 +69,12 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD
 		"system/SystemImplUnix.cpp"
 		"system/SystemImplUnix.h"
 	)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	set(SOURCES
+		${SOURCES}
+		"system/SystemImplWin32.cpp"
+		"system/SystemImplWin32.h"
+	)
 endif()
 
 ege_add_module(util)

@@ -34,24 +34,10 @@
 *
 */
 
-#include "SystemImpl.h"
-
-#include <memory>
+#include "Resource.h"
 
 namespace EGE
 {
-
-namespace System
-{
-
-extern std::unique_ptr<Internal::SystemImpl> g_impl;
-
-Internal::SystemImpl& impl()
-{
-    ASSERT_WITH_MESSAGE(g_impl, "System not supported");
-    return *g_impl;
+    // nothing for now
 }
 
-} // System
-
-}

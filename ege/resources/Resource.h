@@ -34,24 +34,24 @@
 *
 */
 
-#include "SystemImpl.h"
-
-#include <memory>
+#pragma once
 
 namespace EGE
 {
 
-namespace System
+class Resource
 {
+public:
+    enum Type
+    {
+        Texture,
+        Font,
+        Shader,
+        Cursor
+    };
 
-extern std::unique_ptr<Internal::SystemImpl> g_impl;
-
-Internal::SystemImpl& impl()
-{
-    ASSERT_WITH_MESSAGE(g_impl, "System not supported");
-    return *g_impl;
-}
-
-} // System
+    // Make it polymorphic.
+    virtual bool _dummy();
+};
 
 }

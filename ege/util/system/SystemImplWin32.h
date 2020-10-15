@@ -34,24 +34,44 @@
 *
 */
 
-#include "SystemImpl.h"
+#pragma once
 
-#include <memory>
+#include "SystemImpl.h"
 
 namespace EGE
 {
 
-namespace System
+namespace Windows
 {
 
-extern std::unique_ptr<Internal::SystemImpl> g_impl;
-
-Internal::SystemImpl& impl()
+class SystemImplWin32 final : public Internal::SystemImpl
 {
-    ASSERT_WITH_MESSAGE(g_impl, "System not supported");
-    return *g_impl;
-}
+public:
+    // Time
+    virtual time_t unixTime() override;
+    virtual System::ExactTime exactTime() override;
+    virtual void sleep(System::ExactTime) override;
 
-} // System
+    // FileSystem
+    virtual System::FileInfo stat(std::string path) override;
+    virtual std::string getWorkingDirectory() override;
+    virtual bool setWorkingDirectory(std::string dir) override;
+    virtual std::string readLink(std::string link) override;
+    virtual bool testFileAccess(std::string path, System::FileOpenModeMask mode) override;
+    virtual bool createDirectory(std::string path, System::FileMode mode) override;
+    virtual bool removeFile(std::string path) override;
+    virtual std::vector<std::string> listFiles(std::string path) override;
+
+    // Global
+    virtual std::string getErrorMessage() override;
+    virtual std::string getEnv(std::string) override;
+
+    virtual std::string className() override { return "EGE::Windows::SystemImplWin32"; }
+
+private:
+    int m_lastErrno = 0;
+};
+
+} // Windows
 
 }
