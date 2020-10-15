@@ -66,7 +66,7 @@ public:
     : angle(_a), length(_l) {}
 
     template<class V>
-    PolarVector2(const Vector3<V>& another)
+    PolarVector2(const PolarVector2<V>& another)
     : PolarVector2(another.angle, another.length) {}
 
     T angle,length;
