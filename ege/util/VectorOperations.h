@@ -38,9 +38,15 @@ double distanceTo(Vector2<T> begin, Vector2<T> end)
 }
 
 template<class T>
+double lengthSquared(Vector2<T> vector)
+{
+    return (vector.x*vector.x+vector.y*vector.y);
+}
+
+template<class T>
 double length(Vector2<T> vector)
 {
-    return std::sqrt((double)(vector.x*vector.x+vector.y*vector.y));
+    return std::sqrt(lengthSquared(vector));
 }
 
 // Vector3
@@ -54,9 +60,15 @@ double distanceTo(Vector3<T> begin, Vector3<T> end)
 }
 
 template<class T>
-double length(Vector3<T> vector)
+double lengthSquared(Vector2<T> vector)
 {
-    return std::sqrt((double)(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z));
+    return (vector.x*vector.x + vector.y*vector.y + vector.z*vector.z)););
+}
+
+template<class T>
+double length(Vector2<T> vector)
+{
+    return std::sqrt(lengthSquared(vector));
 }
 
 // 2D Polar <-> Cartesian
@@ -121,7 +133,7 @@ bool operator!=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 template<class T>
 bool operator<(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
-    return EGE::VectorOperations::length(_1) < EGE::VectorOperations::length(_2);
+    return EGE::VectorOperations::lengthSquared(_1) < EGE::VectorOperations::lengthSquared(_2);
 }
 
 template<class T>
@@ -134,7 +146,7 @@ bool operator>=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 template<class T>
 bool operator>(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 {
-    return EGE::VectorOperations::length(_1) > EGE::VectorOperations::length(_2);
+    return EGE::VectorOperations::lengthSquared(_1) > EGE::VectorOperations::lengthSquared(_2);
 }
 
 template<class T>
@@ -213,7 +225,7 @@ bool operator!=(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
 template<class T>
 bool operator<(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
 {
-    return EGE::VectorOperations::length(_1) < EGE::VectorOperations::length(_2);
+    return EGE::VectorOperations::lengthSquared(_1) < EGE::VectorOperations::lengthSquared(_2);
 }
 
 template<class T>
@@ -226,7 +238,7 @@ bool operator>=(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
 template<class T>
 bool operator>(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
 {
-    return EGE::VectorOperations::length(_1) > EGE::VectorOperations::length(_2);
+    return EGE::VectorOperations::lengthSquared(_1) > EGE::VectorOperations::lengthSquared(_2);
 }
 
 template<class T>
