@@ -21,6 +21,8 @@ set(SOURCES
 	"ObjectList.h"
 	"ObjectMap.cpp"
 	"ObjectMap.h"
+	"ObjectSerializers.cpp"
+	"ObjectSerializers.h"
 	"ObjectString.cpp"
 	"ObjectString.h"
 	"ObjectUnsignedInt.cpp"

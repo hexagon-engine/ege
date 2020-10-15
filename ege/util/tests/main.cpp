@@ -9,6 +9,7 @@
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectList.h>
 #include <ege/util/ObjectMap.h>
+#include <ege/util/ObjectSerializers.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/Vector.h>
@@ -234,6 +235,24 @@ TESTCASE(equationSystems)
         EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::Infinite);
         EXPECT_EQUAL(result.resultFor(2), EGE::EquationResult::Infinite);
     }
+}
+
+TESTCASE(serializers)
+{
+    auto vec1 = EGE::Vec2d(123.4, 56.789);
+    auto test1 = EGE::Serializers::fromVector2(vec1);
+    std::cerr << test1->toString() << std::endl;
+    EXPECT_EQUAL(test1->getObject("x").lock()->asFloat(), 123.4);
+    EXPECT_EQUAL(test1->getObject("y").lock()->asFloat(), 56.789);
+    EXPECT_EQUAL(EGE::Serializers::toVector2(test1), (EGE::Vec2d)vec1);
+
+    auto vec2 = EGE::Vec3i(123, 456, 789);
+    auto test2 = EGE::Serializers::fromVector3(vec2);
+    std::cerr << test2->toString() << std::endl;
+    EXPECT_EQUAL(test2->getObject("x").lock()->asFloat(), 123);
+    EXPECT_EQUAL(test2->getObject("y").lock()->asFloat(), 456);
+    EXPECT_EQUAL(test2->getObject("z").lock()->asFloat(), 789);
+    EXPECT_EQUAL(EGE::Serializers::toVector3(test2), (EGE::Vec3d)vec2);
 }
 
 RUN_TESTS(util)
