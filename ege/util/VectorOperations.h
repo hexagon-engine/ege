@@ -20,6 +20,7 @@ namespace EGE
 namespace VectorOperations
 {
 
+// Vector2
 template<class T>
 DegreeAngle angleTo(Vector2<T> begin, Vector2<T> end)
 {
@@ -42,6 +43,23 @@ double length(Vector2<T> vector)
     return std::sqrt((double)(vector.x*vector.x+vector.y*vector.y));
 }
 
+// Vector3
+template<class T>
+double distanceTo(Vector3<T> begin, Vector3<T> end)
+{
+    T dx = end.x - begin.x;
+    T dy = end.y - begin.y;
+    T dz = end.z - begin.z;
+    return std::sqrt((double)(dx*dx+dy*dy+dz*dz));
+}
+
+template<class T>
+double length(Vector3<T> vector)
+{
+    return std::sqrt((double)(vector.x*vector.x + vector.y*vector.y + vector.z*vector.z));
+}
+
+// 2D Polar <-> Cartesian
 template<class T>
 Vector2<T> fromPolar(PolarVector2<T> polar)
 {
@@ -57,6 +75,8 @@ PolarVector2<T> toPolar(Vector2<T> cartesian)
 } // namespace VectorOperations
 
 } // namespace EGE
+
+//// 2D VECTORS
 
 // Operations
 template<class T>
@@ -127,32 +147,115 @@ bool operator<=(EGE::Vector2<T> _1, EGE::Vector2<T> _2)
 template<class T>
 EGE::Vector2<T>& operator+=(EGE::Vector2<T>& _1, EGE::Vector2<T> _2)
 {
-    _1.x += _2.x;
-    _1.y += _2.y;
-    return _1;
+    return _1 = _1 + _2;
 }
 
 template<class T>
 EGE::Vector2<T>& operator-=(EGE::Vector2<T>& _1, EGE::Vector2<T> _2)
 {
-    _1.x -= _2.x;
-    _1.y -= _2.y;
-    return _1;
+    return _1 = _1 - _2;
 }
 
 template<class T>
 EGE::Vector2<T>& operator*=(EGE::Vector2<T>& _1, T _2)
 {
-    _1.x *= _2;
-    _1.y *= _2;
-    return _1;
+    return _1 = _1 * _2;
 }
 
 template<class T>
 EGE::Vector2<T>& operator/=(EGE::Vector2<T>& _1, T _2)
 {
+    return _1 = _1 / _2;
+}
+
+//// 3D VECTORS
+
+// Operations
+template<class T>
+EGE::Vector3<T> operator+(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return EGE::Vector3<T>(_1.x + _2.x, _1.y + _2.y, _1.z + _2.z);
+}
+
+template<class T>
+EGE::Vector3<T> operator-(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return EGE::Vector3<T>(_1.x - _2.x, _1.y - _2.y, _1.z - _2.z);
+}
+
+template<class T>
+EGE::Vector3<T> operator*(EGE::Vector3<T> _1, T _2)
+{
+    return EGE::Vector3<T>(_1.x * _2, _1.y * _2, _1.z * _2);
+}
+
+template<class T>
+EGE::Vector3<T> operator/(EGE::Vector3<T> _1, T _2)
+{
     ASSERT(_2 != 0);
-    _1.x /= _2;
-    _1.y /= _2;
-    return _1;
+    return EGE::Vector3<T>(_1.x / _2, _1.y / _2, _1.z / _2);
+}
+
+// Equal / Not equal
+template<class T>
+bool operator==(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return _1.x == _2.x && _1.y == _2.y && _1.z == _2.z;
+}
+
+template<class T>
+bool operator!=(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return !(_1 == _2);
+}
+
+// Less / Not less
+template<class T>
+bool operator<(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return EGE::VectorOperations::length(_1) < EGE::VectorOperations::length(_2);
+}
+
+template<class T>
+bool operator>=(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return !(_1 < _2);
+}
+
+// Greater / Not greater
+template<class T>
+bool operator>(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return EGE::VectorOperations::length(_1) > EGE::VectorOperations::length(_2);
+}
+
+template<class T>
+bool operator<=(EGE::Vector3<T> _1, EGE::Vector3<T> _2)
+{
+    return !(_1 > _2);
+}
+
+// Operations
+template<class T>
+EGE::Vector3<T>& operator+=(EGE::Vector3<T>& _1, EGE::Vector3<T> _2)
+{
+    return _1 = _1 + _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator-=(EGE::Vector3<T>& _1, EGE::Vector3<T> _2)
+{
+    return _1 = _1 - _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator*=(EGE::Vector3<T>& _1, T _2)
+{
+    return _1 = _1 * _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator/=(EGE::Vector3<T>& _1, T _2)
+{
+    return _1 = _1 / _2;
 }
