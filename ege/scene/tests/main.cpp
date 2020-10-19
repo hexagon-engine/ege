@@ -136,7 +136,7 @@ TESTCASE(simple)
     gameLoop.setCurrentGUIScreen(gui);
 
     // run loop
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(_2dCamera)
@@ -204,7 +204,7 @@ TESTCASE(_2dCamera)
     gameLoop.setCurrentGUIScreen(gui);
 
     // run loop
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(serializer)
@@ -245,7 +245,7 @@ TESTCASE(serializer)
     // assign GUI to loop
     gameLoop.setCurrentGUIScreen(gui);
 
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(particleSystem)
@@ -301,7 +301,7 @@ TESTCASE(particleSystem)
     loop.setCurrentGUIScreen(gui);
 
     // run game
-    loop.run();
+    return loop.run();
 }
 
 RUN_TESTS(scene);

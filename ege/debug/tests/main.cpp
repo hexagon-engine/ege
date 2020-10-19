@@ -16,6 +16,8 @@ TESTCASE(_printObject)
     stream >> EGE::objectIn(*map.get(), EGE::JSONConverter());
     EXPECT(!stream.fail());
     EGE::printObject(map);
+
+    return 0;
 }
 
 TESTCASE(logger)
@@ -27,6 +29,8 @@ TESTCASE(logger)
     err(LogLevel::Error) << "Test " << 1234;
     err(LogLevel::Critical) << "Test " << 1234;
     err(LogLevel::Crash) << "Test " << 1234;
+
+    return 0;
 }
 
 RUN_TESTS(debug)

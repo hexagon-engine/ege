@@ -45,6 +45,8 @@ TESTCASE(simple)
             loop.addTimer("exit", timer);
         }
     }
+
+    return 0;
 }
 
 TESTCASE(threadSafeEventLoop)
@@ -82,6 +84,8 @@ TESTCASE(threadSafeEventLoop)
 
     while(running)
         loop.onUpdate();
+
+    return 0;
 }
 
 RUN_TESTS(asyncLoop);

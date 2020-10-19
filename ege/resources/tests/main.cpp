@@ -53,6 +53,8 @@ TESTCASE(simple)
     MyResourceManager manager;
     EXPECT(manager.reload());
     EXPECT(manager.isError());
+
+    return 0;
 }
 
 TESTCASE(defaultFont)
@@ -60,6 +62,8 @@ TESTCASE(defaultFont)
     MyResourceManager2 manager;
     EXPECT(manager.reload());
     EXPECT(manager.isError());
+
+    return 0;
 }
 
 RUN_TESTS(resources);

@@ -229,6 +229,8 @@ TESTCASE(abstract)
     sf::sleep(sf::seconds(1.f));
     client2.disconnect();
     server.running = false;
+
+    return 0;
 }
 
 RUN_TESTS(network)

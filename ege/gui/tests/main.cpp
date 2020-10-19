@@ -37,7 +37,7 @@ TESTCASE(simple)
     gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
     gameLoop.setCurrentGUIScreen(make<EGE::GUIScreen>(&gameLoop));
     gameLoop.setBackgroundColor(sf::Color(127, 127, 127));
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(widget)
@@ -57,7 +57,7 @@ TESTCASE(widget)
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
 
     gameLoop.setCurrentGUIScreen(gui);
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(guiChange)
@@ -94,7 +94,7 @@ TESTCASE(guiChange)
                                      ->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
                                                     gameLoop.setCurrentGUIScreen(gui2);
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 class MyGuiScreen : public EGE::GUIScreen
@@ -381,7 +381,7 @@ TESTCASE(resourceManager)
     gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)"));
     gameLoop.setResourceManager(make<MyResourceManager>());
     gameLoop.setCurrentGUIScreen(make<MyGuiScreen>(&gameLoop));
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(_widgets)
@@ -391,7 +391,7 @@ TESTCASE(_widgets)
     gameLoop.setResourceManager(make<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(make<MyGuiScreen2>(&gameLoop));
     gameLoop.setBackgroundColor(sf::Color(209, 200, 192));
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 RUN_TESTS(gui);

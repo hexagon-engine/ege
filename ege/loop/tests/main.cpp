@@ -10,9 +10,6 @@ class MyGameLoop : public EGE::EventLoop
 {
 public:
     virtual void onUpdate(long long tickCount);
-
-    bool running = true;
-    int m_tickCounter = 0;
 };
 
 struct TickEvent : public EGE::Event
@@ -60,11 +57,7 @@ TESTCASE(gameLoop)
     gameLoop.addEventHandler("TickEvent", new EGE::SimpleEventHandler<TickEvent>(eventTest));
     gameLoop.addEventHandler("TickEvent", new EGE::SimpleEventHandler<TickEvent>(eventTest2));
 
-    while(gameLoop.running)
-    {
-        gameLoop.onUpdate(gameLoop.m_tickCounter);
-        gameLoop.m_tickCounter++;
-    }
+    return gameLoop.run();
 }
 
 EGE::EventResult timerEventTest(EGE::TimerEvent& event)
@@ -129,6 +122,8 @@ TESTCASE(time)
         loop.onUpdate(loop.m_tickCounter);
         loop.m_tickCounter++;
     }
+
+    return 0;
 }
 
 RUN_TESTS(loop)

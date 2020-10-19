@@ -224,6 +224,8 @@ TESTCASE(server)
     };
     sf::Thread thread1(serverThread);
     thread1.launch();
+
+    return 0;
 }
 
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
@@ -362,9 +364,7 @@ TESTCASE(client)
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
 
     // Run main loop.
-    loop.run();
-
-    // Here doing ANYTHING is NOT SAFE!!! (because of destructors)
+    return loop.run();
 }
 
 RUN_TESTS(egeNetwork)

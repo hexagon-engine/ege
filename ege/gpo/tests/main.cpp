@@ -105,6 +105,8 @@ TESTCASE(simple)
     EXPECT_EQUAL(manager.m_myObjectRegistry.findByNumericId(manager.numeric)->getString(), "araer");
     manager.m_myObjectRegistry.remove("testObject");
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject"), nullptr);
+
+    return 0;
 }
 
 RUN_TESTS(gpo)

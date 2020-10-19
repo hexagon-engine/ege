@@ -161,7 +161,7 @@ TESTCASE(simple)
     game.getLoop()->setResourceManager(make<MyResourceManager>());
     game.getLoop()->setCurrentGUIScreen(make<MyGuiScreen>(game.getLoop().get()));
     game.getLoop()->setBackgroundColor(sf::Color(127, 127, 127));
-    DUMP(1, game.run());
+    return game.run();
 }
 
 RUN_TESTS(game)

@@ -28,6 +28,7 @@ TESTCASE(object)
     DEBUG_PRINT(map.getObject("test").lock()->toString().c_str());
     DEBUG_PRINT(((EGE::ObjectMap*)map.getObject("testObjects").lock().get())->getObject("test3").lock()->toString().c_str());
     DEBUG_PRINT(map.toString().c_str());
+    return 0;
 }
 
 class MyConverter : public EGE::Converter<std::string>
@@ -63,6 +64,7 @@ TESTCASE(converter)
     myString >> EGE::objectIn(map2, converter);
     std::cerr << map2.toString() << std::endl;
     EXPECT_EQUAL(map2.getObject("myString").lock()->asString(), "test4443");
+    return 0;
 }
 
 TESTCASE(merge)
@@ -92,6 +94,7 @@ TESTCASE(merge)
     std::cerr << map2->toString() << std::endl;
 
     std::cerr << map1->merge(map2)->toString() << std::endl;
+    return 0;
 }
 
 TESTCASE(lists)
@@ -105,6 +108,7 @@ TESTCASE(lists)
     _list->addObject(map);
     _mapFirst->addObject("Test", _list);
     std::cerr << _mapFirst->toString() << std::endl;
+    return 0;
 }
 
 TESTCASE(vectors)
@@ -112,8 +116,8 @@ TESTCASE(vectors)
     EGE::Vec2d vec(4, 3);
     double dist = EGE::VectorOperations::distanceTo({}, vec);
     EXPECT_EQUAL(dist, 5);
-    double angle = EGE::VectorOperations::angleTo(vec, vec);
-    std::cerr << angle << std::endl;
+    double angle = EGE::VectorOperations::angleTo({}, vec);
+    EXPECT(angle - 53.1301 < 0.01);
 
     EGE::Vec2i vec1(4, 3);
     EGE::Vec2i vec2(3, 4);
@@ -122,6 +126,7 @@ TESTCASE(vectors)
     EXPECT(vec1 * 2 > vec2);
     EXPECT(vec1 >= vec2);
     EXPECT(vec1 <= vec2);
+    return 0;
 }
 
 TESTCASE(json)
@@ -141,6 +146,7 @@ TESTCASE(json)
     std::ostringstream str2;
     str2 << EGE::objectOut(map, EGE::JSONConverter());
     std::cerr << "generated=" << str2.str() << std::endl;
+    return 0;
 }
 
 TESTCASE(objectIntTypes)
@@ -167,6 +173,7 @@ TESTCASE(objectIntTypes)
     EXPECT_EQUAL(map->getObject("us").lock()->asUnsignedInt(), 0x3210);
     EXPECT_EQUAL(map->getObject("ui").lock()->asUnsignedInt(), 0x76543210);
     EXPECT_EQUAL(map->getObject("ul").lock()->asUnsignedInt(), 0xFEDCBA9876543210);
+    return 0;
 }
 
 TESTCASE(equations)
@@ -185,6 +192,7 @@ TESTCASE(equations)
     EGE::Vec2d pB = {3, 7};
     EXPECT_EQUAL(EGE::LinearEquation(pA, pB).b(), 1);
     EXPECT_EQUAL(EGE::LinearEquation(pA, pB).a(), 2);
+    return 0;
 }
 
 TESTCASE(equationSystems)
@@ -236,35 +244,37 @@ TESTCASE(equationSystems)
         EXPECT_EQUAL(result.resultFor(1), EGE::EquationResult::Infinite);
         EXPECT_EQUAL(result.resultFor(2), EGE::EquationResult::Infinite);
     }
+    return 0;
 }
 
 TESTCASE(serializers)
 {
     auto vec1 = EGE::Vec2d(123.4, 56.789);
     auto test1 = EGE::Serializers::fromVector2(vec1);
-    std::cerr << test1->toString() << std::endl;
     EXPECT_EQUAL(test1->getObject("x").lock()->asFloat(), 123.4);
     EXPECT_EQUAL(test1->getObject("y").lock()->asFloat(), 56.789);
     EXPECT_EQUAL(EGE::Serializers::toVector2(test1), (EGE::Vec2d)vec1);
 
     auto vec2 = EGE::Vec3i(123, 456, 789);
     auto test2 = EGE::Serializers::fromVector3(vec2);
-    std::cerr << test2->toString() << std::endl;
     EXPECT_EQUAL(test2->getObject("x").lock()->asFloat(), 123);
     EXPECT_EQUAL(test2->getObject("y").lock()->asFloat(), 456);
     EXPECT_EQUAL(test2->getObject("z").lock()->asFloat(), 789);
     EXPECT_EQUAL(EGE::Serializers::toVector3(test2), (EGE::Vec3d)vec2);
+    return 0;
 }
 
 TESTCASE(system)
 {
     EXPECT(EGE::System::unixTime() > 1500000000);
     EXPECT(EGE::System::exactTime().s > 1500000000);
-    std::cerr << EGE::System::getWorkingDirectory() << std::endl;
+    size_t i1 = EGE::System::getWorkingDirectory().size();
+    EXPECT(i1 > 3);
     EGE::System::setWorkingDirectory("..");
-    std::cerr << EGE::System::getWorkingDirectory() << std::endl;
+    EXPECT(EGE::System::getWorkingDirectory().size() < i1);
     auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
     EXPECT(file.exists() && file.type == EGE::System::FileInfo::Type::Directory);
+    return 0;
 }
 
 RUN_TESTS(util)

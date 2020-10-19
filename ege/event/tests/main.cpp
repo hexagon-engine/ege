@@ -95,7 +95,7 @@ MyGameLoop loop;
 
 TESTCASE(createWindow)
 {
-    loop.run();
+    return loop.run();
 }
 
 RUN_TESTS(syswindow)

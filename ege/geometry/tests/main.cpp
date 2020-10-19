@@ -24,6 +24,8 @@ TESTCASE(simple)
     EXPECT(!pointSum2->isEmpty());
     EXPECT_EQUAL(pointSum2->size(), 3);
     DUMP(1, pointSum2->size());
+
+    return 0;
 }
 
 RUN_TESTS(geometry);
