@@ -13,12 +13,18 @@ namespace EGE
 namespace Unix
 {
 
-class SystemImplUnix : public Internal::SystemImpl
+class SystemImplUnix final : public Internal::SystemImpl
 {
 public:
     // Time
-    virtual time_t unixTime();
-    virtual System::ExactTime exactTime();
+    time_t unixTime();
+    System::ExactTime exactTime();
+
+    // FileSystem
+    System::FileInfo stat(std::string path);
+    std::string getWorkingDirectory();
+    bool setWorkingDirectory(std::string dir);
+    std::string readLink(std::string link);
 
     virtual std::string className() { return "EGE::Unix::SystemImplUnix"; }
 };

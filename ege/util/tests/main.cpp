@@ -1,5 +1,4 @@
 #include <testsuite/Tests.h>
-#include <ege/util/system/Time.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Equation.h>
 #include <ege/util/EquationSystem.h>
@@ -13,6 +12,7 @@
 #include <ege/util/ObjectSerializers.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/system.h>
 #include <ege/util/Vector.h>
 #include <iostream>
 #include <sstream>
@@ -260,6 +260,11 @@ TESTCASE(system)
 {
     EXPECT(EGE::System::unixTime() > 1500000000);
     EXPECT(EGE::System::exactTime().s > 1500000000);
+    std::cerr << EGE::System::getWorkingDirectory() << std::endl;
+    EGE::System::setWorkingDirectory("..");
+    std::cerr << EGE::System::getWorkingDirectory() << std::endl;
+    auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
+    EXPECT(file.exists() && file.type == EGE::System::FileInfo::Type::Directory);
 }
 
 RUN_TESTS(util)
