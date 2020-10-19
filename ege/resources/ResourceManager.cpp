@@ -48,6 +48,45 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
     return font;
 }
 
+std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, sf::Shader::Type type)
+{
+    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    if(!shader->loadFromFile(m_resourcePath + "/" + fileName, type))
+    {
+        err(LogLevel::Error) << "EGE/resources: could not load resource: [" << (int)type << "] SHADER " << fileName;
+        m_error = true;
+        return nullptr;
+    }
+    addShader(fileName, shader);
+    return shader;
+}
+
+std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string fragmentShader)
+{
+    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    if(!shader->loadFromFile(m_resourcePath + "/" + vertexShader, m_resourcePath + "/" + fragmentShader))
+    {
+        err(LogLevel::Error) << "EGE/resources: could not load resource: [VF] SHADER " << vertexShader << ", " << fragmentShader;
+        m_error = true;
+        return nullptr;
+    }
+    addShader(name, shader);
+    return shader;
+}
+
+std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string geometryShader, std::string fragmentShader)
+{
+    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    if(!shader->loadFromFile(m_resourcePath + "/" + vertexShader, m_resourcePath + "/" + geometryShader, m_resourcePath + "/" + fragmentShader))
+    {
+        err(LogLevel::Error) << "EGE/resources: could not load resource: [VGF] SHADER " << vertexShader << ", " << geometryShader << ", " << fragmentShader;
+        m_error = true;
+        return nullptr;
+    }
+    addShader(name, shader);
+    return shader;
+}
+
 std::shared_ptr<sf::Cursor> ResourceManager::loadCursorFromFile(std::string)
 {
     // TODO
@@ -90,6 +129,19 @@ void ResourceManager::addCursor(std::string name, std::shared_ptr<sf::Cursor> cu
     else if(cursor != nullptr)
     {
         it->second = cursor;
+    }
+}
+
+void ResourceManager::addShader(std::string name, std::shared_ptr<sf::Shader> shader)
+{
+    auto it = m_loadedShaders.find(name);
+    if(it == m_loadedShaders.end())
+    {
+        m_loadedShaders.insert(std::make_pair(name, shader));
+    }
+    else if(shader != nullptr)
+    {
+        it->second = shader;
     }
 }
 
@@ -165,6 +217,17 @@ std::shared_ptr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
             return nullptr;
     }
     return cursor;
+}
+
+std::shared_ptr<sf::Shader> ResourceManager::getShader(std::string name)
+{
+    auto it = m_loadedShaders.find(name);
+    if(it == m_loadedShaders.end())
+    {
+        err(LogLevel::Error) << "0008 EGE/resources: invalid SHADER requested: " << name;
+        return nullptr;
+    }
+    return it->second;
 }
 
 std::shared_ptr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
