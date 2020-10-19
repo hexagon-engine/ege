@@ -259,8 +259,27 @@ TESTCASE(serializer)
 
 struct ParticleData : public EGE::ParticleSystem2D::UserData
 {
-    float motion = 0.5f;
+    float motionx = 0.f, motiony = 0.5f;
     float color = 1.f;
+    float ccp = 200.f;
+};
+
+class MyScene : public EGE::Scene2D
+{
+public:
+    MyScene(EGE::GUIGameLoop* loop)
+    : EGE::Scene2D(loop) {}
+
+    virtual void onUpdate(long long tickCounter)
+    {
+        // Update another objects
+        EGE::Scene2D::onUpdate(tickCounter);
+
+        // Update wind
+        wind = std::sin((tickCounter + rand() % 100 / 100.f) / 100.f) * 100.f;
+    }
+
+    float wind = 0.f;
 };
 
 TESTCASE(particleSystem)
@@ -273,23 +292,33 @@ TESTCASE(particleSystem)
     EGE::Renderer renderer(*loop.getWindow().lock());
 
     // create scene
-    std::shared_ptr<EGE::Scene> scene = make<EGE::Scene>(&loop);
+    std::shared_ptr<MyScene> scene = make<MyScene>(&loop);
+
+    // add wind speed variable
+    float wind = 0.f;
 
     // create particle system
     std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(scene, sf::FloatRect(10.f, 10.f, 580.f, 1.f));
     particleSystem->setSpawnChance(50.0);
     particleSystem->setParticleLifeTime(400);
     particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
-        // Physics
         ParticleData* myData = (ParticleData*)particle.userData.get();
-        myData->motion += 0.05f * (1.f - myData->color / 1.1f);
-        particle.position.y += myData->motion;
-        if(particle.position.y > 200.f && myData->color > 0.f)
+        float meltFactor = (1.f - myData->color / 1.1f);
+
+        // Gravity
+        myData->motiony += 0.05f * meltFactor;
+        particle.position.y += myData->motiony;
+        if(particle.position.y > myData->ccp && myData->color > 0.f)
         {
-            myData->color -= rand() % 100 / 10000.f;
+            myData->color -= (rand() % 100) / 2500.f + 0.005f;
             if(myData->color < 0.f)
                 myData->color = 0.f;
         }
+
+        // Wind
+        float wind = ((MyScene*)particle.system->getOwner().get())->wind;
+        myData->motionx = wind / (particle.position.y + 0.5f) * meltFactor;
+        particle.position.x += myData->motionx;
     });
 
     particleSystem->setParticleRenderer([&renderer](const std::list<EGE::ParticleSystem2D::Particle>& particles, sf::RenderTarget&, const EGE::RenderStates&) {
@@ -300,21 +329,32 @@ TESTCASE(particleSystem)
         for(const EGE::ParticleSystem2D::Particle& particle: particles)
         {
             ParticleData* myData = (ParticleData*)particle.userData.get();
-            sf::Color color(myData->color * 255, myData->color * 255, 255);
+            float clf = (myData->color + 4.f) / 5.2f;
+            sf::Color color(clf * 255, clf * 255, 255);
             vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
-            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y + myData->motion, 0.0), color));
+            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + myData->motionx, particle.position.y + myData->motiony, 0.0), color));
         }
 
         // Actually render them.
-        renderer.renderPoints(vertexes);
+        renderer.renderPrimitives(vertexes, sf::Lines);
     });
     particleSystem->setParticleOnSpawn([](EGE::ParticleSystem2D::Particle& particle) {
         // Create user data instance.
         particle.userData = std::make_unique<ParticleData>();
+        ParticleData* myData = (ParticleData*)particle.userData.get();
+
+        // Randomize "melt" position.
+        myData->ccp = rand() % 100 + 150.f;
     });
 
     // assign particle system to scene
     scene->addObject(particleSystem);
+
+    // add camera
+    auto cam = make<EGE::CameraObject2D>(scene);
+    cam->setScalingMode(EGE::ScalingMode::None);
+    scene->setCamera(cam);
+    scene->addObject(cam);
 
     // create GUI
     std::shared_ptr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(&loop);

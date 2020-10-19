@@ -6,5 +6,7 @@ varying vec4 vColor;
 void main()
 {
   float dst = sqrt(vPos.x * vPos.x + vPos.y * vPos.y);
-  gl_FragColor = vec4(dst / 144.0, 0, 1, 1);
+  float maxdst = sqrt(10000);
+  float a = (1.0 - dst / maxdst);
+  gl_FragColor += vec4(a * dst / maxdst, 0.0, a, a);
 }
