@@ -60,13 +60,13 @@ double distanceTo(Vector3<T> begin, Vector3<T> end)
 }
 
 template<class T>
-double lengthSquared(Vector2<T> vector)
+double lengthSquared(Vector3<T> vector)
 {
-    return (vector.x*vector.x + vector.y*vector.y + vector.z*vector.z)););
+    return (vector.x*vector.x + vector.y*vector.y + vector.z*vector.z);
 }
 
 template<class T>
-double length(Vector2<T> vector)
+double length(Vector3<T> vector)
 {
     return std::sqrt(lengthSquared(vector));
 }

@@ -37,5 +37,7 @@ set(SOURCES
 	"VectorOperations.h"
 )
 
+add_subdirectory(system)
+
 ege_add_module(util)
 ege_depend_module(util main)
