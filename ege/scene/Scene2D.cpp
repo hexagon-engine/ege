@@ -88,12 +88,12 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
     }
 }
 
-void Scene2D::renderOnly(sf::RenderTarget& target)
+void Scene2D::renderOnly(sf::RenderTarget& target, const RenderStates& states)
 {
     target.setView(getView(target));
 
     // render objects iteratively
-    Scene::renderOnly(target);
+    Scene::renderOnly(target, states);
 }
 
 sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos)

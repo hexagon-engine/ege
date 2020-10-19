@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Button.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -32,7 +33,7 @@ public:
         m_geometryUpdate = true;
     }
 
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
 
 protected:
     bool m_geometryUpdate = true;

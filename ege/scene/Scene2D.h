@@ -21,7 +21,7 @@ public:
     : Scene(loop) {}
 
     void setCamera(std::weak_ptr<CameraObject2D> camera);
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
 
     virtual sf::View getView(sf::RenderTarget& target);
     virtual sf::Vector2f mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos);

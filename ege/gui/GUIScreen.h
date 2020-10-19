@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/gfx/RenderStates.h>
+
 #include "CompoundWidget.h"
 
 namespace EGE
@@ -39,7 +41,7 @@ public:
     virtual void onTouchMove(sf::Event::TouchEvent& event) override;
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
     virtual void onSensorChange(sf::Event::SensorEvent& event) override;
-    virtual void render(sf::RenderTarget& target) override;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
 };
 
 }

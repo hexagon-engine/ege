@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "Animation.h"
 
 #include <ege/event/DefaultSystemEventHandler.h>
+#include <ege/gfx/RenderStates.h>
 #include <ege/util/Vector.h>
 
 #define WIDGET_DEBUG 0
@@ -68,10 +69,10 @@ public:
 
     virtual sf::FloatRect getBoundingBox();
     virtual sf::FloatRect getViewport(sf::RenderTarget& target);
-    virtual void render(sf::RenderTarget& target);
+    virtual void render(sf::RenderTarget& target, const RenderStates& states = {});
 
     // render without setting view
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
 
     virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};

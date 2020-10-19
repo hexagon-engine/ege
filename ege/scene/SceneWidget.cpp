@@ -11,11 +11,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void SceneWidget::renderOnly(sf::RenderTarget& target)
+void SceneWidget::renderOnly(sf::RenderTarget& target, const RenderStates& states)
 {
-    Widget::renderOnly(target);
+    Widget::renderOnly(target, states);
     if(m_scene)
-        m_scene->renderOnly(target);
+        m_scene->renderOnly(target, states);
 }
 
 void SceneWidget::onResize(sf::Event::SizeEvent& event)

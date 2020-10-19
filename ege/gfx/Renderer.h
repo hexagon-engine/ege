@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "RenderStates.h"
+
 #include <ege/util/Vector.h>
 #include <SFML/Graphics.hpp>
 
@@ -44,6 +46,11 @@ public:
         return m_target;
     }
 
+    void setStates(const RenderStates& states)
+    {
+        m_states = states;
+    }
+
 private:
     // noncopyable, nonmoveable
     Renderer(const Renderer& other) = delete;
@@ -52,6 +59,7 @@ private:
     Renderer& operator=(Renderer&& other) = delete;
 
     sf::RenderTarget& m_target;
+    RenderStates m_states;
 };
 
 }

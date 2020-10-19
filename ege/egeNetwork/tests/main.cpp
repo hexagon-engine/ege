@@ -40,6 +40,8 @@ TESTCASE(converter)
     EGE::EGEPacket packet2(sfPacket);
     std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
     std::cerr << std::dec;
+
+    return 0;
 }
 
 class MyObject : public EGE::SceneObject2D
@@ -64,9 +66,9 @@ public:
         m_scale = sf::Vector2f(rand() % 2 + 1, rand() % 2 + 1);
     }
 
-    virtual void render(sf::RenderTarget& target) const
+    virtual void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
     {
-        EGE::SceneObject2D::render(target);
+        EGE::SceneObject2D::render(target, states);
         sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
         rs.setPosition(getPosition() - sf::Vector2f(5.f, 5.f));
         rs.setRotation(m_rotation);

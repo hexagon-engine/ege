@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
 #include <SFML/Graphics.hpp>
 
@@ -31,7 +32,7 @@ public:
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
-    virtual void renderOnly(sf::RenderTarget& target) override;
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
 
 private:
     sf::String m_text;

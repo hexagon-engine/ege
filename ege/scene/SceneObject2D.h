@@ -101,7 +101,7 @@ public:
     // with collision check
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
-    virtual void render(sf::RenderTarget& target) const;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
     virtual void onUpdate(long long tickCounter);
 
     virtual std::shared_ptr<ObjectMap> serializeMain();

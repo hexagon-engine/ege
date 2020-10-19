@@ -8,9 +8,8 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void DummyObject2D::render(sf::RenderTarget& target) const
+void DummyObject2D::render(sf::RenderTarget&, const RenderStates&) const
 {
-    (void) target;
     // nothing;
 }
 

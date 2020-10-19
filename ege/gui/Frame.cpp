@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Frame::renderOnly(sf::RenderTarget& target)
+void Frame::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     // Frame (generate)
     sf::RectangleShape rsFrame(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));

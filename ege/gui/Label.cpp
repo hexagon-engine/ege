@@ -74,14 +74,14 @@ void Label::updateGeometry()
     }
 }
 
-void Label::render(sf::RenderTarget& target)
+void Label::render(sf::RenderTarget& target, const RenderStates&)
 {
     updateGeometry();
     Widget::render(target);
     renderOnly(target);
 }
 
-void Label::renderOnly(sf::RenderTarget& target)
+void Label::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     target.draw(m_text);
 }

@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "ObjectRenderer.h"
 #include "SceneObject2D.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/resources/ResourceManager.h>
 
@@ -39,7 +40,7 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual void render(const SceneObject& object, sf::RenderTarget& target) const;
+    virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const;
 
 private:
     virtual void updateGeometry(SceneObject& object);

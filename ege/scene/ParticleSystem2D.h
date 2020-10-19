@@ -7,6 +7,8 @@ Copyright (c) Sppmacd 2020
 
 #include "SceneObject2D.h"
 
+#include <ege/gfx/RenderStates.h>
+
 namespace EGE
 {
 
@@ -48,11 +50,11 @@ public:
         return m_spawnRect;
     }
 
-    virtual void render(sf::RenderTarget& target) const;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
     virtual void onUpdate(long long tickCounter);
 
     void setParticleUpdater(std::function<void(Particle&)> func) { m_particleUpdater = func; }
-    void setParticleRenderer(std::function<void(const std::vector<Particle>, sf::RenderTarget&)> func) { m_particleRenderer = func; }
+    void setParticleRenderer(std::function<void(const std::vector<Particle>, sf::RenderTarget&, const RenderStates&)> func) { m_particleRenderer = func; }
 
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.
@@ -70,7 +72,7 @@ private:
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
     std::function<void(Particle&)> m_particleUpdater;
-    std::function<void(const std::vector<Particle>, sf::RenderTarget&)> m_particleRenderer;
+    std::function<void(const std::vector<Particle>, sf::RenderTarget&, const RenderStates&)> m_particleRenderer;
 
     std::vector<Particle> m_particles;
 };

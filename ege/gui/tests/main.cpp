@@ -119,7 +119,7 @@ public:
         texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
     }
 
-    virtual void render(sf::RenderTarget& target) override
+    virtual void render(sf::RenderTarget& target, const EGE::RenderStates& states) override
     {
         EGE::GUIScreen::render(target);
         DEBUG_PRINT("MyResourceManager render");
@@ -168,9 +168,9 @@ public:
         m_size = size;
     }
 
-    void render(sf::RenderTarget& target)
+    void render(sf::RenderTarget& target, const EGE::RenderStates& states) override
     {
-        Widget::render(target);
+        Widget::render(target, states);
 
         sf::RectangleShape rs(sf::Vector2f(m_size.x - 2.f, m_size.y - 2.f));
         rs.setPosition(1.f, 1.f);

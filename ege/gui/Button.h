@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
 #include <SFML/Graphics.hpp>
 
@@ -44,7 +45,7 @@ public:
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
-    virtual void renderOnly(sf::RenderTarget& target) override;
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
 
     void setCallback(std::function<void()> callback)
     {

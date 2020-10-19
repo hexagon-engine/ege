@@ -31,7 +31,7 @@ TextBox::TextBox(Widget* parent)
                  });
 }
 
-void TextBox::renderOnly(sf::RenderTarget& target)
+void TextBox::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     sf::RectangleShape rs;
     rs.setFillColor(sf::Color(255, 255, 255));

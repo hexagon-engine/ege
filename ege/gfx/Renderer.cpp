@@ -20,14 +20,14 @@ void Renderer::renderRectangle(double x, double y, double width, double height, 
         rs.setOutlineColor(outlineColor);
         rs.setOutlineThickness(1.f);
     }
-    getTarget().draw(rs);
+    getTarget().draw(rs, m_states.sfStates());
 }
 
 void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size)
 {
     sf::Text text(str, font, size);
     text.setPosition(x, y);
-    getTarget().draw(text);
+    getTarget().draw(text, m_states.sfStates());
 }
 
 void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size)
@@ -35,7 +35,7 @@ void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String
     sf::Text text(str, font, size);
     text.setPosition(x, y);
     text.setOrigin(text.getLocalBounds().getSize() / 2.f);
-    getTarget().draw(text);
+    getTarget().draw(text, m_states.sfStates());
 }
 
 void Renderer::renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture)
@@ -43,7 +43,7 @@ void Renderer::renderTexturedRectangle(double x, double y, double width, double 
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
     rs.setTexture(&texture);
-    getTarget().draw(rs);
+    getTarget().draw(rs, m_states.sfStates());
 }
 
 void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)

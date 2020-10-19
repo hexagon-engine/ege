@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "ObjectRenderer.h"
 
 #include <SFML/Graphics.hpp>
+#include <ege/gfx/RenderStates.h>
 #include <ege/gpo/GameplayObject.h>
 #include <ege/gui/Animatable.h>
 #include <ege/util/Serializable.h>
@@ -25,10 +26,10 @@ public:
 
     virtual void onUpdate(long long tickCounter);
 
-    virtual void render(sf::RenderTarget& target) const
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const
     {
         if(m_renderer)
-            m_renderer->render(*this, target);
+            m_renderer->render(*this, target, states);
     }
     virtual void preRenderUpdate(sf::RenderTarget& target)
     {

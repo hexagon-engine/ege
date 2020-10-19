@@ -10,11 +10,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void ParticleSystem2D::render(sf::RenderTarget& target) const
+void ParticleSystem2D::render(sf::RenderTarget& target, const RenderStates& states) const
 {
-    SceneObject2D::render(target);
+    SceneObject2D::render(target, states);
     if(m_particleRenderer)
-        m_particleRenderer(m_particles, target);
+        m_particleRenderer(m_particles, target, states);
 }
 
 void ParticleSystem2D::onUpdate(long long tickCounter)

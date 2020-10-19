@@ -155,7 +155,7 @@ double EventLoop::time(Time::Unit unit)
             return GetTickCount() / 1000.0;
         #elif defined(__unix__)
             auto _time = System::exactTime();
-            return _time.s * 1000000000 + _time.ns;
+            return _time.s + _time.ns / 1000000000.0;
         #endif
     }
     ASSERT(false);

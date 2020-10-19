@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void CameraObject2D::render(sf::RenderTarget& target) const
+void CameraObject2D::render(sf::RenderTarget& target, const RenderStates&) const
 {
     if constexpr(CAMERA_DEBUG)
     {

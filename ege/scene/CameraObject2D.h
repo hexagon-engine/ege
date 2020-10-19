@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "CameraObject.h"
 #include "SceneObject2D.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
 #define CAMERA_DEBUG 1
@@ -31,7 +32,7 @@ public:
         setPosition(position);
     }
 
-    virtual void render(sf::RenderTarget& target) const;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
 };
 
 }

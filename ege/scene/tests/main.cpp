@@ -18,10 +18,10 @@ class MyObject : public EGE::SceneObject2D
 
 public:
     MyObject(std::shared_ptr<EGE::Scene> owner, std::string name, sf::Vector2f pos)
-    : EGE::SceneObject2D(owner, name), m_initialPosition(pos)
+    : EGE::SceneObject2D(owner, "MyObject"), m_initialPosition(pos)
     {
-        // set position from constructor
         setPosition(pos);
+        setName(name);
 
         // make object animated (it can be done now by flyTo())
         auto anim = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
@@ -49,13 +49,13 @@ public:
 
     }
 
-    void render(sf::RenderTarget& target) const
+    void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
     {
         // render "low-level" SFML text centered to object position
         sf::Text text("MyObject: " + getName(), *m_font, 18);
         text.setPosition(getPosition().x, getPosition().y);
         text.setOrigin((int)text.getLocalBounds().width / 2, (int)text.getLocalBounds().height / 2);
-        target.draw(text);
+        target.draw(text, states.sfStates());
     }
     void setDead()
     {
@@ -72,14 +72,14 @@ public:
     MyBackground(std::shared_ptr<EGE::Scene> owner, std::string name)
     : EGE::SceneObject2D(owner, name) {}
 
-    void render(sf::RenderTarget& target) const
+    void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
     {
         sf::VertexArray varr(sf::Quads, 4);
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color::Red));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y-100.f), sf::Color::Green));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y+100.f), sf::Color::Blue));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y+100.f), sf::Color::Yellow));
-        target.draw(varr);
+        target.draw(varr, states.sfStates());
     }
 };
 
@@ -269,7 +269,7 @@ TESTCASE(particleSystem)
                                             //particle.position.x += 1.6f;
                                         });
 
-    particleSystem->setParticleRenderer([&renderer](const std::vector<EGE::ParticleSystem2D::Particle> particles, sf::RenderTarget&) {
+    particleSystem->setParticleRenderer([&renderer](const std::vector<EGE::ParticleSystem2D::Particle> particles, sf::RenderTarget&, const EGE::RenderStates&) {
                                             log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
 
                                             // Generate vertexes.

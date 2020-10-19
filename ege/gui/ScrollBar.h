@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Widget.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -49,8 +50,8 @@ public:
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
-    virtual void render(sf::RenderTarget& target);
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void render(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
 
     void setUpdateCallback(std::function<void(double)> func)
     {

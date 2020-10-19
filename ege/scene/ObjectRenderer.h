@@ -8,6 +8,8 @@ Copyright (c) Sppmacd 2020
 #include <memory>
 #include <SFML/Graphics.hpp>
 
+#include <ege/gfx/RenderStates.h>
+
 namespace EGE
 {
 
@@ -20,7 +22,7 @@ public:
     ObjectRenderer(std::shared_ptr<Scene> scene)
     : m_scene(scene) {}
 
-    virtual void render(const SceneObject& object, sf::RenderTarget& target) const = 0;
+    virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const = 0;
 
     virtual void preRender(SceneObject& object, sf::RenderTarget&)
     {

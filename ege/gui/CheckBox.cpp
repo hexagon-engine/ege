@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void CheckBox::renderOnly(sf::RenderTarget& target)
+void CheckBox::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     sf::RectangleShape rs;
     rs.setFillColor(sf::Color(255, 255, 255));

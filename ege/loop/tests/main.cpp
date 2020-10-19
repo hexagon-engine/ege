@@ -35,7 +35,7 @@ void MyGameLoop::onUpdate(long long tickCount)
         EXPECT(event.isCanceled());
 
     if(tickCount == 3)
-        running = false;
+        exit(0);
 }
 
 EGE::EventResult eventTest(TickEvent& event)
@@ -114,16 +114,10 @@ TESTCASE(time)
     loop.addTimer("remove-test", &(*new Timer(&loop, Timer::Mode::Limited, Time(14.f, Time::Unit::Seconds)))
                     .setCallback([&loop](std::string, Timer*) { loop.removeTimer("infinite 2s"); }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("close", &(*new Timer(&loop, Timer::Mode::Limited, Time(15.f, Time::Unit::Seconds)))
-                    .setCallback([&loop](std::string, Timer*) { loop.running = false; }), EGE::EventLoop::TimerImmediateStart::Yes);
+                    .setCallback([&loop](std::string, Timer*) { loop.exit(); }), EGE::EventLoop::TimerImmediateStart::Yes);
     loop.addTimer("test-events", &(*new Timer(&loop, Timer::Mode::Infinite, Time(1.f, Time::Unit::Seconds))), EGE::EventLoop::TimerImmediateStart::Yes);
 
-    while(loop.running)
-    {
-        loop.onUpdate(loop.m_tickCounter);
-        loop.m_tickCounter++;
-    }
-
-    return 0;
+    return loop.run();
 }
 
 RUN_TESTS(loop)

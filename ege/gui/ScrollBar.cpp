@@ -59,7 +59,7 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::render(sf::RenderTarget& target)
+void ScrollBar::render(sf::RenderTarget& target, const RenderStates&)
 {
     // update geometry
     if(m_geometryUpdate)
@@ -118,7 +118,7 @@ void drawRect(sf::RenderTarget& target, EGE::Vec2d position, EGE::Vec2d size, sf
     target.draw(rs);
 }
 
-void ScrollBar::renderOnly(sf::RenderTarget& target)
+void ScrollBar::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     // background
     drawRect(target, EGE::Vec2d(0.f, 20.f), m_size - EGE::Vec2d(0.f, 40.f), sf::Color(175, 175, 175));

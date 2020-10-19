@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
 #include <SFML/Graphics.hpp>
 
@@ -28,8 +29,8 @@ public:
     void setTextAlign(Align align);
     virtual void setPosition(EGE::Vec2d position) override;
     void setFontSize(int size);
-    virtual void render(sf::RenderTarget& target) override;
-    virtual void renderOnly(sf::RenderTarget& target) override;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
 
 protected:
     void setPositionInternal(EGE::Vec2d position);

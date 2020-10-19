@@ -142,7 +142,7 @@ void GUIScreen::onSensorChange(sf::Event::SensorEvent& event)
     CompoundWidget::onSensorChange(event);
 }
 
-void GUIScreen::render(sf::RenderTarget& target)
+void GUIScreen::render(sf::RenderTarget& target, const RenderStates& states)
 {
     // Ensure that GUI is resized to cover entire target
     setPosition(EGE::Vec2d());
@@ -150,6 +150,6 @@ void GUIScreen::render(sf::RenderTarget& target)
     m_size = EGE::Vec2d(size.x, size.y);
 
     // Actually draw child widgets
-    CompoundWidget::render(target);
+    CompoundWidget::render(target, states);
 }
 }

@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "SceneObject2D.h"
 #include "Scene.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -32,7 +33,7 @@ public:
     {
         return sf::FloatRect(getPosition(), m_size);
     }
-    virtual void render(sf::RenderTarget& target) const;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
 
 private:
     sf::Vector2f m_size;

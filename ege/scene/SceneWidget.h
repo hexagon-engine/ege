@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
 #include <ege/scene/Scene.h>
 
@@ -18,7 +19,7 @@ public:
     SceneWidget(Widget* parent, std::shared_ptr<Scene> initialScene = nullptr)
     : Widget(parent), m_scene(initialScene) {}
 
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
 
     virtual void onUpdate(long long tickCounter);
     virtual void onResize(sf::Event::SizeEvent& event);

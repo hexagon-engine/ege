@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "CheckBox.h"
 
+#include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -18,7 +19,7 @@ public:
     RadioButton(Widget* parent)
     : CheckBox(parent) {}
 
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
 
 private:
     virtual void onClick(EGE::Vec2d);

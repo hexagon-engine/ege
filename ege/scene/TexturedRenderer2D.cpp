@@ -47,9 +47,9 @@ sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) cons
     return rect;
 }
 
-void TexturedRenderer2D::render(const SceneObject&, sf::RenderTarget& target) const
+void TexturedRenderer2D::render(const SceneObject&, sf::RenderTarget& target, const RenderStates& states) const
 {
-    target.draw(m_sprite);
+    target.draw(m_sprite, states.sfStates());
 }
 
 }

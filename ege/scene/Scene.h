@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include <SFML/Graphics.hpp>
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/scene/SceneObject.h>
+#include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <functional>
 #include <map>
@@ -26,7 +27,7 @@ public:
 
     typedef std::map<long long, std::shared_ptr<SceneObject>> ObjectMap;
 
-    virtual void renderOnly(sf::RenderTarget& target);
+    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
 
     virtual void onUpdate(long long tickCounter);
 

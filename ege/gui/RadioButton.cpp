@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void RadioButton::renderOnly(sf::RenderTarget& target)
+void RadioButton::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
     sf::CircleShape cs;
     cs.setFillColor(sf::Color(255, 255, 255));

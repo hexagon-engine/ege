@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Scene::renderOnly(sf::RenderTarget& target)
+void Scene::renderOnly(sf::RenderTarget& target, const RenderStates& states)
 {
     // The loop should NOT be specified for server-side
     // since it's NOT necessary (Scene itself is an EventLoop)
@@ -18,7 +18,7 @@ void Scene::renderOnly(sf::RenderTarget& target)
     for(auto pr: *this)
     {
         pr.second->preRenderUpdate(target);
-        pr.second->render(target);
+        pr.second->render(target, states);
     }
 }
 

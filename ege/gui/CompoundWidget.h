@@ -7,6 +7,8 @@ Copyright (c) Sppmacd 2020
 
 #include "Widget.h"
 
+#include <ege/gfx/RenderStates.h>
+
 namespace EGE
 {
 
@@ -49,7 +51,7 @@ public:
     // Widget Events
     virtual void onUpdate(long long tickCounter) override;
 
-    virtual void render(sf::RenderTarget& target) override;
+    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
 
     void addWidget(std::shared_ptr<Widget> widget);
     void removeWidget(Widget* widget);
