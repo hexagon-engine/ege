@@ -38,6 +38,9 @@ set(SOURCES
 	"VectorOperations.cpp"
 	"VectorOperations.h"
 
+	"system.h"
+	"system/FileSystem.cpp"
+	"system/FileSystem.h"
 	"system/SystemImpl.cpp"
 	"system/SystemImpl.h"
 	"system/Time.cpp"
