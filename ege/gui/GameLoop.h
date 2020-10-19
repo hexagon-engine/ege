@@ -8,8 +8,8 @@ Copyright (c) Sppmacd 2020
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/loop/EventHandler.h>
 #include <ege/loop/EventResult.h>
-#include <ege/loop/Time.h>
 #include <ege/loop/Timer.h>
+#include <ege/util/Time.h>
 #include <ege/profiler/Profiler.h>
 
 #include <map>

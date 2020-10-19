@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/system/Time.h>
 #include <iostream>
 #include <string.h>
 
@@ -150,17 +151,10 @@ double EventLoop::time(Time::Unit unit)
         return m_ticks;
     else if(unit == Time::Unit::Seconds)
     {
-        #if defined(__linux__)
-            timespec _ts;
-            if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
-                return 0.0;
-
-            // TODO: assume nobody will run our program longer than 1000000 seconds (~11 days)
-            double time = (long long)(_ts.tv_sec) + _ts.tv_nsec / 1000000000.0;
-            DUMP(TIMER_DEBUG, time);
-            return time;
-        #elif defined(WIN32)
+        #if defined(WIN32)
             return GetTickCount() / 1000.0;
+        #elif defined(__unix__)
+            return System::exactTime();
         #endif
     }
     ASSERT(false);

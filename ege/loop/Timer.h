@@ -5,10 +5,9 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include "Time.h"
-
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/Time.h>
 #include <functional>
 #include <string>
 

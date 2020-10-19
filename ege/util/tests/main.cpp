@@ -1,4 +1,5 @@
 #include <testsuite/Tests.h>
+#include <ege/util/system/Time.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Equation.h>
 #include <ege/util/EquationSystem.h>
@@ -253,6 +254,12 @@ TESTCASE(serializers)
     EXPECT_EQUAL(test2->getObject("y").lock()->asFloat(), 456);
     EXPECT_EQUAL(test2->getObject("z").lock()->asFloat(), 789);
     EXPECT_EQUAL(EGE::Serializers::toVector3(test2), (EGE::Vec3d)vec2);
+}
+
+TESTCASE(system)
+{
+    EXPECT(EGE::System::unixTime() > 1500000000);
+    EXPECT(EGE::System::exactTime().s > 1500000000);
 }
 
 RUN_TESTS(util)

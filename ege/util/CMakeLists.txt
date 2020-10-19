@@ -31,13 +31,27 @@ set(SOURCES
 	"Serializable.cpp"
 	"Serializable.h"
 	"StringUtils.h"
+	"Time.cpp"
+	"Time.h"
 	"Vector.cpp"
 	"Vector.h"
 	"VectorOperations.cpp"
 	"VectorOperations.h"
+
+	"system/SystemImpl.cpp"
+	"system/SystemImpl.h"
+	"system/Time.cpp"
+	"system/Time.h"
 )
 
-add_subdirectory(system)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux" OR ${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+	set(SOURCES
+		${SOURCES}
+		"system/SystemImplUnix.cpp"
+		"system/SystemImplUnix.h"
+	)
+endif()
 
 ege_add_module(util)
 ege_depend_module(util main)
+

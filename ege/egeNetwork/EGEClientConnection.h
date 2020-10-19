@@ -8,9 +8,9 @@ Copyright (c) Sppmacd 2020
 #include "EGEServer.h"
 
 #include <ctime>
-#include <ege/loop/Time.h>
 #include <ege/network/ClientConnection.h>
 #include <ege/network/SFMLNetworkImpl.h>
+#include <ege/util/Time.h>
 #include <memory>
 
 namespace EGE
