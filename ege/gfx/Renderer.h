@@ -40,6 +40,7 @@ public:
     void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
     void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture);
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
+    void renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type);
 
     sf::RenderTarget& getTarget()
     {
