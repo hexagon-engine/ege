@@ -53,6 +53,7 @@ public:
     virtual void deferredInvoke(std::function<void()> func);
 
     // get in-loop time in ticks or ms
+    // it should be used ONLY for comparisions
     virtual double time(Time::Unit unit);
 
     virtual int run();
