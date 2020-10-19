@@ -4,6 +4,7 @@ Copyright (c) Sppmacd 2020
 */
 
 #include "ParticleSystem2D.h"
+#include "Scene.h"
 
 #include <cstdlib>
 
@@ -19,22 +20,28 @@ void ParticleSystem2D::render(sf::RenderTarget& target, const RenderStates& stat
 
 void ParticleSystem2D::onUpdate(long long tickCounter)
 {
+    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->startSection("particleSystem");
     SceneObject2D::onUpdate(tickCounter);
 
     // update existing particles
-    for(size_t i = 0; i < m_particles.size(); i++)
+    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->startSection("update");
+    for(auto it = m_particles.begin(); it != m_particles.end();)
     {
-        Particle& particle = m_particles[i];
+        auto current = it;
+        auto next = ++it;
+
+        Particle& particle = *current;
         particle.update();
 
-        if(particle.dead)
+        if(particle.ttl <= 0)
         {
-            m_particles.erase(m_particles.begin() + i);
-            i--;
+            m_particles.erase(current);
+            it = next;
         }
     }
 
     // spawn new particles
+    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endStartSection("spawn");
     if(m_spawnChance == 1)
         spawnParticle();
     else if(m_spawnChance > 1)
@@ -48,6 +55,9 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
         if(val < m_spawnChance)
             spawnParticle();
     }
+    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endSection();
+
+    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endSection();
 }
 
 sf::Vector2f ParticleSystem2D::randomPosition()
@@ -67,8 +77,6 @@ sf::Vector2f ParticleSystem2D::randomPosition()
 void ParticleSystem2D::Particle::update()
 {
     ttl--;
-    if(ttl <= 0)
-        dead = true;
 
     if(system->m_particleUpdater)
         system->m_particleUpdater(*this);
@@ -79,7 +87,11 @@ void ParticleSystem2D::spawnParticle()
     Particle particle(this);
     particle.position = randomPosition();
     particle.ttl = m_particleTTL;
-    m_particles.push_back(particle);
+
+    if(m_particleOnSpawn)
+        m_particleOnSpawn(particle);
+
+    m_particles.push_back(std::move(particle));
 }
 
 }

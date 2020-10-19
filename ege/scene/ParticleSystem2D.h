@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "SceneObject2D.h"
 
 #include <ege/gfx/RenderStates.h>
+#include <list>
 
 namespace EGE
 {
@@ -21,6 +22,8 @@ namespace EGE
 class ParticleSystem2D : public SceneObject2D
 {
 public:
+    class UserData {};
+
     class Particle
     {
     public:
@@ -28,11 +31,14 @@ public:
         : system(_system) {}
 
         void update();
+        void setDead() { ttl = 0; }
 
         sf::Vector2f position;
         unsigned ttl = 0;
-        bool dead = false;
         ParticleSystem2D* system;
+
+        // TODO: it should be better a flat pointer (memory performance)
+        std::unique_ptr<UserData> userData = nullptr;
     };
 
     friend class Particle;
@@ -54,7 +60,8 @@ public:
     virtual void onUpdate(long long tickCounter);
 
     void setParticleUpdater(std::function<void(Particle&)> func) { m_particleUpdater = func; }
-    void setParticleRenderer(std::function<void(const std::vector<Particle>, sf::RenderTarget&, const RenderStates&)> func) { m_particleRenderer = func; }
+    void setParticleOnSpawn(std::function<void(Particle&)> func) { m_particleOnSpawn = func; }
+    void setParticleRenderer(std::function<void(const std::list<Particle>&, sf::RenderTarget&, const RenderStates&)> func) { m_particleRenderer = func; }
 
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.
@@ -72,9 +79,10 @@ private:
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
     std::function<void(Particle&)> m_particleUpdater;
-    std::function<void(const std::vector<Particle>, sf::RenderTarget&, const RenderStates&)> m_particleRenderer;
+    std::function<void(Particle&)> m_particleOnSpawn;
+    std::function<void(const std::list<Particle>&, sf::RenderTarget&, const RenderStates&)> m_particleRenderer;
 
-    std::vector<Particle> m_particles;
+    std::list<Particle> m_particles;
 };
 
 }

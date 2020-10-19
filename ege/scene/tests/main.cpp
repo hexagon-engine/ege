@@ -74,12 +74,18 @@ public:
 
     void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
     {
+        // add our 'test' shader
+        EGE::RenderStates myStates = states;
+        auto shader = getOwner()->getLoop()->getResourceManager().lock()->getShader("test");
+        shader->setUniform("pos", sf::Vector2f(0.f, 0.f));
+        myStates.sfStates().shader = shader.get();
+
         sf::VertexArray varr(sf::Quads, 4);
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color::Red));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y-100.f), sf::Color::Green));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y+100.f), sf::Color::Blue));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y+100.f), sf::Color::Yellow));
-        target.draw(varr, states.sfStates());
+        target.draw(varr, myStates.sfStates());
     }
 };
 
@@ -94,8 +100,9 @@ public:
         // it will be automatically loaded by engine.
         bool success = setDefaultFont("font.ttf");
         success &= (bool)loadTextureFromFile("texture.png").get();
+        success &= (bool)loadShaderFromFile("test", "test.vert", "test.frag").get();
 
-        // return true if setDefaultFont succeeded or false if not (e.g. font doesn't exist)
+        // return true if all resources successfully loaded
         return success;
     }
 };
@@ -158,6 +165,9 @@ TESTCASE(_2dCamera)
     auto cam = make<EGE::CameraObject2D>(scene);
     bool b1 = false;
 
+    // set scaling mode
+    cam->setScalingMode(EGE::ScalingMode::Centered);
+
     // make camera animated
     auto timer = make<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
     timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
@@ -167,7 +177,6 @@ TESTCASE(_2dCamera)
     // the first fly
     cam->flyTo(sf::Vector2f(0.f, 100.f), 1.0);
     cam->addTimer("camera fly timer", timer);
-    cam->setScalingMode(EGE::ScalingMode::Centered);
 
     // set scene camera and add it to scene (to be updated)
     scene->setCamera(cam);
@@ -248,6 +257,12 @@ TESTCASE(serializer)
     return gameLoop.run();
 }
 
+struct ParticleData : public EGE::ParticleSystem2D::UserData
+{
+    float motion = 0.5f;
+    float color = 1.f;
+};
+
 TESTCASE(particleSystem)
 {
     // create loop
@@ -261,34 +276,42 @@ TESTCASE(particleSystem)
     std::shared_ptr<EGE::Scene> scene = make<EGE::Scene>(&loop);
 
     // create particle system
-    std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(scene, sf::FloatRect(10.f, 10.f, 580.f, 580.f));
-    particleSystem->setSpawnChance(100.0);
-    particleSystem->setParticleLifeTime(700000);
-    particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle&) {
-                                            // Move particle a bit.
-                                            //particle.position.x += 1.6f;
-                                        });
+    std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(scene, sf::FloatRect(10.f, 10.f, 580.f, 1.f));
+    particleSystem->setSpawnChance(50.0);
+    particleSystem->setParticleLifeTime(400);
+    particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
+        // Physics
+        ParticleData* myData = (ParticleData*)particle.userData.get();
+        myData->motion += 0.05f * (1.f - myData->color / 1.1f);
+        particle.position.y += myData->motion;
+        if(particle.position.y > 200.f && myData->color > 0.f)
+        {
+            myData->color -= rand() % 100 / 10000.f;
+            if(myData->color < 0.f)
+                myData->color = 0.f;
+        }
+    });
 
-    particleSystem->setParticleRenderer([&renderer](const std::vector<EGE::ParticleSystem2D::Particle> particles, sf::RenderTarget&, const EGE::RenderStates&) {
-                                            log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
+    particleSystem->setParticleRenderer([&renderer](const std::list<EGE::ParticleSystem2D::Particle>& particles, sf::RenderTarget&, const EGE::RenderStates&) {
+        log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
 
-                                            // Generate vertexes.
-                                            std::vector<EGE::Vertex> vertexes;
-                                            for(const EGE::ParticleSystem2D::Particle& particle: particles)
-                                            {
-                                                vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), sf::Color::White));
-                                            }
+        // Generate vertexes.
+        std::vector<EGE::Vertex> vertexes;
+        for(const EGE::ParticleSystem2D::Particle& particle: particles)
+        {
+            ParticleData* myData = (ParticleData*)particle.userData.get();
+            sf::Color color(myData->color * 255, myData->color * 255, 255);
+            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
+            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y + myData->motion, 0.0), color));
+        }
 
-                                            // Actually render them.
-                                            renderer.renderPoints(vertexes, 4.0);
-                                        });
-
-    // spawn some particles at startup
-    const size_t PARTICLE_COUNT = 65000;
-    for(size_t s = 0; s < PARTICLE_COUNT; s++)
-    {
-        particleSystem->spawnParticle();
-    }
+        // Actually render them.
+        renderer.renderPoints(vertexes);
+    });
+    particleSystem->setParticleOnSpawn([](EGE::ParticleSystem2D::Particle& particle) {
+        // Create user data instance.
+        particle.userData = std::make_unique<ParticleData>();
+    });
 
     // assign particle system to scene
     scene->addObject(particleSystem);

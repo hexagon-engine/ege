@@ -96,7 +96,7 @@ public:
         m_dead = true;
     }
 
-    std::shared_ptr<EGE::Scene> getOwner()
+    std::shared_ptr<EGE::Scene> getOwner() const
     {
         return m_owner;
     }

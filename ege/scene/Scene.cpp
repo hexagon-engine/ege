@@ -24,11 +24,17 @@ void Scene::renderOnly(sf::RenderTarget& target, const RenderStates& states)
 
 void Scene::onUpdate(long long tickCounter)
 {
+    if(!isHeadless()) m_loop->getProfiler()->startSection("eventLoop");
     EventLoop::onUpdate();
+
+    if(!isHeadless()) m_loop->getProfiler()->endStartSection("objectUpdate");
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
+        if(!isHeadless()) m_loop->getProfiler()->startSection("update");
         auto object = *it;
         object.second->onUpdate(tickCounter);
+
+        if(!isHeadless()) m_loop->getProfiler()->endStartSection("deadCheck");
         if(object.second->isDead())
         {
             if(m_removeObjectCallback)
@@ -41,7 +47,9 @@ void Scene::onUpdate(long long tickCounter)
 
             it = m_objects.find(object.first);
         }
+        if(!isHeadless()) m_loop->getProfiler()->endSection();
     }
+    if(!isHeadless()) m_loop->getProfiler()->endSection();
 }
 
 long long Scene::addObject(std::shared_ptr<SceneObject> object)
