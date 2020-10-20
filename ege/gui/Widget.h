@@ -12,7 +12,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/gfx/RenderStates.h>
 #include <ege/util/Vector.h>
 
-#define WIDGET_DEBUG 0
+#define WIDGET_DEBUG 1
 
 namespace EGE
 {
@@ -66,6 +66,7 @@ public:
     {
         return m_size;
     }
+    Widget* getParent() { return m_parent; }
 
     virtual sf::FloatRect getBoundingBox();
     virtual sf::FloatRect getViewport(sf::RenderTarget& target);
