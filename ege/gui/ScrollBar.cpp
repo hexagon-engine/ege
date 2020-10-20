@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "ScrollBar.h"
 
+#include <ege/gfx/Renderer.h>
 #include <ege/gui/GUIGameLoop.h>
 
 namespace EGE
@@ -92,44 +93,20 @@ sf::FloatRect ScrollBar::getKnobBounds()
     return rect;
 }
 
-void drawButtonLike(sf::RenderTarget& target, EGE::Vec2d position, EGE::Vec2d size)
-{
-    sf::RectangleShape rs;
-    rs.setOutlineThickness(1.f);
-
-    rs.setFillColor(sf::Color(209, 209, 209));
-    rs.setSize(sf::Vector2f(size.x - 2.f, size.y - 2.f));
-    rs.setPosition(sf::Vector2f(position.x + 1.f, position.y + 1.f));
-    rs.setOutlineColor(sf::Color(255, 255, 255));
-    target.draw(rs);
-
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setSize(sf::Vector2f(size.x - 1.f, size.y - 1.f));
-    rs.setPosition(sf::Vector2f(position.x, position.y));
-    rs.setOutlineColor(sf::Color(60, 60, 60));
-    target.draw(rs);
-}
-
-void drawRect(sf::RenderTarget& target, EGE::Vec2d position, EGE::Vec2d size, sf::Color color)
-{
-    sf::RectangleShape rs(sf::Vector2f(size.x, size.y));
-    rs.setFillColor(color);
-    rs.setPosition(sf::Vector2f(position.x, position.y));
-    target.draw(rs);
-}
-
 void ScrollBar::renderOnly(sf::RenderTarget& target, const RenderStates&)
 {
+    Renderer renderer(target);
+
     // background
-    drawRect(target, EGE::Vec2d(0.f, 20.f), m_size - EGE::Vec2d(0.f, 40.f), sf::Color(175, 175, 175));
+    renderer.renderRectangle(0.0, 20.0, m_size.x, m_size.y - 40.0, sf::Color(175, 175, 175));
 
     // scroll buttons
-    drawButtonLike(target, EGE::Vec2d(0.f, 0.f), EGE::Vec2d(20.f, 20.f));
-    drawButtonLike(target, EGE::Vec2d(0.f, m_size.y - 20.f), EGE::Vec2d(20.f, 20.f));
+    renderer.renderButtonLike(0.0, 0.0, 20.0, 20.0);
+    renderer.renderButtonLike(0.0, m_size.y - 20.0, 20.0, 20.0);
 
     // knob
     sf::FloatRect rect = getKnobBounds();
-    drawButtonLike(target, EGE::Vec2d(rect.left, rect.top), EGE::Vec2d(rect.width, rect.height));
+    renderer.renderButtonLike(rect.left, rect.top, rect.width, rect.height);
 }
 
 }
