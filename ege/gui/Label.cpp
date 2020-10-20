@@ -69,6 +69,7 @@ void Label::updateGeometry()
                 setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
         }
         text.setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y) - sf::Vector2f(getPosition().x, getPosition().y));
+        text.setFillColor(sf::Color::Black);
         m_text = text;
         m_geometryChanged = false;
     }
