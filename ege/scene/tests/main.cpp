@@ -77,7 +77,10 @@ public:
         // add our 'test' shader
         EGE::RenderStates myStates = states;
         auto shader = getOwner()->getLoop()->getResourceManager().lock()->getShader("test");
-        shader->setUniform("pos", sf::Vector2f(0.f, 0.f));
+        double disturb1 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 5.14);
+        double disturb2 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 1.14);
+        shader->setUniform("disturb1", (float)disturb1);
+        shader->setUniform("disturb2", (float)disturb2);
         myStates.sfStates().shader = shader.get();
 
         sf::VertexArray varr(sf::Quads, 4);

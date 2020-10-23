@@ -14,11 +14,12 @@ void CameraObject2D::render(sf::RenderTarget& target, const RenderStates&) const
 {
     if constexpr(CAMERA_DEBUG)
     {
-        sf::VertexArray varr(sf::LineStrip, 4);
+        sf::VertexArray varr(sf::LineStrip, 5);
         varr.append(sf::Vertex(sf::Vector2f(-30.f, -30.f) + getPosition(), sf::Color::Yellow));
         varr.append(sf::Vertex(sf::Vector2f(30.f, 30.f) + getPosition(), sf::Color::Yellow));
         varr.append(sf::Vertex(sf::Vector2f(-30.f, 30.f) + getPosition(), sf::Color::Yellow));
         varr.append(sf::Vertex(sf::Vector2f(30.f, -30.f) + getPosition(), sf::Color::Yellow));
+        varr.append(sf::Vertex(sf::Vector2f(-30.f, -30.f) + getPosition(), sf::Color::Yellow));
         target.draw(varr);
     }
 }
