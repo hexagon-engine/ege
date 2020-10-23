@@ -21,6 +21,8 @@ set(SOURCES
 	"GUIScreen.h"
 	"Label.cpp"
 	"Label.h"
+	"ListBox.cpp"
+	"ListBox.h"
 	"RadioButton.cpp"
 	"RadioButton.h"
 	"ScrollBar.cpp"
@@ -34,5 +36,6 @@ set(SOURCES
 ege_add_module(gui)
 ege_depend_module(gui asyncLoop)
 ege_depend_module(gui event)
+ege_depend_module(gui gfx)
 ege_depend_module(gui profiler)
 ege_depend_module(gui resources)

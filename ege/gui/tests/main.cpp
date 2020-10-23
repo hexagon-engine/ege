@@ -6,6 +6,7 @@
 #include <ege/gui/CheckBox.h>
 #include <ege/gui/Frame.h>
 #include <ege/gui/Label.h>
+#include <ege/gui/ListBox.h>
 #include <ege/gui/RadioButton.h>
 #include <ege/gui/ScrollBar.h>
 #include <ege/gui/TextBox.h>
@@ -242,19 +243,19 @@ public:
 
         auto labelCenter = make<EGE::Label>(this);
         labelCenter->setString("Label Center");
-        labelCenter->setPosition(EGE::Vec2d(165.f, 200.f));
+        labelCenter->setPosition(EGE::Vec2d(165.f, 180.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
         auto labelRight = make<EGE::Label>(this);
         labelRight->setString("Label Right");
-        labelRight->setPosition(EGE::Vec2d(290.f, 250.f));
+        labelRight->setPosition(EGE::Vec2d(290.f, 210.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
 
         labelAnimated = make<EGE::Label>(this);
         labelAnimated->setString("Animation");
-        labelAnimated->setPosition(EGE::Vec2d(150.f, 300.f));
+        labelAnimated->setPosition(EGE::Vec2d(150.f, 240.f));
         labelAnimated->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelAnimated);
 
@@ -290,6 +291,14 @@ public:
         radioButton->setPosition(EGE::Vec2d(40.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
+
+        auto listBox = make<EGE::ListBox>(this);
+        listBox->setPosition(EGE::Vec2d(40.f, 260.f));
+        listBox->setSize(EGE::Vec2d(100.f, 100.f));
+        listBox->addEntry("ListBox");
+        listBox->addEntry("Element 2");
+        listBox->addEntry("Element Three");
+        addWidget(listBox);
 
         auto scrollBar = make<EGE::ScrollBar>(this);
         scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
@@ -348,7 +357,7 @@ public:
         animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
         animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
         addAnimation(animLabel, [this](EGE::Animation*, double val) {
-                        labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
+                        labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 240.f));
                      });
     }
 

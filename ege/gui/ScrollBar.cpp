@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "ScrollBar.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/gfx/Renderer.h>
 #include <ege/gui/GUIGameLoop.h>
 
@@ -14,7 +15,8 @@ namespace EGE
 void ScrollBar::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     Widget::onMouseButtonPress(event);
-    EGE::Vec2d tmp1(event.x - getPosition().x, event.y - getPosition().y);
+    EGE::Vec2d tmp1(event.x, event.y);
+    log(LogLevel::Debug) << "ScrollBar::onMouseButtonPress: " << tmp1.x << ", " << tmp1.y;
     auto bounds = getKnobBounds();
     m_dragPos = tmp1 - EGE::Vec2d(bounds.getPosition().x, bounds.getPosition().y);
     m_dragValue = m_value;

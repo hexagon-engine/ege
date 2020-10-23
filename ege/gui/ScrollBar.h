@@ -34,7 +34,7 @@ public:
     void setValue(double value)
     {
         ASSERT(value >= 0.0);
-        ASSERT(value < m_maxValue);
+        ASSERT(value <= m_maxValue);
         m_value = value;
         m_geometryUpdate = true;
     }

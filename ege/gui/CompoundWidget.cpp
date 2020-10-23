@@ -7,6 +7,8 @@ Copyright (c) Sppmacd 2020
 
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
@@ -58,12 +60,17 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     EGE::Vec2d position(event.x, event.y);
+
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
 
+        EGE::Vec2d relative = position;
+        relative -= getPosition();
+        log(LogLevel::Debug) << "CompoundWidget::onMouseButtonPress: " << relative.x << ", " << relative.y;
+
         // Change focused widget.
-        if(widget->isMouseOver(position) && event.button == sf::Mouse::Left)
+        if(widget->isMouseOver(relative) && event.button == sf::Mouse::Left)
         {
             if(m_focusedWidget)
                 m_focusedWidget->onLossFocus();
@@ -71,7 +78,12 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
             m_focusedWidget = widget;
             m_focusedWidget->onGainFocus();
 
-            widget->onMouseButtonPress(event);
+            EGE::Vec2d relative = position;
+            log(LogLevel::Debug) << "CompoundWidget::onMouseButtonPress (isMouseOver): " << relative.x << ", " << relative.y;
+            sf::Event::MouseButtonEvent event2;
+            event2.x = relative.x;
+            event2.y = relative.y;
+            widget->onMouseButtonPress(event2);
         }
     }
 }
