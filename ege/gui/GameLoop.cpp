@@ -48,13 +48,11 @@ int GameLoop::run()
 
         m_profiler->endSection();
         m_profiler->end();
-        std::cerr << "TPS: " << 1.f / tickClock.getElapsedTime().asSeconds() << std::endl;
+        //std::cerr << "TPS: " << 1.f / tickClock.getElapsedTime().asSeconds() << std::endl;
     }
 
-    //m_profiler->endStartSection("finish");
     result = onFinish(m_exitCode);
 
-    //m_profiler->endStartSection("subLoopFinish");
     auto subLoop = getSubGameLoop();
     if(subLoop)
     {
@@ -72,11 +70,13 @@ int GameLoop::run()
     return m_exitCode;
 }
 
-void GameLoop::setSubLoop(std::shared_ptr<GameLoop> loop)
+bool GameLoop::setSubLoop(std::shared_ptr<GameLoop> loop)
 {
     ASSERT(loop);
-    loop->onLoad();
+    if(loop->onLoad() == EventResult::Failure)
+        return false;
     EventLoop::setSubLoop(loop);
+    return true;
 }
 
 void GameLoop::exit(int exitCode)

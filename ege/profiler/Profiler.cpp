@@ -44,8 +44,8 @@ void Profiler::startSectionLL(std::string name)
 {
     ASSERT(m_root.m_started);
 
-    Section* section = NULL;
-    Section* parentSection = NULL;
+    Section* section = nullptr;
+    Section* parentSection = nullptr;
     if(m_startedSections.empty())
     {
         parentSection = &m_root;
@@ -57,7 +57,7 @@ void Profiler::startSectionLL(std::string name)
         section = parentSection->findSubSection(name);
     }
 
-    if(section == NULL)
+    if(section == nullptr)
     {
         section = new Section;
         section->m_name = name;

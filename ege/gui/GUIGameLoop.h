@@ -15,7 +15,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/resources/ResourceManager.h>
 #include <memory>
 
-#define GUI_DEBUG 1
+#define GUI_DEBUG 0
 
 namespace EGE
 {
