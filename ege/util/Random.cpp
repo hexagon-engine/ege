@@ -10,9 +10,21 @@ Copyright (c) Sppmacd 2020
 
 namespace EGE
 {
+    // Implementations
+    namespace Internal
+    {
+        uint64_t lcg_gen(uint64_t seed, uint64_t a, uint64_t c, uint64_t m)
+        {
+            uint64_t val = (a * seed + c) % m;
+            return val;
+        }
+    }
+
+    // Random
     uint64_t Random::nextInt(uint64_t range)
     {
         ASSERT(m_randomizer);
+        ASSERT(range != 0);
         return m_randomizer->nextInt() % range;
     }
 
@@ -33,7 +45,7 @@ namespace EGE
 
         if(begin > end)
             std::swap(begin, end); // Begin is bigger than end, swap them.
-        return nextInt(end - begin) + begin;
+        return nextInt(end - begin + 1) + begin;
     }
 
     float Random::nextFloatRanged(float begin, float end)

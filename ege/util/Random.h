@@ -11,6 +11,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+// Generic randomizer
 class Randomizer
 {
 public:
@@ -18,7 +19,16 @@ public:
     virtual uint64_t nextInt() = 0;
 };
 
-template<uint64_t A, uint64_t C, uint64_t M = 1ULL << 63>
+// Implementations
+namespace Internal
+{
+
+uint64_t lcg_gen(uint64_t seed, uint64_t a, uint64_t c, uint64_t m);
+
+}
+
+// LCG
+template<uint64_t A, uint64_t C, uint64_t M = 1ULL << 32>
 class LCGRandomizer : public Randomizer
 {
 public:
@@ -28,14 +38,14 @@ public:
     virtual uint64_t nextInt()
     {
         static_assert(M != 0);
-        return m_seed = (A * m_seed + C) % M;
+        return m_seed = Internal::lcg_gen(m_seed, A, C, M);
     }
 
 private:
     uint64_t m_seed;
 };
 
-typedef LCGRandomizer<1103515245, 12345> DefaultLCGRandomizer;
+typedef LCGRandomizer<1103515211, 12347> DefaultLCGRandomizer;
 
 class Random
 {
