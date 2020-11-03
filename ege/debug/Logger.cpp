@@ -181,7 +181,6 @@ LogBackground Logger::background(LogLevel level)
             return LogBackground::Bright_Red;
         default:
             CRASH();
-            return LogBackground::Black;
     }
 }
 
@@ -212,6 +211,8 @@ std::string Logger::prefix(LogLevel level)
         case LogLevel::Crash:
             prefix += "R";
             break;
+        default:
+            CRASH();
     }
 
     prefix += ": ";
