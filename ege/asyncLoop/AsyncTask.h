@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <functional>
 #include <SFML/System.hpp>
 
-#define ASYNC_TASK_DEBUG 1
+#define ASYNC_TASK_DEBUG 0
 
 namespace EGE
 {
