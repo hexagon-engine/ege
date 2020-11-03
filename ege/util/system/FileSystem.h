@@ -46,10 +46,21 @@ public:
     size_t size;
 };
 
+namespace FileOpenMode
+{
+    const int
+        None = 0,
+        Execute = 1,
+        Write = 2,
+        Read = 4;
+};
+typedef int FileOpenModeMask;
+
 FileInfo stat(std::string path);
 std::string getWorkingDirectory();
 bool setWorkingDirectory(std::string dir);
 std::string readLink(std::string link);
+bool testFileAccess(std::string path, FileOpenModeMask mode = FileOpenMode::None);
 
 }
 

@@ -33,6 +33,11 @@ std::string readLink(std::string link)
     return impl().readLink(link);
 }
 
+bool testFileAccess(std::string path, FileOpenModeMask mode)
+{
+    return impl().testFileAccess(path, mode);
+}
+
 } // System
 
 }

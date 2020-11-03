@@ -105,6 +105,11 @@ std::string SystemImplUnix::readLink(std::string link)
     return path;
 }
 
+bool SystemImplUnix::testFileAccess(std::string path, System::FileOpenModeMask mode)
+{
+    return access(path.c_str(), (int)mode) == 0;
+}
+
 } // Unix
 
 }

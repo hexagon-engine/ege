@@ -25,6 +25,7 @@ public:
     std::string getWorkingDirectory();
     bool setWorkingDirectory(std::string dir);
     std::string readLink(std::string link);
+    bool testFileAccess(std::string path, System::FileOpenModeMask mode);
 
     virtual std::string className() { return "EGE::Unix::SystemImplUnix"; }
 };

@@ -260,6 +260,9 @@ TESTCASE(system)
     EXPECT(EGE::System::getWorkingDirectory().size() < i1);
     auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
     EXPECT(file.exists() && file.type == EGE::System::FileType::Directory);
+    bool access = EGE::System::testFileAccess(".");
+    DUMP(1, access);
+    EXPECT(access);
     return 0;
 }
 
@@ -278,7 +281,6 @@ TESTCASE(random)
         // Ranged
         int64_t r1 = random.nextIntRanged(10, 5);
         distribution[r1]++;
-        std::cerr << r1 << ",";
         EXPECT(r1 <= 10 && r1 >= 5);
         float r2 = random.nextFloatRanged(10, 5);
         EXPECT(r2 <= 10 && r2 >= 5);
