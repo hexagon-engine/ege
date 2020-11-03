@@ -28,6 +28,8 @@ set(SOURCES
 	"ObjectUnsignedInt.cpp"
 	"ObjectUnsignedInt.h"
 	"PointerUtils.h"
+	"Random.cpp"
+	"Random.h"
 	"Serializable.cpp"
 	"Serializable.h"
 	"StringUtils.h"

@@ -12,6 +12,7 @@
 #include <ege/util/ObjectSerializers.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/Random.h>
 #include <ege/util/system.h>
 #include <ege/util/Vector.h>
 #include <iostream>
@@ -152,27 +153,27 @@ TESTCASE(json)
 TESTCASE(objectIntTypes)
 {
     std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-    long long number    =    0xFEDCBA9876543210;
+    long long number    =    0x7EDCBA9876543210;
 
     map->addInt("b", number, EGE::ObjectInt::Type::Byte);  // 0x10
     map->addInt("s", number, EGE::ObjectInt::Type::Short); // 0x3210
     map->addInt("i", number, EGE::ObjectInt::Type::Int);   // 0x76543210
-    map->addInt("l", number, EGE::ObjectInt::Type::Long);  // 0xFEDCBA9876543210
+    map->addInt("l", number, EGE::ObjectInt::Type::Long);  // 0x7EDCBA9876543210
 
     map->addUnsignedInt("ub", number, EGE::ObjectUnsignedInt::Type::Byte);  // 0x10
     map->addUnsignedInt("us", number, EGE::ObjectUnsignedInt::Type::Short); // 0x3210
     map->addUnsignedInt("ui", number, EGE::ObjectUnsignedInt::Type::Int);   // 0x76543210
-    map->addUnsignedInt("ul", number, EGE::ObjectUnsignedInt::Type::Long);  // 0xFEDCBA9876543210
+    map->addUnsignedInt("ul", number, EGE::ObjectUnsignedInt::Type::Long);  // 0x7EDCBA9876543210
 
     EXPECT_EQUAL(map->getObject("b").lock()->asInt(), 0x10);
     EXPECT_EQUAL(map->getObject("s").lock()->asInt(), 0x3210);
     EXPECT_EQUAL(map->getObject("i").lock()->asInt(), 0x76543210);
-    EXPECT_EQUAL(map->getObject("l").lock()->asInt(), 0xFEDCBA9876543210);
+    EXPECT_EQUAL(map->getObject("l").lock()->asInt(), 0x7EDCBA9876543210);
 
     EXPECT_EQUAL(map->getObject("ub").lock()->asUnsignedInt(), 0x10);
     EXPECT_EQUAL(map->getObject("us").lock()->asUnsignedInt(), 0x3210);
     EXPECT_EQUAL(map->getObject("ui").lock()->asUnsignedInt(), 0x76543210);
-    EXPECT_EQUAL(map->getObject("ul").lock()->asUnsignedInt(), 0xFEDCBA9876543210);
+    EXPECT_EQUAL(map->getObject("ul").lock()->asUnsignedInt(), 0x7EDCBA9876543210);
     return 0;
 }
 
@@ -274,6 +275,28 @@ TESTCASE(system)
     EXPECT(EGE::System::getWorkingDirectory().size() < i1);
     auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
     EXPECT(file.exists() && file.type == EGE::System::FileInfo::Type::Directory);
+    return 0;
+}
+
+TESTCASE(random)
+{
+    EGE::Random random(1234);
+    for(size_t s = 0; s < 1024000; s++)
+    {
+        EXPECT(EGE::Random::fastRandom().nextInt(10) < 10);
+
+        EXPECT(random.nextInt(10) < 10);
+        EXPECT(random.nextFloat(10.0) < 10.0);
+        EXPECT(random.nextDouble(10.0) < 10.0);
+
+        // Ranged
+        int64_t r1 = random.nextIntRanged(10, 5);
+        EXPECT(r1 <= 10 && r1 >= 5);
+        float r2 = random.nextFloatRanged(10, 5);
+        EXPECT(r2 <= 10 && r2 >= 5);
+        double r3 = random.nextDoubleRanged(10, 5);
+        EXPECT(r3 <= 10 && r3 >= 5);
+    }
     return 0;
 }
 
