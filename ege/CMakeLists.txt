@@ -16,4 +16,3 @@ add_subdirectory(resources)
 add_subdirectory(scene)
 add_subdirectory(sfml)
 add_subdirectory(util)
-

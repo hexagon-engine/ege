@@ -1,20 +1,5 @@
 #include <testsuite/Tests.h>
-#include <ege/util/Converter.h>
-#include <ege/util/Equation.h>
-#include <ege/util/EquationSystem.h>
-#include <ege/util/JSONConverter.h>
-#include <ege/util/Math.h>
-#include <ege/util/Object.h>
-#include <ege/util/ObjectFloat.h>
-#include <ege/util/ObjectInt.h>
-#include <ege/util/ObjectList.h>
-#include <ege/util/ObjectMap.h>
-#include <ege/util/ObjectSerializers.h>
-#include <ege/util/ObjectString.h>
-#include <ege/util/PointerUtils.h>
-#include <ege/util/Random.h>
-#include <ege/util/system.h>
-#include <ege/util/Vector.h>
+#include <ege/util.h>
 #include <iostream>
 #include <sstream>
 

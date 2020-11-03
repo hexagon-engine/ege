@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <cxxabi.h>
+
 namespace EGE
 {
     template<typename T>
