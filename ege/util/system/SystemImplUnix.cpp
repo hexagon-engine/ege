@@ -50,9 +50,9 @@ System::FileInfo SystemImplUnix::stat(std::string path)
     if(rc < 0)
     {
         if(rc == ENOENT)
-            info.type = System::FileInfo::Type::NonExistent;
+            info.type = System::FileType::NonExistent;
         else
-            info.type = System::FileInfo::Type::Unknown;
+            info.type = System::FileType::Unknown;
 
         return info;
     }
@@ -60,14 +60,14 @@ System::FileInfo SystemImplUnix::stat(std::string path)
     // type
     switch(_stat.st_mode & S_IFMT)
     {
-        case S_IFBLK:  info.type = System::FileInfo::Type::BlockDevice;     break;
-        case S_IFCHR:  info.type = System::FileInfo::Type::CharacterDevice; break;
-        case S_IFDIR:  info.type = System::FileInfo::Type::Directory;       break;
-        case S_IFIFO:  info.type = System::FileInfo::Type::FIFO;            break;
-        case S_IFLNK:  info.type = System::FileInfo::Type::SymLink;         break;
-        case S_IFREG:  info.type = System::FileInfo::Type::File;            break;
-        case S_IFSOCK: info.type = System::FileInfo::Type::Socket;          break;
-        default:       info.type = System::FileInfo::Type::Unknown;         break;
+        case S_IFBLK:  info.type = System::FileType::BlockDevice;     break;
+        case S_IFCHR:  info.type = System::FileType::CharacterDevice; break;
+        case S_IFDIR:  info.type = System::FileType::Directory;       break;
+        case S_IFIFO:  info.type = System::FileType::FIFO;            break;
+        case S_IFLNK:  info.type = System::FileType::SymLink;         break;
+        case S_IFREG:  info.type = System::FileType::File;            break;
+        case S_IFSOCK: info.type = System::FileType::Socket;          break;
+        default:       info.type = System::FileType::Unknown;         break;
     }
 
     // size
@@ -92,7 +92,7 @@ bool SystemImplUnix::setWorkingDirectory(std::string dir)
 std::string SystemImplUnix::readLink(std::string link)
 {
     System::FileInfo info = stat(link);
-    if(info.type != System::FileInfo::Type::SymLink)
+    if(info.type != System::FileType::SymLink)
         return {};
 
     char* buf = new char[info.size];

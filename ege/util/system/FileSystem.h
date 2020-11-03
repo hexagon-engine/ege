@@ -13,37 +13,36 @@ namespace EGE
 namespace System
 {
 
+enum class FileType
+{
+    Directory,
+    File,
+
+    // >>> unix-specific
+    BlockDevice,
+    CharacterDevice,
+    FIFO,
+    Socket,
+    SymLink,
+    // <<<
+
+    Unknown,
+    NonExistent
+};
+
 class FileInfo
 {
 public:
-
-    enum class Type
-    {
-        Directory,
-        File,
-
-        // >>> unix-specific
-        BlockDevice,
-        CharacterDevice,
-        FIFO,
-        Socket,
-        SymLink,
-        // <<<
-
-        Unknown,
-        NonExistent
-    };
-
     bool error()
     {
-        return type == Type::Unknown || type == Type::NonExistent;
+        return type == FileType::Unknown || type == FileType::NonExistent;
     }
     bool exists()
     {
-        return type != Type::NonExistent;
+        return type != FileType::NonExistent;
     }
 
-    Type type;
+    FileType type;
     size_t size;
 };
 

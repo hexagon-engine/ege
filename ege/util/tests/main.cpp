@@ -259,14 +259,15 @@ TESTCASE(system)
     EGE::System::setWorkingDirectory("..");
     EXPECT(EGE::System::getWorkingDirectory().size() < i1);
     auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
-    EXPECT(file.exists() && file.type == EGE::System::FileInfo::Type::Directory);
+    EXPECT(file.exists() && file.type == EGE::System::FileType::Directory);
     return 0;
 }
 
 TESTCASE(random)
 {
-    EGE::Random random(1234);
-    for(size_t s = 0; s < 1024000; s++)
+    EGE::Random random(1235);
+    std::map<uint64_t, size_t> distribution;
+    for(size_t s = 0; s < 1000000; s++)
     {
         EXPECT(EGE::Random::fastRandom().nextInt(10) < 10);
 
@@ -276,12 +277,17 @@ TESTCASE(random)
 
         // Ranged
         int64_t r1 = random.nextIntRanged(10, 5);
+        distribution[r1]++;
+        std::cerr << r1 << ",";
         EXPECT(r1 <= 10 && r1 >= 5);
         float r2 = random.nextFloatRanged(10, 5);
         EXPECT(r2 <= 10 && r2 >= 5);
         double r3 = random.nextDoubleRanged(10, 5);
         EXPECT(r3 <= 10 && r3 >= 5);
     }
+    // FIXME: it shows only even numbers, it's a disadvantage of bad LCG generator :(
+    for(size_t s = 5; s <= 10; s++)
+        std::cout << s << ": " << distribution[s] << " cases" << std::endl;
     return 0;
 }
 

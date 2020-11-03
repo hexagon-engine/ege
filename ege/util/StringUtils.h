@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <cxxabi.h>
+#include <string>
 
 namespace EGE
 {
@@ -23,15 +24,16 @@ namespace EGE
         return tname;
     }
 
-    inline std::string display()
+    template<typename T>
+    inline std::string display(T& first)
     {
-        return "";
+        return std::to_string(first);
     }
 
     template<typename T, typename... Args>
     inline std::string display(T& first, Args&... args)
     {
-        return toString(first) + ", " + display(args...);
+        return std::to_string(first) + ", " + display(args...);
     }
 }
 
