@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include <errno.h>
 #include <limits.h>
 #include <memory>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -34,7 +35,10 @@ System::ExactTime SystemImplUnix::exactTime()
 {
     timespec _ts;
     if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
+    {
+        m_lastErrno = errno;
         return {};
+    }
 
     return {_ts.tv_sec, _ts.tv_nsec};
 }
@@ -49,6 +53,7 @@ System::FileInfo SystemImplUnix::stat(std::string path)
 
     if(rc < 0)
     {
+        m_lastErrno = errno;
         if(rc == ENOENT)
             info.type = System::FileType::NonExistent;
         else
@@ -86,19 +91,28 @@ std::string SystemImplUnix::getWorkingDirectory()
 
 bool SystemImplUnix::setWorkingDirectory(std::string dir)
 {
-    return chdir(dir.c_str()) >= 0;
+    int rc = chdir(dir.c_str());
+    if(rc < 0)
+        m_lastErrno = errno;
+    return !rc;
 }
 
 std::string SystemImplUnix::readLink(std::string link)
 {
     System::FileInfo info = stat(link);
     if(info.type != System::FileType::SymLink)
+    {
+        m_lastErrno = errno;
         return {};
+    }
 
     char* buf = new char[info.size];
     int rc = readlink(link.c_str(), buf, info.size);
     if(rc < 0)
+    {
+        m_lastErrno = errno;
         return {};
+    }
 
     std::string path = buf;
     delete[] buf;
@@ -107,7 +121,16 @@ std::string SystemImplUnix::readLink(std::string link)
 
 bool SystemImplUnix::testFileAccess(std::string path, System::FileOpenModeMask mode)
 {
-    return access(path.c_str(), (int)mode) == 0;
+    int rc = access(path.c_str(), (int)mode);
+    if(rc < 0)
+        m_lastErrno = errno;
+    return !rc;
+}
+
+// Global
+std::string SystemImplUnix::getErrorMessage()
+{
+    return strerror(m_lastErrno);
 }
 
 } // Unix

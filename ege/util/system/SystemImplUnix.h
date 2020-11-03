@@ -27,7 +27,13 @@ public:
     std::string readLink(std::string link);
     bool testFileAccess(std::string path, System::FileOpenModeMask mode);
 
+    // Global
+    std::string getErrorMessage();
+
     virtual std::string className() { return "EGE::Unix::SystemImplUnix"; }
+
+private:
+    int m_lastErrno = 0;
 };
 
 } // Unix

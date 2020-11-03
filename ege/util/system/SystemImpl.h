@@ -31,6 +31,9 @@ public:
     virtual std::string readLink(std::string) { CRASH(); }
     virtual bool testFileAccess(std::string, System::FileOpenModeMask) { CRASH(); }
 
+    // Global
+    virtual std::string getErrorMessage() { CRASH(); }
+
     virtual std::string className() { return "EGE::Internal::SystemImpl"; }
 };
 
