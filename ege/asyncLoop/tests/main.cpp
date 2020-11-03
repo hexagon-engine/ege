@@ -54,9 +54,8 @@ TESTCASE(threadSafeEventLoop)
     EGE::ThreadSafeEventLoop loop;
     float progress = 0;
     srand(time(NULL));
-    bool running = true;
 
-    auto loadingWorker = [&progress, &loop, &running]()->int {
+    auto loadingWorker = [&progress, &loop]()->int {
         std::cerr << "Loading..." << std::endl;
         int mt = 14355;
         for(int i = 0; i < mt; i++)
@@ -66,14 +65,14 @@ TESTCASE(threadSafeEventLoop)
             if(rand() % 100 == 0)
                 std::cerr << "Doing something at i=" << i << std::endl;
             if(i == 5478)
-                loop.deferredInvoke([&running]() {running = false; }); // It will be called in main thread.
+                loop.deferredInvoke([&loop]() { loop.exit(); }); // It will be called in main thread.
         }
         return 0;
     };
-    loop.addAsyncTask(make<EGE::AsyncTask>(loadingWorker, [&running](EGE::AsyncTask::State state) {
+    loop.addAsyncTask(make<EGE::AsyncTask>(loadingWorker, [&loop](EGE::AsyncTask::State state) {
         if(state.finished)
         {
-            running = false;
+            loop.exit();
         }
     }));
     auto timer = make<EGE::Timer>(&loop, EGE::Timer::Mode::Infinite, EGE::Time(1.0, EGE::Time::Unit::Seconds));
@@ -81,11 +80,7 @@ TESTCASE(threadSafeEventLoop)
         std::cerr << "Loading progress: " << (int)(progress * 100) << "%" << std::endl;
     });
     loop.addTimer("displayProgress", timer);
-
-    while(running)
-        loop.onUpdate();
-
-    return 0;
+    return loop.run();
 }
 
 RUN_TESTS(asyncLoop);
