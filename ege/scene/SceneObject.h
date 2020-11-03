@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include "ObjectRenderer.h"
 
 #include <SFML/Graphics.hpp>
+#include <ege/controller/Controllable.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gpo/GameplayObject.h>
 #include <ege/gui/Animatable.h>
@@ -18,7 +19,7 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public GameplayObject
+class SceneObject : public Animatable, public GameplayObject, public Controllable
 {
 public:
     SceneObject(std::shared_ptr<EGE::Scene> owner, std::string typeId)

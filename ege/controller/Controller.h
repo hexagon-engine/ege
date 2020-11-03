@@ -5,9 +5,9 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Controllable.h"
 #include "ControlObject.h"
 
-#include <ege/scene/SceneObject.h>
 #include <ege/util/ObjectMap.h>
 #include <memory>
 
@@ -17,12 +17,12 @@ namespace EGE
 class Controller
 {
 public:
-    Controller(std::shared_ptr<SceneObject> object)
+    Controller(std::shared_ptr<Controllable> object)
     : m_object(object) {}
 
     virtual ~Controller() {}
 
-    std::shared_ptr<SceneObject> getObject()
+    std::shared_ptr<Controllable> getObject()
     {
         return m_object;
     }
@@ -34,7 +34,7 @@ public:
     virtual void sendRequest(const ControlObject& data) = 0;
 
 private:
-    std::shared_ptr<SceneObject> m_object;
+    std::shared_ptr<Controllable> m_object;
 };
 
 }

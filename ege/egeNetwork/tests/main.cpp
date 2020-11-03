@@ -195,8 +195,8 @@ public:
     void move(bool moving, int dir)
     {
         std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
-        _map->addObject("moving", make<EGE::ObjectInt>(moving));
-        _map->addObject("dir", make<EGE::ObjectInt>(dir));
+        _map->addInt("moving", moving);
+        _map->addInt("dir", dir);
         requestControl(nullptr, EGE::ControlObject("move", _map));
     }
 };
@@ -331,7 +331,8 @@ public:
         scene->setCamera(m_camera);
 
         // Set our Client as sub-loop. It will automatically connect to server now.
-        setSubLoop(m_client);
+        if(!setSubLoop(m_client))
+            return EGE::EventResult::Failure;
 
         return EGE::EventResult::Success;
     }
@@ -339,7 +340,7 @@ public:
     void onTick(long long tick)
     {
         EGE::GUIGameLoop::onTick(tick);
-        // Get currently controlled object
+        // Camera: follow currently controlled object.
         auto controller = m_client->getDefaultController();
         if(controller)
         {

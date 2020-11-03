@@ -1,11 +1,13 @@
 set(SOURCES
-	"Controller.h"
+	"Controllable.cpp"
+	"Controllable.h"
 	"Controller.cpp"
-	"ControlObject.h"
+	"Controller.h"
 	"ControlObject.cpp"
+	"ControlObject.h"
 )
 
 ege_add_module(controller)
 ege_depend_module(controller loop) #?
-ege_depend_module(controller scene)
+#ege_depend_module(controller scene)
 ege_depend_module(controller util)
