@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "EGEPacketConverter.h"
 
+#include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
@@ -66,6 +67,7 @@ static bool parseUnsignedInt(sf::Packet& input, ObjectUnsignedInt& object)
             object.setType(ObjectUnsignedInt::Type::Long);
         } return true;
     }
+    err(LogLevel::Debug) << "EGEPacketConverter: Invalid Unsigned Integer " << type;
     return false;
 }
 
@@ -106,6 +108,7 @@ static bool parseInt(sf::Packet& input, ObjectInt& object)
             object.setType(ObjectInt::Type::Long);
         } return true;
     }
+    err(LogLevel::Debug) << "EGEPacketConverter: Invalid Integer " << type;
     return false;
 }
 
@@ -228,7 +231,7 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
         // value
         std::shared_ptr<Object> specific = parseSpecific(type, input);
         if(!specific)
-            return {"expected value", input.getReadPosition()};
+            return {"expected value after value type in map", input.getReadPosition()};
         object.addObject(key, specific);
     }
 
@@ -259,7 +262,7 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
                 // value
                 std::shared_ptr<Object> specific = parseSpecific(type, input);
                 if(!specific)
-                    return {"expected value", input.getReadPosition()};
+                    return {"expected value after value type in list", input.getReadPosition()};
                 object.addObject(specific);
             }
             else
@@ -288,6 +291,7 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
     if(!result.message.empty())
     {
         err(LogLevel::Verbose) << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
+        hexDump(input.getData(), input.getDataSize());
         return false;
     }
     return true;
@@ -295,17 +299,17 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
 
 static bool outputInt(sf::Packet& output, const ObjectInt& object)
 {
-    output << 'i';
+    output << (sf::Uint8)'i';
     switch(object.getType())
     {
     case ObjectInt::Type::Byte:
-        output << 'b' << (sf::Int8)object.asInt(); break;
+        output << (sf::Uint8)'b' << (sf::Int8)object.asInt(); break;
     case ObjectInt::Type::Short:
-        output << 's' << (sf::Int16)object.asInt(); break;
+        output << (sf::Uint8)'s' << (sf::Int16)object.asInt(); break;
     case ObjectInt::Type::Int:
-        output << 'i' << (sf::Int32)object.asInt(); break;
+        output << (sf::Uint8)'i' << (sf::Int32)object.asInt(); break;
     case ObjectInt::Type::Long:
-        output << 'l' << (sf::Int64)object.asInt(); break;
+        output << (sf::Uint8)'l' << (sf::Int64)object.asInt(); break;
     default:
         return false;
     }
@@ -314,17 +318,17 @@ static bool outputInt(sf::Packet& output, const ObjectInt& object)
 
 static bool outputUnsignedInt(sf::Packet& output, const ObjectUnsignedInt& object)
 {
-    output << 'u';
+    output << (sf::Uint8)'u';
     switch(object.getType())
     {
     case ObjectUnsignedInt::Type::Byte:
-        output << 'b' << (sf::Uint8)object.asUnsignedInt(); break;
+        output << (sf::Uint8)'b' << (sf::Uint8)object.asUnsignedInt(); break;
     case ObjectUnsignedInt::Type::Short:
-        output << 's' << (sf::Uint16)object.asUnsignedInt(); break;
+        output << (sf::Uint8)'s' << (sf::Uint16)object.asUnsignedInt(); break;
     case ObjectUnsignedInt::Type::Int:
-        output << 'i' << (sf::Uint32)object.asUnsignedInt(); break;
+        output << (sf::Uint8)'i' << (sf::Uint32)object.asUnsignedInt(); break;
     case ObjectUnsignedInt::Type::Long:
-        output << 'l' << (sf::Uint64)object.asUnsignedInt(); break;
+        output << (sf::Uint8)'l' << (sf::Uint64)object.asUnsignedInt(); break;
     default:
         return false;
     }

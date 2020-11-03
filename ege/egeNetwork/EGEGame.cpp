@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "EGEGame.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/scene/CameraObject2D.h>
 #include <functional>
 
@@ -33,6 +34,12 @@ void EGEGame::setScene(std::shared_ptr<Scene> scene)
 
 bool EGEGame::initialize()
 {
+    if(m_versionString.empty())
+    {
+        log(LogLevel::Warning) << "EGEGame: Version string is empty!";
+        m_versionString = "Game";
+    }
+
     m_gameplayObjectManager = make<EGEGame::GPOM>(this);
     return m_gameplayObjectManager->reload();
 }

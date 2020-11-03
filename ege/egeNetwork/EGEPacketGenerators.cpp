@@ -153,4 +153,12 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSSceneObjectControl(std::shared_pt
     return make<EGEPacket>(EGEPacket::Type::SSceneObjectControl, args);
 }
 
+std::shared_ptr<EGEPacket> EGEPacket::generate_Version(int value, std::string str)
+{
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    args->addInt("value", value);
+    args->addString("string", str);
+    return make<EGEPacket>(EGEPacket::Type::_Version, args);
+}
+
 }

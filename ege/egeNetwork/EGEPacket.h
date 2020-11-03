@@ -45,7 +45,8 @@ public:
         CSceneObjectControl = 0x0d,
         SDefaultControllerId = 0x0e,
         CSceneObjectRequest = 0x0f,
-        SSceneObjectControl = 0x10
+        SSceneObjectControl = 0x10,
+        _Version = 0x11 // defined for EGEGame.
     };
 
     static std::string typeString(Type type);
@@ -96,6 +97,7 @@ public:
     static std::shared_ptr<EGEPacket> generateSDefaultControllerId(std::shared_ptr<SceneObject> object);
     static std::shared_ptr<EGEPacket> generateCSceneObjectRequest(long long id);
     static std::shared_ptr<EGEPacket> generateSSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
+    static std::shared_ptr<EGEPacket> generate_Version(int value, std::string str);
 
 private:
     Type m_type;

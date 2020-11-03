@@ -62,7 +62,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             int value = egePacket->getArgs()->getObject("value").lock()->asInt();
             if(value != EGE_PROTOCOL_VERSION)
             {
-                err(LogLevel::Error) << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
+                err() << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
                     << EGE_PROTOCOL_VERSION << ", got " << value << ")";
                 return EventResult::Failure;
             }
@@ -171,8 +171,13 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                 controller->handleRequest(ControlObject(data_name.lock()->asString(), std::dynamic_pointer_cast<ObjectMap>(data_args.lock())));
         }
         break;
+    case EGEPacket::Type::_Version:
+        {
+
+        }
+        break;
     default:
-        err(LogLevel::Error) << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
+        err() << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
     }
 
@@ -190,7 +195,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     auto func = gpom->sceneObjectCreators.findById(typeId);
     if(!func) //game version mismatch?
     {
-        err(LogLevel::Error) << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?";
+        err() << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?";
         return EventResult::Failure;
     }
 
@@ -253,7 +258,7 @@ EventResult EGEClient::onLoad()
 
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
-        err(LogLevel::Info) << "001E EGE/egeNetwork: Starting client";
+        log() << "001E EGE/egeNetwork: Starting client";
         if(!connect(m_ip, m_port))
             return 1;
 
@@ -269,7 +274,7 @@ EventResult EGEClient::onLoad()
         return 0;
     };
     auto clientNetworkCallback = [this](AsyncTask::State state) {
-        err(LogLevel::Info) << "001F EGE/egeNetwork: Closing client";
+        log() << "001F EGE/egeNetwork: Closing client";
 
         exit(state.returnCode);
 
