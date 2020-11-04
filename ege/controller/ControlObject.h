@@ -27,7 +27,7 @@ public:
     }
     std::shared_ptr<ObjectMap> getArgs() const
     {
-        return std::static_pointer_cast<ObjectMap>(m_args->copy());
+        return m_args ? std::static_pointer_cast<ObjectMap>(m_args->copy()) : nullptr;
     }
 
 private:
