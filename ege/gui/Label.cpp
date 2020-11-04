@@ -67,6 +67,7 @@ void Label::updateGeometry()
             case Align::Right:
                 text.setOrigin(bounds.width, bounds.height);
                 setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
+                break;
         }
         text.setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y) - sf::Vector2f(getPosition().x, getPosition().y));
         text.setFillColor(sf::Color::Black);

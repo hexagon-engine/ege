@@ -29,6 +29,7 @@ public:
     void setTextAlign(Align align);
     virtual void setPosition(EGE::Vec2d position) override;
     void setFontSize(int size);
+
     virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
     virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
 
