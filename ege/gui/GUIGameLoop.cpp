@@ -22,6 +22,10 @@ GUIGameLoop::~GUIGameLoop()
 
 EventResult GUIGameLoop::onLoad()
 {
+    // Call user-defined handler
+    load();
+
+    // Do our own initializations
     if(m_resourceManager)
     {
         bool success = m_resourceManager->reload();

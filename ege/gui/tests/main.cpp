@@ -14,20 +14,11 @@
 class MyGameLoop : public EGE::GUIGameLoop
 {
 public:
-    virtual EGE::EventResult onLoad() override
+    virtual EGE::EventResult load()
     {
-        EGE::EventResult result = EGE::GUIGameLoop::onLoad();
-        if(result == EGE::EventResult::Failure)
-            return result;
-
         DEBUG_PRINT("onLoad");
         getWindow().lock().get()->setFramerateLimit(60);
         return EGE::EventResult::Success;
-    }
-
-    virtual void logicTick(long long tickCount) override
-    {
-        EGE::GUIGameLoop::logicTick(tickCount);
     }
 };
 
@@ -119,7 +110,7 @@ public:
         texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
     }
 
-    virtual void render(sf::RenderTarget& target, const EGE::RenderStates& states) override
+    virtual void render(sf::RenderTarget& target, const EGE::RenderStates&) override
     {
         EGE::GUIScreen::render(target);
         DEBUG_PRINT("MyResourceManager render");

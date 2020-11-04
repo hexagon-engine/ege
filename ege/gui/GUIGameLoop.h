@@ -28,7 +28,6 @@ public:
     virtual ~GUIGameLoop();
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
-    virtual EventResult onLoad() override;
     virtual void onTick(long long tickCount) override;
     virtual void onExit(int) override {}
 
@@ -68,7 +67,12 @@ public:
         return m_frameTime;
     }
 
+protected:
+    virtual EventResult load() { return EventResult::Success; }
+
 private:
+    virtual EventResult onLoad() override;
+
     std::shared_ptr<GUIScreen> m_currentGui = nullptr;
     // to allow animations and lazy-load
     std::shared_ptr<GUIScreen> m_pendingGui = nullptr;
