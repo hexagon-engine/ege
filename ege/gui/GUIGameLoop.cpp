@@ -67,6 +67,12 @@ void GUIGameLoop::onTick(long long tickCount)
         }
         m_currentGui = m_pendingGui;
         m_currentGui->onLoad();
+
+        // allow GUI screens know about window's size when creating
+        sf::Vector2u wndSize = getWindow().lock()->getSize();
+        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
+        m_currentGui->onResize(event);
+
         addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
         m_pendingGui = nullptr;
     }
