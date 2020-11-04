@@ -182,6 +182,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
         break;
     case EGEPacket::Type::_Version:
         {
+            // TODO: Force version check
             auto value = egePacket->getArgs()->getObject("value");
             ASSERT(!value.expired() && value.lock()->isUnsignedInt());
             auto str = egePacket->getArgs()->getObject("string");

@@ -191,6 +191,10 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                 err() << "Invalid server! (need '" << getVersionString() << "', got '" << _str << "')";
                 return EventResult::Failure;
             }
+
+            // TODO: Force it on server-side and kick player when it doesn't send
+            // its _Version packet
+            send(EGEPacket::generate_Version(getVersion(), getVersionString()));
         }
         break;
     default:
