@@ -30,42 +30,22 @@ public:
     : m_parent(parent) {}
 
     CoordType getEyePosition() { return CoordType(); };
+    void setScalingMode(ScalingMode mode) { m_scalingMode = mode; }
+    ScalingMode getScalingMode() { return m_scalingMode; }
+    void setFOV(float fov) { m_fov = fov; }
 
-    void setScalingMode(ScalingMode mode)
-    {
-        m_scalingMode = mode;
-    }
+    float getFOV() const { return m_fov; }
+    void setSize(CoordType size) { m_size = size; }
+    CoordType getSize() { return m_size; }
 
-    ScalingMode getScalingMode()
-    {
-        return m_scalingMode;
-    }
-
-    void setFOV(float fov)
-    {
-        m_fov = fov;
-    }
-
-    float getFOV() const
-    {
-        return m_fov;
-    }
-
-    void setSize(CoordType size)
-    {
-        m_size = size;
-    }
-
-    CoordType getSize()
-    {
-        return m_size;
-    }
+    void setFollowObject(std::shared_ptr<EGE::SceneObject> object) { m_following = object; }
 
 protected:
     float m_fov = 0.f;
     CoordType m_size;
     std::shared_ptr<EGE::Scene> m_parent;
     ScalingMode m_scalingMode = ScalingMode::None;
+    std::shared_ptr<EGE::SceneObject> m_following;
 };
 
 }
