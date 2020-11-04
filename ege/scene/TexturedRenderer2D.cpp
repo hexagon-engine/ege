@@ -12,23 +12,16 @@ namespace EGE
 
 void TexturedRenderer2D::updateGeometry(SceneObject& object)
 {
-    SceneObject2D& sceneObject = (SceneObject2D&)object;
-
     //DBG(SCENE_DEBUG, "TexturedObject2D::updateGeometry");
+    // Update texture
     ResourceManager* resManager = object.getOwner()->getLoop()->getResourceManager().lock().get();
     ASSERT(resManager);
-    sf::Texture* texture = resManager->getTexture(m_texture).get();
-    ASSERT(texture);
-    m_sprite.setTexture(*texture);
+    m_texture = resManager->getTexture(m_textureName).get();
+    ASSERT(m_texture);
+
+    // Update texture rect
     if(m_textureRect == sf::FloatRect())
-        m_textureRect = sf::FloatRect(0.f, 0.f, texture->getSize().x, texture->getSize().y);
-    m_sprite.setTextureRect((sf::IntRect)m_textureRect);
-    m_sprite.setPosition(sceneObject.getPosition());
-    if(m_centered)
-        sceneObject.setOrigin(m_textureRect.getSize() / 2.f);
-    m_sprite.setOrigin(sceneObject.getOrigin());
-    m_sprite.setRotation(sceneObject.getRotation());
-    m_sprite.setScale(sceneObject.getScale());
+        m_textureRect = sf::FloatRect(0.f, 0.f, m_texture->getSize().x, m_texture->getSize().y);
 }
 
 sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) const
@@ -47,9 +40,20 @@ sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) cons
     return rect;
 }
 
-void TexturedRenderer2D::render(const SceneObject&, sf::RenderTarget& target, const RenderStates& states) const
+void TexturedRenderer2D::render(const SceneObject& sceneObject, sf::RenderTarget& target, const RenderStates& states) const
 {
-    target.draw(m_sprite, states.sfStates());
+    sf::Sprite sprite;
+    SceneObject2D& so2d = (SceneObject2D&)sceneObject;
+    sprite.setTexture(*m_texture);
+    sprite.setTextureRect((sf::IntRect)m_textureRect);
+    sprite.setPosition(so2d.getPosition());
+    if(m_centered)
+        so2d.setOrigin(m_textureRect.getSize() / 2.f);
+    sprite.setOrigin(so2d.getOrigin());
+    sprite.setRotation(so2d.getRotation());
+    sprite.setScale(so2d.getScale());
+
+    target.draw(sprite, states.sfStates());
 }
 
 }

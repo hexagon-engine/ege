@@ -23,7 +23,7 @@ public:
 
     void setTextureName(std::string name)
     {
-        m_texture = name;
+        m_textureName = name;
         setGeometryNeedUpdate();
     }
     void setTextureRect(sf::FloatRect rect)
@@ -37,7 +37,6 @@ public:
     void center(bool centered = true)
     {
         m_centered = centered;
-        setGeometryNeedUpdate();
     }
 
     virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const;
@@ -45,9 +44,9 @@ public:
 private:
     virtual void updateGeometry(SceneObject& object);
 
-    std::string m_texture;
+    std::string m_textureName;
     sf::FloatRect m_textureRect;
-    sf::Sprite m_sprite;
+    sf::Texture* m_texture = nullptr;
     bool m_centered = false;
 };
 
