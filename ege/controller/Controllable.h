@@ -11,6 +11,9 @@ namespace EGE
 class Controllable
 {
     // Nothing yet :(
+private:
+    // Make this type polymorphic.
+    virtual void _dummy() {}
 };
 
 }
