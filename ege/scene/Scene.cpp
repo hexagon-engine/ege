@@ -28,10 +28,12 @@ void Scene::onUpdate(long long tickCounter)
     EventLoop::onUpdate();
 
     if(!isHeadless()) m_loop->getProfiler()->endStartSection("objectUpdate");
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
+    for(auto it = m_objects.begin(); it != m_objects.end();)
     {
         if(!isHeadless()) m_loop->getProfiler()->startSection("update");
         auto object = *it;
+        auto oldIt = it;
+        auto nextIt = ++it;
         object.second->onUpdate(tickCounter);
 
         if(!isHeadless()) m_loop->getProfiler()->endStartSection("deadCheck");
@@ -40,13 +42,12 @@ void Scene::onUpdate(long long tickCounter)
             if(m_removeObjectCallback)
                 m_removeObjectCallback(object.second);
 
-            m_objects.erase(it);
+            m_objects.erase(oldIt);
 
             if(m_objects.empty())
                 return;
-
-            it = m_objects.find(object.first);
         }
+        it = nextIt;
         if(!isHeadless()) m_loop->getProfiler()->endSection();
     }
     if(!isHeadless()) m_loop->getProfiler()->endSection();
