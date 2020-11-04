@@ -43,6 +43,7 @@ macro(ege_executable targetname source_path modules)
 		ege_link_sfml("${targetname}")
 		#if(${UNIX}) # TODO
 			target_link_libraries("${targetname}" PUBLIC dl)
+			target_link_libraries("${targetname}" PRIVATE GLEW)
 		#endif()
 	endif()
 	install(TARGETS "${targetname}" RUNTIME DESTINATION ".")
