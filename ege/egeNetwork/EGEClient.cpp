@@ -52,7 +52,6 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         onData(egePacket->getArgs());
         break;
     case EGEPacket::Type::_Ping:
-        std::cerr << "====== PONG ======" << std::endl;
         send(EGEPacket::generate_Pong());
         break;
     case EGEPacket::Type::_Pong:
@@ -173,7 +172,25 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::_Version:
         {
+            auto value = egePacket->getArgs()->getObject("value");
+            ASSERT(!value.expired() && value.lock()->isUnsignedInt());
+            auto str = egePacket->getArgs()->getObject("string");
+            ASSERT(!str.expired() && str.lock()->isString());
 
+            int _value = value.lock()->asInt();
+            std::string _str = str.lock()->asString();
+
+            if(_value != getVersion())
+            {
+                err() << "Invalid server version! (need " << getVersion() << ", got " << _value << ")";
+                return EventResult::Failure;
+            }
+
+            if(_str != getVersionString())
+            {
+                err() << "Invalid server! (need '" << getVersionString() << "', got '" << _str << "')";
+                return EventResult::Failure;
+            }
         }
         break;
     default:

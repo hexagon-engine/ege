@@ -71,10 +71,7 @@ public:
 
     void setExitHandler(std::function<void(int)> func) { m_exitHandler = func; }
 
-    std::shared_ptr<ClientNetworkController> getDefaultController()
-    {
-        return m_defaultController;
-    }
+    std::shared_ptr<ClientNetworkController> getDefaultController() { return m_defaultController; }
     std::shared_ptr<ClientNetworkController> getController(long long objectId);
 
     virtual std::shared_ptr<ClientNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }

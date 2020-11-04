@@ -22,11 +22,13 @@ namespace EGE
 EventResult EGEServer::onClientConnect(ClientConnection* client)
 {
     sf::Lock lock(m_clientsAccessMutex);
-    // FIXME: it should be asynchronous
 
+    // FIXME: it should be asynchronous
     if(!client->send(EGEPacket::generate_Ping()))
         return EventResult::Failure;
     if(!client->send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION)))
+        return EventResult::Failure;
+    if(!client->send(EGEPacket::generate_Version(getVersion(), getVersionString())))
         return EventResult::Failure;
     if(!client->send(EGEPacket::generateSLoginRequest(getLoginData(client))))
         return EventResult::Failure;
@@ -123,6 +125,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             {
                 err(LogLevel::Error) << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
                     << EGE_PROTOCOL_VERSION << ", got " << value << ")";
+                kickClientWithReason(egeClient, "Invalid protocol version (need " + std::to_string(EGE_PROTOCOL_VERSION) + ", got " + std::to_string(value) + ")");
                 return EventResult::Failure;
             }
             egeClient->send(EGEPacket::generate_Pong());
@@ -171,10 +174,34 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             if(!sceneObject) // object doesn't exist
                 return EventResult::Failure;
 
-            err(LogLevel::Debug) << "so request " << id.lock()->asInt();
+            err(LogLevel::Debug) << "SO request " << id.lock()->asInt();
             egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
             if(egeClient->getControlledSceneObject() == id.lock()->asInt())
                 egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
+        }
+        break;
+    case EGEPacket::Type::_Version:
+        {
+            auto value = egePacket->getArgs()->getObject("value");
+            ASSERT(!value.expired() && value.lock()->isUnsignedInt());
+            auto str = egePacket->getArgs()->getObject("string");
+            ASSERT(!str.expired() && str.lock()->isString());
+
+            int _value = value.lock()->asInt();
+            std::string _str = str.lock()->asString();
+
+            if(_value != getVersion())
+            {
+                err() << "Invalid client version! (need " << getVersion() << ", got " << _value;
+                kickClientWithReason(egeClient, "Invalid game version (need " + std::to_string(getVersion()) + ", got " + std::to_string(_value) + ")");
+                return EventResult::Failure;
+            }
+            else
+            {
+                err() << "Invalid client! (need " << getVersionString() << ", got " << _str;
+                kickClientWithReason(egeClient, "Invalid game (need " + getVersionString() + ", got " + _str + ")");
+                return EventResult::Failure;
+            }
         }
         break;
     default:
