@@ -109,6 +109,12 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
         // it's 'delete'd by eventhandler
         m_currentGui = screen;
         m_currentGui->onLoad();
+
+        // allow GUI screens know about window's size when creating
+        sf::Vector2u wndSize = getWindow().lock()->getSize();
+        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
+        m_currentGui->onResize(event);
+
         addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
     }
     else
