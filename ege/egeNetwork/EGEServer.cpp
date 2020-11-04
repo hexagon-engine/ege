@@ -193,13 +193,14 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
             if(_value != getVersion())
             {
-                err() << "Invalid client version! (need " << getVersion() << ", got " << _value;
+                err() << "Invalid client version! (need " << getVersion() << ", got " << _value << ")";
                 kickClientWithReason(egeClient, "Invalid game version (need " + std::to_string(getVersion()) + ", got " + std::to_string(_value) + ")");
                 return EventResult::Failure;
             }
-            else
+
+            if(_str != getVersionString())
             {
-                err() << "Invalid client! (need " << getVersionString() << ", got " << _str;
+                err() << "Invalid client! (need " << getVersionString() << ", got " << _str << ")";
                 kickClientWithReason(egeClient, "Invalid game (need " + getVersionString() + ", got " + _str + ")");
                 return EventResult::Failure;
             }

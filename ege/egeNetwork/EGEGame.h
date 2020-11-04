@@ -54,7 +54,7 @@ private:
     std::shared_ptr<GPOM> m_gameplayObjectManager;
     std::shared_ptr<Scene> m_scene;
     int m_version = 0; // 0 - "unknown"
-    std::string m_versionString;
+    std::string m_versionString = "EGE Generic";
 };
 
 }
