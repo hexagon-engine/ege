@@ -32,6 +32,7 @@ void GameplayObjectRegistry<IdT, ObjT>::clear()
         delete it->second;
     }
     m_objects.clear();
+    m_greatestNumericId = 0;
 }
 
 EGE_GPOREGISTRY_TEMPLATE
