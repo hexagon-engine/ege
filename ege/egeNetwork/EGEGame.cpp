@@ -23,8 +23,12 @@ bool EGEGame::GPOM::load()
     sceneObjectCreators.add("EGE::CameraObject2D", new std::function([](std::shared_ptr<EGE::Scene> scene)->std::shared_ptr<SceneObject> {
                                                                         return make<CameraObject2D>(scene);
                                                                      }));
+    return true;
+}
 
-    return m_game->registerSceneObjectCreators(this);
+EGEGame::EGEGame()
+{
+    m_gameplayObjectManager = make<EGEGame::GPOM>(this);
 }
 
 void EGEGame::setScene(std::shared_ptr<Scene> scene)
@@ -40,8 +44,7 @@ bool EGEGame::initialize()
         m_versionString = "Game";
     }
 
-    m_gameplayObjectManager = make<EGEGame::GPOM>(this);
-    return m_gameplayObjectManager->reload();
+    return m_gameplayObjectManager->load();
 }
 
 }

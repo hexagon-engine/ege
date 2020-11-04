@@ -287,12 +287,8 @@ public:
     MyGameLoop(int port)
     : m_port(port) {}
 
-    EGE::EventResult onLoad()
+    EGE::EventResult load() override
     {
-        // Call base onLoad to create profiler, load resources etc.
-        if(EGE::GUIGameLoop::onLoad() == EGE::EventResult::Failure)
-            return EGE::EventResult::Failure;
-
         // Create GUI and assign it to client.
         auto gui = make<EGE::GUIScreen>(this);
         setCurrentGUIScreen(gui);
@@ -307,14 +303,8 @@ public:
         // Create SceneWidget to be displayed in the window.
         gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
 
-        // Set initialize handler for Client. It will be called before connecting.
-        m_client->setInitializeHandler([](EGE::EGEGame::GPOM* gpom) {
-                                gpom->sceneObjectCreators.add("test-egeNetwork:MyObject", new std::function(
-                                                                [](std::shared_ptr<EGE::Scene> scene)->std::shared_ptr<EGE::SceneObject> {
-                                                                    return make<MyObject>(scene);
-                                                                }));
-                                return true;
-                            });
+        // Register SceneObject types for Client.
+        m_client->addSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE_OBJECT_CREATOR(MyObject));
 
         // Set exit handler for Client. It will be called when client is disconnected.
         m_client->setExitHandler([this](int retVal) {

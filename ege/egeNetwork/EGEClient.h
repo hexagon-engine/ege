@@ -21,6 +21,8 @@ Copyright (c) Sppmacd 2020
 
 #define EGECLIENT_DEBUG 1
 
+#define EGE_SCENE_OBJECT_CREATOR(clazz) [](std::shared_ptr<EGE::Scene> scene) { return make<clazz>(scene); }
+
 namespace EGE
 {
 
@@ -29,6 +31,7 @@ class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop, public
 public:
     EGEClient(sf::IpAddress addr, unsigned short port)
     : Client()
+    , EGEGame()
     , m_ip(addr)
     , m_port(port) {}
 
@@ -66,10 +69,7 @@ public:
     virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
     virtual void disconnect();
 
-    void setExitHandler(std::function<void(int)> func)
-    {
-        m_exitHandler = func;
-    }
+    void setExitHandler(std::function<void(int)> func) { m_exitHandler = func; }
 
     std::shared_ptr<ClientNetworkController> getDefaultController()
     {
@@ -83,6 +83,11 @@ public:
 
     void requestObject(long long id);
 
+    void addSceneObjectCreator(std::string id, std::function<std::shared_ptr<SceneObject>(std::shared_ptr<Scene>)> creator)
+    {
+        m_sceneObjectCreators.push_back(std::make_pair(id, creator));
+    }
+
 private:
     std::map<long long, EGEPacket::Type> m_uidMap;
     std::shared_ptr<AsyncTask> m_clientTask;
@@ -90,6 +95,7 @@ private:
     std::map<long long, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
     std::function<void(int)> m_exitHandler;
     std::set<long long> m_requestedObjects;
+    std::vector<std::pair<std::string, std::function<std::shared_ptr<SceneObject>(std::shared_ptr<Scene>)>>> m_sceneObjectCreators;
     sf::IpAddress m_ip;
     unsigned short m_port;
 };

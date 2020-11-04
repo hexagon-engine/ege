@@ -32,6 +32,8 @@ public:
         EGEGame* m_game;
     };
 
+    EGEGame();
+
     virtual void setScene(std::shared_ptr<Scene> scene);
 
     std::shared_ptr<Scene> getScene() { return m_scene; }
@@ -39,19 +41,6 @@ public:
     std::shared_ptr<GPOM> getGameplayObjectManager() { return m_gameplayObjectManager; }
 
     virtual bool initialize();
-
-    virtual bool registerSceneObjectCreators(GPOM* gpom)
-    {
-        if(m_handler)
-            return m_handler(gpom);
-        else
-        {
-            log(LogLevel::Warning) << "EGEGame: GPOM handler not registered!";
-            return true;
-        }
-    }
-
-    void setInitializeHandler(std::function<bool(GPOM*)> handler) { m_handler = handler; }
 
     // Connection is accepted if <peer version == version>
     void setVersion(int value) { m_version = value; }
@@ -64,7 +53,6 @@ public:
 private:
     std::shared_ptr<GPOM> m_gameplayObjectManager;
     std::shared_ptr<Scene> m_scene;
-    std::function<bool(GPOM*)> m_handler;
     int m_version = 0; // 0 - "unknown"
     std::string m_versionString;
 };

@@ -138,7 +138,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
                 auto sceneObject = scene->getObject(_id);
                 if(!sceneObject) // Object was not yet created on client :(
                 {
-                    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from SDefaultControllerId handler";
+                    if constexpr(EGECLIENT_DEBUG) log(LogLevel::Debug) << "EGEClient: Sending requestObject from SDefaultControllerId handler";
                     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(_id));
                     if(!m_requestedObjects.count(_id))
                         requestObject(_id);
@@ -255,6 +255,20 @@ EventResult EGEClient::onLoad()
 {
     if(!EGEGame::initialize())
         return EventResult::Failure;
+
+    // Add all SceneObjectCreators
+    {
+        auto gpom = getGameplayObjectManager();
+        for(auto pr: m_sceneObjectCreators)
+        {
+            gpom->sceneObjectCreators.add(pr.first, new std::function(
+                                        [pr](std::shared_ptr<EGE::Scene> scene)
+                                        {
+                                            return pr.second(scene);
+                                        }
+                                    ));
+        }
+    }
 
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
