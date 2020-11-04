@@ -64,7 +64,7 @@ void GUIGameLoop::onTick(long long tickCount)
         {
             removeEventHandler(m_currentGui.get());
             // it's 'delete'd by eventhandler
-            m_currentGui->onClose();
+            m_currentGui->onUnload();
         }
         m_currentGui = m_pendingGui;
         m_currentGui->onLoad();
@@ -115,7 +115,7 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
         removeEventHandler(m_currentGui.get());
         // it's 'delete'd by eventhandler
         if(m_currentGui)
-           m_currentGui->onClose();
+           m_currentGui->onUnload();
 
         m_currentGui = screen;
         m_currentGui->onLoad();

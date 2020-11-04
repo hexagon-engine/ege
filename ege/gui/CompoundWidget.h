@@ -22,6 +22,7 @@ public:
     : Widget(loop) {}
 
     // System Events -- are passed to all child widgets
+    virtual void onClose() override {}
     virtual void onResize(sf::Event::SizeEvent& event) override;
     virtual void onTextEnter(sf::Event::TextEvent& event) override;
     virtual void onKeyPress(sf::Event::KeyEvent& event) override;

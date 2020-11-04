@@ -41,6 +41,8 @@ public:
     virtual void onTouchMove(sf::Event::TouchEvent& event) override;
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
     virtual void onSensorChange(sf::Event::SensorEvent& event) override;
+
+    virtual void onUnload() {}
     virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
 };
 
