@@ -402,10 +402,10 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     return false;
 }
 
-bool JSONConverter::in(JSONConverter::InputStreamType& input, ObjectMap& object) const
+bool JSONConverter::in(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object) const
 {
     ignoreWhitespace(input);
-    bool b = parseMap(input, object);
+    bool b = parseValue(input, object);
     ignoreWhitespace(input);
     if(!input.eof())
     {
@@ -417,7 +417,7 @@ bool JSONConverter::in(JSONConverter::InputStreamType& input, ObjectMap& object)
     return b;
 }
 
-bool JSONConverter::out(JSONConverter::OutputStreamType& output, const ObjectMap& object) const
+bool JSONConverter::out(JSONConverter::OutputStreamType& output, const Object& object) const
 {
     output << object.toString();
     return true;

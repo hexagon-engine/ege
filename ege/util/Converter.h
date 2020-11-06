@@ -5,11 +5,15 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <memory>
+
 namespace EGE
 {
 
-class ObjectMap;
+class Object;
 
+// Converter is responsible for
+// creating object in in()!
 template<class I, class O = I>
 class Converter
 {
@@ -17,8 +21,8 @@ public:
     typedef I InputStreamType;
     typedef O OutputStreamType;
 
-    virtual bool in(InputStreamType& input, ObjectMap& object) const = 0;
-    virtual bool out(OutputStreamType& output, const ObjectMap& object) const = 0;
+    virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const = 0;
+    virtual bool out(OutputStreamType& output, const Object& object) const = 0;
 };
 
 namespace Internal
@@ -27,33 +31,33 @@ namespace Internal
 template<class I, class O>
 struct _ConverterInput
 {
-    ObjectMap& object;
+    std::shared_ptr<Object>& object;
     const Converter<I, O>& converter;
 
-    _ConverterInput(ObjectMap& _o, const Converter<I, O>& _c)
+    _ConverterInput(std::shared_ptr<Object>& _o, const Converter<I, O>& _c)
     : object(_o), converter(_c) {}
 };
 
 template<class I, class O>
 struct _ConverterOutput
 {
-    ObjectMap& object;
+    Object& object;
     const Converter<I, O>& converter;
 
-    _ConverterOutput(ObjectMap& _o, const Converter<I, O>& _c)
+    _ConverterOutput(Object& _o, const Converter<I, O>& _c)
     : object(_o), converter(_c) {}
 };
 
 }
 
 template<class I, class O>
-Internal::_ConverterInput<I, O> objectIn(ObjectMap& _o, const Converter<I, O>& _c)
+Internal::_ConverterInput<I, O> objectIn(std::shared_ptr<Object>& _o, const Converter<I, O>& _c)
 {
     return Internal::_ConverterInput<I, O>(_o, _c);
 }
 
 template<class I, class O>
-Internal::_ConverterOutput<I, O> objectOut(ObjectMap& _o, const Converter<I, O>& _c)
+Internal::_ConverterOutput<I, O> objectOut(Object& _o, const Converter<I, O>& _c)
 {
     return Internal::_ConverterOutput<I, O>(_o, _c);
 }
@@ -61,10 +65,10 @@ Internal::_ConverterOutput<I, O> objectOut(ObjectMap& _o, const Converter<I, O>&
 template<class I, class O>
 O convertTo(const I& input, const Converter<I, O>& inputConverter, const Converter<I, O>& outputConverter)
 {
-    ObjectMap tmp;
-    inputConverter.out(input, tmp);
+    std::shared_ptr<Object> tmp;
+    inputConverter.in(input, tmp);
     O output;
-    outputConverter.in(output, tmp);
+    outputConverter.out(output, *tmp.get());
     return output;
 }
 

@@ -15,8 +15,8 @@ namespace EGE
 class JSONConverter : public Converter<std::istream, std::ostream>
 {
 public:
-    virtual bool in(InputStreamType& input, ObjectMap& object) const;
-    virtual bool out(OutputStreamType& output, const ObjectMap& object) const;
+    virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const;
+    virtual bool out(OutputStreamType& output, const Object& object) const;
 };
 
 }

@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "PointerUtils.h"
+
 #include <map>
 #include <memory>
 #include <string>
@@ -18,7 +20,7 @@ class ObjectMap;
 class Object
 {
 public:
-    virtual std::string toString() const { return "<empty Object>"};
+    virtual std::string toString() const { return "<empty Object>"; };
 
     virtual std::string asString() const { return ""; }
     virtual long long asInt() const { return 0; }

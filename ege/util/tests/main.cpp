@@ -20,20 +20,30 @@ TESTCASE(object)
 class MyConverter : public EGE::Converter<std::string>
 {
 public:
-    virtual bool in(std::string& input, EGE::ObjectMap& object) const
+    virtual bool in(std::string& input, std::shared_ptr<EGE::Object>& object) const
     {
-        object.addObject("myString", make<EGE::ObjectString>(input));
+        std::shared_ptr<EGE::ObjectMap> objectMap = make<EGE::ObjectMap>();
+        objectMap->addObject("myString", make<EGE::ObjectString>(input));
+        object = objectMap;
         return true;
     }
 
-    virtual bool out(std::string& output, const EGE::ObjectMap& object) const
+    virtual bool out(std::string& output, const EGE::Object& object) const
     {
-        auto myString = object.getObject("myString").lock();
-        if(!myString)
-            return false;
+        if(object.isMap())
+        {
+            EGE::ObjectMap& objectMap = (EGE::ObjectMap&)object;
+            auto myString = objectMap.getObject("myString").lock();
+            if(!myString)
+                return false;
 
-        output = myString->asString();
-        return true;
+            output = myString->asString();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 };
 
@@ -41,15 +51,17 @@ TESTCASE(converter)
 {
     MyConverter converter;
     std::string myString;
-    EGE::ObjectMap map, map2;
+    EGE::ObjectMap map;
+    std::shared_ptr<EGE::Object> map2;
     map.addObject("myString", make<EGE::ObjectInt>(1234));
     std::cerr << map.toString() << std::endl;
     myString << EGE::objectOut(map, converter);
     EXPECT_EQUAL(myString, "1234");
     myString = "test4443";
     myString >> EGE::objectIn(map2, converter);
-    std::cerr << map2.toString() << std::endl;
-    EXPECT_EQUAL(map2.getObject("myString").lock()->asString(), "test4443");
+    std::cerr << map2->toString() << std::endl;
+    std::shared_ptr<EGE::ObjectMap> objectMap = std::static_pointer_cast<EGE::ObjectMap>(map2);
+    EXPECT_EQUAL(objectMap->getObject("myString").lock()->asString(), "test4443");
     return 0;
 }
 
@@ -124,13 +136,13 @@ TESTCASE(json)
              0,1,2,3,4,5,\n\r6,7,8,9,\"a\"   \n], \"N e x t Text\"            :\"\"\n\n\n\n, \"test66\":{},\
             \"test77\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }, \"EscapeTest\": \"  \
             \\n\\tTest\\\"Test\\\"\\\\ \\\n\t\tTEST\", \"booltest\": true}");
-    EGE::ObjectMap map;
-    if(!(str >> EGE::objectIn(map, EGE::JSONConverter())))
+    std::shared_ptr<EGE::Object> obj;
+    if(!(str >> EGE::objectIn(obj, EGE::JSONConverter())))
         std::cerr << "parse error" << std::endl;
 
     // generate
     std::ostringstream str2;
-    str2 << EGE::objectOut(map, EGE::JSONConverter());
+    str2 << EGE::objectOut(*obj.get(), EGE::JSONConverter());
     std::cerr << "generated=" << str2.str() << std::endl;
     return 0;
 }
