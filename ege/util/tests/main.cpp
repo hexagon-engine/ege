@@ -261,7 +261,7 @@ TESTCASE(system)
     auto file = EGE::System::stat(EGE::System::getWorkingDirectory());
     EXPECT(file.exists() && file.type == EGE::System::FileType::Directory);
     EXPECT(EGE::System::testFileAccess("."));
-    EXPECT(!EGE::System::testFileAccess("/???/nonexistent/"));
+    EXPECT(!EGE::System::testFileAccess("/??/nonexistent/"));
     DUMP(1, EGE::System::getErrorMessage());
     return 0;
 }
