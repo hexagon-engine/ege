@@ -18,7 +18,7 @@ class ObjectMap;
 class Object
 {
 public:
-    virtual std::string toString() const = 0;
+    virtual std::string toString() const { return "<empty Object>"};
 
     virtual std::string asString() const { return ""; }
     virtual long long asInt() const { return 0; }
@@ -36,7 +36,7 @@ public:
     virtual bool isFloat() const { return false; }
     virtual bool isList() const { return false; }
 
-    virtual std::shared_ptr<Object> copy() const = 0;
+    virtual std::shared_ptr<Object> copy() const { return make<Object>(); };
 };
 
 }
