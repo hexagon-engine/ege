@@ -16,15 +16,15 @@ public:
     typedef bool ValueType;
 
     explicit ObjectBoolean(ValueType num = false)
-    : m_number(num) {}
+    : m_value(num) {}
 
     virtual std::string toString() const;
 
     // TODO: int representations
-    virtual std::string asString() const { return m_number ? "1" : "0"; }
-    virtual long long asInt() const { return m_number; };
-    virtual unsigned long long asUnsignedInt() { return m_number; }
-    virtual bool asBool() const { return m_number; }
+    virtual std::string asString() const { return m_value ? "1" : "0"; }
+    virtual long long asInt() const { return m_value; };
+    virtual unsigned long long asUnsignedInt() { return m_value; }
+    virtual bool asBool() const { return m_value; }
     virtual double asFloat() const { return asInt(); }
 
     virtual bool isString() const { return false; }
@@ -33,9 +33,9 @@ public:
     virtual bool isBool() const { return true; }
     virtual bool isFloat() const { return false; }
 
-    void setValue(ValueType number)
+    void setValue(ValueType value)
     {
-        m_number = number;
+        m_value = value;
     }
 
     virtual std::shared_ptr<Object> copy() const;
@@ -43,8 +43,7 @@ public:
 private:
     std::string suffix() const;
 
-    ValueType m_number;
-    Type m_type;
+    ValueType m_value;
 };
 
 }

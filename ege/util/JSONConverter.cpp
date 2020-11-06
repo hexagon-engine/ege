@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "JSONConverter.h"
 
 #include "Object.h"
+#include "ObjectBoolean.h"
 #include "ObjectFloat.h"
 #include "ObjectList.h"
 #include "ObjectMap.h"
@@ -16,6 +17,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <memory>
+#include <set>
 
 namespace EGE
 {
@@ -106,6 +108,30 @@ bool parseString(JSONConverter::InputStreamType& input, std::string& object)
         std::cerr << "json: unexpected EOF" << logIndex(input.tellg()) << std::endl;
         return false;
     }
+    return true;
+}
+
+void consumeUntil(JSONConverter::InputStreamType& input, std::string& object, std::set<char> c)
+{
+    while(!input.eof() && !c.count(input.peek()))
+    {
+        char _c;
+        input >> _c;
+        object.push_back(_c);
+    }
+}
+
+bool parseBoolean(JSONConverter::InputStreamType& input, bool& object)
+{
+    std::string val;
+    consumeUntil(input, val, {',', '}'});
+
+    if(val == "true")
+        object = true;
+    else if(val == "false")
+        object = false;
+    else
+        return false;
     return true;
 }
 
@@ -321,6 +347,19 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
             return false;
         }
         object2->setString(value);
+        object = object2;
+        return true;
+    }
+    else if(c == 't' || c == 'f') // first letters of 'true' and 'false'
+    {
+        std::shared_ptr<ObjectBoolean> object2 = make<ObjectBoolean>();
+        bool value;
+        if(!parseBoolean(input, value))
+        {
+            std::cerr << "json: expected boolean" << logIndex(input.tellg()) << std::endl;
+            return false;
+        }
+        object2->setValue(value);
         object = object2;
         return true;
     }
