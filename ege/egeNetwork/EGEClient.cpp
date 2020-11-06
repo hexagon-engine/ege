@@ -360,6 +360,16 @@ std::shared_ptr<ClientNetworkController> EGEClient::getController(long long obje
     return m_controllersForObjects[objectId];
 }
 
+std::shared_ptr<SceneObject> EGEClient::getDefaultControlledObject()
+{
+    return std::dynamic_pointer_cast<SceneObject>(getDefaultController());
+}
+
+std::shared_ptr<SceneObject> EGEClient::getControlledObject(long long objectId)
+{
+    return std::dynamic_pointer_cast<SceneObject>(getController(objectId));
+}
+
 void EGEClient::control(std::shared_ptr<SceneObject> object, const ControlObject& data)
 {
     if(!object)

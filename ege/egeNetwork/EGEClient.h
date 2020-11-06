@@ -73,6 +73,8 @@ public:
 
     std::shared_ptr<ClientNetworkController> getDefaultController() { return m_defaultController; }
     std::shared_ptr<ClientNetworkController> getController(long long objectId);
+    std::shared_ptr<SceneObject> getDefaultControlledObject();
+    std::shared_ptr<SceneObject> getControlledObject(long long objectId);
 
     virtual std::shared_ptr<ClientNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }
     void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
