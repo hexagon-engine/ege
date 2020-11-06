@@ -27,9 +27,6 @@ std::shared_ptr<Object> ObjectMap::copy() const
 
 const std::shared_ptr<Object>& ObjectMap::addObject(std::string name, const std::shared_ptr<Object>& subObject)
 {
-    if(!subObject)
-        return subObject;
-
     auto& ref = m_subObjects[name];
     ref = subObject;
     return ref;

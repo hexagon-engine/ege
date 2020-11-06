@@ -24,6 +24,8 @@ namespace EGE
 
 std::string logIndex(size_t i)
 {
+    if(i == std::string::npos)
+        return " (end of input reached)";
     return " (at i=" + std::to_string(i) +  ")";
 }
 
@@ -44,7 +46,7 @@ bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string
 {
     // Starting '"'
     char c = input.peek();
-    if(c != '"')
+    if(input.eof() && c != '"')
     {
         std::cerr << "json: expected '\"'" << logIndex(input.tellg()) << std::endl;
         return false;
@@ -55,6 +57,11 @@ bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string
     while(true)
     {
         c = input.peek();
+        if(input.eof())
+        {
+            std::cerr << "json: unexpected EOF" << std::endl;
+            return false;
+        }
         if(escape)
         {
             switch(c)
@@ -124,7 +131,7 @@ void consumeUntil(JSONConverter::InputStreamType& input, std::string& object, st
 bool parseBoolean(JSONConverter::InputStreamType& input, bool& object)
 {
     std::string val;
-    consumeUntil(input, val, {',', '}'});
+    consumeUntil(input, val, {',', '}', ']'});
 
     if(val == "true")
         object = true;
@@ -163,7 +170,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
     // value
     std::shared_ptr<Object> value;
     bool result = parseValue(input, value);
-    if(!result || !value)
+    if(!result)
     {
         std::cerr << "json: expected value for pair" << logIndex(input.tellg()) << std::endl;
         return false;
@@ -398,7 +405,20 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         object = object2;
         return true;
     }
-    std::cerr << "json: expected '\"', number, '[' or '{'" << logIndex(input.tellg()) << std::endl;
+    else if(c == 'n')
+    {
+        std::string object2;
+        consumeUntil(input, object2, {',', '}', ']'});
+        if(object2 == "null")
+            object = nullptr;
+        else
+        {
+            std::cerr << "json: expected null" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    std::cerr << "json: expected '\"', number, '[', '{', 'true', 'false' or 'null'" << logIndex(input.tellg()) << std::endl;
     return false;
 }
 
