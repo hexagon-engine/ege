@@ -204,7 +204,7 @@ bool consumeNumber(JSONConverter::InputStreamType& input, std::string& object)
 {
     char c = 0;
     c = input.peek();
-    while(isdigit(c) || c == '-' || c == '+' || c == 'e' || c == 'E' || c == '.')
+    while(isdigit(c) || c == '-' || c == '+' || c == 'e' || c == 'E' || c == '.' || c == 'n' || c == 'a' || c == 'N' || c == 'i' || c == 'f')
     {
         if(input.eof())
         {
@@ -405,20 +405,35 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
         object = object2;
         return true;
     }
-    else if(c == 'n')
+    else if(c == 'i')
+    {
+        std::string object2;
+        consumeUntil(input, object2, {',', '}', ']'});
+        if(object2 == "inf")
+            object = make<ObjectFloat>(std::numeric_limits<double>::infinity());
+        else
+        {
+            std::cerr << "json: expected 'inf'" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    else if(c == 'n' || c == 'N')
     {
         std::string object2;
         consumeUntil(input, object2, {',', '}', ']'});
         if(object2 == "null")
             object = nullptr;
+        else if(object2 == "nan" || object2 == "NaN")
+            object = make<ObjectFloat>(nan(""));
         else
         {
-            std::cerr << "json: expected null" << std::endl;
+            std::cerr << "json: expected 'null', 'nan' or 'NaN'" << std::endl;
             return false;
         }
         return true;
     }
-    std::cerr << "json: expected '\"', number, '[', '{', 'true', 'false' or 'null'" << logIndex(input.tellg()) << std::endl;
+    std::cerr << "json: expected '\"', number, boolean, '[', '{' or null" << logIndex(input.tellg()) << std::endl;
     return false;
 }
 
