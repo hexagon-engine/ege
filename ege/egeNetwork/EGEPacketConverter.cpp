@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/ObjectBoolean.h>
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectList.h>
@@ -122,6 +123,17 @@ static bool parseFloat(sf::Packet& input, ObjectFloat& object)
     return true;
 }
 
+static bool parseBoolean(sf::Packet& input, ObjectBoolean& object)
+{
+    bool data;
+    if(!(input >> data))
+        return false;
+
+    object.setValue(data);
+    return true;
+}
+
+
 static bool parseString(sf::Packet& input, ObjectString& object)
 {
     std::string data;
@@ -190,6 +202,13 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
             return obj;
         }
         break;
+    case 'B':
+        {
+            std::shared_ptr<ObjectBoolean> obj = make<ObjectBoolean>();
+            if(!parseBoolean(input, *obj))
+                return nullptr;
+            return obj;
+        }
     }
     return nullptr;
 }
@@ -278,7 +297,7 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
     return {"impossible error", input.getReadPosition()};
 }
 
-bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
+bool EGEPacketConverter::in(sf::Packet& input, std::shared_ptr<Object>& object) const
 {
     // value type must be 'm'
     sf::Uint8 type;
@@ -287,7 +306,8 @@ bool EGEPacketConverter::in(sf::Packet& input, ObjectMap& object) const
         return false;
     }
 
-    Internal::_ParseResult result = parseMap(input, (ObjectMap&)object);
+    object = make<ObjectMap>();
+    Internal::_ParseResult result = parseMap(input, (ObjectMap&)*object.get());
     if(!result.message.empty())
     {
         err(LogLevel::Verbose) << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
@@ -378,10 +398,15 @@ static bool outputObject(sf::Packet& output, const Object& object)
         output << (sf::Uint8)'s' << object.asString();
         return true;
     }
+    else if(object.isBool())
+    {
+        output << (sf::Uint8)'B' << object.asBool();
+        return true;
+    }
     return false;
 }
 
-bool EGEPacketConverter::out(sf::Packet& output, const ObjectMap& object) const
+bool EGEPacketConverter::out(sf::Packet& output, const Object& object) const
 {
     return outputObject(output, object);
 }

@@ -46,8 +46,12 @@ bool EGEPacket::fromSFMLPacket(sf::Packet& packet)
     success &= !packet.endOfPacket();
     packet >> (unsigned int&)m_type;
     success &= !packet.endOfPacket();
-    m_args = make<ObjectMap>();
-    return packet >> objectIn(*m_args, EGEPacketConverter());
+    std::shared_ptr<Object> args = make<ObjectMap>();
+    if(!(packet >> objectIn(args, EGEPacketConverter())))
+        return false;
+    m_args = std::dynamic_pointer_cast<ObjectMap>(args);
+    ASSERT(m_args);
+    return true;
 }
 
 sf::Packet EGEPacket::toSFMLPacket()
