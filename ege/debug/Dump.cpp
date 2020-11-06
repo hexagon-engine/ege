@@ -213,6 +213,14 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
             std::cerr << "\e[91m<Empty Map>\e[m" << std::endl;
         }
     }
+    else if(object->isBool())
+    {
+        std::cerr << "\e[36m" << object->toString() << "\e[m" << std::endl;
+    }
+    else
+    {
+        std::cerr << "\e[31m???\e[m" << std::endl;
+    }
 }
 
 static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
