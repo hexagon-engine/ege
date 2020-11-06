@@ -13,6 +13,8 @@ set(SOURCES
 	"Object.h"
 	"ObjectArray.cpp"
 	"ObjectArray.h"
+	"ObjectBoolean.cpp"
+	"ObjectBoolean.h"
 	"ObjectFloat.cpp"
 	"ObjectFloat.h"
 	"ObjectInt.cpp"
