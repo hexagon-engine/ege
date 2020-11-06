@@ -98,7 +98,7 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
 
     if(!object)
     {
-        std::cerr << "\e[31m<Empty>\e[m " << std::endl;
+        std::cerr << "\e[31mnull\e[m " << std::endl;
         return;
     }
 

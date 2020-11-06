@@ -7,16 +7,20 @@
 #include <fstream>
 #include <iostream>
 
+void printObject(std::string fileName)
+{
+    std::ifstream stream;
+    stream.open(fileName);
+    std::shared_ptr<EGE::Object> object = make<EGE::ObjectMap>();
+    stream >> EGE::objectIn(object, EGE::JSONConverter());
+    EXPECT(!stream.fail());
+    EGE::printObject(object);
+}
+
 TESTCASE(_printObject)
 {
-    // parse
-    std::ifstream stream;
-    stream.open("res/1.json");
-    std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-    stream >> EGE::objectIn(*map.get(), EGE::JSONConverter());
-    EXPECT(!stream.fail());
-    EGE::printObject(map);
-
+    printObject("res/1.json");
+    printObject("res/2.json");
     return 0;
 }
 
