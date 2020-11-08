@@ -159,7 +159,6 @@ double EventLoop::time(Time::Unit unit)
         #endif
     }
     ASSERT(false);
-    return 0.0;
 }
 
 void EventLoop::exit(int exitCode)
