@@ -1,16 +1,77 @@
-# ege
+# EGE
 [![Build Status](https://travis-ci.com/hexagon-engine/ege.svg?branch=master)](https://travis-ci.com/hexagon-engine/ege)  
-Extendable Game Engine
+
+## Description
+Extendable Game Engine (EGE) is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of Hexagon Engine (pack with framework, 3D library and IDE).
 
 The engine is now depending on SFML (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be only OS-dependent.
 
+## Modules / Features
+* **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
+   * Thread-safe EventLoop
+   * Async tasks
+* **controller** - "Controller" system used for synchronizing scenes over the network
+* **debug** - Utility used for debugging
+   * EGE custom logger
+   * Configurable hex dump
+   * `util`'s Object printing
+* **egeNetwork** - Protocol for network games
+   * `util`'s Object-compatible packets
+   * `scene` synchronizing
+   * Login system (not encrypted for now)
+   * API for controlling any object
+* **event** - System (window) event handlers
+   * SFML system window wrapper with EventLoop compatible API
+   * Default system event handling (e.g close app on Close)
+* **game** - Game class with Gameplay Object Manager and Game Loop included
+* **geometry** - Geometry utility (computing intersections etc.)
+* **gfx** - Graphics renderer
+   * Basic shape rendering (rectangles, texts, points etc.)
+* **gpo** - Gameplay Object Manage
+   * Mainly *GameplayObjectRegistry* - a structure for registering objects with numerical or "base" id with user-specified type)
+* **gui** - User interface utility
+   * GUI animations with many easing functions
+   * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox)
+* **loop** - Basic event loop utility
+   * EventLoop - event system
+   * Timers
+* **main** - Engine configuration (ASSERT etc.)
+* **network** - Low-level network library (opening sockets etc.)
+   * TCP sockets and listeners
+   * SFML packet wrapper
+* **profiler** - Utility for profiling
+* **resources** - ResourceManager for loading textures, fonts, shaders etc.
+* **scene** - Library for managing scenes and adding objects to it.
+   * Scene and SceneObjects (in 2D) with `gui` integration
+   * Basic texture renderer
+   * Camera
+   * Particle system
+* **sfml** - Dummy module for linking SFML
+* **util** - Common utility
+   * Object system - used for serialization
+   * JSON parser and templatizer
+   * System-specific stuff (filesystem, time)
+   * Basic math (equations, vector operations, radians / degrees convertion)
+   * Random (LCG)
 
+## Tutorial / Documentation
+For basic tutorial refer to **wiki**.  
+Some documentation is in `docs` folder.
+
+## Planned features
+* Tilemaps / Chunked Tilemaps
+* Finished Geometry system
+* Better serializing API
+* More math functions
+* Physics
+* Animations with properties of user-defined type (e.g `EGE::Vec2d`)
 
 ## Dependencies
 * SFML 2.5.1+ and its dependencies (automatically installed by configure script)
 * Git (required to download SFML)
 * C++ compiler with at least C++17 and #pragma once support (GCC fully supported)
-* CMake 2.8+ (latest version recommended)
+* CMake 3.0+ (latest version recommended)
+* OpenGL Utility (GLU) - it's not really required (it's never used for now), but linked
 * GLEW
 
 ## Build
