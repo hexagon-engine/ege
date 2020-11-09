@@ -6,11 +6,11 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
+#include <ege/debug/Profiler.h>
 #include <ege/loop/EventHandler.h>
 #include <ege/loop/EventResult.h>
 #include <ege/loop/Timer.h>
 #include <ege/util/Time.h>
-#include <ege/profiler/Profiler.h>
 
 #include <map>
 #include <memory>

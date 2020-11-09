@@ -33,7 +33,7 @@ set(SOURCES
 
 ege_add_module(gui)
 ege_depend_module(gui asyncLoop)
+ege_depend_module(gui debug)
 ege_depend_module(gui event)
 ege_depend_module(gui gfx)
-ege_depend_module(gui profiler)
 ege_depend_module(gui resources)

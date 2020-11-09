@@ -6,7 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "GUIGameLoop.h"
 
 #include <ege/debug/Logger.h>
-#include <ege/profiler/ProfilerSectionStarter.h>
+#include <ege/debug/ProfilerSectionStarter.h>
 #include <ege/util/PointerUtils.h>
 
 namespace EGE

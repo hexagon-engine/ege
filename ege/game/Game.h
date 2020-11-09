@@ -5,9 +5,9 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <ege/debug/Profiler.h>
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gui/GUIGameLoop.h>
-#include <ege/profiler/Profiler.h>
 #include <memory>
 
 namespace EGE
