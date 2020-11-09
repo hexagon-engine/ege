@@ -53,16 +53,18 @@ void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
     if(points.empty())
         return;
 
-    getTarget().pushGLStates();
+    //getTarget().pushGLStates();
+
+    applyStates();
 
     // TODO: Maybe make it Renderer-local?
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(EGE::Vertex), (char*)points.data());
-    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(double) * 3);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex), (char*)points.data() + sizeof(double) * 3 + sizeof(char) * 4);
+    glVertexPointer(3, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data());
+    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3 + sizeof(char) * 4);
 
     glPointSize(pointSize);
     glDrawArrays(GL_POINTS, 0, points.size());
@@ -71,7 +73,9 @@ void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    getTarget().popGLStates();
+    //getTarget().resetGLStates();
+
+    //getTarget().popGLStates();
 }
 
 void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type)
@@ -79,16 +83,17 @@ void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::Primitive
     if(points.empty())
         return;
 
-    getTarget().pushGLStates();
+    //getTarget().pushGLStates();
+    applyStates();
 
     // TODO: Maybe make it Renderer-local?
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(EGE::Vertex), (char*)points.data());
-    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(double) * 3);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex), (char*)points.data() + sizeof(double) * 3 + sizeof(char) * 4);
+    glVertexPointer(3, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data());
+    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3 + sizeof(char) * 4);
 
     GLenum ptype;
     switch(type)
@@ -109,7 +114,9 @@ void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::Primitive
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    getTarget().popGLStates();
+    //getTarget().resetGLStates();
+
+    //getTarget().popGLStates();
 }
 
 void Renderer::renderButtonLike(double x, double y, double width, double height)
@@ -153,6 +160,27 @@ void Renderer::renderTextBoxLike(double x, double y, double width, double height
     rs.setPosition(x + 1.f, y + 1.f);
     rs.setOutlineColor(sf::Color(210, 210, 210));
     getTarget().draw(rs);
+}
+
+void Renderer::applyStates()
+{
+    glEnable(GL_TEXTURE_2D);
+    sf::Texture::bind(m_states.sfStates().texture, sf::Texture::Pixels);
+    sf::Shader::bind(m_states.sfStates().shader);
+
+    // [SFML] Apply view
+
+    // Set the viewport
+    sf::IntRect viewport = getTarget().getViewport(getTarget().getView());
+    int top = getTarget().getSize().y - (viewport.top + viewport.height);
+    glViewport(viewport.left, top, viewport.width, viewport.height);
+
+    // Set the projection matrix
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(getTarget().getView().getTransform().getMatrix());
+
+    // Go back to model-view mode
+    glMatrixMode(GL_MODELVIEW);
 }
 
 }

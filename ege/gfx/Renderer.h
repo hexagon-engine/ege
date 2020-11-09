@@ -16,11 +16,11 @@ namespace EGE
 // TODO: move it to another file
 struct Vertex
 {
-    double x = 0, y = 0, z = 0;
+    float x = 0, y = 0, z = 0;
     char r = -128, g = -128, b = -128, a = 127;
-    double texX = 0, texY = 0;
+    float texX = 0, texY = 0;
 
-    static inline Vertex make(EGE::Vec3d coords, sf::Color color = sf::Color::White, EGE::Vec2f texCoords = EGE::Vec2d())
+    static inline Vertex make(EGE::Vec3f coords, sf::Color color = sf::Color::White, EGE::Vec2f texCoords = EGE::Vec2f())
     {
         return Vertex{coords.x, coords.y, coords.z, (char)((short)color.r - 128), (char)((short)color.g - 128), (char)((short)color.b - 128), (char)((short)color.a - 128), texCoords.x, texCoords.y};
     }
@@ -56,6 +56,8 @@ public:
     }
 
 private:
+    void applyStates();
+
     // noncopyable, nonmoveable
     Renderer(const Renderer& other) = delete;
     Renderer(Renderer&& other) = delete;
