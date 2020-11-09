@@ -7,6 +7,8 @@ Copyright (c) Sppmacd 2020
 
 #include <vector>
 
+#include <ege/main/Config.h>
+
 namespace EGE
 {
 
@@ -33,6 +35,8 @@ constexpr double e()
     return 2.718281828459045;
 }
 
+double map(double input, double iMin, double iMax, double oMin, double oMax);
+
 } // Math
 
 using Math::DegreeAngle;
@@ -42,5 +46,6 @@ using Math::rad2deg;
 using Math::deg2rad;
 using Math::pi;
 using Math::e;
+using Math::map;
 
 }

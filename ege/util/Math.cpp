@@ -26,6 +26,14 @@ RadianAngle deg2rad(DegreeAngle angle)
     return angle / DEGTORAD;
 }
 
+double map(double input, double iMin, double iMax, double oMin, double oMax)
+{
+    if(iMin > iMax) std::swap(iMin, iMax);
+    if(oMin > oMax) std::swap(oMin, oMax);
+    ASSERT(iMin - iMax != 0);
+    return (input-iMin) / (iMax-iMin) * (oMax-oMin) + oMin;
+}
+
 } // Math
 
 }

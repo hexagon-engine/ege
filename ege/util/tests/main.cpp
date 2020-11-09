@@ -305,4 +305,11 @@ TESTCASE(random)
     return 0;
 }
 
+TESTCASE(math)
+{
+    EXPECT_EQUAL(EGE::map(0.5, 0.1, 1.0, 1.0, 10.0), 5.0);
+    EXPECT_EQUAL(EGE::map(1, -5, 5, 0, 10), 6);
+    return 0;
+}
+
 RUN_TESTS(util)
