@@ -16,7 +16,10 @@ ObjectMap::ObjectMap(const ObjectMap& map)
 {
     for(auto pr: map)
     {
-        addObject(pr.first, pr.second->copy());
+        if(pr.second)
+            addObject(pr.first, pr.second->copy());
+        else
+            addObject(pr.first, nullptr);
     }
 }
 
@@ -81,7 +84,11 @@ std::string ObjectMap::toString() const
     {
         std::string key = pr.first;
         str += "\"" + key + "\":";
-        str += pr.second->toString();
+
+        if(pr.second)
+            str += pr.second->toString();
+        else
+            str += "null";
 
         if(counter != m_subObjects.size() - 1)
         {
