@@ -63,13 +63,12 @@ Internal::_ConverterOutput<I, O> objectOut(Object& _o, const Converter<I, O>& _c
 }
 
 template<class I, class O>
-O convertTo(const I& input, const Converter<I, O>& inputConverter, const Converter<I, O>& outputConverter)
+bool convertTo(const I& input, O& output, const Converter<I, O>& inputConverter, const Converter<I, O>& outputConverter)
 {
     std::shared_ptr<Object> tmp;
-    inputConverter.in(input, tmp);
-    O output;
-    outputConverter.out(output, *tmp.get());
-    return output;
+    if(!inputConverter.in(input, tmp)) return false;
+    if(!outputConverter.out(output, *tmp.get())) return false;
+    return true;
 }
 
 } //namespace EGE
