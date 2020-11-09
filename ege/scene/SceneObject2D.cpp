@@ -24,7 +24,6 @@ bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
             m_renderer->setGeometryNeedUpdate();
     }
 
-
     //DUMP(1, m_name);
     //DUMP(1, m_position.x);
     //DUMP(1, m_position.y);
@@ -80,7 +79,7 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain()
 {
     std::shared_ptr<ObjectMap> data = make<ObjectMap>();
 
-    // TODO: change it to floats!
+    // TODO: change it to ObjectSerializers!
     data->addObject("pX", make<ObjectFloat>(m_position.x));
     data->addObject("pY", make<ObjectFloat>(m_position.y));
 
