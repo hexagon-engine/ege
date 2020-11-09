@@ -61,25 +61,16 @@ double Animation::getValue(double time)
     {
         if(keyframe.first >= time)
         {
-            //DUMP(ANIMATION_DEBUG, keyframe.first);
-            //DUMP(ANIMATION_DEBUG, keyframe.second);
-            //DUMP(ANIMATION_DEBUG, previous.first);
-            //DUMP(ANIMATION_DEBUG, previous.second);
-
             double timeDiff = (keyframe.first - previous.first);
-            //DUMP(ANIMATION_DEBUG, timeDiff);
 
             if(timeDiff == 0.0)
                 return (keyframe.second + previous.second) / 2;
 
             double td2 = (time - previous.first);
-            //DUMP(ANIMATION_DEBUG, td2);
             double timeFactor = td2 / timeDiff;
 
-            // TODO: here apply easing function f(timeFactor) !
             if(m_ease)
                 timeFactor = m_ease(timeFactor);
-            //DUMP(ANIMATION_DEBUG, timeFactor);
             return (keyframe.second - previous.second) * timeFactor + previous.second;
         }
         previous = keyframe;

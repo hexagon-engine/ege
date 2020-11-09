@@ -141,7 +141,7 @@ void GUIGameLoop::setWindow(std::shared_ptr<SFMLSystemWindow> window)
     DBG(GUI_DEBUG, "setWindow");
     // TODO: automatically deletes previous window!
     // so it forces one GameLoop for window
-    // so only one window is allowed currently
+    // so only one window is allowed currently (per thread)
     m_systemWindow = window;
     if(m_currentGui)
     {
