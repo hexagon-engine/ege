@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include <cstddef>
+
 namespace EGE
 {
 
