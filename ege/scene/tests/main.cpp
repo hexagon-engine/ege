@@ -1,15 +1,17 @@
 #include <testsuite/Tests.h>
 #include <ege/debug/Logger.h>
-#include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/Scene2D.h>
-#include <ege/scene/SceneObject2D.h>
-#include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedRenderer2D.h>
 #include <ege/gfx/Renderer.h>
 #include <ege/gui/Animation.h>
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/Label.h>
+#include <ege/scene/ParticleSystem2D.h>
+#include <ege/scene/Scene2D.h>
+#include <ege/scene/SceneObject2D.h>
+#include <ege/scene/SceneWidget.h>
+#include <ege/scene/TexturedRenderer2D.h>
+#include <ege/scene/TilemapRenderer2D.h>
+#include <ege/tilemap/FixedTileMap2D.h>
 
 // my object definition
 class MyObject : public EGE::SceneObject2D
@@ -298,7 +300,7 @@ TESTCASE(particleSystem)
     std::shared_ptr<MyScene> scene = make<MyScene>(&loop);
 
     // add wind speed variable
-    float wind = 0.f;
+    //float wind = 0.f;
 
     // create particle system
     std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(scene, sf::FloatRect(10.f, 10.f, 580.f, 1.f));
@@ -367,6 +369,67 @@ TESTCASE(particleSystem)
     loop.setCurrentGUIScreen(gui);
 
     // run game
+    return loop.run();
+}
+
+struct MyTile
+{
+    int apx, apy;
+};
+
+class MyTileMapObject : public EGE::SceneObject2D
+{
+public:
+    MyTileMapObject(std::shared_ptr<EGE::Scene> owner)
+    : EGE::SceneObject2D(owner, "mytilemapobject")
+    {
+        m_tilemap = make<EGE::FixedTileMap2D<MyTile, 16, 16>>();
+        m_tilemap->initialize({0, 1}); // water
+        m_tilemap->setTileSize({64, 64});
+
+        if(!owner->isHeadless())
+        {
+            auto renderer = make<EGE::TilemapRenderer2D<MyTile, size_t>>(owner, m_tilemap);
+            renderer->setAtlasTextureName("atlas.png");
+            renderer->setTileAtlasMapper( [](const MyTile& tile) { return EGE::Vec2d(tile.apx * 64, tile.apy * 64); } );
+            setRenderer(renderer);
+        }
+    }
+private:
+    std::shared_ptr<EGE::FixedTileMap2D<MyTile, 16, 16>> m_tilemap;
+};
+
+class MyResourceManager2 : public EGE::ResourceManager
+{
+public:
+    virtual bool reload() override
+    {
+        bool success = true;
+        success &= (bool)loadTextureFromFile("atlas.png");
+        return success;
+    }
+};
+
+TESTCASE(_tileMap)
+{
+    EGE::GUIGameLoop loop;
+    loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(600, 600), "Tile Map"));
+    loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
+    loop.setResourceManager(make<MyResourceManager2>());
+
+    auto scene = make<EGE::Scene2D>(&loop);
+    scene->addObject(make<MyTileMapObject>(scene));
+
+    auto camera = make<EGE::CameraObject2D>(scene);
+    camera->setPosition({512, 512});
+    camera->setScalingMode(EGE::ScalingMode::Centered);
+    scene->addObject(camera);
+    scene->setCamera(camera);
+
+    auto gui = make<EGE::GUIScreen>(&loop);
+    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    loop.setCurrentGUIScreen(gui);
+
     return loop.run();
 }
 
