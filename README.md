@@ -4,7 +4,7 @@
 ## Description
 Extendable Game Engine (EGE) is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of Hexagon Engine (pack with framework, 3D library and IDE).
 
-The engine is now depending on SFML (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be only OS-dependent.
+The engine is now depending on SFML (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be (almost) only OS-dependent.
 
 ## Modules / Features
 * **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
@@ -46,7 +46,10 @@ The engine is now depending on SFML (so it's not fully 'from scratch'), but I wi
    * Basic texture renderer
    * Camera
    * Particle system
+   * 2D tilemap renderer
 * **sfml** - Dummy module for linking SFML
+* **tilemap** - Tile maps
+   * 2D tilemaps: abstract and fixed-size
 * **util** - Common utility
    * Object system - used for serialization
    * JSON parser and templatizer
@@ -59,12 +62,13 @@ For basic tutorial refer to **wiki**.
 Some documentation is in `docs` folder.
 
 ## Planned features
-* Tilemaps / Chunked Tilemaps
+* Chunked Tilemaps
 * Finished Geometry system
 * Better serializing API
 * More math functions
 * Physics
 * Animations with properties of user-defined type (e.g `EGE::Vec2d`)
+* Documentation :)
 
 ## Dependencies
 * SFML 2.5.1+ and its dependencies (automatically installed by configure script)
@@ -72,7 +76,7 @@ Some documentation is in `docs` folder.
 * C++ compiler with at least C++17 and #pragma once support (GCC fully supported)
 * CMake 3.0+ (latest version recommended)
 * OpenGL Utility (GLU) - it's not really required (it's never used for now), but linked
-* GLEW
+* OpenGL Extension Wrangler (GLEW)
 
 ## Build
 * Install required packages:
@@ -81,10 +85,12 @@ Some documentation is in `docs` folder.
     - `sudo apt install g++ make cmake git libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libflac-dev libogg-dev libvorbis-dev libopenal-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libglew-dev`
 
 * Run commands:
-    - `export EGE_ROOT="$PWD"`
-    - `scripts/configure.sh`
-    - `cd build`
-    - `make install`
+```bash
+export EGE_ROOT="$PWD"
+scripts/configure.sh
+cd build
+make install
+```
 
 ## Link to your project (Unix and Unix-like system)
 Linking to projects is WIP and is very unintuitive, but works.
@@ -94,7 +100,7 @@ To create project with EGE:
 * Create a new directory in some `${path}`.
 * Create `CMakeLists.txt` file in `${path}`.
 * Put this content to CMakeLists.txt:
-```
+```cmake
 cmake_minimum_required(VERSION 3.0)
 project(<<your name>>)
 
@@ -106,14 +112,14 @@ ege_resources(<<resource path relative to ${path}>>) # << optional
 
 ```
 * Run in shell **this code** to build game:
-```
+```bash
 $ cmake -B build -S .
 $ cd build
 $ make
 $ make install
 ```
 * To run game, run:
-```
+```bash
 $ cd <<install path>>
 $ ./<<your exec name>>
 $ # return to build dir using 'cd'
