@@ -16,14 +16,14 @@ class Converter
 
 ## Pure-virtual members
 
-* `virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const = 0`
+* `virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const = 0`  
 The method is overwritten by derived classes. It's intended to parse `input` of converter-specified format and save the result in `object`.
-The converter is responsible for allocating space for `object`.
+The converter is responsible for allocating space for `object`.  
 
 *Returns*: `true` if parsing succeeded, `false` otherwise.
 
-* `virtual bool out(OutputStreamType& output, const Object& object) const = 0`
-The method is overwritten by derived classes. It's intended to save `object` in converter-specified format to `output`.
+* `virtual bool out(OutputStreamType& output, const Object& object) const = 0`  
+The method is overwritten by derived classes. It's intended to save `object` in converter-specified format to `output`.  
 
 *Returns*: `true` if generation succeeded, `false` otherwise.
 
@@ -130,7 +130,7 @@ bool convertTo(const I& input, O& output, const Converter<I, O>& inputConverter,
 ```
 
 ## Description
-Converts `input` to object of type `O` using `inputConverter` and `outputConverter`.
+Converts `input` to object of type `O` using `inputConverter` and `outputConverter`.  
 *Params*:
   * `input` - The input object.
   * `inputConverter` - `Converter` used to parse the `input`.
