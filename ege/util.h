@@ -16,16 +16,17 @@ Copyright (c) Sppmacd 2020
 #include <ege/util/ObjectList.h>
 #include <ege/util/ObjectUnsignedInt.h>
 #include <ege/util/StringUtils.h>
-//#include <ege/util/VectorOperations.h> // Don't include it!
 #include <ege/util/EquationSystem.h>
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Object.h>
+#include <ege/util/ObjectBoolean.h>
 #include <ege/util/ObjectSerializers.h>
 #include <ege/util/Random.h>
 #include <ege/util/Time.h>
+#include <ege/util/Types.h>
 
 #include <ege/util/system.h>
 

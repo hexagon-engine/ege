@@ -28,10 +28,16 @@ enum class LineRelation
 
 // Lines of form Ax+By+C=0
 template<class T>
-bool lineRelation(double A1, double B1, double C1, double A2, double B2, double C2)
+LineRelation lineRelation(double A1, double B1, double C1, double A2, double B2, double C2)
 {
+    (void)A1;
+    (void)B1;
+    (void)C1;
+    (void)A2;
+    (void)B2;
+    (void)C2;
     // TODO
-    return NoRelation;
+    return LineRelation::NoRelation;
 }
 
 } // Geometry
