@@ -10,15 +10,16 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/gfx/Renderer.h>
 #include <ege/tilemap/TileMap2D.h>
+#include <ege/util/Types.h>
 
 namespace EGE
 {
 
-template<class TT, class SizeType>
+template<class TMap>
 class TilemapRenderer2D : public ObjectRenderer
 {
 public:
-    TilemapRenderer2D(std::shared_ptr<Scene> scene, std::shared_ptr<TileMap2D<TT, SizeType>> tilemap)
+    TilemapRenderer2D(std::shared_ptr<Scene> scene, std::shared_ptr<TMap> tilemap)
     : ObjectRenderer(scene), m_tileMap(tilemap) {}
 
     void setAtlasTextureName(std::string name)
@@ -32,7 +33,7 @@ public:
 
     // Function EGE::Vec2d map(TileType* tile);
     // The function maps tile type (in tilemap) to atlas coords to render (in pixels).
-    void setTileAtlasMapper(std::function<EGE::Vec2d(const TT&)> mapper) { m_tileMapper = mapper; }
+    void setTileAtlasMapper(std::function<EGE::Vec2d(const typename TMap::TileType&)> mapper) { m_tileMapper = mapper; }
 
     virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const
     {
@@ -52,13 +53,13 @@ public:
         sf::Vector2f endCoord = scene->mapScreenToScene(target, sf::Vector2i(target.getSize()));
         sf::Vector2f objPos = sceneObject.getPosition();
 
-        EGE::Vector2<long long> beginTile = {
-            (long long)((beginCoord.x - objPos.x) / tileSize.x),
-            (long long)((beginCoord.y - objPos.y) / tileSize.y - 1)
+        EGE::Vector2<MaxInt> beginTile = {
+            (MaxInt)((beginCoord.x - objPos.x) / tileSize.x),
+            (MaxInt)((beginCoord.y - objPos.y) / tileSize.y - 1)
         };
-        EGE::Vector2<long long> endTile = {
-            (long long)((endCoord.x - objPos.x) / tileSize.x + 1),
-            (long long)((endCoord.y - objPos.y) / tileSize.y)
+        EGE::Vector2<MaxInt> endTile = {
+            (MaxInt)((endCoord.x - objPos.x) / tileSize.x + 1),
+            (MaxInt)((endCoord.y - objPos.y) / tileSize.y)
         };
 
         // TODO: calculate and reserve required space
@@ -68,10 +69,10 @@ public:
         std::vector<EGE::Vertex> vertexes;
         EGE::Renderer renderer(target);
 
-        for(long long x = beginTile.x; x <= endTile.x; x++)
-        for(long long y = beginTile.y; y <= endTile.y; y++)
+        for(MaxInt x = beginTile.x; x <= endTile.x; x++)
+        for(MaxInt y = beginTile.y; y <= endTile.y; y++)
         {
-            const TT* tile = m_tileMap->getTile({(SizeType)x, (SizeType)y});
+            const typename TMap::TileType* tile = m_tileMap->getTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y});
             if(!tile) continue;
             EGE::Vec2d atlasCoords = m_tileMapper(*tile);
 
@@ -125,10 +126,10 @@ public:
     }
 
 private:
-    std::shared_ptr<TileMap2D<TT, SizeType>> m_tileMap;
+    std::shared_ptr<TMap> m_tileMap;
     std::shared_ptr<sf::Texture> m_atlas;
     std::string m_atlasName;
-    std::function<Vec2d(const TT&)> m_tileMapper;
+    std::function<Vec2d(const typename TMap::TileType&)> m_tileMapper;
 };
 
 }

@@ -11,6 +11,7 @@
 #include <ege/scene/SceneWidget.h>
 #include <ege/scene/TexturedRenderer2D.h>
 #include <ege/scene/TilemapRenderer2D.h>
+#include <ege/tilemap/ChunkedTileMap2D.h>
 #include <ege/tilemap/FixedTileMap2D.h>
 
 // my object definition
@@ -374,7 +375,7 @@ TESTCASE(particleSystem)
 
 struct MyTile
 {
-    int apx, apy;
+    int apx = 0, apy = 1;
 };
 
 class MyTileMapObject : public EGE::SceneObject2D
@@ -383,20 +384,26 @@ public:
     MyTileMapObject(std::shared_ptr<EGE::Scene> owner)
     : EGE::SceneObject2D(owner, "mytilemapobject")
     {
-        m_tilemap = make<EGE::FixedTileMap2D<MyTile, 16, 16>>();
-        m_tilemap->initialize({0, 1}); // water
+        m_tilemap = make<EGE::ChunkedTileMap2D<MyTile, 4, 4>>();
+        //m_tilemap->initialize({0, 1}); // water
         m_tilemap->setTileSize({64, 64});
+
+        // Pre-generate some chunks
+        m_tilemap->regenerateChunk({-1, -1});
+        m_tilemap->regenerateChunk({0, 0});
+        m_tilemap->regenerateChunk({1, 1});
+        m_tilemap->regenerateChunk({2, 2});
 
         if(!owner->isHeadless())
         {
-            auto renderer = make<EGE::TilemapRenderer2D<MyTile, size_t>>(owner, m_tilemap);
+            auto renderer = make<EGE::TilemapRenderer2D<decltype(m_tilemap)::element_type>>(owner, m_tilemap);
             renderer->setAtlasTextureName("atlas.png");
             renderer->setTileAtlasMapper( [](const MyTile& tile) { return EGE::Vec2d(tile.apx * 64, tile.apy * 64); } );
             setRenderer(renderer);
         }
     }
 private:
-    std::shared_ptr<EGE::FixedTileMap2D<MyTile, 16, 16>> m_tilemap;
+    std::shared_ptr<EGE::ChunkedTileMap2D<MyTile, 4, 4>> m_tilemap;
 };
 
 class MyResourceManager2 : public EGE::ResourceManager
