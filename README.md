@@ -1,16 +1,16 @@
-# EGE
+![Icon](https://raw.githubusercontent.com/hexagon-engine/resources/main/icons/hexagon-ege-ghi.svg.png)  
 [![Build Status](https://travis-ci.com/hexagon-engine/ege.svg?branch=master)](https://travis-ci.com/hexagon-engine/ege)  
 
 ## Description
-Extendable Game Engine (EGE) is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of Hexagon Engine (pack with framework, 3D library and IDE).
+**Extendable Game Engine (EGE)** is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of *Hexagon Engine* (pack with framework, 3D library and IDE).
 
-The engine is now depending on SFML (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be (almost) only OS-dependent.
+The engine is now depending on **SFML** (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be (almost) only OS-dependent.
 
 ## Modules / Features
 * **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
    * Thread-safe EventLoop
    * Async tasks
-* **controller** - "Controller" system used for synchronizing scenes over the network
+* **controller** - System used for synchronizing scenes over the network
 * **debug** - Utility used for debugging
    * EGE custom logger
    * Configurable hex dump
@@ -27,8 +27,9 @@ The engine is now depending on SFML (so it's not fully 'from scratch'), but I wi
 * **geometry** - Geometry utility (computing intersections etc.)
 * **gfx** - Graphics renderer
    * Basic shape rendering (rectangles, texts, points etc.)
-* **gpo** - Gameplay Object Manage
-   * Mainly *GameplayObjectRegistry* - a structure for registering objects with numerical or "base" id with user-specified type)
+* **gpo** - "Gameplay Object" Manager
+   * *Gameplay Objects* - Objects that can be used in game (e.g entity types) with specified **base** (usually string) and **numeric** ID.
+   * Mainly *GameplayObjectRegistry* - a structure that manages and automatically assigns numeric IDs to registered objects (internally `std::vector` of `std::pairs<IdTEntry, ObjT*>`, where IdTEntry is structure containing `baseId` and `numericId`).
 * **gui** - User interface utility
    * GUI animations with many easing functions
    * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox)
@@ -62,12 +63,16 @@ For basic tutorial refer to **wiki**.
 Some documentation is in `docs` folder.
 
 ## Planned features
+* `EventLoop`-compatible clocks
 * Chunked Tilemaps
+* Noise algorithms + world generation
 * Finished Geometry system
 * Better serializing API
 * More math functions
 * Physics
 * Animations with properties of user-defined type (e.g `EGE::Vec2d`)
+* Splash screens
+* Format detection for `Converter`s
 * Documentation :)
 
 ## Dependencies
