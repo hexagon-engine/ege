@@ -17,7 +17,7 @@ class ObjectArray : public Object
 {
 public:
     typedef T ElementType;
-    typedef std::vector<ElementType> ValueType;
+    typedef Vector<ElementType> ValueType;
 
     explicit ObjectArray(const ValueType& els = {})
     : m_elements(els) {}
@@ -33,9 +33,9 @@ public:
         return m_elements[index];
     }
 
-    virtual std::string toString() const
+    virtual String toString() const
     {
-        std::string str = "A[";
+        String str = "A[";
         size_t counter = 0;
         for(auto it: *this)
         {
@@ -51,7 +51,7 @@ public:
         return str;
     }
 
-    virtual std::shared_ptr<Object> copy() const
+    virtual SharedPtr<Object> copy() const
     {
         return make<ObjectArray<ElementType>>(*this);
     }
@@ -67,7 +67,7 @@ public:
     }
 
 private:
-    std::vector<ElementType> m_elements;
+    Vector<ElementType> m_elements;
 };
 
 }

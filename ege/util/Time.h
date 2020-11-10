@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Types.h"
+
 namespace EGE
 {
 
@@ -17,11 +19,11 @@ public:
         Seconds
     };
 
-    Time(double value, Unit unit)
+    Time(MaxFloat value, Unit unit)
     : m_value(value)
     , m_unit(unit) {}
 
-    double getValue() const
+    MaxFloat getValue() const
     {
         return m_value;
     }
@@ -29,11 +31,11 @@ public:
     {
         return m_unit;
     }
-    Time operator+(double _2);
-    Time& operator+=(double _2);
+    Time operator+(MaxFloat _2);
+    Time& operator+=(MaxFloat _2);
 
 private:
-    double m_value;
+    MaxFloat m_value;
     Unit m_unit;
 };
 

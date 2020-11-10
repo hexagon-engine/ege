@@ -5,7 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <cstddef>
+#include "Types.h"
 
 namespace EGE
 {
@@ -28,11 +28,11 @@ public:
     T x,y;
 };
 
-typedef Vector2<float> Vec2f;
-typedef Vector2<double> Vec2d;
-typedef Vector2<int> Vec2i;
-typedef Vector2<unsigned> Vec2u;
-typedef Vector2<size_t> Vec2s;
+typedef Vector2<Float> Vec2f;
+typedef Vector2<Double> Vec2d;
+typedef Vector2<Int32> Vec2i;
+typedef Vector2<Uint32> Vec2u;
+typedef Vector2<Size> Vec2s;
 
 // 3D Vectors
 template<class T>
@@ -52,10 +52,10 @@ public:
     T x,y,z;
 };
 
-typedef Vector3<float> Vec3f;
-typedef Vector3<double> Vec3d;
-typedef Vector3<int> Vec3i;
-typedef Vector3<unsigned> Vec3u;
+typedef Vector3<Float> Vec3f;
+typedef Vector3<Double> Vec3d;
+typedef Vector3<Int32> Vec3i;
+typedef Vector3<Uint32> Vec3u;
 
 // Polar and Spherical Vectors
 template<class T>
@@ -75,10 +75,10 @@ public:
     T angle,length;
 };
 
-typedef PolarVector2<float> PolVec2f;
-typedef PolarVector2<double> PolVec2d;
-typedef PolarVector2<int> PolVec2i;
-typedef PolarVector2<unsigned> PolVec2u;
+typedef PolarVector2<Float> PolVec2f;
+typedef PolarVector2<Double> PolVec2d;
+typedef PolarVector2<Int32> PolVec2i;
+typedef PolarVector2<Uint32> PolVec2u;
 
 }
 

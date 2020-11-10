@@ -13,19 +13,19 @@ namespace EGE
 class ObjectBoolean : public Object
 {
 public:
-    typedef bool ValueType;
+    typedef Boolean ValueType;
 
     explicit ObjectBoolean(ValueType num = false)
     : m_value(num) {}
 
-    virtual std::string toString() const;
+    virtual String toString() const;
 
     // TODO: int representations
-    virtual std::string asString() const { return m_value ? "1" : "0"; }
-    virtual long long asInt() const { return m_value; };
-    virtual unsigned long long asUnsignedInt() { return m_value; }
-    virtual bool asBool() const { return m_value; }
-    virtual double asFloat() const { return asInt(); }
+    virtual String asString() const { return m_value ? "1" : "0"; }
+    virtual MaxInt asInt() const { return m_value; };
+    virtual MaxUint asUnsignedInt() { return m_value; }
+    virtual Boolean asBool() const { return m_value; }
+    virtual MaxFloat asFloat() const { return asInt(); }
 
     virtual bool isString() const { return false; }
     virtual bool isInt() const { return false; }
@@ -38,10 +38,10 @@ public:
         m_value = value;
     }
 
-    virtual std::shared_ptr<Object> copy() const;
+    virtual SharedPtr<Object> copy() const;
 
 private:
-    std::string suffix() const;
+    String suffix() const;
 
     ValueType m_value;
 };

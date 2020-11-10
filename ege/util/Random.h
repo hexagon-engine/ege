@@ -5,7 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
-#include <inttypes.h>
+#include "Types.h"
+
 #include <memory>
 
 namespace EGE
@@ -16,33 +17,33 @@ class Randomizer
 {
 public:
     // Generate new (pseudo)random integer.
-    virtual uint64_t nextInt() = 0;
+    virtual MaxUint nextInt() = 0;
 };
 
 // Implementations
 namespace Internal
 {
 
-uint64_t lcg_gen(uint64_t seed, uint64_t a, uint64_t c, uint64_t m);
+MaxUint lcg_gen(MaxUint seed, MaxUint a, MaxUint c, MaxUint m);
 
 }
 
 // LCG
-template<uint64_t A, uint64_t C, uint64_t M = 1ULL << 32>
+template<MaxUint A, MaxUint C, MaxUint M = 1ULL << 32>
 class LCGRandomizer : public Randomizer
 {
 public:
-    LCGRandomizer(uint64_t seed)
+    LCGRandomizer(MaxUint seed)
     : m_seed(seed) {}
 
-    virtual uint64_t nextInt()
+    virtual MaxUint nextInt()
     {
         static_assert(M != 0);
         return m_seed = Internal::lcg_gen(m_seed, A, C, M);
     }
 
 private:
-    uint64_t m_seed;
+    MaxUint m_seed;
 };
 
 typedef LCGRandomizer<1103515211, 12347> DefaultLCGRandomizer;
@@ -54,19 +55,19 @@ public:
     Random() = default;
 
     // The default randomizer is LCG with specified seed.
-    Random(uint64_t seed)
+    Random(MaxUint seed)
     : m_randomizer(std::make_unique<DefaultLCGRandomizer>(seed)) {}
 
-    uint64_t nextInt(uint64_t range);
+    MaxUint nextInt(MaxUint range);
 
-    void setRandomizer(std::unique_ptr<Randomizer> rand) { m_randomizer = std::move(rand); }
+    void setRandomizer(UniquePtr<Randomizer> rand) { m_randomizer = std::move(rand); }
 
     // precision - the count of "steps".
     // Number is generated using formula ((nextInt() % precision) / precision) * range.
-    float nextFloat(float range = 1.f, uint64_t precision = 1024);
-    double nextDouble(double range = 1.f, uint64_t precision = 1024);
+    float nextFloat(float range = 1.f, MaxUint precision = 1024);
+    double nextDouble(double range = 1.f, MaxUint precision = 1024);
 
-    int64_t nextIntRanged(int64_t begin, int64_t end);
+    MaxInt nextIntRanged(MaxInt begin, MaxInt end);
     float nextFloatRanged(float begin, float end);
     double nextDoubleRanged(double begin, double end);
 
@@ -83,7 +84,7 @@ public:
     static Random& fastRandom();
 
 private:
-    std::unique_ptr<Randomizer> m_randomizer;
+    UniquePtr<Randomizer> m_randomizer;
 };
 
 }

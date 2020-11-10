@@ -13,32 +13,32 @@ namespace EGE
     // Implementations
     namespace Internal
     {
-        uint64_t lcg_gen(uint64_t seed, uint64_t a, uint64_t c, uint64_t m)
+        MaxUint lcg_gen(MaxUint seed, MaxUint a, MaxUint c, MaxUint m)
         {
-            uint64_t val = (a * seed + c) % m;
+            MaxUint val = (a * seed + c) % m;
             return val;
         }
     }
 
     // Random
-    uint64_t Random::nextInt(uint64_t range)
+    MaxUint Random::nextInt(MaxUint range)
     {
         ASSERT(m_randomizer);
         ASSERT(range != 0);
         return m_randomizer->nextInt() % range;
     }
 
-    float Random::nextFloat(float range, uint64_t precision)
+    float Random::nextFloat(float range, MaxUint precision)
     {
         return (nextInt(precision) / (float)precision) * range;
     }
 
-    double Random::nextDouble(double range, uint64_t precision)
+    double Random::nextDouble(double range, MaxUint precision)
     {
         return (nextInt(precision) / (float)precision) * range;
     }
 
-    int64_t Random::nextIntRanged(int64_t begin, int64_t end)
+    MaxInt Random::nextIntRanged(MaxInt begin, MaxInt end)
     {
         if(begin == end)
             return begin; // Begin and end are equal; nothing to randomize :)

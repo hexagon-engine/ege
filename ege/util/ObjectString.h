@@ -13,28 +13,28 @@ namespace EGE
 class ObjectString : public Object
 {
 public:
-    typedef std::string ValueType;
+    typedef String ValueType;
 
     explicit ObjectString(ValueType str = "")
     : m_string(str) {}
 
-    virtual std::string toString() const;
+    virtual String toString() const;
 
     // TODO: int representations
-    virtual std::string asString() const { return m_string; }
+    virtual String asString() const { return m_string; }
     virtual bool asBool() const { return m_string == "true"; }
 
     virtual bool isString() const { return true; }
     virtual bool isBool() const { return true; }
 
-    virtual std::shared_ptr<Object> copy() const;
+    virtual SharedPtr<Object> copy() const;
 
     void setString(ValueType str)
     {
         m_string = str;
     }
 
-    size_t length()
+    Size length()
     {
         return m_string.size();
     }

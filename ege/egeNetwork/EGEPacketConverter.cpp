@@ -390,7 +390,8 @@ static bool outputObject(sf::Packet& output, const Object& object)
     }
     else if(object.isFloat())
     {
-        output << (sf::Uint8)'f' << object.asFloat();
+        // SFML does not support long doubles :(
+        output << (sf::Uint8)'f' << (Double)object.asFloat();
         return true;
     }
     else if(object.isString())

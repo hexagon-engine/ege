@@ -26,29 +26,29 @@ public:
     ObjectMap() = default;
     ObjectMap(const ObjectMap& map);
 
-    typedef std::map<std::string, std::shared_ptr<Object>> ValueType;
+    typedef SharedPtrStringMap<Object> ValueType;
 
-    const std::shared_ptr<Object>& addObject(std::string name, const std::shared_ptr<Object>& subObject);
-    const std::shared_ptr<Object>& addFloat(std::string name, ObjectFloat::ValueType value = 0.0);
-    const std::shared_ptr<Object>& addInt(std::string name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
-    const std::shared_ptr<Object>& addUnsignedInt(std::string name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
-    const std::shared_ptr<Object>& addList(std::string name, ObjectList::ValueType value = {});
-    const std::shared_ptr<Object>& addString(std::string name, ObjectString::ValueType value = "");
+    const SharedPtr<Object>& addObject(String name, const SharedPtr<Object>& subObject);
+    const SharedPtr<Object>& addFloat(String name, ObjectFloat::ValueType value = 0.0);
+    const SharedPtr<Object>& addInt(String name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
+    const SharedPtr<Object>& addUnsignedInt(String name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
+    const SharedPtr<Object>& addList(String name, ObjectList::ValueType value = {});
+    const SharedPtr<Object>& addString(String name, ObjectString::ValueType value = "");
 
-    std::weak_ptr<Object> getObject(std::string name) const;
-    bool hasObject(std::string name) const;
+    WeakPtr<Object> getObject(String name) const;
+    bool hasObject(String name) const;
 
-    virtual std::string toString() const;
+    virtual String toString() const;
 
     ValueType::const_iterator begin() const;
     ValueType::const_iterator end() const;
     size_t size() const;
 
-    virtual std::map<std::string, std::shared_ptr<Object>> asMap() const;
+    virtual SharedPtrStringMap<Object> asMap() const;
     virtual bool isMap() const { return true; }
 
-    virtual std::shared_ptr<Object> copy() const;
-    std::shared_ptr<ObjectMap> merge(std::shared_ptr<ObjectMap> other);
+    virtual SharedPtr<Object> copy() const;
+    SharedPtr<ObjectMap> merge(SharedPtr<ObjectMap> other);
 
 private:
      ValueType m_subObjects;

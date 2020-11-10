@@ -13,7 +13,7 @@ namespace EGE
 class ObjectInt : public Object
 {
 public:
-    typedef long long ValueType;
+    typedef MaxInt ValueType;
 
     enum class Type
     {
@@ -26,14 +26,14 @@ public:
     explicit ObjectInt(ValueType num = 0, Type type = Type::Long)
     : m_number(num), m_type(type) {}
 
-    virtual std::string toString() const;
+    virtual String toString() const;
 
     // TODO: int representations
-    virtual std::string asString() const { return std::to_string(m_number); }
-    virtual long long asInt() const;
-    virtual unsigned long long asUnsignedInt() { return std::max(0LL, asInt()); }
-    virtual bool asBool() const { return m_number; }
-    virtual double asFloat() const { return asInt(); }
+    virtual String asString() const { return std::to_string(m_number); }
+    virtual MaxInt asInt() const;
+    virtual MaxUint asUnsignedInt() { return std::max(0LL, asInt()); }
+    virtual Boolean asBool() const { return m_number; }
+    virtual MaxFloat asFloat() const { return asInt(); }
 
     virtual bool isString() const { return true; }
     virtual bool isInt() const { return true; }
@@ -56,10 +56,10 @@ public:
         return m_type;
     }
 
-    virtual std::shared_ptr<Object> copy() const;
+    virtual SharedPtr<Object> copy() const;
 
 private:
-    std::string suffix() const;
+    String suffix() const;
 
     ValueType m_number;
     Type m_type;

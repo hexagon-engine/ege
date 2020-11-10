@@ -18,8 +18,8 @@ class Serializable
 public:
     virtual ~Serializable() {}
 
-    virtual std::shared_ptr<ObjectMap> serialize() = 0;
-    virtual void deserialize(std::shared_ptr<ObjectMap>) = 0;
+    virtual SharedPtr<ObjectMap> serialize() = 0;
+    virtual void deserialize(SharedPtr<ObjectMap>) = 0;
 };
 
 }

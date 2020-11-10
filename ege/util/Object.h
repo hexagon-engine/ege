@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include "PointerUtils.h"
+#include "Types.h"
 
 #include <map>
 #include <memory>
@@ -20,15 +21,15 @@ class ObjectMap;
 class Object
 {
 public:
-    virtual std::string toString() const { return "<empty Object>"; };
+    virtual String toString() const { return "<empty Object>"; };
 
-    virtual std::string asString() const { return ""; }
-    virtual long long asInt() const { return 0; }
-    virtual unsigned long long asUnsignedInt() const { return asInt(); }
-    virtual bool asBool() const { return false; }
-    virtual std::map<std::string, std::shared_ptr<Object>> asMap() const { return {}; }
-    virtual double asFloat() const { return 0.0; }
-    virtual std::vector<std::shared_ptr<Object>> asList() const { return {}; }
+    virtual String asString() const { return ""; }
+    virtual MaxInt asInt() const { return 0; }
+    virtual MaxUint asUnsignedInt() const { return asInt(); }
+    virtual Boolean asBool() const { return false; }
+    virtual SharedPtrStringMap<Object> asMap() const { return {}; }
+    virtual MaxFloat asFloat() const { return 0.0; }
+    virtual SharedPtrVector<Object> asList() const { return {}; }
 
     virtual bool isString() const { return false; }
     virtual bool isInt() const { return false; }
@@ -38,7 +39,7 @@ public:
     virtual bool isFloat() const { return false; }
     virtual bool isList() const { return false; }
 
-    virtual std::shared_ptr<Object> copy() const { return make<Object>(); };
+    virtual SharedPtr<Object> copy() const { return make<Object>(); };
 };
 
 }
