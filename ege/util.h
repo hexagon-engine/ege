@@ -20,6 +20,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/Geometry.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Object.h>
 #include <ege/util/ObjectBoolean.h>
