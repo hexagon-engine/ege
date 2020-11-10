@@ -23,8 +23,8 @@ TESTCASE(simple)
 TESTCASE(chunked)
 {
     EGE::ChunkedTileMap2D<MyTile, 16, 16> tileMap;
-    EXPECT_EQUAL(tileMap.getLocalCoords(EGE::Vec2i(16, 16)), EGE::Vec2u(0, 0));
-    EXPECT_EQUAL(tileMap.getLocalCoords(EGE::Vec2i(-1, -1)), EGE::Vec2u(15, 15));
+    EXPECT_EQUAL(tileMap.getLocalCoords(EGE::Vec2i(16, 16)), EGE::Vec2s(0, 0));
+    EXPECT_EQUAL(tileMap.getLocalCoords(EGE::Vec2i(-1, -1)), EGE::Vec2s(15, 15));
     EXPECT_EQUAL(tileMap.ensureTile(EGE::Vec2i(100, 100)).c, 123);
     EXPECT_EQUAL(tileMap.ensureTile(EGE::Vec2i(-165, -112)).c, 123);
     tileMap.ensureTile(EGE::Vec2i(-165, -112)).c = 100;
