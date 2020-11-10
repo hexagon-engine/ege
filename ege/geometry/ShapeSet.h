@@ -16,6 +16,12 @@ class ShapeSet : public Shape
 {
 public:
     ShapeSet() = default;
+
+    explicit ShapeSet(std::shared_ptr<Shape> shape)
+    {
+        append(shape);
+    }
+
     ShapeSet(const ShapeSet& shapeSet);
     virtual ~ShapeSet() {}
 

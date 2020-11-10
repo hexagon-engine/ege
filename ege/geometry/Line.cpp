@@ -6,6 +6,10 @@ Copyright (c) Sppmacd 2020
 #include "Line.h"
 
 #include "Point.h"
+#include "ShapeSet.h"
+
+#include <ege/util/EquationSystem.h>
+#include <ege/util/Geometry.h>
 
 namespace EGE
 {
@@ -20,7 +24,7 @@ std::shared_ptr<ShapeSet> Line::intersection(std::shared_ptr<Shape> other) const
     if(point)
     {
         if(contains(point))
-            return other;
+            return make<ShapeSet>(other);
         else
             return nullptr;
     }
@@ -29,15 +33,15 @@ std::shared_ptr<ShapeSet> Line::intersection(std::shared_ptr<Shape> other) const
     auto line = std::dynamic_pointer_cast<Line>(other);
     if(line)
     {
-        auto relation = Geometry::lineRelation(A, B, C, line->A, line->B, line->C);
+        auto relation = Geometry::lineRelation<double>(A, B, C, line->A, line->B, line->C);
         if(relation == Geometry::LineRelation::Equal)
-            return copy();
+            return make<ShapeSet>(copy());
         else if(relation == Geometry::LineRelation::NoRelation || relation == Geometry::LineRelation::Parallel)
             return nullptr;
         else
         {
             EquationSystemResult result = EquationSystem::linear({ {A, B}, {line->A, line->B} }, {C, line->C});
-            return make<Point>(result.resultFor(0).results[0], result.resultFor(1).results[1]);
+            return make<ShapeSet>(make<Point>(result.resultFor(0).results[0], result.resultFor(1).results[1]));
         }
     }
 
@@ -48,26 +52,30 @@ std::shared_ptr<ShapeSet> Line::intersection(std::shared_ptr<Shape> other) const
 std::shared_ptr<ShapeSet> Line::sum(std::shared_ptr<Shape> other) const
 {
     if(!other)
-        return copy();
+        return make<ShapeSet>(copy());
 
     // With point
-    auto point = std::dynamic_pointer_cast<Point>(other);
-    if(point)
     {
-        if(contains(point))
-            return copy();
-        else
-            goto shapeSet;
+        auto point = std::dynamic_pointer_cast<Point>(other);
+        if(point)
+        {
+            if(contains(point))
+                return make<ShapeSet>(copy());
+            else
+                goto shapeSet;
+        }
     }
 
     // With other line
-    auto line = std::dynamic_pointer_cast<Line>(other);
-    if(line)
     {
-        if(Geometry::lineRelation(A, B, C, line->A, line->B, line->c) == Geometry::LineRelation::Equal)
-            return copy();
-        else
-            goto shapeSet;
+        auto line = std::dynamic_pointer_cast<Line>(other);
+        if(line)
+        {
+            if(Geometry::lineRelation<double>(A, B, C, line->A, line->B, line->C) == Geometry::LineRelation::Equal)
+                return make<ShapeSet>(copy());
+            else
+                goto shapeSet;
+        }
     }
 
     // With another shapes
@@ -76,7 +84,7 @@ std::shared_ptr<ShapeSet> Line::sum(std::shared_ptr<Shape> other) const
     SharedPtr<ShapeSet> shapeSet = make<ShapeSet>();
     shapeSet->append(copy());
     shapeSet->append(other->copy());
-    return shapeSet;
+    return make<ShapeSet>(shapeSet);
 }
 
 bool Line::contains(std::shared_ptr<Point> other) const

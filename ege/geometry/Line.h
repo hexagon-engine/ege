@@ -17,7 +17,7 @@ public:
     Line(double _A, double _B, double _C)
     : A(_A), B(_B), C(_C) {}
 
-    virtual ~Point() {}
+    virtual ~Line() {}
 
     virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const;
     virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const;
