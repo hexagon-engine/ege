@@ -14,7 +14,7 @@ template<class TT, size_t SX, size_t SY>
 class FixedTileMap2D : public TileMap2D<TT, size_t>
 {
 public:
-    virtual TT* getTile(EGE::Vec2s vec)
+    virtual TT* getTile(EGE::Vec2s vec) override
     {
         if(vec.x >= SX || vec.y >= SY)
             return nullptr;
@@ -24,7 +24,7 @@ public:
     // The array is not dynamically resizable;
     // simply crash when we try do access something
     // out of bounds.
-    virtual TT& ensureTile(EGE::Vec2s vec)
+    virtual TT& ensureTile(EGE::Vec2s vec) override
     {
         TT* tile = getTile(vec);
         ASSERT(tile);
