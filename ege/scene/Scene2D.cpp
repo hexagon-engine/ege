@@ -71,6 +71,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
         }
 
         view.setSize(_size);
+        view.zoom(1.f / cam->getZoom());
         return view;
     }
     else

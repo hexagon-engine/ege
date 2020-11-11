@@ -38,10 +38,14 @@ public:
     void setSize(CoordType size) { m_size = size; }
     CoordType getSize() { return m_size; }
 
+    float getZoom() const { return m_zoom; }
+    void setZoom(float zoom) { ASSERT(zoom != 0); m_zoom = zoom; }
+
     void setFollowObject(std::shared_ptr<EGE::SceneObject> object) { m_following = object; }
 
 protected:
     float m_fov = 0.f;
+    float m_zoom = 1.f;
     CoordType m_size;
     std::shared_ptr<EGE::Scene> m_parent;
     ScalingMode m_scalingMode = ScalingMode::None;
