@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/util/Vector.h>
+#include <cmath>
 
 namespace EGE
 {
@@ -22,6 +23,12 @@ public:
 
     virtual TileType* getTile(EGE::Vector2<SizeType> vec) = 0;
     virtual TileType& ensureTile(EGE::Vector2<SizeType> vec) = 0;
+
+    EGE::Vector2<SizeType> getTileAlignedPos(EGE::Vec2d vec)
+    {
+        return EGE::Vector2<SizeType>(std::floor(vec.x / m_tileSize.x),
+                                      std::floor(vec.y / m_tileSize.y));
+    }
 
 private:
     EGE::Vec2u m_tileSize;
