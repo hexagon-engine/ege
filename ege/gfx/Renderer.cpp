@@ -42,6 +42,8 @@ void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String
 
 void Renderer::renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect)
 {
+    if(textureRect == sf::IntRect())
+        textureRect = sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
     rs.setTexture(&texture);
