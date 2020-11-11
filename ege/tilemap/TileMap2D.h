@@ -24,10 +24,10 @@ public:
     virtual TileType* getTile(EGE::Vector2<SizeType> vec) = 0;
     virtual TileType& ensureTile(EGE::Vector2<SizeType> vec) = 0;
 
-    EGE::Vector2<SizeType> getTileAlignedPos(EGE::Vec2d vec)
+    EGE::Vec2i getTileAlignedPos(EGE::Vec2d vec)
     {
-        return EGE::Vector2<SizeType>(std::floor(vec.x / m_tileSize.x),
-                                      std::floor(vec.y / m_tileSize.y));
+        return EGE::Vec2i(std::floor(std::floor(vec.x) / m_tileSize.x),
+                          std::floor(std::floor(vec.y) / m_tileSize.y));
     }
 
 private:
