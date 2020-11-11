@@ -141,13 +141,18 @@ bool Widget::isMouseOver(EGE::Vec2d position)
     return getBoundingBox().contains(sf::Vector2f(position.x, position.y));
 }
 
-void Widget::setViewForWidget(sf::RenderTarget& target)
+sf::View Widget::getView(sf::RenderTarget& target)
 {
     sf::FloatRect viewport = getViewport(target);
     sf::View view(sf::FloatRect(sf::Vector2f(),
                                 sf::Vector2f(viewport.getSize().x * target.getSize().x, viewport.getSize().y * target.getSize().y)));
     view.setViewport(viewport);
-    target.setView(view);
+    return view;
+}
+
+void Widget::setViewForWidget(sf::RenderTarget& target)
+{
+    target.setView(getView(target));
 }
 
 void Widget::onUpdate(long long tickCounter)

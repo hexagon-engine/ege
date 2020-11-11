@@ -87,6 +87,8 @@ public:
     virtual bool isMouseOver(EGE::Vec2d position);
     virtual void setViewForWidget(sf::RenderTarget& target);
 
+    virtual sf::View getView(sf::RenderTarget& target);
+
     bool hasFocus()
     {
         return m_hasFocus;
