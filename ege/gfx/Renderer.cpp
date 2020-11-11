@@ -40,11 +40,12 @@ void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String
     getTarget().draw(text, m_states.sfStates());
 }
 
-void Renderer::renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture)
+void Renderer::renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect)
 {
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
     rs.setTexture(&texture);
+    rs.setTextureRect(textureRect);
     getTarget().draw(rs, m_states.sfStates());
 }
 

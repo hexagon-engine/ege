@@ -37,7 +37,7 @@ public:
     void renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor = sf::Color::Transparent);
     void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16);
     void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
-    void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture);
+    void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect = {});
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
     void renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type);
 
