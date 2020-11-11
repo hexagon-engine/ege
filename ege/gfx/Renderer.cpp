@@ -80,43 +80,14 @@ void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
 
 void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type)
 {
-    if(points.empty())
-        return;
-
-    //getTarget().pushGLStates();
-    applyStates();
-
-    // TODO: Maybe make it Renderer-local?
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data());
-    glColorPointer(4, GL_BYTE, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3);
-    glTexCoordPointer(2, GL_FLOAT, sizeof(EGE::Vertex), (char*)points.data() + sizeof(float) * 3 + sizeof(char) * 4);
-
-    GLenum ptype;
-    switch(type)
+    sf::VertexArray varr(type);
+    for(const Vertex& vertex: points)
     {
-        case sf::Points: ptype = GL_POINTS; break;
-        case sf::Lines: ptype = GL_LINES; break;
-        case sf::LineStrip: ptype = GL_LINE_STRIP; break;
-        case sf::Triangles: ptype = GL_TRIANGLES; break;
-        case sf::TriangleStrip: ptype = GL_TRIANGLE_STRIP; break;
-        case sf::TriangleFan: ptype = GL_TRIANGLE_FAN; break;
-        case sf::Quads: ptype = GL_QUADS; break;
-        default: CRASH();
+        varr.append(sf::Vertex(sf::Vector2f(vertex.x, vertex.y),
+                    sf::Color((int)vertex.r + 128, (int)vertex.g + 128, (int)vertex.b + 128, (int)vertex.a + 128),
+                    sf::Vector2f(vertex.texX, vertex.texY)));
     }
-
-    glDrawArrays(ptype, 0, points.size());
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    //getTarget().resetGLStates();
-
-    //getTarget().popGLStates();
+    getTarget().draw(varr, m_states.sfStates());
 }
 
 void Renderer::renderButtonLike(double x, double y, double width, double height)
