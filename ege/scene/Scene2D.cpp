@@ -15,11 +15,11 @@ void Scene2D::setCamera(std::weak_ptr<CameraObject2D> camera)
     m_camera = camera;
 }
 
-sf::View Scene2D::getView(sf::RenderTarget& target)
+sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView)
 {
     if(!m_camera.expired())
     {
-        sf::View view = target.getView();
+        sf::View view = parentView;
         CameraObject2D* cam = m_camera.lock().get();
         view.setCenter(m_camera.lock()->getEyePosition());
         sf::Vector2f _size;
@@ -91,20 +91,20 @@ sf::View Scene2D::getView(sf::RenderTarget& target)
 
 void Scene2D::renderOnly(sf::RenderTarget& target, const RenderStates& states)
 {
-    target.setView(getView(target));
+    target.setView(getView(target, target.getView()));
 
     // render objects iteratively
     Scene::renderOnly(target, states);
 }
 
-sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos)
+sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView)
 {
-    return target.mapPixelToCoords(screenPos, getView(target));
+    return target.mapPixelToCoords(screenPos, getView(target, parentView));
 }
 
-sf::Vector2i Scene2D::mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos)
+sf::Vector2i Scene2D::mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos, const sf::View& parentView)
 {
-    return target.mapCoordsToPixel(scenePos, getView(target));
+    return target.mapCoordsToPixel(scenePos, getView(target, parentView));
 }
 
 }
