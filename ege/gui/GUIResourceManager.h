@@ -23,9 +23,9 @@ public:
 
     virtual bool reload();
 
-    void registerUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr);
-    bool registerResourcePath(std::string path);
-    bool registerDefaultFont(std::string name);
+    void registerUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr) { m_unknownTextureToLoad = texture; }
+    void registerResourcePath(std::string path) { m_resourcePathToLoad = path; }
+    void registerDefaultFont(std::string name) { m_defaultFontToLoad = name; }
 
 private:
     std::queue<String> m_texturesToLoad;
