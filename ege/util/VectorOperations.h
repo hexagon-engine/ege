@@ -131,7 +131,7 @@ bool operator!=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
 template<class T>
 bool operator<(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
 {
-    return _1.x < _2.x || _1.y < _2.y;
+    return _1.x > _2.x || (_1.x == _2.x && _1.y > _2.y);
 }
 
 template<class T>
@@ -144,7 +144,7 @@ bool operator>=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
 template<class T>
 bool operator>(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
 {
-    return _1.x > _2.x || _1.y > _2.y;
+    return _1.x < _2.x || (_1.x == _2.x && _1.y < _2.y);
 }
 
 template<class T>
