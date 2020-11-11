@@ -54,12 +54,12 @@ public:
         sf::Vector2f objPos = sceneObject.getPosition();
 
         EGE::Vector2<MaxInt> beginTile = {
-            (MaxInt)((beginCoord.x - objPos.x) / tileSize.x),
+            (MaxInt)((beginCoord.x - objPos.x) / tileSize.x - 1),
             (MaxInt)((beginCoord.y - objPos.y) / tileSize.y - 1)
         };
         EGE::Vector2<MaxInt> endTile = {
             (MaxInt)((endCoord.x - objPos.x) / tileSize.x + 1),
-            (MaxInt)((endCoord.y - objPos.y) / tileSize.y)
+            (MaxInt)((endCoord.y - objPos.y) / tileSize.y + 1)
         };
 
         // TODO: calculate and reserve required space
