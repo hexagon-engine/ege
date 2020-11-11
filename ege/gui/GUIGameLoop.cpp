@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "GUIGameLoop.h"
 
+#include "GUIResourceManager.h"
+
 #include <ege/debug/Logger.h>
 #include <ege/debug/ProfilerSectionStarter.h>
 #include <ege/util/PointerUtils.h>
@@ -37,16 +39,11 @@ EventResult GUIGameLoop::onLoad()
     }
     else
     {
-        err(LogLevel::Warning) << "000A EGE/gui: no ResourceManager set, setting to default GUIResourceManager";
+        // Print a message and create some default resource manager (to not crash Scene)
+        err(LogLevel::Critical) << "The ResourceManager is not set!";
         m_resourceManager = make<ResourceManager>();
-
-        bool success = m_resourceManager->reload();
-        success &= !m_resourceManager->isError();
-        if(!success)
-        {
-            return EventResult::Failure;
-        }
     }
+
     return EventResult::Success;
     m_fpsClock.restart();
 }

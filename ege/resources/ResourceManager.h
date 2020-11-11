@@ -63,10 +63,10 @@ protected:
 private:
     std::shared_ptr<sf::Texture> m_unknownTexture;
 
-    std::map<std::string, std::shared_ptr<sf::Texture>> m_loadedTextures;
-    std::map<std::string, std::shared_ptr<sf::Font>> m_loadedFonts;
-    std::map<std::string, std::shared_ptr<sf::Cursor>> m_loadedCursors;
-    std::map<std::string, std::shared_ptr<sf::Shader>> m_loadedShaders;
+    SharedPtrStringMap<sf::Texture> m_loadedTextures;
+    SharedPtrStringMap<sf::Font> m_loadedFonts;
+    SharedPtrStringMap<sf::Cursor> m_loadedCursors;
+    SharedPtrStringMap<sf::Shader> m_loadedShaders;
 
     bool m_error = false;
     bool m_systemCursorError = false;

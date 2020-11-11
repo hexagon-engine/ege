@@ -17,6 +17,8 @@ set(SOURCES
 	"GameLoop.h"
 	"GUIGameLoop.cpp"
 	"GUIGameLoop.h"
+	"GUIResourceManager.cpp"
+	"GUIResourceManager.h"
 	"GUIScreen.cpp"
 	"GUIScreen.h"
 	"Label.cpp"
