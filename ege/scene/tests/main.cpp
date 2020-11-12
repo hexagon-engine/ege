@@ -398,7 +398,7 @@ public:
         {
             auto renderer = make<EGE::TilemapRenderer2D<decltype(m_tilemap)::element_type>>(owner, m_tilemap);
             renderer->setAtlasTextureName("atlas.png");
-            renderer->setTileAtlasMapper( [](const MyTile& tile) { return EGE::Vec2d(tile.apx * 64, tile.apy * 64); } );
+            renderer->setTileAtlasMapper( [](const MyTile& tile, EGE::Size) { return EGE::Vec2d(tile.apx * 64, tile.apy * 64); } );
             setRenderer(renderer);
         }
     }
