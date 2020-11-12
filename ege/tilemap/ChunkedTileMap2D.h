@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "TileMap2D.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/util/Vector.h>
 
 namespace EGE
@@ -51,7 +52,8 @@ public:
 
     virtual TileType& ensureTile(EGE::Vec2i vec) override
     {
-        return ensureChunk(getChunkCoords(vec)).getTile(getLocalCoords(vec));
+        auto lc = getLocalCoords(vec);
+        return ensureChunk(getChunkCoords(vec)).getTile(lc);
     }
 
     const ChunkType* getChunk(EGE::Vec2i chunkCoords) const
@@ -72,7 +74,7 @@ public:
         if(!chunk)
         {
             ChunkType& ptr = allocateChunk(chunkCoords);
-            generateChunk(chunkCoords, *chunk);
+            generateChunk(chunkCoords, ptr);
             return ptr;
         }
         return *chunk;
@@ -106,8 +108,8 @@ public:
 
     EGE::Vec2s getLocalCoords(EGE::Vec2i globalCoord)
     {
-        return {globalCoord.x < 0 ? (unsigned)(CSX - 1) + (globalCoord.x + 1) % CSX : globalCoord.x % CSX,
-                globalCoord.y < 0 ? (unsigned)(CSY - 1) + (globalCoord.y + 1) % CSY : globalCoord.y % CSY};
+        return {(globalCoord.x < 0 ? ((unsigned)(CSX - 1) + int(globalCoord.x + 1) % (int)CSX) : globalCoord.x % (int)CSX),
+                (globalCoord.y < 0 ? ((unsigned)(CSY - 1) + int(globalCoord.y + 1) % (int)CSY) : globalCoord.y % (int)CSY)};
     }
 
     EGE::Vec2i getGlobalCoords(EGE::Vec2i chunkCoord, EGE::Vec2s localCoord);
