@@ -35,6 +35,11 @@ public:
     // The function maps tile type (in tilemap) to atlas coords to render (in pixels).
     void setTileAtlasMapper(std::function<EGE::Vec2d(const typename TMap::TileType&)> mapper) { m_tileMapper = mapper; }
 
+    // Use ensureTile() instead of getTile(). The tilemap will be resized
+    // if possible and necessary. DO NOT USE IT WITH FIXED TILEMAPS, otherwise
+    // assertion will be triggered.
+    void setUseEnsure(bool ensure = true) { m_useEnsure = ensure; }
+
     virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const
     {
         // TODO: tilemap render cache (it should go to updateGeometry)
@@ -66,13 +71,17 @@ public:
         // TODO: don't check tiles outside the bounds
         // TODO: allow checking bounds inside tilemap if it's applicabled
         // TODO: multiple layers (e.g for shadows)
+        // TODO: chunk rendering for chunk-capable tilemaps
         std::vector<EGE::Vertex> vertexes;
         EGE::Renderer renderer(target);
 
         for(MaxInt x = beginTile.x; x <= endTile.x; x++)
         for(MaxInt y = beginTile.y; y <= endTile.y; y++)
         {
-            const typename TMap::TileType* tile = m_tileMap->getTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y});
+            const typename TMap::TileType* tile = (m_useEnsure
+                                                        ? &m_tileMap->ensureTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y})
+                                                        : m_tileMap->getTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y})
+                                                    );
             if(!tile) continue;
             EGE::Vec2d atlasCoords = m_tileMapper(*tile);
 
@@ -130,6 +139,7 @@ private:
     std::shared_ptr<sf::Texture> m_atlas;
     std::string m_atlasName;
     std::function<Vec2d(const typename TMap::TileType&)> m_tileMapper;
+    bool m_useEnsure = false;
 };
 
 }
