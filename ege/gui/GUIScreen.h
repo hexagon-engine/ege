@@ -9,6 +9,8 @@ Copyright (c) Sppmacd 2020
 
 #include "CompoundWidget.h"
 
+#define EGE_MODAL_DIALOG_REPLACED -8
+
 namespace EGE
 {
 
@@ -17,6 +19,10 @@ class GUIScreen : public CompoundWidget
 public:
     GUIScreen(GUIGameLoop* gameLoop)
     : CompoundWidget(gameLoop) {}
+
+    // for modal dialogs
+    GUIScreen(Widget* parent)
+    : CompoundWidget(parent) {}
 
     // System Events -- are passed to all child widgets
     virtual void onClose() override;
@@ -42,8 +48,24 @@ public:
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
     virtual void onSensorChange(sf::Event::SensorEvent& event) override;
 
+    virtual void onUpdate(long long tickCounter) override;
     virtual void onUnload() {}
+
+    // Args: dialog, exitCode
+    virtual void onDialogExit(GUIScreen*, int) {}
+
     virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
+
+    // If you call it on dialog, the onDialogExit function is called
+    // and the dialog is removed on parent.
+    virtual void exitDialog(int code);
+
+    // Opened modal dialog should have 'this' as parent.
+    // e.g   openDialog(make<MyDialog>(this));
+    virtual void openDialog(SharedPtr<GUIScreen> dialog);
+
+protected:
+    SharedPtr<GUIScreen> m_dialog;
 };
 
 }

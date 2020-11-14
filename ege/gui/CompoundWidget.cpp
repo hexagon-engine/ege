@@ -177,11 +177,11 @@ void CompoundWidget::onSensorChange(sf::Event::SensorEvent& event)
 
 void CompoundWidget::onUpdate(long long tickCounter)
 {
-    Widget::onUpdate(tickCounter);
     for(auto widget: m_childWidgets)
     {
         widget->onUpdate(tickCounter);
     }
+    Widget::onUpdate(tickCounter);
 }
 
 void CompoundWidget::render(sf::RenderTarget& target, const RenderStates& states)
