@@ -70,7 +70,7 @@ void Label::updateGeometry()
                 break;
         }
         text.setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y) - sf::Vector2f(getPosition().x, getPosition().y));
-        text.setFillColor(sf::Color::Black);
+        text.setFillColor(m_color);
         m_text = text;
         m_geometryChanged = false;
     }
