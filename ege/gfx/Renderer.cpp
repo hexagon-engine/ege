@@ -23,11 +23,32 @@ void Renderer::renderRectangle(double x, double y, double width, double height, 
     getTarget().draw(rs, m_states.sfStates());
 }
 
-void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size)
+void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size, sf::Color color)
 {
     sf::Text text(str, font, size);
     text.setPosition(x, y);
-    text.setFillColor(sf::Color::Black);
+    text.setFillColor(color);
+    getTarget().draw(text, m_states.sfStates());
+}
+
+void Renderer::renderTextWithBackground(double x, double y, sf::Font& font, sf::String str, Renderer::TextWithBackgroundSettings settings)
+{
+    sf::Text text(str, font, settings.font_size);
+    text.setPosition(x, y);
+
+    auto textRect = text.getLocalBounds();
+    textRect.height += 7.f * settings.font_size / 15.f; //SFML text bounds bug??
+    textRect.width += 1.f * settings.font_size / 15.f;
+
+    // Background
+    renderRectangle(x - settings.padding,
+                    y - settings.padding,
+                    textRect.width + settings.padding * 2,
+                    textRect.height + settings.padding * 2,
+                    settings.background_color);
+
+    // Text
+    text.setFillColor(settings.color);
     getTarget().draw(text, m_states.sfStates());
 }
 

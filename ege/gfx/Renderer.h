@@ -33,9 +33,21 @@ public:
     : m_target(target) {}
 
     // Common renderers.
-    // For more advanced shapes, use SFML sf::Drawables.
+    // For more complex shapes, use SFML sf::Drawables.
     void renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor = sf::Color::Transparent);
-    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16);
+    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, sf::Color color = sf::Color::White);
+
+    struct TextWithBackgroundSettings
+    {
+        sf::Color background_color = sf::Color::Black;
+        sf::Color color = sf::Color::White;
+        int font_size = 16;
+        double padding = 5.0;
+
+        TextWithBackgroundSettings() {};
+    };
+
+    void renderTextWithBackground(double x, double y, sf::Font& font, sf::String str, TextWithBackgroundSettings settings = {});
     void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
     void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect = {});
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
