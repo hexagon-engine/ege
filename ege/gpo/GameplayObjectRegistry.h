@@ -8,6 +8,8 @@ Copyright (c) Sppmacd 2020
 #include <string>
 #include <vector>
 
+#include <ege/util.h>
+
 #define EGE_GPOREGISTRY_TEMPLATE template<class IdT, class ObjT>
 
 namespace EGE
@@ -23,8 +25,6 @@ enum class RegistryError : int
 // TODO: be Serializable
 
 // Gameplay Object Registry.
-// Note that objects MUST be created dynamically
-// because they are destroyed when game is closed.
 //
 // Requirements for IdT:
 //
@@ -46,7 +46,7 @@ public:
     };
 
     // TODO: binary search of gpos?
-    typedef std::vector<std::pair<IdTEntry, ObjT*>> ArrayType;
+    typedef std::vector<std::pair<IdTEntry, EGE::UniquePtr<ObjT>>> ArrayType;
 
     GameplayObjectRegistry();
 
@@ -55,12 +55,12 @@ public:
     // Deallocates and removes all elements from registry.
     virtual void clear();
 
-    // Adds a new object to registry. It must be created dynamically.
+    // Adds a new object to registry.
     // Returns negative value if object exists (or another error occured),
     // positive otherwise.
     // If %numeric is not specified or equal 0, the ID is automatically
     // generated and the return value is an ID of object.
-    virtual RegistryError add(IdT id, ObjT* obj, size_t numeric = 0);
+    virtual RegistryError add(IdT id, EGE::UniquePtr<ObjT> obj, size_t numeric = 0);
 
     // Returns an object that has specified base %id. Returns NULL if
     // the object doesn't exist or another error occured.

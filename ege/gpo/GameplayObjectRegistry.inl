@@ -27,16 +27,12 @@ GameplayObjectRegistry<IdT, ObjT>::~GameplayObjectRegistry()
 EGE_GPOREGISTRY_TEMPLATE
 void GameplayObjectRegistry<IdT, ObjT>::clear()
 {
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        delete it->second;
-    }
     m_objects.clear();
     m_greatestNumericId = 0;
 }
 
 EGE_GPOREGISTRY_TEMPLATE
-RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, ObjT* obj, size_t numeric)
+RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, EGE::UniquePtr<ObjT> obj, size_t numeric)
 {
     if(numeric != 0)
     {
@@ -53,7 +49,7 @@ RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, ObjT* obj, size_t n
         // Try to add object.
         try
         {
-            m_objects.push_back(std::make_pair(IdTEntry{id,numeric}, obj));
+            m_objects.push_back(std::make_pair(IdTEntry{id,numeric}, std::move(obj)));
         }
         catch(std::exception& e)
         {
@@ -74,7 +70,7 @@ RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, ObjT* obj, size_t n
     {
         // Generate ID and add the object if %numeric == 0.
         numeric = m_greatestNumericId + 1;
-        return (RegistryError)add(id, obj, numeric);
+        return (RegistryError)add(id, std::move(obj), numeric);
     }
 }
 
@@ -84,7 +80,7 @@ ObjT* GameplayObjectRegistry<IdT, ObjT>::findById(const IdT& id) const
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
         if(it->first.baseId == id)
-            return it->second;
+            return it->second.get();
     }
     return nullptr;
 }
@@ -95,7 +91,7 @@ ObjT* GameplayObjectRegistry<IdT, ObjT>::findByNumericId(const size_t id) const
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
         if(it->first.numericId == id)
-            return it->second;
+            return it->second.get();
     }
     return nullptr;
 }
@@ -105,7 +101,7 @@ typename GameplayObjectRegistry<IdT, ObjT>::IdTEntry GameplayObjectRegistry<IdT,
 {
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
-        if(it->second == obj)
+        if(it->second.get() == obj)
             return it->first;
     }
     return IdTEntry{IdT(), 0};
@@ -118,7 +114,6 @@ void GameplayObjectRegistry<IdT, ObjT>::remove(const IdT& id)
     {
         if(it->first.baseId == id)
         {
-            delete it->second;
             m_objects.erase(it);
             return;
         }
@@ -132,7 +127,6 @@ void GameplayObjectRegistry<IdT, ObjT>::removeByNumericId(const size_t id)
     {
         if(it->first.numericId == id)
         {
-            delete it->second;
             m_objects.erase(it);
             return;
         }
@@ -144,9 +138,8 @@ void GameplayObjectRegistry<IdT, ObjT>::remove(ObjT* obj)
 {
     for(auto it = m_objects.begin(); it != m_objects.end(); it++)
     {
-        if(it->second == obj)
+        if(it->second.get() == obj)
         {
-            delete it->second;
             m_objects.erase(it);
             return;
         }

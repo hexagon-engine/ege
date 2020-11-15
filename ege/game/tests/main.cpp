@@ -49,7 +49,7 @@ public:
 
     virtual void registerObject(std::string id, int r, int g, int b)
     {
-        colors.add(id, new MyColor(id, sf::Color(r,g,b)));
+        colors.add(id, std::make_unique<MyColor>(id, sf::Color(r,g,b)));
     }
 
     virtual bool clear()
@@ -128,11 +128,11 @@ public:
     {
         DEBUG_PRINT("MyGuiScreen onLoad");
         size_t s = 0;
-        for(auto& _color: MyGameplayObjectManager::instance->colors.arr())
+        for(auto& _color: MyGameplayObjectManager::instance->colors)
         {
             DEBUG_PRINT(_color.first.baseId.c_str());
             DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
-            auto widget = make<ColorWidget>(this, _color.first, _color.second);
+            auto widget = make<ColorWidget>(this, _color.first, _color.second.get());
             widget->setPosition(EGE::Vec2d(40.f, 40.f * s + 40.f));
             m_widgets.push_back(widget);
             addWidget(widget);

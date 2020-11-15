@@ -282,7 +282,8 @@ EventResult EGEClient::onLoad()
         auto gpom = getGameplayObjectManager();
         for(auto pr: m_sceneObjectCreators)
         {
-            gpom->sceneObjectCreators.add(pr.first, new std::function(
+            // TODO: Make some alias for it.
+            gpom->sceneObjectCreators.add(pr.first, std::make_unique<std::function<std::shared_ptr<EGE::SceneObject>(std::shared_ptr<EGE::Scene> scene)>>(
                                         [pr](std::shared_ptr<EGE::Scene> scene)
                                         {
                                             return pr.second(scene);

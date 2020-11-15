@@ -66,8 +66,8 @@ public:
 
     bool load()
     {
-        registerMyObject(new MyObjectTest("testObject", -123, "addd"));
-        numeric = registerMyObject(new MyObject("unknownObject", 54, "araer"));
+        registerMyObject(std::make_unique<MyObjectTest>("testObject", -123, "addd"));
+        numeric = registerMyObject(std::make_unique<MyObject>("unknownObject", 54, "araer"));
         return true;
     }
 
@@ -87,9 +87,10 @@ public:
     }
 
 private:
-    int registerMyObject(MyObject* object)
+    int registerMyObject(EGE::UniquePtr<MyObject> object)
     {
-        return (int)m_myObjectRegistry.add(object->getId(), object);
+        std::string id = object->getId();
+        return (int)m_myObjectRegistry.add(id, std::move(object));
     }
 };
 
