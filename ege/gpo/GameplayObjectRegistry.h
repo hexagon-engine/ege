@@ -50,6 +50,9 @@ public:
 
     GameplayObjectRegistry();
 
+    // non-copyable
+    GameplayObjectRegistry(const GameplayObjectRegistry<IdT, ObjT>& obj) = delete;
+
     virtual ~GameplayObjectRegistry();
 
     // Deallocates and removes all elements from registry.
