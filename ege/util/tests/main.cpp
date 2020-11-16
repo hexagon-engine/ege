@@ -120,10 +120,6 @@ TESTCASE(vectors)
     EGE::Vec2i vec1(4, 3);
     EGE::Vec2i vec2(3, 4);
     EXPECT_EQUAL(EGE::VectorOperations::length(vec1), EGE::VectorOperations::length(vec2));
-    EXPECT(vec1 < vec2 * 2);
-    EXPECT(vec1 * 2 > vec2);
-    EXPECT(vec1 >= vec2);
-    EXPECT(vec1 <= vec2);
     return 0;
 }
 

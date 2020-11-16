@@ -15,7 +15,7 @@ namespace EGE
     {
         MaxUint lcg_gen(MaxUint seed, MaxUint a, MaxUint c, MaxUint m)
         {
-            MaxUint val = (a * seed + c) % m;
+            MaxUint val = (a * seed + c) % m / 4;
             return val;
         }
     }
