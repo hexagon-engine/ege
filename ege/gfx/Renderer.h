@@ -37,12 +37,20 @@ public:
     void renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor = sf::Color::Transparent);
     void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, sf::Color color = sf::Color::White);
 
+    enum TextAlign
+    {
+        Left,
+        Center,
+        Right
+    };
+
     struct TextWithBackgroundSettings
     {
         sf::Color background_color = sf::Color::Black;
         sf::Color color = sf::Color::White;
         int font_size = 16;
         double padding = 5.0;
+        TextAlign text_align = Left;
 
         TextWithBackgroundSettings() {};
     };

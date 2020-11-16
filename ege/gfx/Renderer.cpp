@@ -36,13 +36,27 @@ void Renderer::renderTextWithBackground(double x, double y, sf::Font& font, sf::
     sf::Text text(str, font, settings.font_size);
     text.setPosition(x, y);
 
-    auto textRect = text.getLocalBounds();
-    textRect.height += 7.f * settings.font_size / 15.f; //SFML text bounds bug??
+    switch(settings.text_align)
+    {
+    case Renderer::TextAlign::Left:
+        break;
+    case Renderer::TextAlign::Center:
+        text.setOrigin(text.getLocalBounds().getSize() / 2.f);
+        break;
+    case Renderer::TextAlign::Right:
+        text.setOrigin(text.getLocalBounds().getSize());
+        break;
+    default:
+        CRASH();
+    }
+
+    auto textRect = text.getGlobalBounds();
+    textRect.height += 5.f * settings.font_size / 15.f; //SFML text bounds bug??
     textRect.width += 1.f * settings.font_size / 15.f;
 
     // Background
-    renderRectangle(x - settings.padding,
-                    y - settings.padding,
+    renderRectangle(textRect.left - settings.padding,
+                    textRect.top - settings.padding,
                     textRect.width + settings.padding * 2,
                     textRect.height + settings.padding * 2,
                     settings.background_color);
