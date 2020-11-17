@@ -1,6 +1,7 @@
 set(SOURCES
 	"ChunkedTileMap2D.cpp"
 	"ChunkedTileMap2D.h"
+	"FixedChunk.h"
 	"FixedTileMap2D.cpp"
 	"FixedTileMap2D.h"
 	"TileMap2D.cpp"

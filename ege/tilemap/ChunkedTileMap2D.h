@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "FixedChunk.h"
 #include "TileMap2D.h"
 
 #include <ege/debug/Logger.h>
@@ -13,34 +14,12 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-template<class TT, Size SX, Size SY>
-class Chunk
-{
-public:
-    TT& getTile(EGE::Vec2s vec)
-    {
-        if(vec.x >= SX || vec.y >= SY)
-            CRASH();
-        return m_tiles[vec.x][vec.y];
-    }
-
-    const TT& getTile(EGE::Vec2s vec) const
-    {
-        if(vec.x >= SX || vec.y >= SY)
-            CRASH();
-        return m_tiles[vec.x][vec.y];
-    }
-
-private:
-    TT m_tiles[SX][SY];
-};
-
 template<class TT, Size CSX, Size CSY>
-class ChunkedTileMap2D : public TileMap2D<TT, int>
+class ChunkedTileMap2D : public TileMap2D<TT, int, CSX, CSY>
 {
 public:
     typedef TT TileType;
-    typedef Chunk<TileType, CSX, CSY> ChunkType;
+    typedef FixedChunk<TileType, CSX, CSY> ChunkType;
 
     virtual TileType* getTile(EGE::Vec2i vec) override
     {
@@ -58,17 +37,20 @@ public:
 
     const ChunkType* getChunk(EGE::Vec2i chunkCoords) const
     {
-        return m_chunks[chunkCoords].get();
+        auto it = m_chunks.find(chunkCoords);
+        if(it == m_chunks.end())
+            return nullptr;
+        return it->second.get();
     }
 
     // Get pointer to chunk, if it exists.
-    ChunkType* getChunk(EGE::Vec2i chunkCoords)
+    virtual ChunkType* getChunk(EGE::Vec2i chunkCoords)
     {
         return m_chunks[chunkCoords].get();
     }
 
     // Ensure that chunk exists, and return reference to it.
-    ChunkType& ensureChunk(EGE::Vec2i chunkCoords)
+    virtual ChunkType& ensureChunk(EGE::Vec2i chunkCoords)
     {
         ChunkType* chunk = getChunk(chunkCoords);
         if(!chunk)

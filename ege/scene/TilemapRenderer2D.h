@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/gfx/Renderer.h>
 #include <ege/tilemap/TileMap2D.h>
-#include <ege/util/Types.h>
+#include <ege/util.h>
 
 namespace EGE
 {
@@ -51,60 +51,76 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual void renderLayer(Size layer, sf::Vector2f objPos, Vector2<MaxInt> beginTile, Vector2<MaxInt> endTile, sf::RenderTarget& target, const RenderStates& states) const
+    virtual void renderLayer(Size layer, sf::Vector2f objPos, Vector2<MaxInt> beginChunk, Vector2<MaxInt> endChunk, sf::RenderTarget& target, const RenderStates& states) const
     {
-        std::vector<Vertex> vertexes;
+        sf::VertexArray vertexes(sf::Quads);
         Renderer renderer(target);
 
         Vec2u tileSize = m_tileMap->getTileSize();
+        Vec2s chunkSize = m_tileMap->getChunkSize();
 
         ASSERT(tileSize.x != 0);
         ASSERT(tileSize.y != 0);
+        ASSERT(chunkSize.x != 0);
+        ASSERT(chunkSize.y != 0);
+
+        Size arraySize = (endChunk.x - beginChunk.x + 1) * (endChunk.y - beginChunk.y + 1) * chunkSize.x * chunkSize.y * 4;
+        vertexes.resize(arraySize);
+        Size index = 0;
 
         // TODO: calculate and reserve required space
         // TODO: don't check tiles outside the bounds
         // TODO: allow checking bounds inside tilemap if it's applicable
-        for(MaxInt x = beginTile.x; x <= endTile.x; x++)
-        for(MaxInt y = beginTile.y; y <= endTile.y; y++)
+        for(MaxInt cx = beginChunk.x; cx <= endChunk.x; cx++)
+        for(MaxInt cy = beginChunk.y; cy <= endChunk.y; cy++)
         {
-            const typename TMap::TileType* tile = (m_useEnsure
-                                                        ? &m_tileMap->ensureTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y})
-                                                        : m_tileMap->getTile({(typename TMap::SizeType)x, (typename TMap::SizeType)y})
-                                                    );
-            if(!tile) continue;
-            Vec2d atlasCoords = m_tileMapper(*tile, layer);
+            const typename TMap::ChunkType* chunk = (m_useEnsure
+                                                            ? &m_tileMap->ensureChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
+                                                            : m_tileMap->getChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
+                                                        );
+            if(!chunk)
+                continue;
 
-            Vertex vertex;
-            vertex.r = 127;
-            vertex.g = 127;
-            vertex.b = 127;
+            for(Size x = 0; x < chunkSize.x; x++)
+            for(Size y = 0; y < chunkSize.y; y++)
+            {
+                const typename TMap::TileType& tile = chunk->getTile({x, y});
 
-            vertex.x = x * tileSize.x + objPos.x;
-            vertex.y = y * tileSize.y + objPos.y;
-            vertex.texX = atlasCoords.x;
-            vertex.texY = atlasCoords.y;
-            vertexes.push_back(vertex);
+                Vec2d atlasCoords = m_tileMapper(tile, layer);
 
-            vertex.x = (x + 1) * tileSize.x + objPos.x;
-            vertex.y = y * tileSize.y + objPos.y;
-            vertex.texX = atlasCoords.x + tileSize.x;
-            vertex.texY = atlasCoords.y;
-            vertexes.push_back(vertex);
+                double vx = cx * (MaxInt)chunkSize.x + (MaxInt)x;
+                double vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
 
-            vertex.x = (x + 1) * tileSize.x + objPos.x;
-            vertex.y = (y + 1) * tileSize.y + objPos.y;
-            vertex.texX = atlasCoords.x + tileSize.x;
-            vertex.texY = atlasCoords.y + tileSize.y;
-            vertexes.push_back(vertex);
+                sf::Vertex vertex;
+                vertex.color.r = 255;
+                vertex.color.g = 255;
+                vertex.color.b = 255;
+                vertex.color.a = 255;
 
-            vertex.x = x * tileSize.x + objPos.x;
-            vertex.y = (y + 1) * tileSize.y + objPos.y;
-            vertex.texX = atlasCoords.x;
-            vertex.texY = atlasCoords.y + tileSize.y;
-            vertexes.push_back(vertex);
+                vertex.position.x = vx * tileSize.x + objPos.x;
+                vertex.position.y = vy * tileSize.y + objPos.y;
+                vertex.texCoords.x = atlasCoords.x;
+                vertex.texCoords.y = atlasCoords.y;
+                vertexes[index++] = (vertex);
 
-            // DEBUG
-            //renderer.renderRectangle(vertex.x - tileSize.x, vertex.y - tileSize.y, tileSize.x, tileSize.y, sf::Color::Red, sf::Color::Green);
+                vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                vertex.position.y = vy * tileSize.y + objPos.y;
+                vertex.texCoords.x = atlasCoords.x + tileSize.x;
+                vertex.texCoords.y = atlasCoords.y;
+                vertexes[index++] = (vertex);
+
+                vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                vertex.texCoords.x = atlasCoords.x + tileSize.x;
+                vertex.texCoords.y = atlasCoords.y + tileSize.y;
+                vertexes[index++] = (vertex);
+
+                vertex.position.x = vx * tileSize.x + objPos.x;
+                vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                vertex.texCoords.x = atlasCoords.x;
+                vertex.texCoords.y = atlasCoords.y + tileSize.y;
+                vertexes[index++] = (vertex);
+            }
         }
 
         // TODO: use triangles
@@ -112,18 +128,22 @@ public:
         ASSERT(texture);
         RenderStates newStates = states;
         newStates.sfStates().texture = texture.get();
-        renderer.setStates(newStates);
-        renderer.renderPrimitives(vertexes, sf::Quads);
+        target.draw(vertexes, newStates.sfStates());
     }
 
     virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const
     {
         // TODO: tilemap render cache (it should go to updateGeometry)
         ASSERT(m_tileMapper);
+
         Vec2u tileSize = m_tileMap->getTileSize();
+        Vec2s chunkSize = m_tileMap->getChunkSize();
 
         ASSERT(tileSize.x != 0);
         ASSERT(tileSize.y != 0);
+        ASSERT(chunkSize.x != 0);
+        ASSERT(chunkSize.y != 0);
+
         Scene2D* scene = (Scene2D*)m_scene.get();
         ASSERT(scene);
 
@@ -134,18 +154,17 @@ public:
         sf::Vector2f endCoord = scene->mapScreenToScene(target, sf::Vector2i(target.getSize()));
         sf::Vector2f objPos = sceneObject.getPosition();
 
-        Vector2<MaxInt> beginTile = {
-            (MaxInt)((beginCoord.x - objPos.x) / tileSize.x - 1),
-            (MaxInt)((beginCoord.y - objPos.y) / tileSize.y - 1)
+        Vector2<MaxInt> beginChunk = {
+            (MaxInt)((beginCoord.x - objPos.x) / ((MaxInt)tileSize.x * chunkSize.x) - 1),
+            (MaxInt)((beginCoord.y - objPos.y) / ((MaxInt)tileSize.y * chunkSize.y) - 1)
         };
-        Vector2<MaxInt> endTile = {
-            (MaxInt)((endCoord.x - objPos.x) / tileSize.x + 1),
-            (MaxInt)((endCoord.y - objPos.y) / tileSize.y + 1)
+        Vector2<MaxInt> endChunk = {
+            (MaxInt)((endCoord.x - objPos.x) / ((MaxInt)tileSize.x * chunkSize.x) + 1),
+            (MaxInt)((endCoord.y - objPos.y) / ((MaxInt)tileSize.y * chunkSize.y) + 1)
         };
 
-        // TODO: chunk rendering for chunk-capable tilemaps
         for(Size s = 0; s < m_layerCount; s++)
-            renderLayer(s, objPos, beginTile, endTile, target, states);
+            renderLayer(s, objPos, beginChunk, endChunk, target, states);
     }
 
     virtual void updateGeometry(SceneObject&)

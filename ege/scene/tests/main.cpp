@@ -393,6 +393,8 @@ public:
         m_tilemap->regenerateChunk({0, 0});
         m_tilemap->regenerateChunk({1, 1});
         m_tilemap->regenerateChunk({2, 2});
+        m_tilemap->regenerateChunk({3, 2});
+        m_tilemap->regenerateChunk({4, 3});
 
         if(!owner->isHeadless())
         {
