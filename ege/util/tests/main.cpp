@@ -125,21 +125,23 @@ TESTCASE(vectors)
 
 TESTCASE(json)
 {
-    // parse
-    std::istringstream str;
-    str.str("{ \"test1\":{},\"test2\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }   , \
-             \"test\"   :   \"aaaa\"          \n\t\n\r, \"blablaba\":-31.1444E+0003,  \"L::ttt=tttsy\": [ \
-             0,1,2,3,4,5,\n\r6,7,8,9,\"a\"   \n], \"N e x t Text\"            :\"\"\n\n\n\n, \"test66\":{},\
-            \"test77\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }, \"EscapeTest\": \"  \
-            \\n\\tTest\\\"Test\\\"\\\\ \\\n\t\tTEST\", \"booltest\": true}");
-    std::shared_ptr<EGE::Object> obj;
-    if(!(str >> EGE::objectIn(obj, EGE::JSONConverter())))
-        std::cerr << "parse error" << std::endl;
+    for(EGE::Size s = 0; s < 10240; s++)
+    {
+        // parse
+        std::istringstream str;
+        str.str("{ \"test1\":{},\"test2\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }   , \
+                 \"test\"   :   \"aaaa\"          \n\t\n\r, \"blablaba\":-31.1444E+0003,  \"L::ttt=tttsy\": [ \
+                 0,1,2,3,4,5,\n\r6,7,8,9,\"a\"   \n], \"N e x t Text\"            :\"\"\n\n\n\n, \"test66\":{},\
+                \"test77\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }, \"EscapeTest\": \"  \
+                \\n\\tTest\\\"Test\\\"\\\\ \\\n\t\tTEST\", \"booltest\": true}");
+        std::shared_ptr<EGE::Object> obj;
+        if(!(str >> EGE::objectIn(obj, EGE::JSONConverter())))
+            std::cerr << "parse error" << std::endl;
 
-    // generate
-    std::ostringstream str2;
-    str2 << EGE::objectOut(*obj.get(), EGE::JSONConverter());
-    std::cerr << "generated=" << str2.str() << std::endl;
+        // generate
+        std::ostringstream str2;
+        str2 << EGE::objectOut(*obj.get(), EGE::JSONConverter());
+    }
     return 0;
 }
 
