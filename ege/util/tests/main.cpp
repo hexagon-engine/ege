@@ -308,4 +308,43 @@ TESTCASE(math)
     return 0;
 }
 
+int testFunc(int a, int b)
+{
+    return a - b;
+}
+
+TESTCASE(_perf_std_function)
+{
+    std::function<int(int, int)> test([](int a, int b) { return a + b; });
+    for(EGE::Size size = 0; size < 10240000; size++)
+    {
+        test(size, size + 1);
+    }
+    return 0;
+}
+
+int func(int a, int b)
+{
+    return a + b;
+}
+TESTCASE(_perf_normal_function)
+{
+    for(EGE::Size size = 0; size < 10240000; size++)
+    {
+        func(size, size + 1);
+    }
+    return 0;
+}
+
+TESTCASE(_perf_normal_function_ptr)
+{
+    int(*test)(int, int) = func;
+
+    for(EGE::Size size = 0; size < 10240000; size++)
+    {
+        test(size, size + 1);
+    }
+    return 0;
+}
+
 RUN_TESTS(util)
