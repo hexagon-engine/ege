@@ -14,11 +14,12 @@ namespace EGE
 {
 
 // TODO: move it to another file
+// TODO: use some uninitialized vector type in renderer
 struct Vertex
 {
-    float x = 0, y = 0, z = 0;
-    char r = -128, g = -128, b = -128, a = 127;
-    float texX = 0, texY = 0;
+    float x, y, z;
+    char r, g, b, a;
+    float texX, texY;
 
     static inline Vertex make(EGE::Vec3f coords, sf::Color color = sf::Color::White, EGE::Vec2f texCoords = EGE::Vec2f())
     {

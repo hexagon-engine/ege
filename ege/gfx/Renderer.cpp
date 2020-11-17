@@ -118,10 +118,12 @@ void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
 
 void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type)
 {
-    sf::VertexArray varr(type);
-    for(const Vertex& vertex: points)
+    sf::VertexArray varr(type, points.size());
+    Size _size = points.size();
+    for(Size s = 0; s < _size; s++)
     {
-        varr.append(sf::Vertex(sf::Vector2f(vertex.x, vertex.y),
+        const Vertex& vertex = points[s];
+        varr[s] = (sf::Vertex(sf::Vector2f(vertex.x, vertex.y),
                     sf::Color((int)vertex.r + 128, (int)vertex.g + 128, (int)vertex.b + 128, (int)vertex.a + 128),
                     sf::Vector2f(vertex.texX, vertex.texY)));
     }
