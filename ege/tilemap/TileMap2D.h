@@ -46,6 +46,7 @@ public:
 
     EGE::Vec2s getChunkSize() { return {CSX, CSY}; }
 
+    // Convert screen coordinates to tile coordinates.
     EGE::Vec2i getTileAlignedPos(EGE::Vec2d vec)
     {
         return EGE::Vec2i(std::floor(std::floor(vec.x) / m_tileSize.x),

@@ -98,6 +98,7 @@ void GUIGameLoop::onTick(long long tickCount)
         exit();
 
     // TODO: tick rate limit?
+    //log() << m_frameTime.asMicroseconds();
     m_frameTime = m_fpsClock.restart();
 
     m_profiler->endSection();

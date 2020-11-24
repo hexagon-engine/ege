@@ -276,7 +276,6 @@ void GUIScreen::render(sf::RenderTarget& target, const RenderStates& states)
     {
         m_dialog->render(target, states);
     }
-
 }
 
 void GUIScreen::exitDialog(int code)
