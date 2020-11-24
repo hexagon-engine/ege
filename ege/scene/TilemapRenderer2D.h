@@ -179,6 +179,12 @@ public:
         }
     }
 
+    EGE::SharedPtr<sf::Texture> getTextureForLayer(EGE::Size layer)
+    {
+        ASSERT(layer < m_atlasses.size());
+        return m_atlasses[layer];
+    }
+
 private:
     std::shared_ptr<TMap> m_tileMap;
     SharedPtrVector<sf::Texture> m_atlasses;
