@@ -23,11 +23,12 @@ void Renderer::renderRectangle(double x, double y, double width, double height, 
     getTarget().draw(rs, m_states.sfStates());
 }
 
-void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size, sf::Color color)
+void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size, sf::Color color, float scale)
 {
-    sf::Text text(str, font, size);
+    sf::Text text(str, font, size * scale);
     text.setPosition(x, y);
     text.setFillColor(color);
+    text.setScale(1.f / scale, 1.f / scale);
     getTarget().draw(text, m_states.sfStates());
 }
 

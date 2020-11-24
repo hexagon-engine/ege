@@ -36,7 +36,9 @@ public:
     // Common renderers.
     // For more complex shapes, use SFML sf::Drawables.
     void renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor = sf::Color::Transparent);
-    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, sf::Color color = sf::Color::White);
+
+    // scale - resolution scale, used when rendering small text with big resolution
+    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, sf::Color color = sf::Color::White, float scale = 1.f);
 
     enum TextAlign
     {
