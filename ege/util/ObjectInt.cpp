@@ -36,7 +36,7 @@ long long ObjectInt::asInt() const
 
 std::string ObjectInt::toString() const
 {
-    return asString() + suffix();
+    return asString();
 }
 
 std::string ObjectInt::suffix() const

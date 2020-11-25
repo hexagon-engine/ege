@@ -36,7 +36,7 @@ unsigned long long ObjectUnsignedInt::asUnsignedInt() const
 
 std::string ObjectUnsignedInt::toString() const
 {
-    return asString() + suffix();
+    return asString();
 }
 
 std::string ObjectUnsignedInt::suffix() const
