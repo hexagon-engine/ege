@@ -26,12 +26,13 @@ public:
         return map;
     }
 
-    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
         m_color.r = obj->getObject("r").lock()->asInt();
         m_color.g = obj->getObject("g").lock()->asInt();
         m_color.b = obj->getObject("b").lock()->asInt();
         m_color.a = obj->getObject("a").lock()->asInt();
+        return true;
     }
 };
 

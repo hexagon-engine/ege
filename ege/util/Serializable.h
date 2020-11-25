@@ -19,7 +19,7 @@ public:
     virtual ~Serializable() {}
 
     virtual SharedPtr<ObjectMap> serialize() = 0;
-    virtual void deserialize(SharedPtr<ObjectMap>) = 0;
+    virtual bool deserialize(SharedPtr<ObjectMap>) = 0;
 };
 
 }

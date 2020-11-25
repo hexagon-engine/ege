@@ -61,13 +61,13 @@ public:
     }
 
     virtual std::shared_ptr<ObjectMap> serialize();
-    virtual void deserialize(std::shared_ptr<ObjectMap>);
+    virtual bool deserialize(std::shared_ptr<ObjectMap>);
 
     virtual std::shared_ptr<ObjectMap> serializeMain();
-    virtual void deserializeMain(std::shared_ptr<ObjectMap>);
+    virtual bool deserializeMain(std::shared_ptr<ObjectMap>);
 
     virtual std::shared_ptr<ObjectMap> serializeExtended();
-    virtual void deserializeExtended(std::shared_ptr<ObjectMap>);
+    virtual bool deserializeExtended(std::shared_ptr<ObjectMap>);
 
     // Clears main and extended changed flags. Called by server.
     // FIXME: it should be only callable by Server.

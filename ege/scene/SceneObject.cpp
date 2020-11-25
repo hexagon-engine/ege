@@ -27,7 +27,7 @@ std::shared_ptr<ObjectMap> SceneObject::serialize()
     return data;
 }
 
-void SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
+bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
 {
     ASSERT(object);
     auto name = object->getObject("name");
@@ -37,10 +37,19 @@ void SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
     if(!name.expired() && name.lock()->isString())
         m_name = name.lock()->asString();
 
+    bool s = true;
+
     if(!m.expired() && m.lock()->isMap())
-        deserializeMain(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(m)));
+        s &= deserializeMain(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(m)));
+    else
+        return false;
+
     if(!x.expired() && x.lock()->isMap())
-        deserializeExtended(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(x)));
+        s &= deserializeExtended(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(x)));
+    else
+        return false;
+
+    return s;
 }
 
 std::shared_ptr<ObjectMap> SceneObject::serializeMain()
@@ -48,9 +57,10 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain()
     return nullptr;
 }
 
-void SceneObject::deserializeMain(std::shared_ptr<ObjectMap>)
+bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap>)
 {
     // nothing
+    return true;
 }
 
 std::shared_ptr<ObjectMap> SceneObject::serializeExtended()
@@ -58,9 +68,10 @@ std::shared_ptr<ObjectMap> SceneObject::serializeExtended()
     return nullptr;
 }
 
-void SceneObject::deserializeExtended(std::shared_ptr<ObjectMap>)
+bool SceneObject::deserializeExtended(std::shared_ptr<ObjectMap>)
 {
     // nothing
+    return true;
 }
 
 }

@@ -32,7 +32,7 @@ public:
     std::string toString();
 
     virtual std::shared_ptr<ObjectMap> serialize();
-    virtual void deserialize(std::shared_ptr<ObjectMap>);
+    virtual bool deserialize(std::shared_ptr<ObjectMap>);
 
 private:
     void startSectionLL(std::string name);
@@ -52,7 +52,7 @@ private:
         void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
 
         virtual std::shared_ptr<ObjectMap> serialize();
-        virtual void deserialize(std::shared_ptr<ObjectMap>);
+        virtual bool deserialize(std::shared_ptr<ObjectMap>);
     };
     Section m_root;
     std::stack<Section*> m_startedSections;

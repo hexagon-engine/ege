@@ -26,7 +26,7 @@ public:
     std::string toString() const;
 
     virtual std::shared_ptr<ObjectMap> serialize() { return nullptr; }
-    virtual void deserialize(std::shared_ptr<ObjectMap>) {}
+    virtual bool deserialize(std::shared_ptr<ObjectMap>) { return true; }
 };
 
 }

@@ -39,10 +39,11 @@ public:
         return map;
     }
 
-    virtual void deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
         m_int = obj->getObject("int").lock()->asInt();
         m_string = obj->getObject("string").lock()->asString();
+        return true;
     }
 };
 
@@ -81,9 +82,10 @@ public:
         return nullptr;
     }
 
-    virtual void deserialize(std::shared_ptr<EGE::ObjectMap>)
+    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap>)
     {
         // TODO because of EGE::GameplayObjectRegistry
+        return true;
     }
 
 private:

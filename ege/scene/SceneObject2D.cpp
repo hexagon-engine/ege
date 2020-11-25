@@ -104,12 +104,14 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain()
 
 #define DESERIALIZE_OBJECT_WITH_CHECK(from,name,varName,type) \
 { \
-auto tmp = from->getObject(name); \
-if(!tmp.expired() && tmp.lock()->is##type()) \
-    varName = tmp.lock()->as##type(); \
+    auto tmp = from->getObject(name); \
+    if(!tmp.expired() && tmp.lock()->is##type()) \
+    { \
+        varName = tmp.lock()->as##type(); \
+    } \
 }
 
-void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
+bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 {
     DESERIALIZE_OBJECT_WITH_CHECK(object, "pX", m_position.x, Float);
     DESERIALIZE_OBJECT_WITH_CHECK(object, "pY", m_position.y, Float);
@@ -125,7 +127,7 @@ void SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 
     DESERIALIZE_OBJECT_WITH_CHECK(object, "rot", m_rotation, Float);
 
-    SceneObject::deserializeMain(object);
+    return SceneObject::deserializeMain(object);
 }
 
 void SceneObject2D::onUpdate(long long tickCounter)

@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/system.h>
 #include <vector>
 
 namespace EGE
@@ -143,13 +144,8 @@ std::string Profiler::toString()
 
 long long Profiler::getTime()
 {
-    timespec _ts;
-    if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
-        return 0.0;
-
-    long long time = _ts.tv_sec * 1000000000 + _ts.tv_nsec;
-    DUMP(0, time);
-    return time;
+    auto et = EGE::System::exactTime();
+    return et.ns * 1000000000LL + et.s;
 }
 
 Profiler::Section* Profiler::Section::findSubSection(std::string name)
@@ -219,11 +215,11 @@ std::shared_ptr<ObjectMap> Profiler::Section::serialize()
     return map;
 }
 
-void Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
+bool Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
 {
     //TODO
     DBG(1, "TODO: profiler deserialize not implemented");
-    ASSERT(false);
+    CRASH();
 }
 
 std::shared_ptr<ObjectMap> Profiler::serialize()
@@ -233,11 +229,11 @@ std::shared_ptr<ObjectMap> Profiler::serialize()
     return map;
 }
 
-void Profiler::deserialize(std::shared_ptr<ObjectMap>)
+bool Profiler::deserialize(std::shared_ptr<ObjectMap>)
 {
     //TODO
     DBG(1, "TODO: profiler deserialize not implemented");
-    ASSERT(false);
+    CRASH();
 }
 
 }

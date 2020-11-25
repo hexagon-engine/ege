@@ -105,7 +105,7 @@ public:
     virtual void onUpdate(long long tickCounter);
 
     virtual std::shared_ptr<ObjectMap> serializeMain();
-    virtual void deserializeMain(std::shared_ptr<ObjectMap>);
+    virtual bool deserializeMain(std::shared_ptr<ObjectMap>);
 
 protected:
     double m_rotation = 0.0;
