@@ -12,7 +12,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/gfx/RenderStates.h>
 #include <ege/util/Vector.h>
 
-#define WIDGET_DEBUG 1
+#define WIDGET_DEBUG 0
 
 namespace EGE
 {

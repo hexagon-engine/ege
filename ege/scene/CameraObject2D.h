@@ -11,7 +11,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
 
-#define CAMERA_DEBUG 1
+#define CAMERA_DEBUG 0
 
 namespace EGE
 {

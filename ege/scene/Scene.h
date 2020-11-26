@@ -14,7 +14,7 @@ Copyright (c) Sppmacd 2020
 #include <map>
 #include <memory>
 
-#define SCENE_DEBUG 1
+#define SCENE_DEBUG 0
 
 namespace EGE
 {
