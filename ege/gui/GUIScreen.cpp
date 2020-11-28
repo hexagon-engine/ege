@@ -23,6 +23,10 @@ void GUIScreen::onClose()
 
 void GUIScreen::onResize(sf::Event::SizeEvent& event)
 {
+    // Ensure that GUI is resized to cover entire target
+    setPosition(EGE::Vec2d());
+    setSize(EGE::Vec2d(event.width, event.height));
+
     if(m_dialog)
     {
         m_dialog->onResize(event);
@@ -263,11 +267,6 @@ void GUIScreen::onUpdate(long long tickCounter)
 
 void GUIScreen::render(sf::RenderTarget& target, const RenderStates& states)
 {
-    // Ensure that GUI is resized to cover entire target
-    setPosition(EGE::Vec2d());
-    auto size = target.getSize();
-    m_size = EGE::Vec2d(size.x, size.y);
-
     // Actually draw child widgets
     CompoundWidget::render(target, states);
 
