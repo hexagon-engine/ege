@@ -280,7 +280,7 @@ void GUIScreen::render(sf::RenderTarget& target, const RenderStates& states)
 
 void GUIScreen::exitDialog(int code)
 {
-    deferredInvoke([this, code] {
+    m_parent->deferredInvoke([this, code] {
         GUIScreen* parent = (GUIScreen*)m_parent;
         ASSERT(parent);
         parent->onDialogExit(this, code);
