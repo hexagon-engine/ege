@@ -186,10 +186,14 @@ void CompoundWidget::onUpdate(long long tickCounter)
 
 void CompoundWidget::render(sf::RenderTarget& target, const RenderStates& states)
 {
+    // Render widget self
+    Widget::render(target, states);
+
+    // Render child widgets
     // TODO: draw only visible widgets
     for(auto widget: m_childWidgets)
     {
-        Widget::render(target, states);
+        Widget::setViewForWidget(target);
         widget->render(target, states);
     }
 }
