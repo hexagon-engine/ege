@@ -64,6 +64,8 @@ public:
     // e.g   openDialog(make<MyDialog>(this));
     virtual void openDialog(SharedPtr<GUIScreen> dialog);
 
+    virtual SharedPtr<GUIScreen> getDialog() { return m_dialog; }
+
 protected:
     SharedPtr<GUIScreen> m_dialog;
 };
