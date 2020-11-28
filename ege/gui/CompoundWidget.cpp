@@ -57,7 +57,7 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 
 void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
-    EGE::Vec2d position(event.x, event.y);
+    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
@@ -71,26 +71,31 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
             m_focusedWidget = widget;
             m_focusedWidget->onGainFocus();
 
-            widget->onMouseButtonPress(event);
+            sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
+            widget->onMouseButtonPress(event2);
         }
     }
 }
 
 void CompoundWidget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 {
+    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
-        widget->onMouseButtonRelease(event);
+        sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
+        widget->onMouseButtonRelease(event2);
     }
 }
 
 void CompoundWidget::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
+    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
-        widget->onMouseMove(event);
+        sf::Event::MouseMoveEvent event2 { (int)position.x, (int)position.y };
+        widget->onMouseMove(event2);
     }
 }
 
