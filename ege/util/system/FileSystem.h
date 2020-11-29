@@ -55,12 +55,17 @@ namespace FileOpenMode
         Read = 4;
 };
 typedef int FileOpenModeMask;
+typedef int FileMode;
+
+#define FMODE(s,u,g,o) (o | (g << 3) | (u << 6) | (s << 9))
 
 FileInfo stat(std::string path);
 std::string getWorkingDirectory();
 bool setWorkingDirectory(std::string dir);
 std::string readLink(std::string link);
 bool testFileAccess(std::string path, FileOpenModeMask mode = FileOpenMode::None);
+bool createDirectory(std::string path, System::FileMode mode = FMODE(0,7,5,0));
+bool createPath(std::string path, System::FileMode mode = FMODE(0,7,5,0));
 
 }
 

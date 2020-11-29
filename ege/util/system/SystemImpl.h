@@ -30,6 +30,7 @@ public:
     virtual bool setWorkingDirectory(std::string) { CRASH(); }
     virtual std::string readLink(std::string) { CRASH(); }
     virtual bool testFileAccess(std::string, System::FileOpenModeMask) { CRASH(); }
+    virtual bool createDirectory(std::string, System::FileMode) { CRASH(); }
 
     // Global
     virtual std::string getErrorMessage() { CRASH(); }

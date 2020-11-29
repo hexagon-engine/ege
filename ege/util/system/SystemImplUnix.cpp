@@ -85,8 +85,8 @@ System::FileInfo SystemImplUnix::stat(std::string path)
 std::string SystemImplUnix::getWorkingDirectory()
 {
     char buf[PATH_MAX];
-    getcwd(buf, PATH_MAX);
-    return buf;
+    char* a = getcwd(buf, PATH_MAX);
+    return a;
 }
 
 bool SystemImplUnix::setWorkingDirectory(std::string dir)
@@ -124,6 +124,16 @@ bool SystemImplUnix::testFileAccess(std::string path, System::FileOpenModeMask m
     int rc = access(path.c_str(), (int)mode);
     if(rc < 0)
         m_lastErrno = errno;
+    return !rc;
+}
+
+bool SystemImplUnix::createDirectory(std::string path, System::FileMode mode)
+{
+    int rc = mkdir(path.c_str(), mode);
+    if(rc < 0)
+        m_lastErrno = errno;
+    if(errno == EEXIST)
+        rc = 0;
     return !rc;
 }
 

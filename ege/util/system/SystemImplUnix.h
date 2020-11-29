@@ -26,6 +26,7 @@ public:
     bool setWorkingDirectory(std::string dir);
     std::string readLink(std::string link);
     bool testFileAccess(std::string path, System::FileOpenModeMask mode);
+    bool createDirectory(std::string path, System::FileMode mode);
 
     // Global
     std::string getErrorMessage();
