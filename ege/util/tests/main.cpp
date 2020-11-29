@@ -273,7 +273,8 @@ TESTCASE(system)
     EXPECT(EGE::System::testFileAccess("."));
     EXPECT(!EGE::System::testFileAccess("/?/nonexistent/"));
     DUMP(1, EGE::System::getErrorMessage());
-    EGE::System::createPath("test/1/23/456/");
+    EGE::System::createPath("test/1/23/456");
+    EGE::System::createPath("test2/1/23/456/");
     return 0;
 }
 

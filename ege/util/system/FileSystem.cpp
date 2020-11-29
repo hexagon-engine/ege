@@ -47,9 +47,9 @@ bool createDirectory(std::string path, FileMode mode)
 
 bool createPath(std::string path, FileMode mode)
 {
-    for(EGE::Size s = 0; s < path.size(); s++)
+    for(EGE::Size s = 0; s < path.size() + 1; s++)
     {
-        if(path[s] == '/' && s != path.size())
+        if(path[s] == '/' || s == path.size())
         {
             if(!createDirectory(path.substr(0, s), mode))
             {
