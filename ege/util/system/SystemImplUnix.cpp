@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #include "SystemImplUnix.h"
 
+#include <dirent.h>
 #include <errno.h>
 #include <limits.h>
 #include <memory>
@@ -135,6 +136,45 @@ bool SystemImplUnix::createDirectory(std::string path, System::FileMode mode)
     if(errno == EEXIST)
         rc = 0;
     return !rc;
+}
+
+bool SystemImplUnix::removeFile(std::string path)
+{
+    //std::cerr << "remove " << path << std::endl;
+    int rc = remove(path.c_str());
+    if(rc < 0)
+        m_lastErrno = errno;
+    if(errno == ENOENT)
+        rc = 0;
+    return !rc;
+}
+
+std::vector<std::string> SystemImplUnix::listFiles(std::string path)
+{
+    std::vector<std::string> names;
+    std::string search_path = path;
+
+    DIR* dir = opendir(path.c_str());
+    if(dir)
+    {
+        dirent* entry;
+        do
+        {
+            entry = readdir(dir);
+            // read all (real) files in current folder
+            // , delete '!' read other 2 default folder . and ..
+            if(!entry || !entry->d_name)
+                break;
+
+            std::string fname = entry->d_name;
+            if(fname != "." && fname != "..")
+                names.push_back(path + "/" + std::string(entry->d_name));
+        } while(true);
+
+        closedir(dir);
+        return names;
+    }
+    return {};
 }
 
 // Global

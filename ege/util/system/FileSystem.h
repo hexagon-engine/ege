@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace EGE
 {
@@ -66,6 +67,9 @@ std::string readLink(std::string link);
 bool testFileAccess(std::string path, FileOpenModeMask mode = FileOpenMode::None);
 bool createDirectory(std::string path, System::FileMode mode = FMODE(0,7,5,0));
 bool createPath(std::string path, System::FileMode mode = FMODE(0,7,5,0));
+bool removeFile(std::string path);
+bool removePath(std::string path);
+std::vector<std::string> listFiles(std::string path);
 
 }
 

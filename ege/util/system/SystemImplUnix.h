@@ -27,6 +27,8 @@ public:
     std::string readLink(std::string link);
     bool testFileAccess(std::string path, System::FileOpenModeMask mode);
     bool createDirectory(std::string path, System::FileMode mode);
+    bool removeFile(std::string path);
+    std::vector<std::string> listFiles(std::string path);
 
     // Global
     std::string getErrorMessage();

@@ -31,6 +31,8 @@ public:
     virtual std::string readLink(std::string) { CRASH(); }
     virtual bool testFileAccess(std::string, System::FileOpenModeMask) { CRASH(); }
     virtual bool createDirectory(std::string, System::FileMode) { CRASH(); }
+    virtual bool removeFile(std::string) { CRASH(); }
+    virtual std::vector<std::string> listFiles(std::string) { CRASH(); }
 
     // Global
     virtual std::string getErrorMessage() { CRASH(); }

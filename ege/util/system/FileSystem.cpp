@@ -53,12 +53,42 @@ bool createPath(std::string path, FileMode mode)
         {
             if(!createDirectory(path.substr(0, s), mode))
             {
-                std::cerr << "failed to create directory: " << impl().getErrorMessage() << std::endl;
                 return false;
             }
         }
     }
     return true;
+}
+
+bool removeFile(std::string path)
+{
+    return impl().removeFile(path);
+}
+
+bool removePath(std::string path)
+{
+    if(stat(path).type == FileType::Directory)
+    {
+        // Remove all sub-directories and files
+        std::vector<std::string> files = listFiles(path);
+        for(auto& file: files)
+        {
+            //std::cerr << "rp " << file << std::endl;
+            // Remove sub-directories
+            if(!removePath(file))
+            {
+                std::cerr << "err: " << impl().getErrorMessage() << std::endl;
+                return false;
+            }
+        }
+    }
+
+    return removeFile(path);
+}
+
+std::vector<std::string> listFiles(std::string path)
+{
+    return impl().listFiles(path);
 }
 
 } // System

@@ -275,6 +275,8 @@ TESTCASE(system)
     DUMP(1, EGE::System::getErrorMessage());
     EGE::System::createPath("test/1/23/456");
     EGE::System::createPath("test2/1/23/456/");
+    EGE::System::removePath("test");
+    EGE::System::removePath("test2");
     return 0;
 }
 
