@@ -345,6 +345,7 @@ public:
 
     virtual void onResize(sf::Event::SizeEvent& event)
     {
+        EGE::GUIScreen::onResize(event);
         labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
     }
 
