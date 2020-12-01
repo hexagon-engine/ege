@@ -113,8 +113,8 @@ public:
     {
         std::string type = data.getType();
         MyObject* object = (MyObject*)getObject().get();
-        bool moving = data.getArgs()->getObject("moving").lock()->asInt();
-        int dir = data.getArgs()->getObject("dir").lock()->asInt();
+        bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
+        int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
 
         if(type == "move")
             object->move(moving, dir);
@@ -131,8 +131,8 @@ public:
     {
         std::string type = data.getType();
         MyObject* object = (MyObject*)getObject().get();
-        bool moving = data.getArgs()->getObject("moving").lock()->asInt();
-        int dir = data.getArgs()->getObject("dir").lock()->asInt();
+        bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
+        int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
 
         if(type == "move")
             object->move(moving, dir);

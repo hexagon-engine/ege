@@ -18,7 +18,7 @@ class Serializable
 public:
     virtual ~Serializable() {}
 
-    virtual SharedPtr<ObjectMap> serialize() = 0;
+    virtual SharedPtr<ObjectMap> serialize() const = 0;
     virtual bool deserialize(SharedPtr<ObjectMap>) = 0;
 };
 

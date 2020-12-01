@@ -31,18 +31,18 @@ public:
         return "unknown";
     }
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
     {
         std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-        map->addObject("int", make<EGE::ObjectInt>(m_int));
-        map->addObject("string", make<EGE::ObjectString>(m_string));
+        map->addInt("int", m_int);
+        map->addString("string", m_string);
         return map;
     }
 
     virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
-        m_int = obj->getObject("int").lock()->asInt();
-        m_string = obj->getObject("string").lock()->asString();
+        m_int = obj->getObject("int").as<EGE::MaxInt>().valueOr(0);
+        m_string = obj->getObject("string").as<EGE::String>().valueOr("");
         return true;
     }
 };
@@ -77,7 +77,7 @@ public:
         return true;
     }
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
     {
         return nullptr;
     }

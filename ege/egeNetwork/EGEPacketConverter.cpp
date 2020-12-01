@@ -363,8 +363,11 @@ static bool outputObject(sf::Packet& output, const Object& object)
         bool success = true;
         for(auto pr: (ObjectMap&)object)
         {
-            output << pr.first;
-            success |= outputObject(output, *pr.second);
+            if(pr.second)
+            {
+                output << pr.first;
+                success |= outputObject(output, *pr.second);
+            }
         }
         output << (sf::Uint8)'0';
         return success;

@@ -16,22 +16,22 @@ public:
 
     sf::Color m_color;
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize()
+    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
     {
         std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-        map->addObject("r", make<EGE::ObjectInt>(m_color.r));
-        map->addObject("g", make<EGE::ObjectInt>(m_color.g));
-        map->addObject("b", make<EGE::ObjectInt>(m_color.b));
-        map->addObject("a", make<EGE::ObjectInt>(m_color.a));
+        map->addInt("r", m_color.r);
+        map->addInt("g", m_color.g);
+        map->addInt("b", m_color.b);
+        map->addInt("a", m_color.a);
         return map;
     }
 
     virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
-        m_color.r = obj->getObject("r").lock()->asInt();
-        m_color.g = obj->getObject("g").lock()->asInt();
-        m_color.b = obj->getObject("b").lock()->asInt();
-        m_color.a = obj->getObject("a").lock()->asInt();
+        m_color.r = obj->getObject("r").as<EGE::MaxInt>().valueOr(0);
+        m_color.g = obj->getObject("g").as<EGE::MaxInt>().valueOr(0);
+        m_color.b = obj->getObject("b").as<EGE::MaxInt>().valueOr(0);
+        m_color.a = obj->getObject("a").as<EGE::MaxInt>().valueOr(0);
         return true;
     }
 };

@@ -18,10 +18,10 @@ void SceneObject::onUpdate(long long tickCounter)
     EventLoop::onUpdate();
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serialize()
+std::shared_ptr<ObjectMap> SceneObject::serialize() const
 {
     std::shared_ptr<ObjectMap> data = make<ObjectMap>();
-    data->addObject("name", make<ObjectString>(m_name));
+    data->addString("name", m_name);
     data->addObject("m", serializeMain());
     data->addObject("x", serializeExtended());
     return data;
@@ -30,29 +30,28 @@ std::shared_ptr<ObjectMap> SceneObject::serialize()
 bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
 {
     ASSERT(object);
-    auto name = object->getObject("name");
-    auto m = object->getObject("m");
-    auto x = object->getObject("x");
+    auto _name = object->getObject("name");
+    auto _m = object->getObject("m");
+    auto _x = object->getObject("x");
 
-    if(!name.expired() && name.lock()->isString())
-        m_name = name.lock()->asString();
+    m_name = _name.as<EGE::String>().valueOr(m_name);
 
     bool s = true;
 
-    if(!m.expired() && m.lock()->isMap())
-        s &= deserializeMain(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(m)));
+    if(_m.is<ObjectMap::ValueType>())
+        s &= deserializeMain(_m.to<ObjectMap>().value());
     else
         return false;
 
-    if(!x.expired() && x.lock()->isMap())
-        s &= deserializeExtended(std::dynamic_pointer_cast<ObjectMap>(std::shared_ptr<Object>(x)));
+    if(_x.is<ObjectMap::ValueType>())
+        s &= deserializeExtended(_x.to<ObjectMap>().value());
     else
         return false;
 
     return s;
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serializeMain()
+std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 {
     return nullptr;
 }
@@ -63,7 +62,7 @@ bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap>)
     return true;
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serializeExtended()
+std::shared_ptr<ObjectMap> SceneObject::serializeExtended() const
 {
     return nullptr;
 }

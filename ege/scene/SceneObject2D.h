@@ -101,11 +101,11 @@ public:
     // with collision check
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
-    virtual void onUpdate(long long tickCounter);
+    virtual void render(sf::RenderTarget& target, const RenderStates& states) const override;
+    virtual void onUpdate(long long tickCounter) override;
 
-    virtual std::shared_ptr<ObjectMap> serializeMain();
-    virtual bool deserializeMain(std::shared_ptr<ObjectMap>);
+    virtual std::shared_ptr<ObjectMap> serializeMain() const override;
+    virtual bool deserializeMain(std::shared_ptr<ObjectMap>) override;
 
 protected:
     double m_rotation = 0.0;

@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Optional.h"
 #include "PointerUtils.h"
 #include "Types.h"
 
@@ -39,7 +40,10 @@ public:
     virtual bool isFloat() const { return false; }
     virtual bool isList() const { return false; }
 
-    virtual SharedPtr<Object> copy() const { return make<Object>(); };
+    virtual SharedPtr<Object> copy() const { return make<Object>(); }
+
+    template<class T>
+    static Optional<SharedPtr<T>> cast(SharedPtr<Object> object) { return std::dynamic_pointer_cast<T>(object); }
 };
 
 }

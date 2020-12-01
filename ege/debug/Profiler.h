@@ -31,7 +31,7 @@ public:
     void end();
     std::string toString();
 
-    virtual std::shared_ptr<ObjectMap> serialize();
+    virtual std::shared_ptr<ObjectMap> serialize() const;
     virtual bool deserialize(std::shared_ptr<ObjectMap>);
 
 private:
@@ -51,7 +51,7 @@ private:
         Section* findSubSection(std::string name);
         void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
 
-        virtual std::shared_ptr<ObjectMap> serialize();
+        virtual std::shared_ptr<ObjectMap> serialize() const;
         virtual bool deserialize(std::shared_ptr<ObjectMap>);
     };
     Section m_root;

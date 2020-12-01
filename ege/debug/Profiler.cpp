@@ -193,7 +193,7 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
         section->addSectionInfo(info, m_time, rootTime);
 }
 
-std::shared_ptr<ObjectMap> Profiler::Section::serialize()
+std::shared_ptr<ObjectMap> Profiler::Section::serialize() const
 {
     std::shared_ptr<ObjectMap> map = make<ObjectMap>();
 
@@ -222,7 +222,7 @@ bool Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
     CRASH();
 }
 
-std::shared_ptr<ObjectMap> Profiler::serialize()
+std::shared_ptr<ObjectMap> Profiler::serialize() const
 {
     std::shared_ptr<ObjectMap> map = make<ObjectMap>();
     map->addObject("root", m_root.serialize());

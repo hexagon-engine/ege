@@ -120,7 +120,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
     case EGEPacket::Type::_ProtocolVersion:
         {
             egeClient->send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
-            int value = egePacket->getArgs()->getObject("value").lock()->asInt();
+            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
                 err(LogLevel::Error) << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
@@ -139,22 +139,32 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
     case EGEPacket::Type::CSceneObjectControl:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
-            auto id = args->getObject("id");
-            ASSERT(!id.expired() && id.lock()->isInt());
+
+            auto id = args->getObject("id").as<MaxInt>();
+            if(!id.hasValue())
+                return EventResult::Failure;
+
             auto data = args->getObject("data");
-            ASSERT(!data.expired() && data.lock()->isMap());
-            auto data_map = std::dynamic_pointer_cast<ObjectMap>(data.lock());
-            auto data_name = data_map->getObject("type");
-            ASSERT(!data_name.expired() && data_name.lock()->isString());
+            if(!data.is<ObjectMap::ValueType>())
+                return EventResult::Failure;
+
+            auto data_map = data.to<ObjectMap>().value();
+            auto data_name = data_map->getObject("type").as<String>();
+            if(!data_name.hasValue())
+                return EventResult::Failure;
+
             auto data_args = data_map->getObject("args");
-            ASSERT(!data_args.expired() && data_args.lock()->isMap());
+            if(!data_args.is<ObjectMap::ValueType>())
+                return EventResult::Failure;
 
             if(!getScene()) // cannot control object when no scene is created!
                 return EventResult::Failure;
 
-            auto controller = getController(id.lock()->asInt());
+
+            auto controller = getController(id.value());
+
             if(controller)
-                controller->handleRequest(ControlObject(data_name.lock()->asString(), std::dynamic_pointer_cast<ObjectMap>(data_args.lock())));
+                controller->handleRequest(ControlObject(data_name.value(), data_args.to<ObjectMap>().value()));
             else
                 return EventResult::Failure; // kick f*****g cheaters
         }
@@ -162,46 +172,39 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
     case EGEPacket::Type::CSceneObjectRequest:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
-            auto id = args->getObject("id");
-            ASSERT(!id.expired() && id.lock()->isInt());
-            // TODO: syncObject();
+            auto id = args->getObject("id").as<MaxInt>();
+            if(!id.hasValue())
+                return EventResult::Failure;
 
             auto scene = getScene();
             if(!scene) // cannot request object when no scene is created!
                 return EventResult::Failure;
 
-            auto sceneObject = scene->getObject(id.lock()->asInt());
+            auto sceneObject = scene->getObject(id.value());
             if(!sceneObject) // object doesn't exist
                 return EventResult::Failure;
 
-            err(LogLevel::Debug) << "SO request " << id.lock()->asInt();
+            err(LogLevel::Debug) << "SO request " << id.value();
             egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
-            if(egeClient->getControlledSceneObject() == id.lock()->asInt())
+            if(egeClient->getControlledSceneObject() == id.value())
                 egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
         }
         break;
     case EGEPacket::Type::_Version:
         {
             // TODO: Force version check
-            auto value = egePacket->getArgs()->getObject("value");
-            ASSERT(!value.expired() && value.lock()->isUnsignedInt());
-            auto str = egePacket->getArgs()->getObject("string");
-            ASSERT(!str.expired() && str.lock()->isString());
+            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
+            String str = egePacket->getArgs()->getObject("string").as<String>().valueOr("Generic EGE::EGEClient");
 
-            int _value = value.lock()->asInt();
-            std::string _str = str.lock()->asString();
-
-            if(_value != getVersion())
+            if(value != getVersion())
             {
-                err() << "Invalid client version! (need " << getVersion() << ", got " << _value << ")";
-                kickClientWithReason(egeClient, "Invalid game version (need " + std::to_string(getVersion()) + ", got " + std::to_string(_value) + ")");
+                err() << "Invalid server version! (need " << getVersion() << ", got " << value << ")";
                 return EventResult::Failure;
             }
 
-            if(_str != getVersionString())
+            if(str != getVersionString())
             {
-                err() << "Invalid client! (need " << getVersionString() << ", got " << _str << ")";
-                kickClientWithReason(egeClient, "Invalid game (need " + getVersionString() + ", got " + _str + ")");
+                err() << "Invalid server! (need '" << getVersionString() << "', got '" << str << "')";
                 return EventResult::Failure;
             }
         }

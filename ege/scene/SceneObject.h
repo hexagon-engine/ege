@@ -60,13 +60,13 @@ public:
         return m_id;
     }
 
-    virtual std::shared_ptr<ObjectMap> serialize();
+    virtual std::shared_ptr<ObjectMap> serialize() const;
     virtual bool deserialize(std::shared_ptr<ObjectMap>);
 
-    virtual std::shared_ptr<ObjectMap> serializeMain();
+    virtual std::shared_ptr<ObjectMap> serializeMain() const;
     virtual bool deserializeMain(std::shared_ptr<ObjectMap>);
 
-    virtual std::shared_ptr<ObjectMap> serializeExtended();
+    virtual std::shared_ptr<ObjectMap> serializeExtended() const;
     virtual bool deserializeExtended(std::shared_ptr<ObjectMap>);
 
     // Clears main and extended changed flags. Called by server.
