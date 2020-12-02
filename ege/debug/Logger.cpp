@@ -131,10 +131,10 @@ std::ostream& operator<<(std::ostream& input, LogBackground color)
     return input;
 }
 
-Logger::Logger(std::ostream& output, LogLevel level)
+Logger::Logger(std::ostream& output, LogLevel level, std::string streamName)
 : m_stream(output)
 {
-    m_stream << LogColor::Magenta << "EGE " << LogColor::Bright_Yellow << prefix(level) << color(level) << background(level);
+    m_stream << LogColor::Magenta << "EGE/" << streamName << " " << LogColor::Bright_Yellow << prefix(level) << color(level) << background(level);
 }
 
 Logger::~Logger()
@@ -149,9 +149,11 @@ LogColor Logger::color(LogLevel level)
         case LogLevel::Debug:
             return LogColor::Bright_Black;
         case LogLevel::Verbose:
-            return LogColor::White;
-        case LogLevel::Info:
             return LogColor::Bright_Blue;
+        case LogLevel::Info:
+            return LogColor::White;
+        case LogLevel::Notice:
+            return LogColor::Cyan;
         case LogLevel::Warning:
             return LogColor::Yellow;
         case LogLevel::Error:
@@ -173,6 +175,7 @@ LogBackground Logger::background(LogLevel level)
         case LogLevel::Debug:
         case LogLevel::Verbose:
         case LogLevel::Info:
+        case LogLevel::Notice:
         case LogLevel::Warning:
         case LogLevel::Error:
         case LogLevel::Critical:
@@ -198,6 +201,9 @@ std::string Logger::prefix(LogLevel level)
             break;
         case LogLevel::Info:
             prefix += "I";
+            break;
+        case LogLevel::Notice:
+            prefix += "N";
             break;
         case LogLevel::Warning:
             prefix += "W";
@@ -239,13 +245,13 @@ void setLogStream(std::ostream& output)
 
 Logger err(LogLevel level)
 {
-    Logger logger(*Log::g_errorStream, level);
+    Logger logger(*Log::g_errorStream, level, "STDERR");
     return logger;
 }
 
 Logger log(LogLevel level)
 {
-    Logger logger(*Log::g_logStream, level);
+    Logger logger(*Log::g_logStream, level, "STDOUT");
     return logger;
 }
 

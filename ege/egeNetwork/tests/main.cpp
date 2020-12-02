@@ -143,7 +143,7 @@ class MyServer : public EGE::EGEServer
 {
 public:
     MyServer()
-    : EGE::EGEServer(rand() % 63536 + 2000) {}
+    : EGE::EGEServer(rand() % 63536 + 2000) { setVersion(1); setVersionString("EGE Test"); }
 
     virtual std::shared_ptr<EGE::ServerNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
     {
@@ -178,7 +178,7 @@ class MyClient : public EGE::EGEClient
 {
 public:
     MyClient(unsigned short port)
-    : EGE::EGEClient(sf::IpAddress::LocalHost, port) {}
+    : EGE::EGEClient(sf::IpAddress::LocalHost, port) { setVersion(1); setVersionString("EGE Test"); }
 
     virtual std::shared_ptr<EGE::ClientNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
     {

@@ -315,6 +315,8 @@ EventResult EGEClient::onLoad()
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
         log() << "001E EGE/egeNetwork: Starting client";
+        log() << "Extendable Game Engine egeNetwork Client v" << EGE_PROTOCOL_VERSION;
+        log() << "Agent: " << getVersionString() << " v" << getVersion();
         if(!connect(m_ip, m_port))
             return 1;
 

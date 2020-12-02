@@ -225,6 +225,8 @@ EventResult EGEServer::onLoad()
     // Run server thread
     auto serverNetworkWorker = [this]()->int {
         err(LogLevel::Info) << "001E EGE/egeNetwork: Starting server";
+        log(LogLevel::Notice) << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
+        log(LogLevel::Notice) << "Agent: " << getVersionString() << " v" << getVersion();
         if(!start())
             return 1;
 

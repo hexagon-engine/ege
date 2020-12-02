@@ -15,6 +15,7 @@ enum class LogLevel
     Debug,
     Verbose,
     Info,
+    Notice,
     Warning,
     Error,
     Critical,
@@ -73,7 +74,7 @@ std::ostream& operator<<(std::ostream& input, LogColor color);
 class Logger
 {
 public:
-    Logger(std::ostream& output, LogLevel level);
+    Logger(std::ostream& output, LogLevel level, std::string streamName = "LOG");
     ~Logger();
 
     template<class T>

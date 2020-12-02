@@ -19,7 +19,7 @@ void NetworkEndpoint::disconnect()
 
     if(m_socket)
     {
-        err(LogLevel::Info) << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort();
+        err(LogLevel::Info) << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort() << " -> " << m_socket->getRemotePort();
         m_socket->disconnect();
     }
 }
