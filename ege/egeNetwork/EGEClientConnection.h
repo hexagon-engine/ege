@@ -60,10 +60,14 @@ public:
         m_controlledSceneObjectId = id;
     }
 
+    bool hasVersionCheckValid() { return m_versionCheckValid; }
+    void setVersionCheckValid() { m_versionCheckValid = true; }
+
 private:
     long long m_controlledSceneObjectId = 0;
     Time m_lastRecv;
     bool m_pinged = false;
+    bool m_versionCheckValid = false;
 };
 
 }
