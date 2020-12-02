@@ -5,6 +5,7 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "EGEPacket.h"
 #include "EGEServer.h"
 
 #include <ctime>
@@ -21,14 +22,15 @@ class EGEClientConnection : public ClientConnection, public SFMLNetworkImpl
 public:
     EGEClientConnection(EGEServer* server, std::shared_ptr<sf::TcpSocket> socket)
     : ClientConnection(server, socket)
-    , m_lastRecv(server->time(Time::Unit::Seconds), Time::Unit::Seconds) {}
+    , m_lastRecv(server->time(Time::Unit::Seconds), Time::Unit::Seconds)
+    , m_createTime(server->time(Time::Unit::Seconds), Time::Unit::Seconds) {}
 
-    virtual bool send(std::shared_ptr<EGE::Packet> packet)
+    virtual bool send(std::shared_ptr<Packet> packet)
     {
         return sendTo(this, packet);
     }
 
-    virtual std::shared_ptr<EGE::Packet> receive()
+    virtual std::shared_ptr<Packet> receive()
     {
         return receiveFrom(this);
     }
@@ -40,6 +42,11 @@ public:
     Time getLastRecvTime()
     {
         return m_lastRecv;
+    }
+
+    Time getCreateTime()
+    {
+        return m_createTime;
     }
 
     bool wasPinged()
@@ -60,14 +67,19 @@ public:
         m_controlledSceneObjectId = id;
     }
 
-    bool hasVersionCheckValid() { return m_versionCheckValid; }
-    void setVersionCheckValid() { m_versionCheckValid = true; }
+    bool agentVerCheckSucceeded() { return m_agentVerCheck; }
+    bool protVerCheckSucceeded() { return m_agentVerCheck; }
+    void setAgentVerCheckSuccess() { m_agentVerCheck = true; }
+    void setProtVerCheckSuccess() { m_agentVerCheck = true; }
 
 private:
     long long m_controlledSceneObjectId = 0;
     Time m_lastRecv;
+    Time m_createTime;
+
     bool m_pinged = false;
-    bool m_versionCheckValid = false;
+    bool m_agentVerCheck = false;
+    bool m_protVerCheck = false;
 };
 
 }

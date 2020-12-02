@@ -23,7 +23,7 @@ EventResult EGEServer::onClientConnect(ClientConnection* client)
 {
     sf::Lock lock(m_clientsAccessMutex);
 
-    // FIXME: it should be asynchronous
+    // FIXME: should it be asynchronous?
     if(!client->send(EGEPacket::generate_Ping()))
         return EventResult::Failure;
     if(!client->send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION)))
@@ -101,11 +101,13 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
     egeClient->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
     egeClient->setPinged(false);
 
-    /*if constexpr(EGESERVER_DEBUG)
+    // Version check
+    if((!egeClient->agentVerCheckSucceeded() || !egeClient->protVerCheckSucceeded())
+    && time(Time::Unit::Seconds) - egeClient->getCreateTime().getValue() > 10)
     {
-        std::cerr << "Server: EGEPacket(" << EGEPacket::typeString(egePacket->getType()) << ") ";
-        std::cerr << egePacket->getArgs()->toString() << std::endl;
-    }*/
+        log(LogLevel::Error) << "Version check timed out for client " << egeClient->getID();
+        return EventResult::Failure;
+    }
 
     switch(egePacket->getType())
     {
@@ -129,6 +131,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 return EventResult::Failure;
             }
             egeClient->send(EGEPacket::generate_Pong());
+            egeClient->setProtVerCheckSuccess();
         }
         break;
     case EGEPacket::Type::CLogin:
@@ -184,7 +187,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             if(!sceneObject) // object doesn't exist
                 return EventResult::Failure;
 
-            err(LogLevel::Debug) << "SO request " << id.value();
+            err(LogLevel::Debug) << "SceneObject requested: " << id.value();
             egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
             if(egeClient->getControlledSceneObject() == id.value())
                 egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
@@ -192,7 +195,6 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
         break;
     case EGEPacket::Type::_Version:
         {
-            // TODO: Force version check
             int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
             String str = egePacket->getArgs()->getObject("string").as<String>().valueOr("Generic EGE::EGEClient");
 
@@ -207,6 +209,8 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 err() << "Invalid server! (need '" << getVersionString() << "', got '" << str << "')";
                 return EventResult::Failure;
             }
+
+            egeClient->setAgentVerCheckSuccess();
         }
         break;
     default:
