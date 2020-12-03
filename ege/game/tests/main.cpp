@@ -83,7 +83,7 @@ public:
     typedef EGE::GameplayObjectRegistry<std::string, MyColor> GPORObjc;
     GPORObjc::IdTEntry m_id;
 
-    ColorWidget(EGE::Widget* parent, GPORObjc::IdTEntry id, MyColor* color)
+    ColorWidget(EGE::Widget& parent, GPORObjc::IdTEntry id, MyColor* color)
     : EGE::Widget(parent)
     , m_color(color)
     , m_id(id)
@@ -95,10 +95,8 @@ public:
         m_size = EGE::Vec2d(event.width - 80.f, 32.f);
     }
 
-    void render(sf::RenderTarget& target)
+    void renderOnly(EGE::Renderer& renderer)
     {
-        EGE::Widget::render(target);
-
         sf::RectangleShape rs(sf::Vector2f(30.f, 30.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255 - m_color->m_color.r, 255 - m_color->m_color.g, 255 - m_color->m_color.b));
@@ -107,13 +105,13 @@ public:
             rs.setOutlineThickness(1.f);
 
         rs.setFillColor(m_color->m_color);
-        target.draw(rs);
+        renderer.getTarget().draw(rs);
 
-        EGE::Label label(this);
+        EGE::Label label(*this);
         label.setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
         label.setPosition(EGE::Vec2d(40.f, 0.f));
         label.setFontSize(15);
-        label.render(target);
+        label.render(renderer);
     }
 };
 
@@ -122,7 +120,7 @@ class MyGuiScreen : public EGE::GUIScreen
 public:
     std::vector<std::shared_ptr<ColorWidget>> m_widgets;
 
-    MyGuiScreen(EGE::GUIGameLoop* loop)
+    MyGuiScreen(EGE::GUIGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
     void onLoad()
@@ -133,7 +131,7 @@ public:
         {
             DEBUG_PRINT(_color.first.baseId.c_str());
             DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
-            auto widget = make<ColorWidget>(this, _color.first, _color.second.get());
+            auto widget = make<ColorWidget>(*this, _color.first, _color.second.get());
             widget->setPosition(EGE::Vec2d(40.f, 40.f * s + 40.f));
             m_widgets.push_back(widget);
             addWidget(widget);
@@ -158,9 +156,9 @@ TESTCASE(simple)
     auto game = EGE::Game::instance();
     auto gpom = make<MyGameplayObjectManager>();
     game.setGameplayObjectManager(gpom);
-    game.getLoop()->setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(400, 400), "EGE::Game"));
+    game.getLoop()->openWindow(sf::VideoMode(400, 400), "EGE::Game");
     game.getLoop()->setResourceManager(make<MyResourceManager>());
-    game.getLoop()->setCurrentGUIScreen(make<MyGuiScreen>(game.getLoop().get()));
+    game.getLoop()->setCurrentGUIScreen(make<MyGuiScreen>(*game.getLoop()));
     game.getLoop()->setBackgroundColor(sf::Color(127, 127, 127));
     return game.run();
 }
