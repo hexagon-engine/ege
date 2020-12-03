@@ -53,6 +53,7 @@ typedef std::basic_string<Uint32> UString; // Unicode String
 typedef size_t      Size;
 typedef size_t      IdType;
 typedef long long   TickCount;
+typedef long long   UidType;
 
 //////////////
 // Pointers //
