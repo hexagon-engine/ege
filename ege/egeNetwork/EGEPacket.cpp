@@ -11,6 +11,8 @@ Copyright (c) Sppmacd 2020
 #include <ctime>
 #include <ege/util/Converter.h>
 #include <ege/util/ObjectInt.h>
+#include <ege/util/Random.h>
+#include <ege/util/system.h>
 
 namespace EGE
 {
@@ -68,13 +70,10 @@ sf::Packet EGEPacket::toSFMLPacket()
 
 long long EGEPacket::generateUID()
 {
-    static long long lastId = []()->long long {
-        srand(time(NULL));
-        return 0LL;
-    }();
-
-    lastId += rand() % 3 + 1;
-    return lastId;
+    static EGE::Random random(EGE::System::unixTime());
+    static EGE::UidType lastUID = 0;
+    lastUID += random.nextIntRanged(1, 4);
+    return lastUID;
 }
 
 void EGEPacket::appendUID(std::shared_ptr<ObjectMap> packetArgs)
