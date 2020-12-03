@@ -134,11 +134,31 @@ SFMLSystemWindow& GUIGameLoop::getWindow()
 void GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
 {
     m_systemWindow.create(mode, label, style, settings);
+
+    if(m_currentGui)
+    {
+        // Notify GUI about size change
+        sf::Event::SizeEvent event;
+        auto size = m_systemWindow.getSize();
+        event.width = size.x;
+        event.height = size.y;
+        m_currentGui->onResize(event);
+    }
 }
 
 void GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings)
 {
     m_systemWindow.create(handle, settings);
+
+    if(m_currentGui)
+    {
+        // Notify GUI about size change
+        sf::Event::SizeEvent event;
+        auto size = m_systemWindow.getSize();
+        event.width = size.x;
+        event.height = size.y;
+        m_currentGui->onResize(event);
+    }
 }
 
 std::weak_ptr<ResourceManager> GUIGameLoop::getResourceManager()
