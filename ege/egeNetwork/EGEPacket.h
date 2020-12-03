@@ -17,6 +17,8 @@ Copyright (c) Sppmacd 2020
 // It's reported by _ProtocolVersion packet.
 #define EGE_PROTOCOL_VERSION 0
 
+#define EGEPACKET_DEBUG 1
+
 namespace EGE
 {
 

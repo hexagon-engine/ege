@@ -33,18 +33,11 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
 {
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    /*if constexpr(EGECLIENT_DEBUG)
+    if constexpr(EGEPACKET_DEBUG)
     {
-        sf::Packet sfPacket = egePacket->toSFMLPacket();
-        std::cerr << "Client: Hex dump: " << std::endl;
-        hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }*/
-
-    /*if constexpr(EGECLIENT_DEBUG)
-    {
-        std::cerr << "Client: EGEPacket(" << EGEPacket::typeString(egePacket->getType()) << ") ";
-        std::cerr << egePacket->getArgs()->toString() << std::endl;
-    }*/
+        std::cerr << "Client: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")" << std::endl;
+        printObject(egePacket->getArgs());
+    }
 
     switch(egePacket->getType())
     {

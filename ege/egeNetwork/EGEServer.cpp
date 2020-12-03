@@ -86,12 +86,11 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
     sf::Lock lock(m_clientsAccessMutex);
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
-    /*if constexpr(EGESERVER_DEBUG)
+    if constexpr(EGEPACKET_DEBUG)
     {
-        sf::Packet sfPacket = egePacket->toSFMLPacket();
-        std::cerr << "Server: Hex dump: " << std::endl;
-        hexDump(sfPacket.getData(), sfPacket.getDataSize(), HexDumpSettings{8});
-    }*/
+        std::cerr << "Server: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")" << std::endl;
+        printObject(egePacket->getArgs());
+    }
 
     EGEClientConnection* egeClient = (EGEClientConnection*)client;
 
@@ -162,7 +161,6 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
             if(!getScene()) // cannot control object when no scene is created!
                 return EventResult::Failure;
-
 
             auto controller = getController(id.value());
 
