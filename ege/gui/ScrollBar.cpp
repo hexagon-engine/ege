@@ -60,7 +60,7 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::render(sf::RenderTarget& target, const RenderStates&)
+void ScrollBar::render(Renderer& renderer)
 {
     // update geometry
     if(m_geometryUpdate)
@@ -75,7 +75,7 @@ void ScrollBar::render(sf::RenderTarget& target, const RenderStates&)
         m_geometryUpdate = false;
     }
 
-    Widget::render(target);
+    Widget::render(renderer);
 }
 
 sf::FloatRect ScrollBar::getKnobBounds()
@@ -93,10 +93,8 @@ sf::FloatRect ScrollBar::getKnobBounds()
     return rect;
 }
 
-void ScrollBar::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void ScrollBar::renderOnly(Renderer& renderer)
 {
-    Renderer renderer(target);
-
     // background
     renderer.renderRectangle(0.0, 20.0, m_size.x, m_size.y - 40.0, sf::Color(175, 175, 175));
 

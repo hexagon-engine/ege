@@ -30,7 +30,7 @@ public:
         Button* m_button;
     };
 
-    Button(Widget* parent)
+    explicit Button(Widget& parent)
     : Widget(parent) {}
 
     virtual void setLabel(sf::String label)
@@ -45,7 +45,7 @@ public:
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void renderOnly(Renderer& renderer) override;
 
     void setCallback(std::function<void()> callback)
     {

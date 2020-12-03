@@ -25,14 +25,6 @@ public:
     : sf::RenderWindow()
     {}
 
-    SFMLSystemWindow(sf::VideoMode mode, const sf::String& title, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings())
-    : sf::RenderWindow(mode, title, style, settings)
-    {}
-
-    explicit SFMLSystemWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings())
-    : sf::RenderWindow(handle, settings)
-    {}
-
     virtual void callEvents(EventLoop* loop, WaitForEvents wait = WaitForEvents::No);
 
     bool areGLExtensionsEnabled() { return m_glExtensions; }

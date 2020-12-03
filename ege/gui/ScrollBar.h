@@ -22,7 +22,7 @@ public:
         Vertical
     };
 
-    ScrollBar(Widget* parent)
+    explicit ScrollBar(Widget& parent)
     : Widget(parent) {}
 
     double getValue() const
@@ -50,8 +50,8 @@ public:
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
-    virtual void render(sf::RenderTarget& target, const RenderStates& states = {});
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void render(Renderer& renderer);
+    virtual void renderOnly(Renderer& renderer);
 
     void setUpdateCallback(std::function<void(double)> func)
     {

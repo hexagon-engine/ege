@@ -22,8 +22,10 @@ void Button::onTouchEnd(sf::Event::TouchEvent& event)
     Widget::onTouchEnd(event); //it removes m_leftClicked state
 }
 
-void Button::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void Button::renderOnly(Renderer& renderer)
 {
+    sf::RenderTarget& target = renderer.getTarget();
+
     // base
     if(m_leftClicked)
     {
@@ -83,7 +85,7 @@ void Button::renderOnly(sf::RenderTarget& target, const RenderStates&)
     }
 
     // label
-    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 18);
     text.setPosition((int)m_size.x / 2, (int)m_size.y / 2);

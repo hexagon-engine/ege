@@ -11,11 +11,6 @@ namespace EGE
 {
     void DefaultSystemEventHandler::onClose()
     {
-        if(m_window.expired())
-        {
-            err(LogLevel::Verbose) << "000E EGE/syswindow: window already removed, close skipped";
-            return;
-        }
-        m_window.lock()->close();
+        m_window.close();
     }
 }

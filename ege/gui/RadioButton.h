@@ -16,10 +16,10 @@ namespace EGE
 class RadioButton : public CheckBox
 {
 public:
-    RadioButton(Widget* parent)
+    explicit RadioButton(Widget& parent)
     : CheckBox(parent) {}
 
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void renderOnly(Renderer& renderer);
 
 private:
     virtual void onClick(EGE::Vec2d);

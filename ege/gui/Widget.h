@@ -9,7 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "Animation.h"
 
 #include <ege/event/DefaultSystemEventHandler.h>
-#include <ege/gfx/RenderStates.h>
+#include <ege/gfx/Renderer.h>
 #include <ege/util/Vector.h>
 
 #define WIDGET_DEBUG 0
@@ -38,13 +38,13 @@ public:
         std::string m_id;
     };
 
-    Widget(Widget* parent)
-    : DefaultSystemEventHandler(parent ? parent->getWindow() : std::weak_ptr<SFMLSystemWindow>())
-    , m_parent(parent)
-    , m_gameLoop(parent ? parent->m_gameLoop : nullptr) {}
+    explicit Widget(Widget& parent)
+    : DefaultSystemEventHandler(parent.getWindow())
+    , m_parent(&parent)
+    , m_gameLoop(parent.m_gameLoop) {}
 
     // for non-parented widgets, e.g. GUIScreen
-    Widget(GUIGameLoop* gameLoop);
+    explicit Widget(GUIGameLoop& gameLoop);
 
     virtual void setPosition(EGE::Vec2d position)
     {
@@ -54,7 +54,7 @@ public:
     {
         return m_position;
     }
-    GUIGameLoop* getLoop() const
+    GUIGameLoop& getLoop() const
     {
         return m_gameLoop;
     }
@@ -66,14 +66,15 @@ public:
     {
         return m_size;
     }
+
     Widget* getParent() { return m_parent; }
 
     virtual sf::FloatRect getBoundingBox();
     virtual sf::FloatRect getViewport(sf::RenderTarget& target);
-    virtual void render(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void render(Renderer& renderer);
 
     // render without setting view
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void renderOnly(Renderer& renderer);
 
     virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};
@@ -99,7 +100,7 @@ protected:
     Widget* m_parent;
     bool m_mouseOver = false;
     bool m_leftClicked = false;
-    GUIGameLoop* m_gameLoop = nullptr;
+    GUIGameLoop& m_gameLoop;
 
 private:
     EGE::Vec2d m_position;
@@ -110,7 +111,7 @@ private:
 class DummyWidget : public Widget
 {
 public:
-    DummyWidget(Widget* parent)
+    DummyWidget(Widget& parent)
     : Widget(parent) {}
 
     void setSize(EGE::Vec2d size)

@@ -18,7 +18,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-TextBox::TextBox(Widget* parent)
+TextBox::TextBox(Widget& parent)
 : Widget(parent)
 {
     m_caretAnimation = make<Animation>(this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
@@ -31,7 +31,7 @@ TextBox::TextBox(Widget* parent)
                  });
 }
 
-void TextBox::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void TextBox::renderOnly(Renderer& renderer)
 {
     sf::RectangleShape rs;
     rs.setFillColor(sf::Color(255, 255, 255));
@@ -41,16 +41,16 @@ void TextBox::renderOnly(sf::RenderTarget& target, const RenderStates&)
     rs.setPosition(2.f, 2.f);
     rs.setOutlineColor(sf::Color(60, 60, 60));
     rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
-    target.draw(rs);
+    renderer.getTarget().draw(rs);
 
     // label
-    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);
     float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
-    target.draw(text);
+    renderer.getTarget().draw(text);
 
     // caret
     if(hasFocus() && m_caretShown)
@@ -58,36 +58,27 @@ void TextBox::renderOnly(sf::RenderTarget& target, const RenderStates&)
         sf::RectangleShape rsCaret(sf::Vector2f(1.f, m_size.y - 6.f));
         rsCaret.setPosition(text.findCharacterPos(m_caretPos).x, 3.f);
         rsCaret.setFillColor(sf::Color::Black);
-        target.draw(rsCaret);
+        renderer.getTarget().draw(rsCaret);
     }
 
     // border
-    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(3.f, 3.f));
-    rs.setPosition(1.f, 1.f);
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setOutlineColor(sf::Color(173, 173, 173));
-    target.draw(rs);
-
-    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
-    rs.setPosition(1.f, 1.f);
-    rs.setOutlineColor(sf::Color(210, 210, 210));
-    target.draw(rs);
+    renderer.renderTextBoxLike(0, 0, getSize().x, getSize().y);
 }
 
 void TextBox::onMouseEnter()
 {
     Widget::onMouseEnter();
-    auto cursor = getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Text);
+    auto cursor = getLoop().getResourceManager().lock()->getCursor(sf::Cursor::Text);
     ASSERT(cursor);
-    getWindow().lock()->setMouseCursor(*cursor);
+    getWindow().setMouseCursor(*cursor);
 }
 
 void TextBox::onMouseLeave()
 {
     Widget::onMouseLeave();
-    auto cursor = getLoop()->getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
+    auto cursor = getLoop().getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
     ASSERT(cursor);
-    getWindow().lock()->setMouseCursor(*cursor);
+    getWindow().setMouseCursor(*cursor);
 }
 
 void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
@@ -97,7 +88,7 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
         m_caretAnimation->restart();
 
     // Find character to set caret next to.
-    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);

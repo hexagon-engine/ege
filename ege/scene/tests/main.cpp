@@ -117,13 +117,13 @@ TESTCASE(simple)
 {
     // create loop and window
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Test");
 
     // limit window framerate to 10
-    gameLoop.getWindow().lock()->setFramerateLimit(60);
+    gameLoop.getWindow().setFramerateLimit(60);
 
     // create main GUI
-    auto gui = make<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(gameLoop);
 
     // create scene
     auto scene = make<EGE::Scene>(&gameLoop);
@@ -140,7 +140,7 @@ TESTCASE(simple)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(make<MyResourceManager>());
@@ -156,13 +156,13 @@ TESTCASE(_2dCamera)
 {
     // create loop and window
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Test"));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Test");
 
     // limit window framerate to 10
-    gameLoop.getWindow().lock()->setFramerateLimit(60);
+    gameLoop.getWindow().setFramerateLimit(60);
 
     // create main GUI
-    auto gui = make<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(gameLoop);
 
     // create scene
     auto scene = make<EGE::Scene2D>(&gameLoop);
@@ -210,7 +210,7 @@ TESTCASE(_2dCamera)
                                                 })), EGE::GameLoop::TimerImmediateStart::Yes);
 
     // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(make<MyResourceManager>());
@@ -226,13 +226,13 @@ TESTCASE(serializer)
 {
     // create loop
     EGE::GUIGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Scene Serializer Test"));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Serializer Test");
 
     // limit window framerate to 10
-    gameLoop.getWindow().lock()->setFramerateLimit(60);
+    gameLoop.getWindow().setFramerateLimit(60);
 
     // create main GUI
-    auto gui = make<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(gameLoop);
 
     // create scene
     auto scene = make<EGE::Scene2D>(&gameLoop);
@@ -252,7 +252,7 @@ TESTCASE(serializer)
     scene->addObject(myObject2);
 
     // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(make<MyResourceManager>());
@@ -273,7 +273,7 @@ struct ParticleData : public EGE::ParticleSystem2D::UserData
 class MyScene : public EGE::Scene2D
 {
 public:
-    MyScene(EGE::GUIGameLoop* loop)
+    explicit MyScene(EGE::GUIGameLoop* loop)
     : EGE::Scene2D(loop) {}
 
     virtual void onUpdate(long long tickCounter)
@@ -292,10 +292,10 @@ TESTCASE(particleSystem)
 {
     // create loop
     EGE::GUIGameLoop loop;
-    loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(600, 600), "Particle System"));
+    loop.openWindow(sf::VideoMode(600, 600), "Particle System");
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
-    EGE::Renderer renderer(*loop.getWindow().lock());
+    EGE::Renderer& renderer = loop.getRenderer();
 
     // create scene
     std::shared_ptr<MyScene> scene = make<MyScene>(&loop);
@@ -363,8 +363,8 @@ TESTCASE(particleSystem)
     scene->addObject(cam);
 
     // create GUI
-    std::shared_ptr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(&loop);
-    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    std::shared_ptr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
     // assign GUI to loop
     loop.setCurrentGUIScreen(gui);
@@ -422,7 +422,7 @@ public:
 TESTCASE(_tileMap)
 {
     EGE::GUIGameLoop loop;
-    loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(600, 600), "Tile Map"));
+    loop.openWindow(sf::VideoMode(600, 600), "Tile Map");
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
     loop.setResourceManager(make<MyResourceManager2>());
 
@@ -435,8 +435,8 @@ TESTCASE(_tileMap)
     scene->addObject(camera);
     scene->setCamera(camera);
 
-    auto gui = make<EGE::GUIScreen>(&loop);
-    gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+    auto gui = make<EGE::GUIScreen>(loop);
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
     loop.setCurrentGUIScreen(gui);
 
     return loop.run();

@@ -14,8 +14,8 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-Widget::Widget(GUIGameLoop* gameLoop)
-: DefaultSystemEventHandler(gameLoop->getWindow())
+Widget::Widget(GUIGameLoop& gameLoop)
+: DefaultSystemEventHandler(gameLoop.getWindow())
 , m_parent(nullptr)
 , m_gameLoop(gameLoop) {}
 
@@ -59,17 +59,18 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
         return currentRect;
 }
 
-void Widget::render(sf::RenderTarget& target, const RenderStates& states)
+void Widget::render(Renderer& renderer)
 {
-    setViewForWidget(target);
-    renderOnly(target, states);
+    setViewForWidget(renderer.getTarget());
+    renderOnly(renderer);
 }
 
-void Widget::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void Widget::renderOnly(Renderer& renderer)
 {
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
     {
+        // TODO: Use Renderer's methods
         sf::RectangleShape rs(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(sf::Vector2f(1.f, 1.f));
         rs.setOutlineColor(sf::Color::Cyan);
@@ -88,7 +89,7 @@ void Widget::renderOnly(sf::RenderTarget& target, const RenderStates&)
             rs.setOutlineColor(sf::Color::Red);
         if(m_leftClicked)
             rs.setOutlineColor(sf::Color::Green);
-        target.draw(rs);
+        renderer.getTarget().draw(rs);
     }
 }
 

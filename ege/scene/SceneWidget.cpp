@@ -11,11 +11,10 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void SceneWidget::renderOnly(sf::RenderTarget& target, const RenderStates& states)
+void SceneWidget::renderOnly(Renderer& renderer)
 {
-    Widget::renderOnly(target, states);
     if(m_scene)
-        m_scene->renderOnly(target, states);
+        m_scene->renderOnly(renderer.getTarget(), renderer.getStates());
 }
 
 void SceneWidget::onResize(sf::Event::SizeEvent& event)
@@ -34,9 +33,9 @@ void SceneWidget::onUpdate(long long tickCounter)
     Widget::onUpdate(tickCounter);
     if(m_scene)
     {
-        if(m_gameLoop->getProfiler()) m_gameLoop->getProfiler()->startSection("sceneUpdate");
+        if(m_gameLoop.getProfiler()) m_gameLoop.getProfiler()->startSection("sceneUpdate");
         m_scene->onUpdate(tickCounter);
-        if(m_gameLoop->getProfiler()) m_gameLoop->getProfiler()->endSection();
+        if(m_gameLoop.getProfiler()) m_gameLoop.getProfiler()->endSection();
     }
 }
 

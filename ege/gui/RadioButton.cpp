@@ -10,8 +10,10 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void RadioButton::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void RadioButton::renderOnly(Renderer& renderer)
 {
+    sf::RenderTarget& target = renderer.getTarget();
+
     sf::CircleShape cs;
     cs.setFillColor(sf::Color(255, 255, 255));
     cs.setOutlineThickness(1.f);
@@ -54,7 +56,7 @@ void RadioButton::renderOnly(sf::RenderTarget& target, const RenderStates&)
     }
 
     // label (generate)
-    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
 

@@ -44,10 +44,10 @@ void Label::updateGeometry()
     // FIXME: label is weirdly clipped (':('; '???')
     if(m_geometryChanged)
     {
-        ASSERT(!getLoop()->getResourceManager().expired());
+        ASSERT(!getLoop().getResourceManager().expired());
         if(!m_font)
         {
-            m_font = getLoop()->getResourceManager().lock()->getDefaultFont();
+            m_font = getLoop().getResourceManager().lock()->getDefaultFont();
         }
         sf::Text text(m_string, *m_font, m_fontSize);
         sf::FloatRect bounds = text.getLocalBounds();
@@ -76,16 +76,16 @@ void Label::updateGeometry()
     }
 }
 
-void Label::render(sf::RenderTarget& target, const RenderStates&)
+void Label::render(Renderer& renderer)
 {
     updateGeometry();
-    Widget::render(target);
-    renderOnly(target);
+    Widget::render(renderer);
+    renderOnly(renderer);
 }
 
-void Label::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void Label::renderOnly(Renderer& renderer)
 {
-    target.draw(m_text);
+    renderer.getTarget().draw(m_text);
 }
 
 }

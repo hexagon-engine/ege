@@ -25,7 +25,6 @@ class GUIGameLoop : public GameLoop
 public:
     //EGE_SINGLETON(GUIGameLoop);
     GUIGameLoop();
-    virtual ~GUIGameLoop();
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
     virtual void onTick(long long tickCount) override;
@@ -45,8 +44,12 @@ public:
 
     std::shared_ptr<GUIScreen> getCurrentGUIScreen() { return m_currentGui; }
 
-    std::weak_ptr<SFMLSystemWindow> getWindow();
-    void setWindow(std::shared_ptr<SFMLSystemWindow> window);
+    SFMLSystemWindow& getWindow();
+    Renderer& getRenderer() { return m_renderer; }
+
+    void openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
+    void openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
+
     std::weak_ptr<ResourceManager> getResourceManager();
     void setResourceManager(std::shared_ptr<ResourceManager> manager);
     void setProfiler(std::weak_ptr<Profiler> profiler);
@@ -70,11 +73,13 @@ protected:
 private:
     virtual EventResult onLoad() override;
 
-    std::shared_ptr<GUIScreen> m_currentGui = nullptr;
+    std::shared_ptr<GUIScreen> m_currentGui;
     // to allow animations and lazy-load
-    std::shared_ptr<GUIScreen> m_pendingGui = nullptr;
-    std::shared_ptr<SFMLSystemWindow> m_systemWindow;
+    std::shared_ptr<GUIScreen> m_pendingGui;
     std::shared_ptr<ResourceManager> m_resourceManager;
+    SFMLSystemWindow m_systemWindow;
+    Renderer m_renderer;
+
     sf::Color m_backgroundColor;
     sf::Clock m_fpsClock;
     sf::Time m_frameTime;

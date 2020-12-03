@@ -15,7 +15,7 @@ namespace EGE
 class TextBox : public Widget
 {
 public:
-    TextBox(Widget* parent);
+    explicit TextBox(Widget& parent);
 
     void setText(sf::String text)
     {
@@ -32,7 +32,7 @@ public:
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void renderOnly(Renderer& renderer) override;
 
 private:
     sf::String m_text;

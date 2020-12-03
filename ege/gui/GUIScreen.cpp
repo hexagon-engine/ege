@@ -265,15 +265,15 @@ void GUIScreen::onUpdate(long long tickCounter)
     }
 }
 
-void GUIScreen::render(sf::RenderTarget& target, const RenderStates& states)
+void GUIScreen::render(Renderer& renderer)
 {
     // Actually draw child widgets
-    CompoundWidget::render(target, states);
+    CompoundWidget::render(renderer);
 
     // Render dialog on top of GUI.
     if(m_dialog)
     {
-        m_dialog->render(target, states);
+        m_dialog->render(renderer);
     }
 }
 
@@ -299,7 +299,7 @@ void GUIScreen::openDialog(SharedPtr<GUIScreen> dialog)
         m_dialog = dialog;
         m_dialog->onLoad();
 
-        sf::Vector2u wndSize = getLoop()->getWindow().lock()->getSize();
+        sf::Vector2u wndSize = getLoop().getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_dialog->onResize(event);
     });

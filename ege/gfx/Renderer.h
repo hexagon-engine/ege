@@ -68,15 +68,9 @@ public:
     void renderButtonLike(double x, double y, double width, double height);
     void renderTextBoxLike(double x, double y, double width, double height);
 
-    sf::RenderTarget& getTarget()
-    {
-        return m_target;
-    }
-
-    void setStates(const RenderStates& states)
-    {
-        m_states = states;
-    }
+    sf::RenderTarget& getTarget() { return m_target; }
+    void setStates(const RenderStates& states) { m_states = states; }
+    const RenderStates& getStates() { return m_states; }
 
 private:
     void applyStates();

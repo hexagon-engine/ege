@@ -10,8 +10,10 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Frame::renderOnly(sf::RenderTarget& target, const RenderStates&)
+void Frame::renderOnly(Renderer& renderer)
 {
+    sf::RenderTarget& target = renderer.getTarget();
+
     // Frame (generate)
     sf::RectangleShape rsFrame(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
     rsFrame.setPosition(1.f, 1.f);
@@ -27,7 +29,7 @@ void Frame::renderOnly(sf::RenderTarget& target, const RenderStates&)
     rsFrame2.setFillColor(sf::Color::Transparent);
 
     // Label (generate)
-    auto font = m_parent->getLoop()->getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 12);
     text.setFillColor(sf::Color::Black);
@@ -37,7 +39,7 @@ void Frame::renderOnly(sf::RenderTarget& target, const RenderStates&)
     // Label background (generate)
     sf::RectangleShape rsBg(sf::Vector2f(text.getLocalBounds().width + 10.f, text.getLocalBounds().height * 2.f));
     rsBg.setOrigin(rsBg.getSize() / 2.f);
-    rsBg.setFillColor(m_parent->getLoop()->getBackgroundColor());
+    rsBg.setFillColor(m_parent->getLoop().getBackgroundColor());
     rsBg.setPosition(m_size.x / 2.f, 0.f);
 
     // Frame (draw)

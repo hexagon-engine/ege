@@ -22,7 +22,7 @@ public:
         Right
     };
 
-    Label(Widget* parent)
+    explicit Label(Widget& parent)
     : Widget(parent) {}
 
     void setString(sf::String str);
@@ -31,8 +31,8 @@ public:
     void setFontSize(int size);
     void setColor(sf::Color color) { m_color = color; m_geometryChanged = true; }
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void render(Renderer& renderer) override;
+    virtual void renderOnly(Renderer& renderer) override;
 
 protected:
     void setPositionInternal(EGE::Vec2d position);

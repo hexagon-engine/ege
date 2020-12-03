@@ -15,7 +15,7 @@ namespace EGE
 class Frame : public Widget
 {
 public:
-    Frame(Widget* parent)
+    explicit Frame(Widget& parent)
     : Widget(parent) {}
 
     void setLabel(sf::String label)
@@ -23,7 +23,7 @@ public:
         m_label = label;
     }
 
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void renderOnly(Renderer& renderer) override;
     virtual sf::FloatRect getBoundingBox()
     {
         return sf::FloatRect();

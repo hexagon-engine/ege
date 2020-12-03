@@ -16,10 +16,10 @@ namespace EGE
 class SceneWidget : public Widget
 {
 public:
-    SceneWidget(Widget* parent, std::shared_ptr<Scene> initialScene = nullptr)
+    explicit SceneWidget(Widget& parent, std::shared_ptr<Scene> initialScene = nullptr)
     : Widget(parent), m_scene(initialScene) {}
 
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
+    virtual void renderOnly(Renderer& renderer);
 
     virtual void onUpdate(long long tickCounter);
     virtual void onResize(sf::Event::SizeEvent& event);

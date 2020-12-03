@@ -15,10 +15,10 @@ namespace EGE
 class CompoundWidget : public Widget
 {
 public:
-    CompoundWidget(Widget* parent)
+    explicit CompoundWidget(Widget& parent)
     : Widget(parent) {}
 
-    CompoundWidget(GUIGameLoop* loop)
+    explicit CompoundWidget(GUIGameLoop& loop)
     : Widget(loop) {}
 
     // System Events -- are passed to all child widgets
@@ -52,7 +52,7 @@ public:
     // Widget Events
     virtual void onUpdate(long long tickCounter) override;
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void render(Renderer& renderer) override;
 
     void addWidget(std::shared_ptr<Widget> widget);
     void removeWidget(Widget* widget);

@@ -17,11 +17,11 @@ namespace EGE
 class GUIScreen : public CompoundWidget
 {
 public:
-    GUIScreen(GUIGameLoop* gameLoop)
+    explicit GUIScreen(GUIGameLoop& gameLoop)
     : CompoundWidget(gameLoop) {}
 
     // for modal dialogs
-    GUIScreen(Widget* parent)
+    explicit GUIScreen(Widget& parent)
     : CompoundWidget(parent) {}
 
     // System Events -- are passed to all child widgets
@@ -54,7 +54,7 @@ public:
     // Args: dialog, exitCode
     virtual void onDialogExit(GUIScreen*, int) {}
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states = {}) override;
+    virtual void render(Renderer& renderer) override;
 
     // If you call it on dialog, the onDialogExit function is called
     // and the dialog is removed on parent.

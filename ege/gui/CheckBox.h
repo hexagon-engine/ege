@@ -16,7 +16,7 @@ namespace EGE
 class CheckBox : public Button
 {
 public:
-    CheckBox(Widget* parent)
+    explicit CheckBox(Widget& parent)
     : Button(parent) {}
 
     void setChecked(bool checked = true)
@@ -33,7 +33,7 @@ public:
         m_geometryUpdate = true;
     }
 
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states = {});
+    virtual void renderOnly(Renderer& renderer);
 
 protected:
     bool m_geometryUpdate = true;

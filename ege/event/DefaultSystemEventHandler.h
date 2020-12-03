@@ -16,23 +16,18 @@ namespace EGE
 class DefaultSystemEventHandler : public SystemEventHandler
 {
 public:
-    DefaultSystemEventHandler(std::weak_ptr<SFMLSystemWindow> window)
-    : m_window(window)
-    {}
+    DefaultSystemEventHandler(SFMLSystemWindow& window)
+    : m_window(window) {}
 
     virtual void onClose() override;
 
-    std::weak_ptr<SFMLSystemWindow> getWindow() const
+    SFMLSystemWindow& getWindow() const
     {
         return m_window;
     }
-    void setWindow(std::weak_ptr<SFMLSystemWindow> window)
-    {
-        m_window = window;
-    }
 
 private:
-    std::weak_ptr<SFMLSystemWindow> m_window;
+    SFMLSystemWindow& m_window;
 };
 
 }

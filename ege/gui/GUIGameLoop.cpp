@@ -15,10 +15,7 @@ namespace EGE
 {
 
 GUIGameLoop::GUIGameLoop()
-{
-}
-
-GUIGameLoop::~GUIGameLoop()
+: m_renderer(m_systemWindow)
 {
 }
 
@@ -67,7 +64,7 @@ void GUIGameLoop::onTick(long long tickCount)
         m_currentGui->onLoad();
 
         // allow GUI screens know about window's size when creating
-        sf::Vector2u wndSize = getWindow().lock()->getSize();
+        sf::Vector2u wndSize = getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
 
@@ -76,11 +73,11 @@ void GUIGameLoop::onTick(long long tickCount)
     }
 
     // Call system event handlers
-    m_profiler->endStartSection("systemEvents");
-    if(m_systemWindow)
+    if(m_systemWindow.isOpen())
     {
+        m_profiler->endStartSection("systemEvents");
         DBG(0, "systemEvents");
-        m_systemWindow->callEvents(this, SystemWindow::WaitForEvents::No);
+        m_systemWindow.callEvents(this, SystemWindow::WaitForEvents::No);
     }
 
     m_profiler->endStartSection("guiUpdate");
@@ -94,7 +91,7 @@ void GUIGameLoop::onTick(long long tickCount)
     render();
     m_profiler->endSection();
 
-    if(m_systemWindow && !m_systemWindow->isOpen())
+    if(!m_systemWindow.isOpen())
         exit();
 
     // TODO: tick rate limit?
@@ -119,7 +116,7 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
         m_currentGui->onLoad();
 
         // allow GUI screens know about window's size when creating
-        sf::Vector2u wndSize = getWindow().lock()->getSize();
+        sf::Vector2u wndSize = getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
 
@@ -129,22 +126,19 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
         m_pendingGui = screen;
 }
 
-std::weak_ptr<SFMLSystemWindow> GUIGameLoop::getWindow()
+SFMLSystemWindow& GUIGameLoop::getWindow()
 {
     return m_systemWindow;
 }
 
-void GUIGameLoop::setWindow(std::shared_ptr<SFMLSystemWindow> window)
+void GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
 {
-    DBG(GUI_DEBUG, "setWindow");
-    // TODO: automatically deletes previous window!
-    // so it forces one GameLoop for window
-    // so only one window is allowed currently (per thread)
-    m_systemWindow = window;
-    if(m_currentGui)
-    {
-        m_currentGui->setWindow(window);
-    }
+    m_systemWindow.create(mode, label, style, settings);
+}
+
+void GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings)
+{
+    m_systemWindow.create(handle, settings);
 }
 
 std::weak_ptr<ResourceManager> GUIGameLoop::getResourceManager()
@@ -164,17 +158,17 @@ void GUIGameLoop::setProfiler(std::weak_ptr<Profiler> profiler)
 
 void GUIGameLoop::render()
 {
-    if(m_systemWindow)
+    if(m_systemWindow.isOpen())
     {
         m_profiler->startSection("clear");
-        m_systemWindow->clear(m_backgroundColor);
+        m_systemWindow.clear(m_backgroundColor);
 
         m_profiler->endStartSection("gui");
         if(m_currentGui)
-            m_currentGui->render(*(m_systemWindow.get()), {});
+            m_currentGui->render(m_renderer);
 
         m_profiler->endStartSection("display");
-        m_systemWindow->display();
+        m_systemWindow.display();
         m_profiler->endSection();
     }
 }

@@ -17,7 +17,7 @@ public:
     virtual EGE::EventResult load()
     {
         DEBUG_PRINT("onLoad");
-        getWindow().lock().get()->setFramerateLimit(60);
+        getWindow().setFramerateLimit(60);
         return EGE::EventResult::Success;
     }
 };
@@ -25,8 +25,8 @@ public:
 TESTCASE(simple)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
-    gameLoop.setCurrentGUIScreen(make<EGE::GUIScreen>(&gameLoop));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test");
+    gameLoop.setCurrentGUIScreen(make<EGE::GUIScreen>(gameLoop));
     gameLoop.setBackgroundColor(sf::Color(127, 127, 127));
     return gameLoop.run();
 }
@@ -34,18 +34,18 @@ TESTCASE(simple)
 TESTCASE(widget)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
-    auto gui = make<EGE::GUIScreen>(&gameLoop);
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test");
+    auto gui = make<EGE::GUIScreen>(gameLoop);
 
-    auto widget = new EGE::DummyWidget(gui.get());
+    auto widget = make<EGE::DummyWidget>(*gui);
     widget->setPosition(EGE::Vec2d(50.f, 50.f));
     widget->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
+    gui->addWidget(widget);
 
-    auto widget2 = new EGE::DummyWidget(gui.get());
+    auto widget2 = make<EGE::DummyWidget>(*gui);
     widget2->setPosition(EGE::Vec2d(150.f, 50.f));
     widget2->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
+    gui->addWidget(widget2);
 
     gameLoop.setCurrentGUIScreen(gui);
     return gameLoop.run();
@@ -54,37 +54,40 @@ TESTCASE(widget)
 TESTCASE(guiChange)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test"));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test");
 
-    auto gui = make<EGE::GUIScreen>(&gameLoop);
+    auto gui = make<EGE::GUIScreen>(gameLoop);
 
-    auto widget = new EGE::DummyWidget(gui.get());
+    auto widget = new EGE::DummyWidget(*gui);
     widget->setPosition(EGE::Vec2d(50.f, 50.f));
     widget->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
 
-    auto widget2 = new EGE::DummyWidget(gui.get());
+    auto widget2 = new EGE::DummyWidget(*gui);
     widget2->setPosition(EGE::Vec2d(150.f, 50.f));
     widget2->setSize(EGE::Vec2d(50.f, 50.f));
     gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
 
-    auto gui2 = make<EGE::GUIScreen>(&gameLoop);
+    auto gui2 = make<EGE::GUIScreen>(gameLoop);
 
-    auto widget3 = new EGE::DummyWidget(gui.get());
+    auto widget3 = new EGE::DummyWidget(*gui);
     widget3->setPosition(EGE::Vec2d(50.f, 150.f));
     widget3->setSize(EGE::Vec2d(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget3));
 
-    auto widget4 = new EGE::DummyWidget(gui.get());
+    auto widget4 = new EGE::DummyWidget(*gui);
     widget4->setPosition(EGE::Vec2d(150.f, 150.f));
     widget4->setSize(EGE::Vec2d(50.f, 50.f));
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
 
     gameLoop.setCurrentGUIScreen(gui);
-    gameLoop.addTimer("changeGUI", std::shared_ptr<EGE::Timer>(&(new EGE::Timer(&gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
-                                     ->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
-                                                    gameLoop.setCurrentGUIScreen(gui2);
-                                                })), EGE::GameLoop::TimerImmediateStart::Yes);
+
+    auto timer = make<EGE::Timer>(&gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds));
+    timer->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
+        gameLoop.setCurrentGUIScreen(gui2);
+    });
+    gameLoop.addTimer("changeGUI", timer, EGE::GameLoop::TimerImmediateStart::Yes);
+
     return gameLoop.run();
 }
 
@@ -95,32 +98,32 @@ public:
     sf::Font* font;
     sf::Texture* texture;
 
-    MyGuiScreen(MyGameLoop* loop)
+    explicit MyGuiScreen(MyGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
     virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
         DEBUG_PRINT("MyResourceManager onLoad");
-        widget1 = make<EGE::DummyWidget>(this);
+        widget1 = make<EGE::DummyWidget>(*this);
         widget1->setPosition(EGE::Vec2d(50.f, 50.f));
         widget1->setSize(EGE::Vec2d(50.f, 50.f));
         addWidget(widget1);
-        font = &*m_gameLoop->getResourceManager().lock()->getFont("font.ttf");
-        texture = &*m_gameLoop->getResourceManager().lock()->getTexture("texture.png");
+        font = m_gameLoop.getResourceManager().lock()->getFont("font.ttf").get();
+        texture = m_gameLoop.getResourceManager().lock()->getTexture("texture.png").get();
     }
 
-    virtual void render(sf::RenderTarget& target, const EGE::RenderStates&) override
+    virtual void render(EGE::Renderer& renderer) override
     {
-        EGE::GUIScreen::render(target);
+        EGE::GUIScreen::render(renderer);
         DEBUG_PRINT("MyResourceManager render");
 
-        setViewForWidget(target);
+        setViewForWidget(renderer.getTarget());
         sf::Text text("TEST", *font, 30);
-        target.draw(text);
+        renderer.getTarget().draw(text);
         sf::Sprite sprite(*texture);
         sprite.setPosition(0.f, 40.f);
-        target.draw(sprite);
+        renderer.getTarget().draw(sprite);
     }
 };
 
@@ -141,7 +144,7 @@ class AnimationGraphWidget : public EGE::Widget
     std::vector<double> m_vals;
     int m_max = 1;
 public:
-    AnimationGraphWidget(EGE::Widget* parent)
+    explicit AnimationGraphWidget(EGE::Widget& parent)
     : EGE::Widget(parent) {}
 
     void setMax(int m)
@@ -159,9 +162,9 @@ public:
         m_size = size;
     }
 
-    void render(sf::RenderTarget& target, const EGE::RenderStates& states) override
+    void renderOnly(EGE::Renderer& renderer) override
     {
-        Widget::render(target, states);
+        sf::RenderTarget& target = renderer.getTarget();
 
         sf::RectangleShape rs(sf::Vector2f(m_size.x - 2.f, m_size.y - 2.f));
         rs.setPosition(1.f, 1.f);
@@ -193,16 +196,16 @@ public:
     std::shared_ptr<EGE::Label> ball;
     bool timerRunning = false;
 
-    MyGuiScreen2(MyGameLoop* loop)
+    explicit MyGuiScreen2(MyGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
     virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
-        getWindow().lock()->setFramerateLimit(60);
+        getWindow().setFramerateLimit(60);
         DEBUG_PRINT("MyResourceManager onLoad");
 
-        auto button = make<EGE::Button>(this);
+        auto button = make<EGE::Button>(*this);
         button->setLabel("T.e.s.t&");
         button->setPosition(EGE::Vec2d(50.f, 50.f));
         button->setSize(EGE::Vec2d(200.f, 40.f));
@@ -221,68 +224,68 @@ public:
         });
         addWidget(button);
 
-        button2 = make<EGE::Button>(this);
+        button2 = make<EGE::Button>(*this);
         button2->setLabel("T.e.s.t&:2");
         button2->setPosition(EGE::Vec2d(50.f, 100.f));
         button2->setSize(EGE::Vec2d(200.f, 40.f));
 
-        auto labelLeft = make<EGE::Label>(this);
+        auto labelLeft = make<EGE::Label>(*this);
         labelLeft->setString("Label Left");
         labelLeft->setPosition(EGE::Vec2d(40.f, 150.f));
         addWidget(labelLeft);
 
-        auto labelCenter = make<EGE::Label>(this);
+        auto labelCenter = make<EGE::Label>(*this);
         labelCenter->setString("Label Center");
         labelCenter->setPosition(EGE::Vec2d(165.f, 200.f));
         labelCenter->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelCenter);
 
-        auto labelRight = make<EGE::Label>(this);
+        auto labelRight = make<EGE::Label>(*this);
         labelRight->setString("Label Right");
         labelRight->setPosition(EGE::Vec2d(290.f, 250.f));
         labelRight->setTextAlign(EGE::Label::Align::Right);
         addWidget(labelRight);
 
-        labelAnimated = make<EGE::Label>(this);
+        labelAnimated = make<EGE::Label>(*this);
         labelAnimated->setString("Animation");
         labelAnimated->setPosition(EGE::Vec2d(150.f, 300.f));
         labelAnimated->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelAnimated);
 
-        ball = make<EGE::Label>(this);
+        ball = make<EGE::Label>(*this);
         ball->setString("O");
         ball->setPosition(EGE::Vec2d(0.f, 0.f));
         ball->setTextAlign(EGE::Label::Align::Center);
         addWidget(ball);
 
-        labelFPS = make<EGE::Label>(this);
+        labelFPS = make<EGE::Label>(*this);
         labelFPS->setString("FPS: 0.0");
         labelFPS->setPosition(EGE::Vec2d(10.f, 10.f));
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         addWidget(labelFPS);
 
-        auto myTextBox = make<EGE::TextBox>(this);
+        auto myTextBox = make<EGE::TextBox>(*this);
         myTextBox->setPosition(EGE::Vec2d(40.f, 400.f));
         myTextBox->setSize(EGE::Vec2d(440.f, 25.f));
         addWidget(myTextBox);
 
-        auto myFrame = make<EGE::Frame>(this);
+        auto myFrame = make<EGE::Frame>(*this);
         myFrame->setSize(EGE::Vec2d(460.f, 470.f));
         myFrame->setPosition(EGE::Vec2d(30.f, 20.f));
         myFrame->setLabel("Widget test");
         addWidget(myFrame);
 
-        auto checkBox = make<EGE::CheckBox>(this);
+        auto checkBox = make<EGE::CheckBox>(*this);
         checkBox->setPosition(EGE::Vec2d(40.f, 440.f));
         checkBox->setLabel("CheckBox");
         addWidget(checkBox);
 
-        auto radioButton = make<EGE::RadioButton>(this);
+        auto radioButton = make<EGE::RadioButton>(*this);
         radioButton->setPosition(EGE::Vec2d(40.f, 460.f));
         radioButton->setLabel("RadioButton");
         addWidget(radioButton);
 
-        auto scrollBar = make<EGE::ScrollBar>(this);
+        auto scrollBar = make<EGE::ScrollBar>(*this);
         scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
         scrollBar->setType(EGE::ScrollBar::Type::Vertical);
         scrollBar->setLength(500.f);
@@ -291,7 +294,7 @@ public:
                                      });
         addWidget(scrollBar);
 
-        graph = make<AnimationGraphWidget>(this);
+        graph = make<AnimationGraphWidget>(*this);
         graph->setPosition(EGE::Vec2d(300.f, 100.f));
         graph->setSize(EGE::Vec2d(100.f, 100.f));
         graph->setMax(600.f);
@@ -306,7 +309,7 @@ public:
                         graph->addVal(val);
                      });
 
-        graph2 = make<AnimationGraphWidget>(this);
+        graph2 = make<AnimationGraphWidget>(*this);
         graph2->setPosition(EGE::Vec2d(300.f, 210.f));
         graph2->setSize(EGE::Vec2d(100.f, 100.f));
         graph2->setMax(600.f);
@@ -352,7 +355,7 @@ public:
     virtual void onUpdate(long long tickCounter)
     {
         EGE::GUIScreen::onUpdate(tickCounter);
-        labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop()->getLatestFrameTime().asSeconds())));
+        labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop().getLatestFrameTime().asSeconds())));
     }
 };
 
@@ -370,18 +373,18 @@ public:
 TESTCASE(resourceManager)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)"));
+    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)");
     gameLoop.setResourceManager(make<MyResourceManager>());
-    gameLoop.setCurrentGUIScreen(make<MyGuiScreen>(&gameLoop));
+    gameLoop.setCurrentGUIScreen(make<MyGuiScreen>(gameLoop));
     return gameLoop.run();
 }
 
 TESTCASE(_widgets)
 {
     MyGameLoop gameLoop;
-    gameLoop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(500, 500), "EGE GUI Test (widgets)"));
+    gameLoop.openWindow(sf::VideoMode(500, 500), "EGE GUI Test (widgets)");
     gameLoop.setResourceManager(make<MyResourceManager2>());
-    gameLoop.setCurrentGUIScreen(make<MyGuiScreen2>(&gameLoop));
+    gameLoop.setCurrentGUIScreen(make<MyGuiScreen2>(gameLoop));
     gameLoop.setBackgroundColor(sf::Color(209, 200, 192));
     return gameLoop.run();
 }

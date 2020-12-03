@@ -189,17 +189,17 @@ void CompoundWidget::onUpdate(long long tickCounter)
     Widget::onUpdate(tickCounter);
 }
 
-void CompoundWidget::render(sf::RenderTarget& target, const RenderStates& states)
+void CompoundWidget::render(Renderer& renderer)
 {
     // Render widget self
-    Widget::render(target, states);
+    Widget::render(renderer);
 
     // Render child widgets
     // TODO: draw only visible widgets
     for(auto widget: m_childWidgets)
     {
-        Widget::setViewForWidget(target);
-        widget->render(target, states);
+        Widget::setViewForWidget(renderer.getTarget());
+        widget->render(renderer);
     }
 }
 
@@ -213,7 +213,7 @@ void CompoundWidget::addWidget(std::shared_ptr<Widget> widget)
         widget->onLoad();
 
         // allow widgets know about window's size when creating
-        sf::Vector2u wndSize = getLoop()->getWindow().lock()->getSize();
+        sf::Vector2u wndSize = getLoop().getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         widget->onResize(event);
 

@@ -69,7 +69,7 @@ void MyGameLoop::exit(int exitCode)
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
 {
 public:
-    MySystemEventHandler(std::weak_ptr<EGE::SFMLSystemWindow> window)
+    MySystemEventHandler(EGE::SFMLSystemWindow& window)
     : EGE::DefaultSystemEventHandler(window)
     {}
 
@@ -86,7 +86,7 @@ public:
 EGE::EventResult MyGameLoop::onLoad()
 {
     m_window = make<EGE::SFMLSystemWindow>();
-    addEventHandler(EGE::SystemEvent::getTypeStatic(), new MySystemEventHandler(m_window));
+    addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(*m_window));
     m_window->create(sf::VideoMode(256, 256), "EGE Test");
     return EGE::EventResult::Success;
 }

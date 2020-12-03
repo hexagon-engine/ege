@@ -233,7 +233,7 @@ TESTCASE(server)
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
 {
 public:
-    MySystemEventHandler(std::weak_ptr<EGE::SFMLSystemWindow> window, std::shared_ptr<MyClient> client)
+    MySystemEventHandler(EGE::SFMLSystemWindow& window, std::shared_ptr<MyClient> client)
     : EGE::DefaultSystemEventHandler(window), m_client(client) {}
 
     void onKeyPress(sf::Event::KeyEvent& event)
@@ -290,7 +290,7 @@ public:
     EGE::EventResult load() override
     {
         // Create GUI and assign it to client.
-        auto gui = make<EGE::GUIScreen>(this);
+        auto gui = make<EGE::GUIScreen>(*this);
         setCurrentGUIScreen(gui);
 
         // Create client - define server IP and port.
@@ -301,7 +301,7 @@ public:
         m_client->setScene(scene);
 
         // Create SceneWidget to be displayed in the window.
-        gui->addWidget(make<EGE::SceneWidget>(gui.get(), scene));
+        gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
         // Register SceneObject types for Client.
         m_client->addSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE_OBJECT_CREATOR(MyObject));
@@ -352,8 +352,8 @@ TESTCASE(client)
 
     // Create GameLoop and window.
     MyGameLoop loop(PORT);
-    loop.setWindow(make<EGE::SFMLSystemWindow>(sf::VideoMode(300, 300), "EGE Protocol Test"));
-    loop.getWindow().lock()->setKeyRepeatEnabled(false);
+    loop.openWindow(sf::VideoMode(300, 300), "EGE Protocol Test");
+    loop.getWindow().setKeyRepeatEnabled(false);
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
 
     // Run main loop.
