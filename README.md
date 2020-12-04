@@ -4,7 +4,7 @@
 ## Description
 **Extendable Game Engine (EGE)** is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of *Hexagon Engine* (pack with framework, 3D library and IDE).
 
-The engine is now depending on **SFML** (so it's not fully 'from scratch'), but I will replace SFML and its dependencies with own written replacements - the engine will be (almost) only OS-dependent.
+The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFML).
 
 ## Modules / Features
 * **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
@@ -32,25 +32,24 @@ The engine is now depending on **SFML** (so it's not fully 'from scratch'), but 
    * Mainly *GameplayObjectRegistry* - a structure that manages and automatically assigns numeric IDs to registered objects (internally `std::vector` of `std::pairs<IdTEntry, ObjT*>`, where IdTEntry is structure containing `baseId` and `numericId`).
 * **gui** - User interface utility
    * GUI animations with many easing functions
-   * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox)
+   * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox) and modal dialogs
 * **loop** - Basic event loop utility
    * EventLoop - event system
    * Timers
-* **main** - Engine configuration (ASSERT etc.)
+* **main** - Engine-global functionality & configuration (ASSERT etc.)
 * **network** - Low-level network library (opening sockets etc.)
    * TCP sockets and listeners
    * SFML packet wrapper
 * **profiler** - Utility for profiling
 * **resources** - ResourceManager for loading textures, fonts, shaders etc.
 * **scene** - Library for managing scenes and adding objects to it.
-   * Scene and SceneObjects (in 2D) with `gui` integration
+   * Scene and SceneObjects (in 2D) with `gui` integration and camera system
    * Basic texture renderer
-   * Camera
    * Particle system
-   * 2D tilemap renderer
+   * Tilemap renderer
 * **sfml** - Dummy module for linking SFML
-* **tilemap** - Tile maps
-   * 2D tilemaps: abstract and fixed-size
+* **tilemap** - Tilemaps
+   * Tilemaps: abstract, fixed sized, dynamic sized (chunked)
 * **util** - Common utility
    * Object system - used for serialization
    * JSON parser and templatizer
@@ -64,9 +63,8 @@ Some documentation is in `docs` folder.
 
 ## Planned features
 * `EventLoop`-compatible clocks
-* Chunked Tilemaps
 * Noise algorithms + world generation
-* Finished Geometry system
+* Geometry system (for e.g. collisions)
 * Better serializing API
 * More math functions
 * Physics
@@ -112,7 +110,7 @@ project(<<your name>>)
 set(EGE_LIB_ROOT "<<path to EGE root>>")
 set(CMAKE_INSTALL_PREFIX "<<install path>>")
 include(${EGE_LIB_ROOT}/cmake/FindEGE.cmake)
-ege_executable(<<your exec name>> <<source path relative to ${path}>> "gui;resources;..other modules..")
+ege_executable(<<your exec name>> <<source path relative to ${path}>> "ege-gui;ege-resources;..other modules..")
 ege_resources(<<resource path relative to ${path}>>) # << optional
 
 ```
