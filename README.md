@@ -63,15 +63,18 @@ Some documentation is in `docs` folder.
 
 ## Planned features
 * `EventLoop`-compatible clocks
+* Serialization of tilemaps
 * Noise algorithms + world generation
 * Geometry system (for e.g. collisions)
 * Better serializing API
 * More math functions
 * Physics
 * Animations with properties of user-defined type (e.g `EGE::Vec2d`)
+* Pathfinding
 * Splash screens
 * Format detection for `Converter`s
 * Documentation :)
+* ... and many more!
 
 ## Dependencies
 * SFML 2.5.1+ and its dependencies (automatically installed by configure script)
