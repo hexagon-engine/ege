@@ -27,11 +27,11 @@ public:
     virtual Boolean asBool() const { return m_value; }
     virtual MaxFloat asFloat() const { return asInt(); }
 
-    virtual bool isString() const { return false; }
-    virtual bool isInt() const { return false; }
-    virtual bool isUnsignedInt() const { return false; }
+    virtual bool isString() const { return true; }
+    virtual bool isInt() const { return true; }
+    virtual bool isUnsignedInt() const { return true; }
     virtual bool isBool() const { return true; }
-    virtual bool isFloat() const { return false; }
+    virtual bool isFloat() const { return true; }
 
     void setValue(ValueType value)
     {

@@ -33,13 +33,13 @@ public:
     virtual MaxInt asInt() const;
     virtual MaxUint asUnsignedInt() { return std::max(0LL, asInt()); }
     virtual Boolean asBool() const { return m_number; }
-    virtual MaxFloat asFloat() const { return asInt(); }
+    virtual MaxFloat asFloat() const { return (MaxFloat)asInt(); }
 
     virtual bool isString() const { return true; }
     virtual bool isInt() const { return true; }
     virtual bool isUnsignedInt() const { return m_number >= 0; }
     virtual bool isBool() const { return true; }
-    virtual bool isFloat() const { return true; }
+    virtual bool isFloat() const { return (MaxFloat)m_number == m_number; }
 
     void setNumber(ValueType number)
     {

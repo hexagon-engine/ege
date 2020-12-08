@@ -307,7 +307,7 @@ bool EGEPacketConverter::in(sf::Packet& input, std::shared_ptr<Object>& object) 
     }
 
     object = make<ObjectMap>();
-    Internal::_ParseResult result = parseMap(input, (ObjectMap&)*object.get());
+    Internal::_ParseResult result = parseMap(input, (ObjectMap&)*object);
     if(!result.message.empty())
     {
         err(LogLevel::Verbose) << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
@@ -317,41 +317,17 @@ bool EGEPacketConverter::in(sf::Packet& input, std::shared_ptr<Object>& object) 
     return true;
 }
 
-static bool outputInt(sf::Packet& output, const ObjectInt& object)
+static bool outputInt(sf::Packet& output, MaxInt object)
 {
     output << (sf::Uint8)'i';
-    switch(object.getType())
-    {
-    case ObjectInt::Type::Byte:
-        output << (sf::Uint8)'b' << (sf::Int8)object.asInt(); break;
-    case ObjectInt::Type::Short:
-        output << (sf::Uint8)'s' << (sf::Int16)object.asInt(); break;
-    case ObjectInt::Type::Int:
-        output << (sf::Uint8)'i' << (sf::Int32)object.asInt(); break;
-    case ObjectInt::Type::Long:
-        output << (sf::Uint8)'l' << (sf::Int64)object.asInt(); break;
-    default:
-        return false;
-    }
+    output << (sf::Uint8)'l' << (sf::Int64)object;
     return true;
 }
 
-static bool outputUnsignedInt(sf::Packet& output, const ObjectUnsignedInt& object)
+static bool outputUnsignedInt(sf::Packet& output, MaxUint object)
 {
     output << (sf::Uint8)'u';
-    switch(object.getType())
-    {
-    case ObjectUnsignedInt::Type::Byte:
-        output << (sf::Uint8)'b' << (sf::Uint8)object.asUnsignedInt(); break;
-    case ObjectUnsignedInt::Type::Short:
-        output << (sf::Uint8)'s' << (sf::Uint16)object.asUnsignedInt(); break;
-    case ObjectUnsignedInt::Type::Int:
-        output << (sf::Uint8)'i' << (sf::Uint32)object.asUnsignedInt(); break;
-    case ObjectUnsignedInt::Type::Long:
-        output << (sf::Uint8)'l' << (sf::Uint64)object.asUnsignedInt(); break;
-    default:
-        return false;
-    }
+    output << (sf::Uint8)'l' << (sf::Uint64)object;
     return true;
 }
 
@@ -361,7 +337,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
     {
         output << (sf::Uint8)'m';
         bool success = true;
-        for(auto pr: (ObjectMap&)object)
+        for(auto pr: object.asMap())
         {
             if(pr.second)
             {
@@ -376,7 +352,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
     {
         output << (sf::Uint8)'l';
         bool success = true;
-        for(auto it: (ObjectList&)object)
+        for(auto it: object.asList())
         {
             success |= outputObject(output, *it);
         }
@@ -385,11 +361,11 @@ static bool outputObject(sf::Packet& output, const Object& object)
     }
     else if(object.isUnsignedInt())
     {
-        return outputUnsignedInt(output, (ObjectUnsignedInt&)object);
+        return outputUnsignedInt(output, object.asUnsignedInt());
     }
     else if(object.isInt())
     {
-        return outputInt(output, (ObjectInt&)object);
+        return outputInt(output, object.asInt());
     }
     else if(object.isFloat())
     {

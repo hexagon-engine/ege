@@ -14,6 +14,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+// TODO: Give it a better name!
 class ControlObject
 {
 public:

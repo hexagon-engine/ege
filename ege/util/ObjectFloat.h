@@ -29,7 +29,7 @@ public:
     virtual MaxFloat asFloat() const { return m_number; }
 
     virtual bool isString() const { return true; }
-    virtual bool isInt() const { return false; }
+    virtual bool isInt() const { return (MaxInt)m_number == m_number; }
     virtual bool isBool() const { return true; }
     virtual bool isFloat() const { return true; }
 
