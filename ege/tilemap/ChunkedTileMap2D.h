@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/debug/Logger.h>
 #include <ege/util/Vector.h>
+#include <functional>
 
 namespace EGE
 {
@@ -21,7 +22,7 @@ public:
     typedef TT TileType;
     typedef FixedChunk<TileType, CSX, CSY> ChunkType;
 
-    virtual TileType* getTile(EGE::Vec2i vec) override
+    virtual TileType* getTile(Vec2i vec) override
     {
         ChunkType* chunk = getChunk(getChunkCoords(vec));
         if(chunk)
@@ -29,13 +30,13 @@ public:
         return nullptr;
     }
 
-    virtual TileType& ensureTile(EGE::Vec2i vec) override
+    virtual TileType& ensureTile(Vec2i vec) override
     {
         auto lc = getLocalCoords(vec);
         return ensureChunk(getChunkCoords(vec)).getTile(lc);
     }
 
-    const ChunkType* getChunk(EGE::Vec2i chunkCoords) const
+    const ChunkType* getChunk(Vec2i chunkCoords) const
     {
         auto it = m_chunks.find(chunkCoords);
         if(it == m_chunks.end())
@@ -44,13 +45,13 @@ public:
     }
 
     // Get pointer to chunk, if it exists.
-    virtual ChunkType* getChunk(EGE::Vec2i chunkCoords)
+    virtual ChunkType* getChunk(Vec2i chunkCoords)
     {
         return m_chunks[chunkCoords].get();
     }
 
     // Ensure that chunk exists, and return reference to it.
-    virtual ChunkType& ensureChunk(EGE::Vec2i chunkCoords)
+    virtual ChunkType& ensureChunk(Vec2i chunkCoords)
     {
         ChunkType* chunk = getChunk(chunkCoords);
         if(!chunk)
@@ -65,38 +66,38 @@ public:
     // Generate chunk at specified position, if it doesn't
     // exist. It's almost equivalent to ensureChunk, except
     // that the function doesn't return a value.
-    void generateChunk(EGE::Vec2i chunkCoords)
+    void generateChunk(Vec2i chunkCoords)
     {
         ensureChunk(chunkCoords);
     }
 
     // Force chunk to be regenerated / reinitialized and allocated if necessary.
-    void regenerateChunk(EGE::Vec2i chunkCoords)
+    void regenerateChunk(Vec2i chunkCoords)
     {
         generateChunk(chunkCoords, getAndAllocateChunk(chunkCoords));
     }
 
     // Initialize chunk at specified position using specified tile.
     // Allocate chunk if it's necessary.
-    void initialize(EGE::Vec2i chunkCoords, const TileType& defaultTile = {})
+    void initialize(Vec2i chunkCoords, const TileType& defaultTile = {})
     {
         initialize(getAndAllocateChunk(chunkCoords), defaultTile);
     }
 
-    EGE::Vec2i getChunkCoords(EGE::Vec2i globalCoord)
+    Vec2i getChunkCoords(Vec2i globalCoord)
     {
-        return EGE::Vec2i(globalCoord.x / CSX, globalCoord.y / CSY);
+        return Vec2i(globalCoord.x / CSX, globalCoord.y / CSY);
     }
 
-    EGE::Vec2s getLocalCoords(EGE::Vec2i globalCoord)
+    Vec2s getLocalCoords(Vec2i globalCoord)
     {
         return {(globalCoord.x < 0 ? ((unsigned)(CSX - 1) + int(globalCoord.x + 1) % (int)CSX) : globalCoord.x % (int)CSX),
                 (globalCoord.y < 0 ? ((unsigned)(CSY - 1) + int(globalCoord.y + 1) % (int)CSY) : globalCoord.y % (int)CSY)};
     }
 
-    EGE::Vec2i getGlobalCoords(EGE::Vec2i chunkCoord, EGE::Vec2s localCoord);
+    Vec2i getGlobalCoords(Vec2i chunkCoord, Vec2s localCoord);
 
-    void setGenerator(std::function<void(EGE::Vec2i, ChunkType&)> func) { m_generator = func; }
+    void setGenerator(std::function<void(Vec2i, ChunkType&)> func) { m_generator = func; }
 
     const auto begin() const { return m_chunks.begin(); }
     auto begin() { return m_chunks.begin(); }
@@ -113,12 +114,12 @@ private:
         for(Size x = 0; x < CSX; x++)
         for(Size y = 0; y < CSY; y++)
         {
-            chunk.getTile(EGE::Vec2s(x, y)) = defaultTile;
+            chunk.getTile(Vec2s(x, y)) = defaultTile;
         }
     }
 
     // Populate chunk using user-specified generator or default initializer.
-    void generateChunk(EGE::Vec2i chunkCoords, ChunkType& chunk)
+    void generateChunk(Vec2i chunkCoords, ChunkType& chunk)
     {
         if(m_generator)
             m_generator(chunkCoords, chunk);
@@ -127,7 +128,7 @@ private:
     }
 
     // Add chunk to tile map without initializing it.
-    ChunkType& allocateChunk(EGE::Vec2i chunkCoords)
+    ChunkType& allocateChunk(Vec2i chunkCoords)
     {
         UniquePtr<ChunkType> chunk = std::make_unique<ChunkType>();
         ChunkType& ptr = *chunk.get();
@@ -136,7 +137,7 @@ private:
     }
 
     // Return specified chunk and allocate it if it's necessary.
-    ChunkType& getAndAllocateChunk(EGE::Vec2i chunkCoords)
+    ChunkType& getAndAllocateChunk(Vec2i chunkCoords)
     {
         ChunkType* chunk = getChunk(chunkCoords);
         if(!chunk)
@@ -147,13 +148,13 @@ private:
     }
 
     // Add pre-allocated chunk to tilemap.
-    void addChunk(EGE::Vec2i chunkCoords, UniquePtr<ChunkType> chunk)
+    void addChunk(Vec2i chunkCoords, UniquePtr<ChunkType> chunk)
     {
         m_chunks[chunkCoords] = std::move(chunk);
     }
 
-    Map<EGE::Vec2i, UniquePtr<ChunkType>> m_chunks;
-    std::function<void(EGE::Vec2i, ChunkType&)> m_generator;
+    Map<Vec2i, UniquePtr<ChunkType>> m_chunks;
+    std::function<void(Vec2i, ChunkType&)> m_generator;
 };
 
 }
