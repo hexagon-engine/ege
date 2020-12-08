@@ -19,6 +19,10 @@ public:
         Seconds
     };
 
+    Time()
+    : m_value(0)
+    , m_unit(Unit::Seconds) {}
+
     Time(MaxFloat value, Unit unit)
     : m_value(value)
     , m_unit(unit) {}

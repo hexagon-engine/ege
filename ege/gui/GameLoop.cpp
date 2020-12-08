@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #include "GameLoop.h"
 
 #include <ege/debug/Logger.h>
+#include <ege/loop/Clock.h>
 #include <ege/loop/EventResult.h>
 #include <SFML/System.hpp>
 
@@ -23,7 +24,7 @@ int GameLoop::run()
     }
 
     // TODO: maybe our own clocks?
-    sf::Clock tickClock;
+    Clock tickClock(this);
     while(m_running)
     {
         m_profiler = make<Profiler>();
@@ -44,7 +45,7 @@ int GameLoop::run()
         // Limit tick time / frame rate
         m_profiler->endStartSection("tickLimit");
         if(m_minTickTime.getValue() > 0.0)
-            sf::sleep(sf::seconds(m_minTickTime.getValue()) - tickClock.getElapsedTime());
+            sf::sleep(sf::seconds(m_minTickTime.getValue() - tickClock.getElapsedTime()));
 
         m_profiler->endSection();
         m_profiler->end();
