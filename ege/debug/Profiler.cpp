@@ -145,7 +145,7 @@ std::string Profiler::toString()
 long long Profiler::getTime()
 {
     auto et = EGE::System::exactTime();
-    return et.ns * 1000000000LL + et.s;
+    return et.s * 1000000000LL + et.ns;
 }
 
 Profiler::Section* Profiler::Section::findSubSection(std::string name)
