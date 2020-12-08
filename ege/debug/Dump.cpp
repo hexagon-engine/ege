@@ -51,6 +51,9 @@ void hexDump(const void* data, size_t size, HexDumpSettings settings)
     }
 }
 
+namespace PrintObject
+{
+
 enum class IntendMode
 {
     None,
@@ -230,9 +233,11 @@ static void _printPair(std::string name, std::shared_ptr<Object> object, std::ve
     _printValue(object, depth, isLast);
 }
 
+}
+
 void printObject(std::shared_ptr<Object> object)
 {
-    _printPair("root", object, {}, true);
+    PrintObject::_printPair("root", object, {}, true);
 }
 
 }
