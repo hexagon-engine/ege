@@ -398,9 +398,13 @@ public:
 
         if(!owner->isHeadless())
         {
-            auto renderer = make<EGE::TilemapRenderer2D<decltype(m_tilemap)::element_type>>(owner, m_tilemap);
+            typedef EGE::TilemapRenderer2D<decltype(m_tilemap)::element_type> RendererType;
+            auto renderer = make<RendererType>(owner, m_tilemap);
             renderer->setAtlasTextureName("atlas.png");
-            renderer->setTileAtlasMapper( [](const MyTile& tile, EGE::Size) { return EGE::Vec2d(tile.apx * 64, tile.apy * 64); } );
+            renderer->setTileAtlasMapper( [](const MyTile& tile, EGE::Vector2<EGE::MaxInt> tilePos, EGE::Size, RendererType::AtlasInfo& info) {
+                info.texCoords = EGE::Vec2i(tile.apx * 64, tile.apy * 64);
+                info.rotation = tilePos.x;
+            });
             setRenderer(renderer);
         }
     }

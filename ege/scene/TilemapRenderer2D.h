@@ -32,9 +32,17 @@ public:
         }
     }
 
-    // Function EGE::Vec2i map(TileType* tile, EGE::Size layer);
+    struct AtlasInfo
+    {
+        Vec2i texCoords;
+        int rotation = 0; // 90*x deg
+    };
+
+    // Function void map(const TileType& tile, EGE::Vector2<MaxInt> tilePos, EGE::Size layer, AtlasInfo& info);
+    typedef std::function<void(const typename TMap::TileType&, Vector2<MaxInt>, Size, AtlasInfo&)> AtlasMapper;
+
     // The function maps tile type (in tilemap) to atlas coords to render (in pixels).
-    void setTileAtlasMapper(std::function<Vec2i(const typename TMap::TileType&, Size)> mapper) { m_tileMapper = mapper; }
+    void setTileAtlasMapper(AtlasMapper mapper) { m_tileMapper = mapper; }
 
     // Use ensureTile() instead of getTile(). The tilemap will be resized
     // if possible and necessary. DO NOT USE IT WITH FIXED TILEMAPS, otherwise
@@ -67,6 +75,7 @@ public:
         Size arraySize = (endChunk.x - beginChunk.x + 1) * (endChunk.y - beginChunk.y + 1) * chunkSize.x * chunkSize.y * 4;
         vertexes.resize(arraySize);
         Size index = 0;
+        Size realIndex;
 
         // TODO: calculate and reserve required space
         // TODO: don't check tiles outside the bounds
@@ -86,40 +95,98 @@ public:
             {
                 const typename TMap::TileType& tile = chunk->getTile({x, y});
 
-                Vec2i atlasCoords = m_tileMapper(tile, layer);
+                MaxInt vx = cx * (MaxInt)chunkSize.x + (MaxInt)x;
+                MaxInt vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
 
-                double vx = cx * (MaxInt)chunkSize.x + (MaxInt)x;
-                double vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
+                AtlasInfo info;
+                m_tileMapper(tile, {vx, vy}, layer, info);
 
-                sf::Vertex vertex;
-                vertex.color.r = 255;
-                vertex.color.g = 255;
-                vertex.color.b = 255;
-                vertex.color.a = 255;
+                // tex coords
+                Size index2 = index;
+                {
+                    sf::Vertex& vertex = vertexes[index2++];
+                    vertex.texCoords.x = info.texCoords.x;
+                    vertex.texCoords.y = info.texCoords.y;
+                }
 
-                vertex.position.x = vx * tileSize.x + objPos.x;
-                vertex.position.y = vy * tileSize.y + objPos.y;
-                vertex.texCoords.x = atlasCoords.x;
-                vertex.texCoords.y = atlasCoords.y;
-                vertexes[index++] = (vertex);
+                {
+                    sf::Vertex& vertex = vertexes[index2++];
+                    vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
+                    vertex.texCoords.y = info.texCoords.y;
+                }
 
-                vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                vertex.position.y = vy * tileSize.y + objPos.y;
-                vertex.texCoords.x = atlasCoords.x + tileSize.x;
-                vertex.texCoords.y = atlasCoords.y;
-                vertexes[index++] = (vertex);
+                {
+                    sf::Vertex& vertex = vertexes[index2++];
+                    vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
+                    vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                }
 
-                vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
-                vertex.texCoords.x = atlasCoords.x + tileSize.x;
-                vertex.texCoords.y = atlasCoords.y + tileSize.y;
-                vertexes[index++] = (vertex);
+                {
+                    sf::Vertex& vertex = vertexes[index2++];
+                    vertex.texCoords.x = info.texCoords.x;
+                    vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                }
 
-                vertex.position.x = vx * tileSize.x + objPos.x;
-                vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
-                vertex.texCoords.x = atlasCoords.x;
-                vertex.texCoords.y = atlasCoords.y + tileSize.y;
-                vertexes[index++] = (vertex);
+                // position & color
+                {
+                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                    sf::Vertex& vertex = vertexes[realIndex];
+                    vertex.position.x = vx * tileSize.x + objPos.x;
+                    vertex.position.y = vy * tileSize.y + objPos.y;
+
+                    // color
+                    vertex.color.r = 255;
+                    vertex.color.g = 255;
+                    vertex.color.b = 255;
+                    vertex.color.a = 255;
+
+                    index++;
+                }
+
+                {
+                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                    sf::Vertex& vertex = vertexes[realIndex];
+                    vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                    vertex.position.y = vy * tileSize.y + objPos.y;
+
+                    // color
+                    vertex.color.r = 255;
+                    vertex.color.g = 255;
+                    vertex.color.b = 255;
+                    vertex.color.a = 255;
+
+                    index++;
+                }
+
+                {
+                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                    sf::Vertex& vertex = vertexes[realIndex];
+                    vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                    vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+
+                    // color
+                    vertex.color.r = 255;
+                    vertex.color.g = 255;
+                    vertex.color.b = 255;
+                    vertex.color.a = 255;
+
+                    index++;
+                }
+
+                {
+                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                    sf::Vertex& vertex = vertexes[realIndex];
+                    vertex.position.x = vx * tileSize.x + objPos.x;
+                    vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+
+                    // color
+                    vertex.color.r = 255;
+                    vertex.color.g = 255;
+                    vertex.color.b = 255;
+                    vertex.color.a = 255;
+
+                    index++;
+                }
             }
         }
 
@@ -189,7 +256,7 @@ private:
     std::shared_ptr<TMap> m_tileMap;
     SharedPtrVector<sf::Texture> m_atlasses;
     Vector<std::string> m_atlasNames;
-    std::function<Vec2i(const typename TMap::TileType&, EGE::Size)> m_tileMapper;
+    AtlasMapper m_tileMapper;
     bool m_useEnsure = false;
     EGE::Size m_layerCount = 1;
 };
