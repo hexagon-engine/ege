@@ -1,4 +1,6 @@
 set(SOURCES
+	"Clock.cpp"
+	"Clock.h"
 	"Event.h"
 	"EventCast.h"
 	"EventHandler.h"
