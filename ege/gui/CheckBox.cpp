@@ -56,7 +56,7 @@ void CheckBox::renderOnly(Renderer& renderer)
     }
 
     // label (generate)
-    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
 

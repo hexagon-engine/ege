@@ -237,11 +237,11 @@ public:
     virtual void updateGeometry(SceneObject&)
     {
         auto resourceManager = m_scene->getLoop()->getResourceManager();
-        ASSERT(!resourceManager.expired());
+        ASSERT(resourceManager);
 
         for(Size s = 0; s < m_layerCount; s++)
         {
-            m_atlasses[s] = resourceManager.lock()->getTexture(m_atlasNames[s]);
+            m_atlasses[s] = resourceManager->getTexture(m_atlasNames[s]);
             ASSERT(m_atlasses[s]);
         }
     }

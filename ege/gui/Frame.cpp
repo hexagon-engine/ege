@@ -29,7 +29,7 @@ void Frame::renderOnly(Renderer& renderer)
     rsFrame2.setFillColor(sf::Color::Transparent);
 
     // Label (generate)
-    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 12);
     text.setFillColor(sf::Color::Black);

@@ -109,8 +109,8 @@ public:
         widget1->setPosition(EGE::Vec2d(50.f, 50.f));
         widget1->setSize(EGE::Vec2d(50.f, 50.f));
         addWidget(widget1);
-        font = m_gameLoop.getResourceManager().lock()->getFont("font.ttf").get();
-        texture = m_gameLoop.getResourceManager().lock()->getTexture("texture.png").get();
+        font = m_gameLoop.getResourceManager()->getFont("font.ttf").get();
+        texture = m_gameLoop.getResourceManager()->getTexture("texture.png").get();
     }
 
     virtual void render(EGE::Renderer& renderer) override

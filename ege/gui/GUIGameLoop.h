@@ -50,7 +50,7 @@ public:
     void openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
     void openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
 
-    std::weak_ptr<ResourceManager> getResourceManager();
+    std::shared_ptr<ResourceManager> getResourceManager();
     void setResourceManager(std::shared_ptr<ResourceManager> manager);
     void setProfiler(std::weak_ptr<Profiler> profiler);
 

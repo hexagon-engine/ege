@@ -44,7 +44,7 @@ void TextBox::renderOnly(Renderer& renderer)
     renderer.getTarget().draw(rs);
 
     // label
-    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);
@@ -68,7 +68,7 @@ void TextBox::renderOnly(Renderer& renderer)
 void TextBox::onMouseEnter()
 {
     Widget::onMouseEnter();
-    auto cursor = getLoop().getResourceManager().lock()->getCursor(sf::Cursor::Text);
+    auto cursor = getLoop().getResourceManager()->getCursor(sf::Cursor::Text);
     ASSERT(cursor);
     getWindow().setMouseCursor(*cursor);
 }
@@ -76,7 +76,7 @@ void TextBox::onMouseEnter()
 void TextBox::onMouseLeave()
 {
     Widget::onMouseLeave();
-    auto cursor = getLoop().getResourceManager().lock()->getCursor(sf::Cursor::Arrow);
+    auto cursor = getLoop().getResourceManager()->getCursor(sf::Cursor::Arrow);
     ASSERT(cursor);
     getWindow().setMouseCursor(*cursor);
 }
@@ -88,7 +88,7 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
         m_caretAnimation->restart();
 
     // Find character to set caret next to.
-    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_text, *font, m_size.y / 2.f);
     text.setFillColor(sf::Color::Black);

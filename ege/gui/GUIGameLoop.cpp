@@ -161,7 +161,7 @@ void GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings&
     }
 }
 
-std::weak_ptr<ResourceManager> GUIGameLoop::getResourceManager()
+std::shared_ptr<ResourceManager> GUIGameLoop::getResourceManager()
 {
     return m_resourceManager;
 }

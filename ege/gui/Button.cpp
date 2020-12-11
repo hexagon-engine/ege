@@ -85,7 +85,7 @@ void Button::renderOnly(Renderer& renderer)
     }
 
     // label
-    auto font = m_parent->getLoop().getResourceManager().lock()->getDefaultFont();
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 18);
     text.setPosition((int)m_size.x / 2, (int)m_size.y / 2);

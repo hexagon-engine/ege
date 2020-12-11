@@ -46,7 +46,7 @@ public:
         // maybe void renderUpdate() ??
         if(!m_font)
         {
-            m_font = m_owner->getLoop()->getResourceManager().lock()->getDefaultFont();
+            m_font = m_owner->getLoop()->getResourceManager()->getDefaultFont();
             ASSERT(m_font);
         }
 
@@ -79,7 +79,7 @@ public:
     {
         // add our 'test' shader
         EGE::RenderStates myStates = states;
-        auto shader = getOwner()->getLoop()->getResourceManager().lock()->getShader("test");
+        auto shader = getOwner()->getLoop()->getResourceManager()->getShader("test");
         double disturb1 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 5.14);
         double disturb2 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 1.14);
         shader->setUniform("disturb1", (float)disturb1);

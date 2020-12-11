@@ -44,10 +44,10 @@ void Label::updateGeometry()
     // FIXME: label is weirdly clipped (':('; '???')
     if(m_geometryChanged)
     {
-        ASSERT(!getLoop().getResourceManager().expired());
+        ASSERT(getLoop().getResourceManager());
         if(!m_font)
         {
-            m_font = getLoop().getResourceManager().lock()->getDefaultFont();
+            m_font = getLoop().getResourceManager()->getDefaultFont();
         }
         sf::Text text(m_string, *m_font, m_fontSize);
         sf::FloatRect bounds = text.getLocalBounds();
