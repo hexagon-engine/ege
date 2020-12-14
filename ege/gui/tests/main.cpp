@@ -96,7 +96,7 @@ class MyGuiScreen : public EGE::GUIScreen
 public:
     std::shared_ptr<EGE::DummyWidget> widget1;
     sf::Font* font;
-    sf::Texture* texture;
+    EGE::Texture* texture;
 
     explicit MyGuiScreen(MyGameLoop& loop)
     : EGE::GUIScreen(loop) {}
@@ -121,7 +121,7 @@ public:
         setViewForWidget(renderer.getTarget());
         sf::Text text("TEST", *font, 30);
         renderer.getTarget().draw(text);
-        sf::Sprite sprite(*texture);
+        sf::Sprite sprite(texture->getTexture());
         sprite.setPosition(0.f, 40.f);
         renderer.getTarget().draw(sprite);
     }

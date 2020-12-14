@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #pragma once
 
+#include "Texture.h"
+
 #include <ege/main/Config.h>
 #include <ege/debug/Profiler.h>
 #include <ege/util/PointerUtils.h>
@@ -22,7 +24,7 @@ public:
     void clear();
     bool isError();
 
-    std::shared_ptr<sf::Texture> getTexture(std::string name);
+    std::shared_ptr<Texture> getTexture(std::string name);
     std::shared_ptr<sf::Font> getFont(std::string name);
     std::shared_ptr<sf::Cursor> getCursor(std::string name);
     std::shared_ptr<sf::Cursor> getCursor(sf::Cursor::Type type);
@@ -33,7 +35,7 @@ protected:
 
     // Loads specified resources from file.
     // Returns nullptr when resource couldn't be loaded.
-    std::shared_ptr<sf::Texture> loadTextureFromFile(std::string fileName);
+    std::shared_ptr<Texture> loadTextureFromFile(std::string fileName);
     std::shared_ptr<sf::Font> loadFontFromFile(std::string fileName);
     std::shared_ptr<sf::Cursor> loadCursorFromFile(std::string fileName);
     std::shared_ptr<sf::Shader> loadShaderFromFile(std::string fileName, sf::Shader::Type type);
@@ -44,7 +46,7 @@ protected:
     // Useful when you want to add your options to resource before adding to RM.
     // If you specify nullptr as resource, it will be lazy-loaded from file on
     // first use. (it doesn't apply to shaders)
-    void addTexture(std::string name, std::shared_ptr<sf::Texture> texture = nullptr);
+    void addTexture(std::string name, std::shared_ptr<Texture> texture = nullptr);
     void addFont(std::string name, std::shared_ptr<sf::Font> font = nullptr);
     void addCursor(std::string name, std::shared_ptr<sf::Cursor> cursor = nullptr);
     void addShader(std::string name, std::shared_ptr<sf::Shader> shader = nullptr);
@@ -53,7 +55,7 @@ protected:
     std::shared_ptr<sf::Font> loadSystemFont(std::string) { ASSERT(false); return nullptr; }
     std::shared_ptr<sf::Cursor> loadSystemCursor(sf::Cursor::Type);
 
-    void setUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr);
+    void setUnknownTexture(std::shared_ptr<Texture> texture = nullptr);
 
     // Sets the resource path (absolute or relative to current working directory)
     bool setResourcePath(std::string path);
@@ -61,9 +63,9 @@ protected:
     // NOTE: the font will be automatically added to lazy-load if not added.
     bool setDefaultFont(std::string name);
 private:
-    std::shared_ptr<sf::Texture> m_unknownTexture;
+    std::shared_ptr<Texture> m_unknownTexture;
 
-    SharedPtrStringMap<sf::Texture> m_loadedTextures;
+    SharedPtrStringMap<Texture> m_loadedTextures;
     SharedPtrStringMap<sf::Font> m_loadedFonts;
     SharedPtrStringMap<sf::Cursor> m_loadedCursors;
     SharedPtrStringMap<sf::Shader> m_loadedShaders;

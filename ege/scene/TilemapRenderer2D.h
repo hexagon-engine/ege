@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "Scene2D.h"
 
 #include <ege/gfx/Renderer.h>
+#include <ege/resources/Texture.h>
 #include <ege/tilemap/TileMap2D.h>
 #include <ege/util.h>
 
@@ -190,11 +191,11 @@ public:
             }
         }
 
-        // TODO: use triangles
+        // TODO: use triangles?
         auto texture = m_atlasses[layer];
         ASSERT(texture);
         RenderStates newStates = states;
-        newStates.sfStates().texture = texture.get();
+        newStates.sfStates().texture = &texture->getTexture();
         target.draw(vertexes, newStates.sfStates());
     }
 
@@ -246,7 +247,7 @@ public:
         }
     }
 
-    EGE::SharedPtr<sf::Texture> getTextureForLayer(EGE::Size layer)
+    SharedPtr<Texture> getTextureForLayer(EGE::Size layer)
     {
         ASSERT(layer < m_atlasses.size());
         return m_atlasses[layer];
@@ -254,7 +255,7 @@ public:
 
 private:
     std::shared_ptr<TMap> m_tileMap;
-    SharedPtrVector<sf::Texture> m_atlasses;
+    SharedPtrVector<Texture> m_atlasses;
     Vector<std::string> m_atlasNames;
     AtlasMapper m_tileMapper;
     bool m_useEnsure = false;

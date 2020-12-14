@@ -1,6 +1,12 @@
 set(SOURCES
+	"AtlasTexture.cpp"
+	"AtlasTexture.h"
 	"ResourceManager.cpp"
 	"ResourceManager.h"
+	"SFMLTexture.cpp"
+	"SFMLTexture.h"
+	"Texture.cpp"
+	"Texture.h"
 )
 
 ege_add_module(resources)

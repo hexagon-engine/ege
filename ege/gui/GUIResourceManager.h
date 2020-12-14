@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/resources/ResourceManager.h>
+#include <ege/resources/SFMLTexture.h>
 #include <queue>
 
 namespace EGE
@@ -23,7 +24,7 @@ public:
 
     virtual bool reload();
 
-    void registerUnknownTexture(std::shared_ptr<sf::Texture> texture = nullptr) { m_unknownTextureToLoad = texture; }
+    void registerUnknownTexture(std::shared_ptr<SFMLTexture> texture = nullptr) { m_unknownTextureToLoad = texture; }
     void registerResourcePath(std::string path) { m_resourcePathToLoad = path; }
     void registerDefaultFont(std::string name) { m_defaultFontToLoad = name; }
 
@@ -32,7 +33,7 @@ private:
     std::queue<String> m_fontsToLoad;
     std::queue<String> m_cursorsToLoad;
     std::queue<std::pair<String, Vector<String>>> m_shadersToLoad;
-    std::shared_ptr<sf::Texture> m_unknownTextureToLoad;
+    std::shared_ptr<SFMLTexture> m_unknownTextureToLoad;
     std::string m_resourcePathToLoad;
     std::string m_defaultFontToLoad;
 };

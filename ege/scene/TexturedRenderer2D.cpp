@@ -21,7 +21,7 @@ void TexturedRenderer2D::updateGeometry(SceneObject& object)
 
     // Update texture rect
     if(m_textureRect == sf::FloatRect())
-        m_textureRect = sf::FloatRect(0.f, 0.f, m_texture->getSize().x, m_texture->getSize().y);
+        m_textureRect = sf::FloatRect(0.f, 0.f, m_texture->getTexture().getSize().x, m_texture->getTexture().getSize().y);
 }
 
 sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) const
@@ -44,7 +44,7 @@ void TexturedRenderer2D::render(const SceneObject& sceneObject, sf::RenderTarget
 {
     sf::Sprite sprite;
     SceneObject2D& so2d = (SceneObject2D&)sceneObject;
-    sprite.setTexture(*m_texture);
+    sprite.setTexture(m_texture->getTexture());
     sprite.setTextureRect((sf::IntRect)m_textureRect);
     sprite.setPosition(so2d.getPosition());
     if(m_centered)

@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "ResourceManager.h"
 
+#include "SFMLTexture.h"
+
 #include <ege/debug/Logger.h>
 #include <sys/stat.h>
 
@@ -22,9 +24,9 @@ void ResourceManager::clear()
     m_defaultFont = "";
 }
 
-std::shared_ptr<sf::Texture> ResourceManager::loadTextureFromFile(std::string fileName)
+std::shared_ptr<Texture> ResourceManager::loadTextureFromFile(std::string fileName)
 {
-    std::shared_ptr<sf::Texture> texture(new sf::Texture);
+    std::shared_ptr<SFMLTexture> texture = make<SFMLTexture>();
     if(!texture->loadFromFile(m_resourcePath + "/" + fileName))
     {
         err(LogLevel::Error) << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
@@ -37,7 +39,7 @@ std::shared_ptr<sf::Texture> ResourceManager::loadTextureFromFile(std::string fi
 
 std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
 {
-    std::shared_ptr<sf::Font> font(new sf::Font);
+    std::shared_ptr<sf::Font> font = make<sf::Font>();
     if(!font->loadFromFile(m_resourcePath + "/" + fileName))
     {
         err(LogLevel::Error) << "0006 EGE/resources: could not load resource: FONT " << fileName;
@@ -93,7 +95,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::loadCursorFromFile(std::string)
     return nullptr;
 }
 
-void ResourceManager::addTexture(std::string name, std::shared_ptr<sf::Texture> texture)
+void ResourceManager::addTexture(std::string name, std::shared_ptr<Texture> texture)
 {
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
@@ -145,7 +147,7 @@ void ResourceManager::addShader(std::string name, std::shared_ptr<sf::Shader> sh
     }
 }
 
-std::shared_ptr<sf::Texture> ResourceManager::getTexture(std::string name)
+std::shared_ptr<Texture> ResourceManager::getTexture(std::string name)
 {
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
@@ -268,7 +270,7 @@ bool ResourceManager::setDefaultFont(std::string name)
     }
 }
 
-void ResourceManager::setUnknownTexture(std::shared_ptr<sf::Texture> texture)
+void ResourceManager::setUnknownTexture(std::shared_ptr<Texture> texture)
 {
     m_unknownTexture = texture;
 }

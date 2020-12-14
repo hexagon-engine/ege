@@ -46,7 +46,7 @@ private:
 
     std::string m_textureName;
     sf::FloatRect m_textureRect;
-    sf::Texture* m_texture = nullptr;
+    EGE::Texture* m_texture = nullptr;
     bool m_centered = false;
 };
 
