@@ -30,13 +30,18 @@ public:
     virtual void onMouseEnter();
     virtual void onMouseLeave();
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
+    virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
     virtual void renderOnly(Renderer& renderer) override;
 
 private:
+    virtual sf::Text generateText();
+
     sf::String m_text;
     size_t m_caretPos = 0;
+    size_t m_selectionStart = 0;
+    size_t m_selectionEnd = 0;
     bool m_caretShown = true;
     std::shared_ptr<Animation> m_caretAnimation;
 };
