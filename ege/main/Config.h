@@ -15,9 +15,14 @@ extern "C"
 #define ASSERT_WITH_MESSAGE(expr, message) \
     if(!(expr)) _ege_assertion_failed(#expr, message, __FILE__, __LINE__)
 
-#define ASSERT(expr) ASSERT_WITH_MESSAGE(expr, "Failed check")
+#define ASSERT(expr) ASSERT_WITH_MESSAGE(expr, "Check failed")
 
-#define CRASH() ASSERT_WITH_MESSAGE(false, "Crash")
+#define CRASH_WITH_MESSAGE(message) \
+    ASSERT_WITH_MESSAGE(false, message)
+
+#define CRASH() CRASH_WITH_MESSAGE("Crash")
+
+#define NOT_IMPLEMENTED(message) CRASH_WITH_MESSAGE("Not implemented: " message)
 
 #define EGE_ENUM_YES_NO(X) \
     enum class X : bool \
