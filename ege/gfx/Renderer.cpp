@@ -89,6 +89,7 @@ void Renderer::renderTexturedRectangle(double x, double y, double width, double 
 
 void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
 {
+    NOT_IMPLEMENTED("Use renderPrimitives()");
     if(points.empty())
         return;
 
