@@ -66,7 +66,8 @@ public:
 
     // GUI theme renderers
     void renderButtonLike(double x, double y, double width, double height);
-    void renderTextBoxLike(double x, double y, double width, double height);
+    void renderTextBoxLikeBorder(double x, double y, double width, double height);
+    void renderTextBoxLikeBackground(double x, double y, double width, double height);
 
     sf::RenderTarget& getTarget() { return m_target; }
     void setStates(const RenderStates& states) { m_states = states; }

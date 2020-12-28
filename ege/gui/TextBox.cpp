@@ -38,10 +38,7 @@ void TextBox::renderOnly(Renderer& renderer)
     rs.setOutlineThickness(1.f);
 
     // background
-    rs.setPosition(2.f, 2.f);
-    rs.setOutlineColor(sf::Color(60, 60, 60));
-    rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
-    renderer.getTarget().draw(rs);
+    renderer.renderTextBoxLikeBackground(0, 0, getSize().x, getSize().y);
 
     // label
     auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
@@ -50,6 +47,7 @@ void TextBox::renderOnly(Renderer& renderer)
     text.setFillColor(sf::Color::Black);
     float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
+    log() << overflow;
     renderer.getTarget().draw(text);
 
     // caret
@@ -62,7 +60,7 @@ void TextBox::renderOnly(Renderer& renderer)
     }
 
     // border
-    renderer.renderTextBoxLike(0, 0, getSize().x, getSize().y);
+    renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
 }
 
 void TextBox::onMouseEnter()

@@ -150,7 +150,7 @@ void Renderer::renderButtonLike(double x, double y, double width, double height)
     getTarget().draw(rs, m_states.sfStates());
 }
 
-void Renderer::renderTextBoxLike(double x, double y, double width, double height)
+void Renderer::renderTextBoxLikeBackground(double x, double y, double width, double height)
 {
     sf::RectangleShape rs;
     rs.setFillColor(sf::Color(255, 255, 255));
@@ -161,11 +161,17 @@ void Renderer::renderTextBoxLike(double x, double y, double width, double height
     rs.setOutlineColor(sf::Color(60, 60, 60));
     rs.setSize(sf::Vector2f(width, height) - sf::Vector2f(4.f, 4.f));
     getTarget().draw(rs);
+}
+
+void Renderer::renderTextBoxLikeBorder(double x, double y, double width, double height)
+{
+    sf::RectangleShape rs;
+    rs.setFillColor(sf::Color::Transparent);
+    rs.setOutlineThickness(1.f);
 
     // border
     rs.setSize(sf::Vector2f(width, height) - sf::Vector2f(3.f, 3.f));
     rs.setPosition(x + 1.f, y + 1.f);
-    rs.setFillColor(sf::Color::Transparent);
     rs.setOutlineColor(sf::Color(173, 173, 173));
     getTarget().draw(rs);
 
