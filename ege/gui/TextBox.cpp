@@ -153,9 +153,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                 m_caretPos++;
             }
 
-            // Clear selection
-            m_selectionEnd = 0;
-            m_selectionStart = 0;
+            clearSelection();
         }
         else
         {
@@ -200,11 +198,41 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
     {
     case sf::Keyboard::Left:
         if(m_caretPos > 0)
-            m_caretPos--;
+        {
+            if(event.shift)
+            {
+                if(m_selectionEnd == m_selectionStart)
+                    m_selectionStart = m_caretPos;
+                m_caretPos--;
+                m_selectionEnd = m_caretPos;
+            }
+            else
+            {
+                if(m_selectionEnd == m_selectionStart)
+                    m_caretPos--;
+                else
+                    clearSelection();
+            }
+        }
         break;
     case sf::Keyboard::Right:
         if(m_caretPos + 1 <= m_text.getSize())
-            m_caretPos++;
+        {
+            if(event.shift)
+            {
+                if(m_selectionEnd == m_selectionStart)
+                    m_selectionStart = m_caretPos;
+                m_caretPos++;
+                m_selectionEnd = m_caretPos;
+            }
+            else
+            {
+                if(m_selectionEnd == m_selectionStart)
+                    m_caretPos++;
+                else
+                    clearSelection();
+            }
+        }
         break;
     default:
         break;
@@ -221,6 +249,12 @@ sf::Text TextBox::generateText()
     float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
     return text;
+}
+
+void TextBox::clearSelection()
+{
+    m_selectionStart = 0;
+    m_selectionEnd = 0;
 }
 
 }

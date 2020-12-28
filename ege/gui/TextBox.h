@@ -37,6 +37,7 @@ public:
 
 private:
     virtual sf::Text generateText();
+    virtual void clearSelection();
 
     sf::String m_text;
     size_t m_caretPos = 0;
