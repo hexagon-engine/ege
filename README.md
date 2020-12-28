@@ -62,17 +62,18 @@ For basic tutorial refer to **wiki**.
 Some documentation is in `docs` folder.
 
 ## Planned features
-* `EventLoop`-compatible clocks
 * Serialization of tilemaps
 * Noise algorithms + world generation
-* Geometry system (for e.g. collisions)
-* Better serializing API
+* (Partially done) Geometry system (for e.g. collisions)
+* (Partially done) Better serializing API
 * More math functions
 * Physics
 * Animations with properties of user-defined type (e.g `EGE::Vec2d`)
 * Pathfinding
 * Splash screens
 * Format detection for `Converter`s
+* SceneObject access control for server
+* Sound, localization
 * Documentation :)
 * ... and many more!
 
