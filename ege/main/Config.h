@@ -10,12 +10,14 @@ Copyright (c) Sppmacd 2020
 #include <utility>
 
 extern "C"
-[[noreturn]] void _ege_assertion_failed(const char* expr, const char* file, unsigned line);
+[[noreturn]] void _ege_assertion_failed(const char* expr, const char* message, const char* file, unsigned line);
 
-#define ASSERT(expr) \
-    if(!(expr)) _ege_assertion_failed(#expr, __FILE__, __LINE__)
+#define ASSERT_WITH_MESSAGE(expr, message) \
+    if(!(expr)) _ege_assertion_failed(#expr, message, __FILE__, __LINE__)
 
-#define CRASH() ASSERT(false)
+#define ASSERT(expr) ASSERT_WITH_MESSAGE(expr, "Failed check")
+
+#define CRASH() ASSERT_WITH_MESSAGE(false, "Crash")
 
 #define EGE_ENUM_YES_NO(X) \
     enum class X : bool \
