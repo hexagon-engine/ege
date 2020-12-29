@@ -60,10 +60,10 @@ public:
                                });
 
             addTimer("timer", timer);
-            m_motion = sf::Vector2f(rand() % 5 - 2, rand() % 5 - 2);
+            m_motion = EGE::Vec2d(rand() % 5 - 2, rand() % 5 - 2);
         }
         m_rotation = rand() % 360;
-        m_scale = sf::Vector2f(rand() % 2 + 1, rand() % 2 + 1);
+        m_scale = EGE::Vec2d(rand() % 2 + 1, rand() % 2 + 1);
     }
 
     virtual void render(EGE::Renderer& renderer) const override
@@ -71,10 +71,10 @@ public:
         EGE::SceneObject2D::render(renderer);
 
         sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
-        rs.setPosition(getPosition() - sf::Vector2f(5.f, 5.f));
+        rs.setPosition(getPosition().x - 5, getPosition().y - 5);
         rs.setRotation(m_rotation);
-        rs.setScale(m_scale);
-        rs.setOrigin(m_origin);
+        rs.setScale(m_scale.x, m_scale.y);
+        rs.setOrigin(m_origin.x, m_origin.y);
         renderer.getTarget().draw(rs);
     }
 
@@ -216,7 +216,7 @@ TESTCASE(server)
         auto timer = make<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
         timer->setCallback([scene](std::string, EGE::Timer*) {
                                 auto object = make<MyObject>(scene);
-                                object->setPosition(sf::Vector2f(rand() % 50 - 25, rand() % 50 - 25));
+                                object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
                                 scene->addObject(object);
                            });
 

@@ -28,7 +28,7 @@ public:
     {
         m_size = size;
         if(m_scene)
-            m_scene->setSize(sf::Vector2f(size.x, size.y));
+            m_scene->setSize(size);
 
         m_autoResizable = false;
     }
@@ -41,7 +41,7 @@ public:
     {
         ASSERT(scene);
         m_scene = scene;
-        m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
+        m_scene->setSize(m_size);
     }
 
     std::shared_ptr<Scene> getScene()

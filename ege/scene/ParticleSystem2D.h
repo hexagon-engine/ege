@@ -33,7 +33,7 @@ public:
         void update();
         void setDead() { ttl = 0; }
 
-        sf::Vector2f position;
+        Vec2d position;
         unsigned ttl = 0;
         ParticleSystem2D* system;
 
@@ -73,7 +73,7 @@ public:
     void spawnParticle();
 
 private:
-    sf::Vector2f randomPosition();
+    Vec2d randomPosition();
 
     sf::FloatRect m_spawnRect;
     double m_spawnChance = 1.0;

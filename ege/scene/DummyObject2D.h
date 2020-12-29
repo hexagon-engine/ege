@@ -21,22 +21,23 @@ public:
     DummyObject2D(std::shared_ptr<EGE::Scene> owner, std::string name)
     : SceneObject2D(owner, name) {}
 
-    void setSize(sf::Vector2f size)
+    void setSize(Vec2d size)
     {
         m_size = size;
     }
-    sf::Vector2f getSize() const
+    Vec2d getSize() const
     {
         return m_size;
     }
     sf::FloatRect getBoundingBox()
     {
-        return sf::FloatRect(getPosition(), m_size);
+        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
     }
-    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
+
+    virtual void render(Renderer&) const override {}
 
 private:
-    sf::Vector2f m_size;
+    Vec2d m_size;
 };
 
 }

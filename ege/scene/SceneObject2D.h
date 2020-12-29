@@ -25,7 +25,7 @@ public:
     SceneObject2D(std::shared_ptr<EGE::Scene> owner, std::string typeId)
     : SceneObject(owner, typeId) {}
 
-    virtual void setPosition(sf::Vector2f position)
+    virtual void setPosition(Vec2d position)
     {
         if(m_position != position)
         {
@@ -34,9 +34,9 @@ public:
         }
         m_position = position;
     }
-    sf::Vector2f getPosition() const { return m_position; }
+    Vec2d getPosition() const { return m_position; }
 
-    virtual void setMotion(sf::Vector2f motion)
+    virtual void setMotion(Vec2d motion)
     {
         // We don't need to update geometry since motion doesn't
         // actually change anything in appearance of object. If
@@ -48,13 +48,13 @@ public:
 
         m_motion = motion;
     }
-    sf::Vector2f getMotion() const { return m_motion; }
+    Vec2d getMotion() const { return m_motion; }
 
-    virtual sf::FloatRect getBoundingBox() const { return sf::FloatRect(m_position, sf::Vector2f(0.f, 0.f)); }
+    virtual sf::FloatRect getBoundingBox() const { return sf::FloatRect(m_position.x, m_position.y, 0.f, 0.f); }
 
-    sf::FloatRect getBoundingBox(sf::Vector2f pos)
+    sf::FloatRect getBoundingBox(Vec2d pos)
     {
-        sf::Vector2f tmp = m_position;
+        Vec2d tmp = m_position;
         m_position = pos;
         sf::FloatRect rect = getBoundingBox();
         m_position = tmp;
@@ -68,25 +68,25 @@ public:
         setGeometryNeedUpdate();
     }
 
-    sf::Vector2f getOrigin() const { return m_origin; }
-    void setOrigin(sf::Vector2f origin)
+    Vec2d getOrigin() const { return m_origin; }
+    void setOrigin(Vec2d origin)
     {
         m_origin = origin;
         setGeometryNeedUpdate();
     }
 
-    sf::Vector2f getScale() const { return m_scale;}
-    void setScale(sf::Vector2f scale)
+    Vec2d getScale() const { return m_scale;}
+    void setScale(Vec2d scale)
     {
         m_scale = scale;
         setGeometryNeedUpdate();
     }
 
     // with collision check
-    virtual bool moveTo(sf::Vector2f pos, bool notify = true);
+    virtual bool moveTo(Vec2d pos, bool notify = true);
 
     // with collision check
-    virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
+    virtual bool flyTo(Vec2d pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;
@@ -96,12 +96,12 @@ public:
 
 protected:
     double m_rotation = 0.0;
-    sf::Vector2f m_origin;
-    sf::Vector2f m_motion;
-    sf::Vector2f m_scale = sf::Vector2f(1, 1);
+    Vec2d m_origin;
+    Vec2d m_motion;
+    Vec2d m_scale = {1, 1};
 
 private:
-    sf::Vector2f m_position;
+    Vec2d m_position;
 };
 
 }

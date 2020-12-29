@@ -24,7 +24,7 @@ void SceneWidget::onResize(sf::Event::SizeEvent& event)
         m_size = EGE::Vec2d(event.width, event.height);
 
         if(m_scene)
-            m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
+            m_scene->setSize(m_size);
     }
 }
 
@@ -49,7 +49,7 @@ void SceneWidget::updateGeometry(Renderer& renderer)
         auto size = renderer.getTarget().getSize();
         m_size = EGE::Vec2d(size.x, size.y);
         if(m_scene)
-            m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
+            m_scene->setSize(m_size);
 
         m_autoResizable = true;
     }

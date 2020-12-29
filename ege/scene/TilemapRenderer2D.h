@@ -60,7 +60,7 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual void renderLayer(Size layer, sf::Vector2f objPos, Vector2<MaxInt> beginChunk, Vector2<MaxInt> endChunk, Renderer& renderer) const
+    virtual void renderLayer(Size layer, Vec2d objPos, Vector2<MaxInt> beginChunk, Vector2<MaxInt> endChunk, Renderer& renderer) const
     {
         sf::VertexArray vertexes(sf::Quads);
 
@@ -217,9 +217,9 @@ public:
         ASSERT(scene);
 
         // TODO: allow setting tilemap bounds
-        sf::Vector2f beginCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
-        sf::Vector2f endCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
-        sf::Vector2f objPos = sceneObject.getPosition();
+        Vec2d beginCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
+        Vec2d endCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
+        Vec2d objPos = sceneObject.getPosition();
 
         Vector2<MaxInt> beginChunk = {
             (MaxInt)((beginCoord.x - objPos.x) / ((MaxInt)tileSize.x * chunkSize.x) - 1),

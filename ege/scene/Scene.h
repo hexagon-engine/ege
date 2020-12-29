@@ -41,8 +41,8 @@ public:
     ObjectMap::iterator begin() { return m_objects.begin(); }
     ObjectMap::iterator end() { return m_objects.end(); }
 
-    void setSize(sf::Vector2f size) { m_size = size; }
-    sf::Vector2f getSize() const { return m_size; }
+    void setSize(Vec2d size) { m_size = size; }
+    Vec2d getSize() const { return m_size; }
 
     void setAddObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_addObjectCallback = func; }
     void setRemoveObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_removeObjectCallback = func; }
@@ -59,7 +59,7 @@ protected:
 
 private:
     long long m_greatestId = 0;
-    sf::Vector2f m_size;
+    Vec2d m_size;
     GUIGameLoop* m_loop;
     std::function<void(std::shared_ptr<SceneObject>)> m_addObjectCallback;
     std::function<void(std::shared_ptr<SceneObject>)> m_removeObjectCallback;

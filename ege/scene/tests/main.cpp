@@ -20,7 +20,7 @@ class MyObject : public EGE::SceneObject2D
     std::shared_ptr<sf::Font> m_font;
 
 public:
-    MyObject(std::shared_ptr<EGE::Scene> owner, std::string name, sf::Vector2f pos)
+    MyObject(std::shared_ptr<EGE::Scene> owner, std::string name, EGE::Vec2d pos)
     : EGE::SceneObject2D(owner, "MyObject"), m_initialPosition(pos)
     {
         setPosition(pos);
@@ -33,7 +33,7 @@ public:
         anim->addKeyframe(1.0, -1.0);
         anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
         addAnimation(anim, [this](EGE::Animation*, double val) {
-                        setPosition(m_initialPosition + sf::Vector2f(val * 20.f, 0));
+                        setPosition(m_initialPosition + EGE::Vec2d(val * 20.f, 0));
                      });
     }
 
@@ -59,7 +59,7 @@ public:
     void setDead() { m_dead = true; }
 
 private:
-    sf::Vector2f m_initialPosition;
+    EGE::Vec2d m_initialPosition;
 };
 
 class MyBackground : public EGE::SceneObject2D
@@ -122,8 +122,8 @@ TESTCASE(simple)
     auto scene = make<EGE::Scene>(&gameLoop);
 
     // add some objects to scene
-    scene->addObject(make<MyObject>(scene, "My Object", sf::Vector2f(200.f, 200.f)));
-    auto removedObject = make<MyObject>(scene, "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyObject>(scene, "My Object", EGE::Vec2d(200.f, 200.f)));
+    auto removedObject = make<MyObject>(scene, "Test Object", EGE::Vec2d(100.f, 100.f));
     scene->addObject(removedObject);
 
     // set Test Object to be removed after 5 seconds
@@ -170,11 +170,11 @@ TESTCASE(_2dCamera)
     // make camera animated
     auto timer = make<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
     timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
-                        cam->flyTo(b1 ? sf::Vector2f(0.f, 100.f) : sf::Vector2f(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
+                        cam->flyTo(b1 ? EGE::Vec2d(0.f, 100.f) : EGE::Vec2d(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
                         b1 = !b1;
                        });
     // the first fly
-    cam->flyTo(sf::Vector2f(0.f, 100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
+    cam->flyTo(EGE::Vec2d(0.f, 100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
     cam->addTimer("camera fly timer", timer);
 
     // set scene camera and add it to scene (to be updated)
@@ -183,8 +183,8 @@ TESTCASE(_2dCamera)
 
     // add some objects to scene
     scene->addObject(make<MyBackground>(scene, "bg"));
-    scene->addObject(make<MyObject>(scene, "My Object", sf::Vector2f(-100.f, -100.f)));
-    auto removedObject = make<MyObject>(scene, "Test Object", sf::Vector2f(100.f, 100.f));
+    scene->addObject(make<MyObject>(scene, "My Object", EGE::Vec2d(-100.f, -100.f)));
+    auto removedObject = make<MyObject>(scene, "Test Object", EGE::Vec2d(100.f, 100.f));
     scene->addObject(removedObject);
 
     auto texturedObject = make<EGE::SceneObject2D>(scene, "Textured Object");
@@ -193,7 +193,7 @@ TESTCASE(_2dCamera)
     renderer->center();
     texturedObject->setRenderer(renderer);
 
-    texturedObject->setPosition(sf::Vector2f(100.f, 100.f));
+    texturedObject->setPosition(EGE::Vec2d(100.f, 100.f));
     scene->addObject(texturedObject);
 
     // set Test Object to be removed after 5 seconds
@@ -232,7 +232,7 @@ TESTCASE(serializer)
 
     // create some object
     auto myObject = make<MyBackground>(scene, "My Test");
-    myObject->setPosition(sf::Vector2f(0.f, 0.f));
+    myObject->setPosition(EGE::Vec2d(0.f, 0.f));
 
     // serialize object
     auto data = myObject->serialize();
@@ -240,7 +240,7 @@ TESTCASE(serializer)
 
     // deserialize object and add result
     auto myObject2 = make<MyBackground>(scene, "My Object 5555");
-    myObject2->setPosition(sf::Vector2f(-100.f, -100.f));
+    myObject2->setPosition(EGE::Vec2d(-100.f, -100.f));
     myObject2->deserialize(data);
     scene->addObject(myObject2);
 

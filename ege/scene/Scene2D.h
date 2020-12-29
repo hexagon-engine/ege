@@ -27,16 +27,16 @@ public:
     virtual sf::View getCustomView(sf::RenderTarget& target) const override;
     virtual bool isCustomViewNeeded() const override { return true; }
 
-    virtual sf::Vector2f mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView);
+    virtual Vec2d mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView);
 
-    virtual sf::Vector2f mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos)
+    virtual Vec2d mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos)
     {
         return mapScreenToScene(target, screenPos, target.getView());
     }
 
-    virtual sf::Vector2i mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos, const sf::View& parentView);
+    virtual sf::Vector2i mapSceneToScreen(sf::RenderTarget& target, Vec2d scenePos, const sf::View& parentView);
 
-    virtual sf::Vector2i mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos)
+    virtual sf::Vector2i mapSceneToScreen(sf::RenderTarget& target, Vec2d scenePos)
     {
         return mapSceneToScreen(target, scenePos, target.getView());
     }

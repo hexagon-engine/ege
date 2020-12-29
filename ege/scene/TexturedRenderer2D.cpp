@@ -28,11 +28,16 @@ sf::FloatRect TexturedRenderer2D::getBoundingBox() const
 {
     auto sceneObject = (SceneObject2D&)m_sceneObject;
 
-    sf::Vector2f origin = sceneObject.getOrigin();
+    Vec2d origin = sceneObject.getOrigin();
     if(m_centered)
-        origin = m_textureRect.getSize() / 2.f;
+    {
+        auto _origin = m_textureRect.getSize() / 2.f;
+        origin = {_origin.x, _origin.y};
+    }
 
-    sf::FloatRect rect(sceneObject.getPosition(), m_textureRect.getSize());
+    auto pos = sceneObject.getPosition();
+    auto size = m_textureRect.getSize();
+    sf::FloatRect rect(pos.x, pos.y, size.x, size.y);
     rect.width *= sceneObject.getScale().x;
     rect.height *= sceneObject.getScale().y;
     rect.left -= origin.x * sceneObject.getScale().x;
@@ -46,12 +51,15 @@ void TexturedRenderer2D::render(Renderer& renderer) const
     SceneObject2D& so2d = (SceneObject2D&)m_sceneObject;
     sprite.setTexture(m_texture->getTexture());
     sprite.setTextureRect((sf::IntRect)m_textureRect);
-    sprite.setPosition(so2d.getPosition());
+    sprite.setPosition(so2d.getPosition().x, so2d.getPosition().y);
     if(m_centered)
-        so2d.setOrigin(m_textureRect.getSize() / 2.f);
-    sprite.setOrigin(so2d.getOrigin());
+    {
+        auto origin = m_textureRect.getSize() / 2.f;
+        so2d.setOrigin({origin.x, origin.y});
+    }
+    sprite.setOrigin(so2d.getOrigin().x, so2d.getOrigin().y);
     sprite.setRotation(so2d.getRotation());
-    sprite.setScale(so2d.getScale());
+    sprite.setScale(so2d.getScale().x, so2d.getScale().y);
 
     renderer.getTarget().draw(sprite, renderer.getStates().sfStates());
 }

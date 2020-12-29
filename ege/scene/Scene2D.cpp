@@ -21,8 +21,9 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
     {
         sf::View view = parentView;
         CameraObject2D* cam = m_camera.lock().get();
-        view.setCenter(m_camera.lock()->getEyePosition());
-        sf::Vector2f _size;
+        auto eye = m_camera.lock()->getEyePosition();
+        view.setCenter({(float)eye.x, (float)eye.y});
+        Vec2d _size;
 
         switch(cam->getScalingMode())
         {
@@ -31,7 +32,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
                 _size = getSize();
 
                 // The SFML camera is by default centered, so "uncenter" it.
-                view.move(getSize() / 2.f);
+                view.move({(float)_size.x / 2, (float)_size.y / 2});
             }
             break;
         case ScalingMode::Centered:
@@ -46,21 +47,21 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
                 DUMP(CAMERA_DEBUG, aspect);
                 DUMP(CAMERA_DEBUG, sizeAspect);
                 if(aspect > sizeAspect)
-                    _size = sf::Vector2f(cam->getSize().y * aspect, cam->getSize().y);
+                    _size = Vec2d(cam->getSize().y * aspect, cam->getSize().y);
                 else
-                    _size = sf::Vector2f(cam->getSize().x, cam->getSize().x / aspect);
+                    _size = Vec2d(cam->getSize().x, cam->getSize().x / aspect);
             }
             break;
         case ScalingMode::XLocked:
             {
                 float aspect = getSize().x / getSize().y;
-                _size = sf::Vector2f(cam->getFOV(), cam->getFOV() / aspect);
+                _size = Vec2d(cam->getFOV(), cam->getFOV() / aspect);
             }
             break;
         case ScalingMode::YLocked:
             {
                 float aspect = getSize().x / getSize().y;
-                _size = sf::Vector2f(cam->getFOV() * aspect, cam->getFOV());
+                _size = Vec2d(cam->getFOV() * aspect, cam->getFOV());
             }
             break;
         case ScalingMode::Scaled:
@@ -70,7 +71,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
             break;
         }
 
-        view.setSize(_size);
+        view.setSize({(float)_size.x, (float)_size.y});
         view.zoom(1.f / cam->getZoom());
         return view;
     }
@@ -84,7 +85,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
         }
 
         sf::View view = target.getView();
-        view.setCenter(sf::Vector2f(0.f, 0.f));
+        view.setCenter({});
         return view;
     }
 }
@@ -94,14 +95,15 @@ sf::View Scene2D::getCustomView(sf::RenderTarget& target) const
     return getView(target, target.getView());
 }
 
-sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView)
+Vec2d Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView)
 {
-    return target.mapPixelToCoords(screenPos, getView(target, parentView));
+    auto vec = target.mapPixelToCoords(screenPos, getView(target, parentView));
+    return {vec.x, vec.y};
 }
 
-sf::Vector2i Scene2D::mapSceneToScreen(sf::RenderTarget& target, sf::Vector2f scenePos, const sf::View& parentView)
+sf::Vector2i Scene2D::mapSceneToScreen(sf::RenderTarget& target, Vec2d scenePos, const sf::View& parentView)
 {
-    return target.mapCoordsToPixel(scenePos, getView(target, parentView));
+    return target.mapCoordsToPixel({(float)scenePos.x, (float)scenePos.y}, getView(target, parentView));
 }
 
 }

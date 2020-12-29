@@ -60,7 +60,7 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endSection();
 }
 
-sf::Vector2f ParticleSystem2D::randomPosition()
+Vec2d ParticleSystem2D::randomPosition()
 {
     int rand1 = rand() % 1024;
     int rand2 = rand() % 1024;
@@ -71,7 +71,7 @@ sf::Vector2f ParticleSystem2D::randomPosition()
     float val1 = randSize1 + m_spawnRect.left;
     float val2 = randSize2 + m_spawnRect.top;
 
-    return sf::Vector2f(val1, val2);
+    return Vec2d(val1, val2);
 }
 
 void ParticleSystem2D::Particle::update()
