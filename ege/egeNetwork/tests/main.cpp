@@ -66,15 +66,16 @@ public:
         m_scale = sf::Vector2f(rand() % 2 + 1, rand() % 2 + 1);
     }
 
-    virtual void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
+    virtual void render(EGE::Renderer& renderer) const override
     {
-        EGE::SceneObject2D::render(target, states);
+        EGE::SceneObject2D::render(renderer);
+
         sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
         rs.setPosition(getPosition() - sf::Vector2f(5.f, 5.f));
         rs.setRotation(m_rotation);
         rs.setScale(m_scale);
         rs.setOrigin(m_origin);
-        target.draw(rs);
+        renderer.getTarget().draw(rs);
     }
 
     virtual void move(bool moving, int dir)

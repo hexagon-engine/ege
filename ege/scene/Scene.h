@@ -14,20 +14,18 @@ Copyright (c) Sppmacd 2020
 #include <map>
 #include <memory>
 
-#define SCENE_DEBUG 0
+#define SCENE_DEBUG 00
 
 namespace EGE
 {
 
-class Scene : public ThreadSafeEventLoop
+class Scene : public ThreadSafeEventLoop, public Renderable
 {
 public:
     explicit Scene(GUIGameLoop* loop)
     : m_loop(loop) {}
 
     typedef std::map<long long, std::shared_ptr<SceneObject>> ObjectMap;
-
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
 
     virtual void onUpdate(long long tickCounter);
 
@@ -37,47 +35,26 @@ public:
     std::vector<SceneObject*> getObjects(std::string typeId);
     std::shared_ptr<SceneObject> getObject(long long id);
 
-    ObjectMap::const_iterator begin()
-    {
-        return m_objects.begin();
-    }
-    ObjectMap::const_iterator end()
-    {
-        return m_objects.end();
-    }
+    ObjectMap::const_iterator begin() const { return m_objects.begin(); }
+    ObjectMap::const_iterator end() const { return m_objects.end(); }
 
-    void setSize(sf::Vector2f size)
-    {
-        m_size = size;
-    }
+    ObjectMap::iterator begin() { return m_objects.begin(); }
+    ObjectMap::iterator end() { return m_objects.end(); }
 
-    sf::Vector2f getSize()
-    {
-        return m_size;
-    }
+    void setSize(sf::Vector2f size) { m_size = size; }
+    sf::Vector2f getSize() const { return m_size; }
 
-    void setAddObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func)
-    {
-        m_addObjectCallback = func;
-    }
+    void setAddObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_addObjectCallback = func; }
+    void setRemoveObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_removeObjectCallback = func; }
 
-    void setRemoveObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func)
-    {
-        m_removeObjectCallback = func;
-    }
+    GUIGameLoop* getLoop() { return m_loop; }
 
-    GUIGameLoop* getLoop()
-    {
-        return m_loop;
-    }
-
-    bool isHeadless()
-    {
-        // We don't have GUI on servers!
-        return !getLoop();
-    }
+    // We don't have GUI on servers!
+    bool isHeadless() { return !getLoop(); }
 
 protected:
+    virtual void render(Renderer& renderer) const override;
+
     ObjectMap m_objects;
 
 private:

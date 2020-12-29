@@ -20,8 +20,8 @@ template<class TMap>
 class TilemapRenderer2D : public ObjectRenderer
 {
 public:
-    TilemapRenderer2D(std::shared_ptr<Scene> scene, std::shared_ptr<TMap> tilemap)
-    : ObjectRenderer(scene), m_tileMap(tilemap) { setLayerCount(1); }
+    TilemapRenderer2D(SceneObject& sceneObject, std::shared_ptr<TMap> tilemap)
+    : ObjectRenderer(sceneObject), m_tileMap(tilemap) { setLayerCount(1); }
 
     void setAtlasTextureName(std::string name, Size layer = 0)
     {
@@ -60,10 +60,9 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual void renderLayer(Size layer, sf::Vector2f objPos, Vector2<MaxInt> beginChunk, Vector2<MaxInt> endChunk, sf::RenderTarget& target, const RenderStates& states) const
+    virtual void renderLayer(Size layer, sf::Vector2f objPos, Vector2<MaxInt> beginChunk, Vector2<MaxInt> endChunk, Renderer& renderer) const
     {
         sf::VertexArray vertexes(sf::Quads);
-        Renderer renderer(target);
 
         Vec2u tileSize = m_tileMap->getTileSize();
         Vec2s chunkSize = m_tileMap->getChunkSize();
@@ -194,12 +193,12 @@ public:
         // TODO: use triangles?
         auto texture = m_atlasses[layer];
         ASSERT(texture);
-        RenderStates newStates = states;
+        RenderStates newStates = renderer.getStates();
         newStates.sfStates().texture = &texture->getTexture();
-        target.draw(vertexes, newStates.sfStates());
+        renderer.getTarget().draw(vertexes, newStates.sfStates());
     }
 
-    virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const
+    virtual void render(Renderer& renderer) const override
     {
         // TODO: tilemap render cache (it should go to updateGeometry)
         ASSERT(m_tileMapper);
@@ -212,14 +211,14 @@ public:
         ASSERT(chunkSize.x != 0);
         ASSERT(chunkSize.y != 0);
 
-        Scene2D* scene = (Scene2D*)m_scene.get();
+        SceneObject2D& sceneObject = (SceneObject2D&)m_sceneObject;
+
+        Scene2D* scene = (Scene2D*)sceneObject.getOwner().get();
         ASSERT(scene);
 
-        SceneObject2D& sceneObject = (SceneObject2D&)object;
-
         // TODO: allow setting tilemap bounds
-        sf::Vector2f beginCoord = scene->mapScreenToScene(target, sf::Vector2i(0, 0));
-        sf::Vector2f endCoord = scene->mapScreenToScene(target, sf::Vector2i(target.getSize()));
+        sf::Vector2f beginCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
+        sf::Vector2f endCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
         sf::Vector2f objPos = sceneObject.getPosition();
 
         Vector2<MaxInt> beginChunk = {
@@ -232,12 +231,12 @@ public:
         };
 
         for(Size s = 0; s < m_layerCount; s++)
-            renderLayer(s, objPos, beginChunk, endChunk, target, states);
+            renderLayer(s, objPos, beginChunk, endChunk, renderer);
     }
 
-    virtual void updateGeometry(SceneObject&)
+    virtual void updateGeometry(Renderer&) override
     {
-        auto resourceManager = m_scene->getLoop()->getResourceManager();
+        auto resourceManager = m_sceneObject.getOwner()->getLoop()->getResourceManager();
         ASSERT(resourceManager);
 
         for(Size s = 0; s < m_layerCount; s++)

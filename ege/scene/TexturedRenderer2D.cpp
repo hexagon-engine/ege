@@ -10,11 +10,11 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void TexturedRenderer2D::updateGeometry(SceneObject& object)
+void TexturedRenderer2D::updateGeometry(Renderer&)
 {
     //DBG(SCENE_DEBUG, "TexturedObject2D::updateGeometry");
     // Update texture
-    ResourceManager* resManager = object.getOwner()->getLoop()->getResourceManager().get();
+    ResourceManager* resManager = m_sceneObject.getOwner()->getLoop()->getResourceManager().get();
     ASSERT(resManager);
     m_texture = resManager->getTexture(m_textureName).get();
     ASSERT(m_texture);
@@ -24,9 +24,9 @@ void TexturedRenderer2D::updateGeometry(SceneObject& object)
         m_textureRect = sf::FloatRect(0.f, 0.f, m_texture->getTexture().getSize().x, m_texture->getTexture().getSize().y);
 }
 
-sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) const
+sf::FloatRect TexturedRenderer2D::getBoundingBox() const
 {
-    SceneObject2D& sceneObject = (SceneObject2D&)object;
+    auto sceneObject = (SceneObject2D&)m_sceneObject;
 
     sf::Vector2f origin = sceneObject.getOrigin();
     if(m_centered)
@@ -40,10 +40,10 @@ sf::FloatRect TexturedRenderer2D::getBoundingBox(const SceneObject& object) cons
     return rect;
 }
 
-void TexturedRenderer2D::render(const SceneObject& sceneObject, sf::RenderTarget& target, const RenderStates& states) const
+void TexturedRenderer2D::render(Renderer& renderer) const
 {
     sf::Sprite sprite;
-    SceneObject2D& so2d = (SceneObject2D&)sceneObject;
+    SceneObject2D& so2d = (SceneObject2D&)m_sceneObject;
     sprite.setTexture(m_texture->getTexture());
     sprite.setTextureRect((sf::IntRect)m_textureRect);
     sprite.setPosition(so2d.getPosition());
@@ -53,7 +53,7 @@ void TexturedRenderer2D::render(const SceneObject& sceneObject, sf::RenderTarget
     sprite.setRotation(so2d.getRotation());
     sprite.setScale(so2d.getScale());
 
-    target.draw(sprite, states.sfStates());
+    renderer.getTarget().draw(sprite, renderer.getStates().sfStates());
 }
 
 }

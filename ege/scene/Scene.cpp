@@ -10,15 +10,14 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Scene::renderOnly(sf::RenderTarget& target, const RenderStates& states)
+void Scene::render(Renderer& renderer) const
 {
     // The loop should NOT be specified for server-side
     // since it's NOT necessary (Scene itself is an EventLoop)
-    ASSERT(m_loop);
+    ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
     for(auto pr: *this)
     {
-        pr.second->preRenderUpdate(target);
-        pr.second->render(target, states);
+        pr.second->doRender(renderer);
     }
 }
 

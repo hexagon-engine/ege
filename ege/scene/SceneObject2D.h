@@ -30,34 +30,27 @@ public:
         if(m_position != position)
         {
             setMainChanged();
-            if(m_renderer)
-                m_renderer->setGeometryNeedUpdate();
+            setGeometryNeedUpdate();
         }
         m_position = position;
     }
-    sf::Vector2f getPosition() const
-    {
-        return m_position;
-    }
+    sf::Vector2f getPosition() const { return m_position; }
+
     virtual void setMotion(sf::Vector2f motion)
     {
+        // We don't need to update geometry since motion doesn't
+        // actually change anything in appearance of object. If
+        // someone wants to update geometry, they should override
+        // that function and manually call setGeometryNeedUpdate().
+
         if(m_motion != motion)
-        {
             setMainChanged();
-            if(m_renderer)
-                m_renderer->setGeometryNeedUpdate();
-        }
+
         m_motion = motion;
     }
-    sf::Vector2f getMotion() const
-    {
-        return m_motion;
-    }
+    sf::Vector2f getMotion() const { return m_motion; }
 
-    virtual sf::FloatRect getBoundingBox() const
-    {
-        return sf::FloatRect(m_position, sf::Vector2f(0.f, 0.f));
-    }
+    virtual sf::FloatRect getBoundingBox() const { return sf::FloatRect(m_position, sf::Vector2f(0.f, 0.f)); }
 
     sf::FloatRect getBoundingBox(sf::Vector2f pos)
     {
@@ -68,31 +61,25 @@ public:
         return rect;
     }
 
-    double getRotation() const
-    {
-        return m_rotation;
-    }
+    double getRotation() const { return m_rotation; }
     void setRotation(double rotation)
     {
         m_rotation = rotation;
+        setGeometryNeedUpdate();
     }
 
-    sf::Vector2f getOrigin() const
-    {
-        return m_origin;
-    }
+    sf::Vector2f getOrigin() const { return m_origin; }
     void setOrigin(sf::Vector2f origin)
     {
         m_origin = origin;
+        setGeometryNeedUpdate();
     }
 
-    sf::Vector2f getScale() const
-    {
-        return m_scale;
-    }
+    sf::Vector2f getScale() const { return m_scale;}
     void setScale(sf::Vector2f scale)
     {
         m_scale = scale;
+        setGeometryNeedUpdate();
     }
 
     // with collision check
@@ -101,7 +88,7 @@ public:
     // with collision check
     virtual bool flyTo(sf::Vector2f pos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states) const override;
+    virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;
 
     virtual std::shared_ptr<ObjectMap> serializeMain() const override;

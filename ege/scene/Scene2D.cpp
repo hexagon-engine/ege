@@ -15,7 +15,7 @@ void Scene2D::setCamera(std::weak_ptr<CameraObject2D> camera)
     m_camera = camera;
 }
 
-sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView)
+sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) const
 {
     if(!m_camera.expired())
     {
@@ -89,12 +89,9 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView)
     }
 }
 
-void Scene2D::renderOnly(sf::RenderTarget& target, const RenderStates& states)
+sf::View Scene2D::getCustomView(sf::RenderTarget& target) const
 {
-    target.setView(getView(target, target.getView()));
-
-    // render objects iteratively
-    Scene::renderOnly(target, states);
+    return getView(target, target.getView());
 }
 
 sf::Vector2f Scene2D::mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView)

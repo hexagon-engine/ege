@@ -56,18 +56,18 @@ public:
         return m_spawnRect;
     }
 
-    virtual void render(sf::RenderTarget& target, const RenderStates& states) const;
-    virtual void onUpdate(long long tickCounter);
+    virtual void render(Renderer& renderer) const override;
+    virtual void onUpdate(long long tickCounter) override;
 
     void setParticleUpdater(std::function<void(Particle&)> func) { m_particleUpdater = func; }
     void setParticleOnSpawn(std::function<void(Particle&)> func) { m_particleOnSpawn = func; }
-    void setParticleRenderer(std::function<void(const std::list<Particle>&, sf::RenderTarget&, const RenderStates&)> func) { m_particleRenderer = func; }
+    void setParticleRenderer(std::function<void(const std::list<Particle>&, Renderer&)> func) { m_particleRenderer = func; }
 
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.
     // If val > 1, 'val' particles will be spawned.
     // If val <= 0, CRASH().
-    void setSpawnChance(double val) { ASSERT(val >= 0); m_spawnChance = val; }
+    void setSpawnChance(double val) { ASSERT(val > 0); m_spawnChance = val; }
     void setParticleLifeTime(unsigned ttl) { m_particleTTL = ttl; }
 
     void spawnParticle();
@@ -80,7 +80,7 @@ private:
     unsigned m_particleTTL = 60; // 1s
     std::function<void(Particle&)> m_particleUpdater;
     std::function<void(Particle&)> m_particleOnSpawn;
-    std::function<void(const std::list<Particle>&, sf::RenderTarget&, const RenderStates&)> m_particleRenderer;
+    std::function<void(const std::list<Particle>&, Renderer&)> m_particleRenderer;
 
     std::list<Particle> m_particles;
 };

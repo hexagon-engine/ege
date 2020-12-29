@@ -18,8 +18,8 @@ namespace EGE
 class TexturedRenderer2D : public ObjectRenderer
 {
 public:
-    TexturedRenderer2D(std::shared_ptr<Scene> scene)
-    : ObjectRenderer(scene) {}
+    TexturedRenderer2D(SceneObject& sceneObject)
+    : ObjectRenderer(sceneObject) {}
 
     void setTextureName(std::string name)
     {
@@ -32,17 +32,13 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual sf::FloatRect getBoundingBox(const SceneObject& object) const;
+    virtual sf::FloatRect getBoundingBox() const;
 
-    void center(bool centered = true)
-    {
-        m_centered = centered;
-    }
-
-    virtual void render(const SceneObject& object, sf::RenderTarget& target, const RenderStates& states) const;
+    void center(bool centered = true) { m_centered = centered; }
 
 private:
-    virtual void updateGeometry(SceneObject& object);
+    virtual void updateGeometry(Renderer& renderer) override;
+    virtual void render(Renderer& renderer) const override;
 
     std::string m_textureName;
     sf::FloatRect m_textureRect;

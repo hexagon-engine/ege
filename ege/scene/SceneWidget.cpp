@@ -14,7 +14,7 @@ namespace EGE
 void SceneWidget::render(Renderer& renderer) const
 {
     if(m_scene)
-        m_scene->renderOnly(renderer.getTarget(), renderer.getStates());
+        m_scene->doRender(renderer);
 }
 
 void SceneWidget::onResize(sf::Event::SizeEvent& event)

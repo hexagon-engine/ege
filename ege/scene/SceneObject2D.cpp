@@ -21,8 +21,7 @@ bool SceneObject2D::moveTo(sf::Vector2f pos, bool notify)
     else
     {
         m_position = pos;
-        if(m_renderer)
-            m_renderer->setGeometryNeedUpdate();
+        setGeometryNeedUpdate();
     }
 
     //DUMP(1, m_name);
@@ -59,20 +58,15 @@ bool SceneObject2D::flyTo(sf::Vector2f toPos, double time, std::function<double(
     return true;
 }
 
-void SceneObject2D::render(sf::RenderTarget& target, const RenderStates& states) const
+void SceneObject2D::render(Renderer& renderer) const
 {
-    SceneObject::render(target, states);
+    SceneObject::render(renderer);
 
     // debug shape
     if constexpr(SCENEOBJECT2D_DEBUG)
     {
         sf::FloatRect rect(getBoundingBox());
-        sf::RectangleShape rs(rect.getSize() - sf::Vector2f(2.f, 2.f));
-        rs.setPosition(rect.getPosition() + sf::Vector2f(1.f, 1.f));
-        rs.setOutlineColor(sf::Color::Cyan);
-        rs.setOutlineThickness(1.f);
-        rs.setFillColor(sf::Color::Transparent);
-        target.draw(rs);
+        renderer.renderRectangle(rect.left + 1, rect.top + 1, rect.width - 2, rect.height - 2, sf::Color::Transparent, sf::Color::Cyan);
     }
 }
 
@@ -105,6 +99,7 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
 
 bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 {
+    // TODO: change it to ObjectSerializers!
     m_position.x = object->getObject("pX").as<Float>().valueOr(0);
     m_position.y = object->getObject("pY").as<Float>().valueOr(0);
 
@@ -133,8 +128,7 @@ void SceneObject2D::onUpdate(long long tickCounter)
     if(m_motion != sf::Vector2f())
     {
         moveTo(getPosition() + m_motion, false);
-        if(m_renderer)
-            m_renderer->setGeometryNeedUpdate();
+        setGeometryNeedUpdate();
     }
 }
 

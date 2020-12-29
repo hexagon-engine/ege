@@ -22,9 +22,10 @@ public:
 
     void setCamera(std::weak_ptr<CameraObject2D> camera);
     std::weak_ptr<CameraObject2D> getCamera() { return m_camera; }
-    virtual void renderOnly(sf::RenderTarget& target, const RenderStates& states);
 
-    virtual sf::View getView(sf::RenderTarget& target, const sf::View& parentView);
+    virtual sf::View getView(sf::RenderTarget& target, const sf::View& parentView) const;
+    virtual sf::View getCustomView(sf::RenderTarget& target) const override;
+    virtual bool isCustomViewNeeded() const override { return true; }
 
     virtual sf::Vector2f mapScreenToScene(sf::RenderTarget& target, sf::Vector2i screenPos, const sf::View& parentView);
 

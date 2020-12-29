@@ -37,33 +37,21 @@ public:
                      });
     }
 
-    void onUpdate(long long tickCounter)
+    void updateGeometry(EGE::Renderer&) override
     {
-        SceneObject2D::onUpdate(tickCounter); // updateTimers()
-
-        // because we can't use labels in Scene yet :(
-        // it should be in render phase (it's not necessary on server)
-        // maybe void renderUpdate() ??
         if(!m_font)
         {
             m_font = m_owner->getLoop()->getResourceManager()->getDefaultFont();
             ASSERT(m_font);
         }
-
     }
 
-    void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
+    void render(EGE::Renderer& renderer) const override
     {
-        // render "low-level" SFML text centered to object position
-        sf::Text text("MyObject: " + getName(), *m_font, 18);
-        text.setPosition(getPosition().x, getPosition().y);
-        text.setOrigin((int)text.getLocalBounds().width / 2, (int)text.getLocalBounds().height / 2);
-        target.draw(text, states.sfStates());
+        renderer.renderCenteredText(getPosition().x, getPosition().y, *m_font, "MyObject: " + getName(), 18);
     }
-    void setDead()
-    {
-        m_dead = true;
-    }
+
+    void setDead() { m_dead = true; }
 
 private:
     sf::Vector2f m_initialPosition;
@@ -75,10 +63,10 @@ public:
     MyBackground(std::shared_ptr<EGE::Scene> owner, std::string name)
     : EGE::SceneObject2D(owner, name) {}
 
-    void render(sf::RenderTarget& target, const EGE::RenderStates& states) const
+    void render(EGE::Renderer& renderer) const override
     {
         // add our 'test' shader
-        EGE::RenderStates myStates = states;
+        EGE::RenderStates myStates = renderer.getStates();
         auto shader = getOwner()->getLoop()->getResourceManager()->getShader("test");
         double disturb1 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 5.14);
         double disturb2 = (float)std::sin(getOwner()->getLoop()->time(EGE::Time::Unit::Seconds) * 1.14);
@@ -91,7 +79,7 @@ public:
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y-100.f), sf::Color::Green));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y+100.f), sf::Color::Blue));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y+100.f), sf::Color::Yellow));
-        target.draw(varr, myStates.sfStates());
+        renderer.getTarget().draw(varr, myStates.sfStates());
     }
 };
 
@@ -195,7 +183,7 @@ TESTCASE(_2dCamera)
     scene->addObject(removedObject);
 
     auto texturedObject = make<EGE::SceneObject2D>(scene, "Textured Object");
-    auto renderer = make<EGE::TexturedRenderer2D>(scene);
+    auto renderer = make<EGE::TexturedRenderer2D>(*texturedObject);
     renderer->setTextureName("texture.png");
     renderer->center();
     texturedObject->setRenderer(renderer);
@@ -295,8 +283,6 @@ TESTCASE(particleSystem)
     loop.openWindow(sf::VideoMode(600, 600), "Particle System");
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
-    EGE::Renderer& renderer = loop.getRenderer();
-
     // create scene
     std::shared_ptr<MyScene> scene = make<MyScene>(&loop);
 
@@ -327,7 +313,7 @@ TESTCASE(particleSystem)
         particle.position.x += myData->motionx;
     });
 
-    particleSystem->setParticleRenderer([&renderer](const std::list<EGE::ParticleSystem2D::Particle>& particles, sf::RenderTarget&, const EGE::RenderStates&) {
+    particleSystem->setParticleRenderer([](const std::list<EGE::ParticleSystem2D::Particle>& particles, EGE::Renderer& renderer) {
         log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
 
         // Generate vertexes.
@@ -399,7 +385,7 @@ public:
         if(!owner->isHeadless())
         {
             typedef EGE::TilemapRenderer2D<decltype(m_tilemap)::element_type> RendererType;
-            auto renderer = make<RendererType>(owner, m_tilemap);
+            auto renderer = make<RendererType>(*this, m_tilemap);
             renderer->setAtlasTextureName("atlas.png");
             renderer->setTileAtlasMapper( [](const MyTile& tile, EGE::Vector2<EGE::MaxInt> tilePos, EGE::Size, RendererType::AtlasInfo& info) {
                 info.texCoords = EGE::Vec2i(tile.apx * 64, tile.apy * 64);
