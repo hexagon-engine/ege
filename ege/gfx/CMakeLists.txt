@@ -1,8 +1,10 @@
 set(SOURCES
-	"Renderer.h"
 	"Renderer.cpp"
-	"RenderStates.h"
+	"Renderer.h"
+	"Renderable.cpp"
+	"Renderable.h"
 	"RenderStates.cpp"
+	"RenderStates.h"
 )
 
 ege_add_module(gfx)
