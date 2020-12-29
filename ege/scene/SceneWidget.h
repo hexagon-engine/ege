@@ -19,7 +19,7 @@ public:
     explicit SceneWidget(Widget& parent, std::shared_ptr<Scene> initialScene = nullptr)
     : Widget(parent), m_scene(initialScene) {}
 
-    virtual void renderOnly(Renderer& renderer);
+    virtual void render(Renderer& renderer) const override;
 
     virtual void onUpdate(long long tickCounter);
     virtual void onResize(sf::Event::SizeEvent& event);
@@ -49,9 +49,10 @@ public:
         return m_scene;
     }
 
+protected:
     // The Scene widget is set to be auto resizable if its size is not set
     // before first render. You can revert this behaviour by using setSize().
-    virtual void setViewForWidget(sf::RenderTarget& target);
+    virtual void updateGeometry(Renderer& renderer) override;
 
 private:
     bool m_autoResizable = false;

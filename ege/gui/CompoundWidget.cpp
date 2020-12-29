@@ -189,17 +189,17 @@ void CompoundWidget::onUpdate(long long tickCounter)
     Widget::onUpdate(tickCounter);
 }
 
-void CompoundWidget::render(Renderer& renderer)
+void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
     // Render widget self
-    Widget::render(renderer);
+    Widget::doRender(renderer, states);
 
     // Render child widgets
     // TODO: draw only visible widgets
     for(auto widget: m_childWidgets)
     {
-        Widget::setViewForWidget(renderer.getTarget());
-        widget->render(renderer);
+        setCustomView(renderer.getTarget());
+        widget->doRender(renderer, states);
     }
 }
 

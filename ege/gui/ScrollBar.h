@@ -36,7 +36,7 @@ public:
         ASSERT(value >= 0.0);
         ASSERT(value < m_maxValue);
         m_value = value;
-        m_geometryUpdate = true;
+        setGeometryNeedUpdate();
     }
 
     // 1.0 - one page.
@@ -44,14 +44,12 @@ public:
     {
         ASSERT(value > 0.0);
         m_maxValue = value;
-        m_geometryUpdate = true;
+        setGeometryNeedUpdate();
     }
 
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
-    virtual void render(Renderer& renderer);
-    virtual void renderOnly(Renderer& renderer);
 
     void setUpdateCallback(std::function<void(double)> func)
     {
@@ -61,22 +59,24 @@ public:
     void setType(Type type)
     {
         m_type = type;
-        m_geometryUpdate = true;
+        setGeometryNeedUpdate();
     }
 
     void setLength(double length)
     {
         ASSERT(length >= 0.0);
         m_length = length;
-        m_geometryUpdate = true;
+        setGeometryNeedUpdate();
     }
 
 protected:
-    bool m_geometryUpdate = true;
+    virtual void render(Renderer& renderer) const override;
+
     bool m_knobMouseOver = false;
     bool m_knobDragged = false;
 
-    sf::FloatRect getKnobBounds();
+    sf::FloatRect getKnobBounds() const;
+    virtual void updateGeometry(Renderer& renderer) override;
 
     std::function<void(double)> m_updateCallback;
     double m_value = 0.0;

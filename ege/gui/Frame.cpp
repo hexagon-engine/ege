@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void Frame::renderOnly(Renderer& renderer)
+void Frame::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 

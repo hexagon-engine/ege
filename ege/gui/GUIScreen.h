@@ -54,7 +54,7 @@ public:
     // Args: dialog, exitCode
     virtual void onDialogExit(GUIScreen*, int) {}
 
-    virtual void render(Renderer& renderer) override;
+    virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
 
     // If you call it on dialog, the onDialogExit function is called
     // and the dialog is removed on parent.

@@ -52,7 +52,7 @@ public:
     // Widget Events
     virtual void onUpdate(long long tickCounter) override;
 
-    virtual void render(Renderer& renderer) override;
+    virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
 
     void addWidget(std::shared_ptr<Widget> widget);
     void removeWidget(Widget* widget);

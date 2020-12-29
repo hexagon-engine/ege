@@ -23,11 +23,13 @@ public:
         m_label = label;
     }
 
-    virtual void renderOnly(Renderer& renderer) override;
     virtual sf::FloatRect getBoundingBox()
     {
         return sf::FloatRect();
     }
+
+protected:
+    virtual void render(Renderer& renderer) const override;
 
 private:
     sf::String m_label;

@@ -23,21 +23,21 @@ public:
     {
         m_checked = checked;
     }
-    bool isChecked()
+    bool isChecked() const
     {
         return m_checked;
     }
     void setLabel(sf::String label)
     {
         Button::setLabel(label);
-        m_geometryUpdate = true;
+        setGeometryNeedUpdate();
     }
 
-    virtual void renderOnly(Renderer& renderer);
-
 protected:
-    bool m_geometryUpdate = true;
     bool m_checked = false;
+
+    virtual void render(Renderer& renderer) const override;
+    virtual void updateGeometry(Renderer& renderer) override;
 
     virtual void setSize(EGE::Vec2d) {}
     virtual void onClick(EGE::Vec2d);

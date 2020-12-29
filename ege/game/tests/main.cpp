@@ -76,7 +76,7 @@ public:
 
 MyGameplayObjectManager* MyGameplayObjectManager::instance;
 
-class ColorWidget : public EGE::Widget
+class ColorWidget : public EGE::CompoundWidget
 {
 public:
     MyColor* m_color;
@@ -84,10 +84,16 @@ public:
     GPORObjc::IdTEntry m_id;
 
     ColorWidget(EGE::Widget& parent, GPORObjc::IdTEntry id, MyColor* color)
-    : EGE::Widget(parent)
+    : EGE::CompoundWidget(parent)
     , m_color(color)
     , m_id(id)
-    {}
+    {
+        auto label = make<EGE::Label>(*this);
+        label->setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
+        label->setPosition(EGE::Vec2d(40.f, 0.f));
+        label->setFontSize(15);
+        addWidget(label);
+    }
 
     void onResize(sf::Event::SizeEvent& event)
     {
@@ -95,7 +101,7 @@ public:
         m_size = EGE::Vec2d(event.width - 80.f, 32.f);
     }
 
-    void renderOnly(EGE::Renderer& renderer)
+    void render(EGE::Renderer& renderer) const override
     {
         sf::RectangleShape rs(sf::Vector2f(30.f, 30.f));
         rs.setPosition(1.f, 1.f);
@@ -106,12 +112,6 @@ public:
 
         rs.setFillColor(m_color->m_color);
         renderer.getTarget().draw(rs);
-
-        EGE::Label label(*this);
-        label.setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
-        label.setPosition(EGE::Vec2d(40.f, 0.f));
-        label.setFontSize(15);
-        label.render(renderer);
     }
 };
 

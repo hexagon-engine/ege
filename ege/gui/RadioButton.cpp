@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void RadioButton::renderOnly(Renderer& renderer)
+void RadioButton::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 
@@ -55,18 +55,10 @@ void RadioButton::renderOnly(Renderer& renderer)
         target.draw(cs);
     }
 
-    // label (generate)
+    // label
     auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
-
-    if(m_geometryUpdate)
-    {
-        m_geometryUpdate = false;
-        m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
-    }
-
-    // label
     text.setPosition(20.f, 0.f);
     text.setFillColor(sf::Color::Black);
     target.draw(text);
@@ -82,6 +74,15 @@ void RadioButton::onClick(EGE::Vec2d pos)
         group->deselectAllBut(this);
     }
     */
+}
+
+void RadioButton::updateGeometry(Renderer&)
+{
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    ASSERT(font);
+    sf::Text text(getLabel(), *font, 12);
+
+    m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
 }
 
 }

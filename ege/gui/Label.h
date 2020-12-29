@@ -29,14 +29,12 @@ public:
     void setTextAlign(Align align);
     virtual void setPosition(EGE::Vec2d position) override;
     void setFontSize(int size);
-    void setColor(sf::Color color) { m_color = color; m_geometryChanged = true; }
-
-    virtual void render(Renderer& renderer) override;
-    virtual void renderOnly(Renderer& renderer) override;
+    void setColor(sf::Color color) { m_color = color; setGeometryNeedUpdate(); }
 
 protected:
+    virtual void render(Renderer& renderer) const override;
     void setPositionInternal(EGE::Vec2d position);
-    void updateGeometry();
+    virtual void updateGeometry(Renderer& renderer) override;
 
     sf::String m_string;
     Align m_align = Align::Left;
@@ -45,7 +43,6 @@ protected:
     sf::Text m_text;
     EGE::Vec2d m_textPosition;
     std::shared_ptr<sf::Font> m_font;
-    bool m_geometryChanged = true;
 
 private:
     virtual void setSize(EGE::Vec2d) {}

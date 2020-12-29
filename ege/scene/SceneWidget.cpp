@@ -11,7 +11,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void SceneWidget::renderOnly(Renderer& renderer)
+void SceneWidget::render(Renderer& renderer) const
 {
     if(m_scene)
         m_scene->renderOnly(renderer.getTarget(), renderer.getStates());
@@ -39,20 +39,20 @@ void SceneWidget::onUpdate(long long tickCounter)
     }
 }
 
-void SceneWidget::setViewForWidget(sf::RenderTarget& target)
+void SceneWidget::updateGeometry(Renderer& renderer)
 {
-    // fill the window fully by default
+    // The first geometry update (always done before first render)
+    // should set the widget auto resizable if it's not explicitly
+    // disabled by user.
     if(m_size == EGE::Vec2d())
     {
-        auto size = target.getSize();
+        auto size = renderer.getTarget().getSize();
         m_size = EGE::Vec2d(size.x, size.y);
         if(m_scene)
             m_scene->setSize(sf::Vector2f(m_size.x, m_size.y));
 
         m_autoResizable = true;
     }
-
-    Widget::setViewForWidget(target);
 }
 
 }

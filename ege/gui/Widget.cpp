@@ -23,7 +23,7 @@ sf::FloatRect Widget::getBoundingBox()
 {
     return sf::FloatRect(m_position.x, m_position.y, m_size.x, m_size.y);
 }
-sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
+sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
 {
     EGE::Vec2d parentPosition;
 
@@ -59,13 +59,7 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target)
         return currentRect;
 }
 
-void Widget::render(Renderer& renderer)
-{
-    setViewForWidget(renderer.getTarget());
-    renderOnly(renderer);
-}
-
-void Widget::renderOnly(Renderer& renderer)
+void Widget::render(Renderer& renderer) const
 {
     // draw some debug shape
     if constexpr(WIDGET_DEBUG)
@@ -142,18 +136,13 @@ bool Widget::isMouseOver(EGE::Vec2d position)
     return getBoundingBox().contains(sf::Vector2f(position.x, position.y));
 }
 
-sf::View Widget::getView(sf::RenderTarget& target)
+sf::View Widget::getCustomView(sf::RenderTarget& target) const
 {
     sf::FloatRect viewport = getViewport(target);
     sf::View view(sf::FloatRect(sf::Vector2f(),
                                 sf::Vector2f(viewport.getSize().x * target.getSize().x, viewport.getSize().y * target.getSize().y)));
     view.setViewport(viewport);
     return view;
-}
-
-void Widget::setViewForWidget(sf::RenderTarget& target)
-{
-    target.setView(getView(target));
 }
 
 void Widget::onUpdate(long long tickCounter)

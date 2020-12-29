@@ -265,15 +265,15 @@ void GUIScreen::onUpdate(long long tickCounter)
     }
 }
 
-void GUIScreen::render(Renderer& renderer)
+void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
 {
     // Actually draw child widgets
-    CompoundWidget::render(renderer);
+    CompoundWidget::doRender(renderer, states);
 
     // Render dialog on top of GUI.
     if(m_dialog)
     {
-        m_dialog->render(renderer);
+        m_dialog->doRender(renderer, states);
     }
 }
 

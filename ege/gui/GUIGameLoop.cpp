@@ -185,7 +185,7 @@ void GUIGameLoop::render()
 
         m_profiler->endStartSection("gui");
         if(m_currentGui)
-            m_currentGui->render(m_renderer);
+            m_currentGui->doRender(m_renderer);
 
         m_profiler->endStartSection("display");
         m_systemWindow.display();

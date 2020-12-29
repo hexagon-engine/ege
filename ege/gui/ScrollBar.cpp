@@ -60,25 +60,17 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::render(Renderer& renderer)
+void ScrollBar::updateGeometry(Renderer&)
 {
-    // update geometry
-    if(m_geometryUpdate)
+    switch(m_type)
     {
-        switch(m_type)
-        {
-            case Type::Horizontal: m_size = EGE::Vec2d(m_length, 20.f); break;
-            case Type::Vertical: m_size = EGE::Vec2d(20.f, m_length); break;
-            default: CRASH(); break;
-        }
-
-        m_geometryUpdate = false;
+        case Type::Horizontal: m_size = EGE::Vec2d(m_length, 20.f); break;
+        case Type::Vertical: m_size = EGE::Vec2d(20.f, m_length); break;
+        default: CRASH(); break;
     }
-
-    Widget::render(renderer);
 }
 
-sf::FloatRect ScrollBar::getKnobBounds()
+sf::FloatRect ScrollBar::getKnobBounds() const
 {
     sf::FloatRect rect(0.f, 0.f, 20.f, 20.f);
     double knobPos = (m_value / m_maxValue) * (m_length - 55.0) + 20.0;
@@ -93,7 +85,7 @@ sf::FloatRect ScrollBar::getKnobBounds()
     return rect;
 }
 
-void ScrollBar::renderOnly(Renderer& renderer)
+void ScrollBar::render(Renderer& renderer) const
 {
     // background
     renderer.renderRectangle(0.0, 20.0, m_size.x, m_size.y - 40.0, sf::Color(175, 175, 175));

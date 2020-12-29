@@ -33,13 +33,17 @@ public:
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
     virtual void onTextEnter(sf::Event::TextEvent& event);
     virtual void onKeyPress(sf::Event::KeyEvent& event);
-    virtual void renderOnly(Renderer& renderer) override;
+
+protected:
+    virtual void render(Renderer& renderer) const override;
+    virtual void updateGeometry(Renderer& renderer) override;
 
 private:
-    virtual sf::Text generateText();
+    virtual void generateText();
     virtual void clearSelection();
 
     sf::String m_text;
+    sf::Text m_textDrawable;
     size_t m_caretPos = 0;
     size_t m_selectionStart = 0;
     size_t m_selectionEnd = 0;

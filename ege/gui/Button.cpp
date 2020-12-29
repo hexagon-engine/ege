@@ -22,7 +22,7 @@ void Button::onTouchEnd(sf::Event::TouchEvent& event)
     Widget::onTouchEnd(event); //it removes m_leftClicked state
 }
 
-void Button::renderOnly(Renderer& renderer)
+void Button::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 

@@ -10,7 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-void CheckBox::renderOnly(Renderer& renderer)
+void CheckBox::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 
@@ -55,21 +55,22 @@ void CheckBox::renderOnly(Renderer& renderer)
         target.draw(rs);
     }
 
+    // label
+    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    ASSERT(font);
+    sf::Text text(getLabel(), *font, 12);
+    text.setPosition(20.f, 0.f);
+    text.setFillColor(sf::Color::Black);
+    target.draw(text);
+}
+
+void CheckBox::updateGeometry(Renderer&)
+{
     // label (generate)
     auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
-
-    if(m_geometryUpdate)
-    {
-        m_geometryUpdate = false;
-        m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
-    }
-
-    // label
-    text.setPosition(20.f, 0.f);
-    text.setFillColor(sf::Color::Black);
-    target.draw(text);
+    m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
 }
 
 void CheckBox::onClick(EGE::Vec2d position)

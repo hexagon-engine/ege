@@ -113,12 +113,10 @@ public:
         texture = m_gameLoop.getResourceManager()->getTexture("texture.png").get();
     }
 
-    virtual void render(EGE::Renderer& renderer) override
+    virtual void render(EGE::Renderer& renderer) const override
     {
         EGE::GUIScreen::render(renderer);
         DEBUG_PRINT("MyResourceManager render");
-
-        setViewForWidget(renderer.getTarget());
         sf::Text text("TEST", *font, 30);
         renderer.getTarget().draw(text);
         sf::Sprite sprite(texture->getTexture());
@@ -162,7 +160,7 @@ public:
         m_size = size;
     }
 
-    void renderOnly(EGE::Renderer& renderer) override
+    void render(EGE::Renderer& renderer) const override
     {
         sf::RenderTarget& target = renderer.getTarget();
 

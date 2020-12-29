@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include "Animation.h"
 
 #include <ege/event/DefaultSystemEventHandler.h>
+#include <ege/gfx/Renderable.h>
 #include <ege/gfx/Renderer.h>
 #include <ege/util/Vector.h>
 
@@ -19,7 +20,7 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Widget : public Animatable, public DefaultSystemEventHandler
+class Widget : public Animatable, public DefaultSystemEventHandler, public Renderable
 {
 public:
     class Command
@@ -46,35 +47,18 @@ public:
     // for non-parented widgets, e.g. GUIScreen
     explicit Widget(GUIGameLoop& gameLoop);
 
-    virtual void setPosition(EGE::Vec2d position)
-    {
-        m_position = position;
-    }
-    EGE::Vec2d getPosition() const
-    {
-        return m_position;
-    }
-    GUIGameLoop& getLoop() const
-    {
-        return m_gameLoop;
-    }
-    virtual void setSize(EGE::Vec2d size)
-    {
-        m_size = size;
-    }
-    EGE::Vec2d getSize() const
-    {
-        return m_size;
-    }
+    virtual void setPosition(EGE::Vec2d position) { m_position = position; }
+    EGE::Vec2d getPosition() const { return m_position; }
+
+    GUIGameLoop& getLoop() const { return m_gameLoop; }
+
+    virtual void setSize(EGE::Vec2d size) { m_size = size; }
+    EGE::Vec2d getSize() const { return m_size; }
 
     Widget* getParent() { return m_parent; }
 
     virtual sf::FloatRect getBoundingBox();
-    virtual sf::FloatRect getViewport(sf::RenderTarget& target);
-    virtual void render(Renderer& renderer);
-
-    // render without setting view
-    virtual void renderOnly(Renderer& renderer);
+    virtual sf::FloatRect getViewport(sf::RenderTarget& target) const;
 
     virtual void onUpdate(long long tickCounter);
     virtual void onLoad() {};
@@ -86,16 +70,14 @@ public:
     virtual void onGainFocus() override;
 
     virtual bool isMouseOver(EGE::Vec2d position);
-    virtual void setViewForWidget(sf::RenderTarget& target);
+    virtual sf::View getCustomView(sf::RenderTarget& target) const override;
+    virtual bool isCustomViewNeeded() const { return true; }
 
-    virtual sf::View getView(sf::RenderTarget& target);
-
-    bool hasFocus()
-    {
-        return m_hasFocus;
-    }
+    bool hasFocus() const { return m_hasFocus; }
 
 protected:
+    virtual void render(Renderer& renderer) const override;
+
     EGE::Vec2d m_size;
     Widget* m_parent;
     bool m_mouseOver = false;

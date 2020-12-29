@@ -38,14 +38,13 @@ public:
         m_label = label;
     }
 
-    sf::String getLabel()
+    sf::String getLabel() const
     {
         return m_label;
     }
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
-    virtual void renderOnly(Renderer& renderer) override;
 
     void setCallback(std::function<void()> callback)
     {
@@ -53,6 +52,8 @@ public:
     }
 
 protected:
+    virtual void render(Renderer& renderer) const override;
+
     virtual void onClick(EGE::Vec2d position);
     std::function<void()> m_callback;
 

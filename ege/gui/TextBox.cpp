@@ -31,7 +31,7 @@ TextBox::TextBox(Widget& parent)
                  });
 }
 
-void TextBox::renderOnly(Renderer& renderer)
+void TextBox::render(Renderer& renderer) const
 {
     sf::RectangleShape rs;
     rs.setFillColor(sf::Color(255, 255, 255));
@@ -41,19 +41,18 @@ void TextBox::renderOnly(Renderer& renderer)
     renderer.renderTextBoxLikeBackground(0, 0, getSize().x, getSize().y);
 
     // label
-    sf::Text text = generateText();
-    renderer.getTarget().draw(text);
+    renderer.getTarget().draw(m_textDrawable);
 
     // selection
-    float selStart = text.findCharacterPos(m_selectionStart).x;
-    float selEnd = text.findCharacterPos(m_selectionEnd).x - selStart;
+    float selStart = m_textDrawable.findCharacterPos(m_selectionStart).x;
+    float selEnd = m_textDrawable.findCharacterPos(m_selectionEnd).x - selStart;
     renderer.renderRectangle(selStart, 3.f, selEnd, m_size.y - 6.f, sf::Color(17, 168, 219, 127));
 
     // caret
     if(hasFocus() && m_caretShown)
     {
         sf::RectangleShape rsCaret(sf::Vector2f(1.f, m_size.y - 6.f));
-        rsCaret.setPosition(text.findCharacterPos(m_caretPos).x, 3.f);
+        rsCaret.setPosition(m_textDrawable.findCharacterPos(m_caretPos).x, 3.f);
         rsCaret.setFillColor(sf::Color::Black);
         renderer.getTarget().draw(rsCaret);
     }
@@ -85,35 +84,37 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
         m_caretAnimation->restart();
 
     // Find character to set caret next to.
-    sf::Text text = generateText();
-
+    // TODO: Optimize it!
+    doUpdateGeometry(getLoop().getRenderer());
     for(size_t s = 0; s <= m_text.getSize(); s++)
     {
-        if(text.findCharacterPos(s).x < event.x - getPosition().x + text.getCharacterSize() / 3.91f)
+        if(m_textDrawable.findCharacterPos(s).x < event.x - getPosition().x + m_textDrawable.getCharacterSize() / 3.91f)
         {
             m_caretPos = s;
             m_selectionStart = s;
             m_selectionEnd = s;
         }
     }
+    setGeometryNeedUpdate();
 }
 
 void TextBox::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
     Widget::onMouseMove(event);
 
-    sf::Text text = generateText();
-
     if(m_leftClicked)
     {
+        // TODO: Optimize it!
+        doUpdateGeometry(getLoop().getRenderer());
         for(size_t s = 0; s <= m_text.getSize(); s++)
         {
-            if(text.findCharacterPos(s).x < event.x - getPosition().x + text.getCharacterSize() / 3.91f)
+            if(m_textDrawable.findCharacterPos(s).x < event.x - getPosition().x + m_textDrawable.getCharacterSize() / 3.91f)
             {
                 m_caretPos = s;
                 m_selectionEnd = s;
             }
         }
+        setGeometryNeedUpdate();
     }
 }
 
@@ -154,6 +155,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
             }
 
             clearSelection();
+            setGeometryNeedUpdate();
         }
         else
         {
@@ -167,6 +169,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                         {
                             m_text.erase(m_caretPos - 1);
                             m_caretPos--;
+                            setGeometryNeedUpdate();
                         }
                     } break;
                 case 0x7f: // DEL
@@ -174,6 +177,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                         if(m_caretPos < m_text.getSize())
                         {
                             m_text.erase(m_caretPos);
+                            setGeometryNeedUpdate();
                         }
                     } break;
                 case '\r':
@@ -186,6 +190,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
             {
                 m_text.insert(m_caretPos, chr);
                 m_caretPos++;
+                setGeometryNeedUpdate();
             }
         }
         m_caretAnimation->restart();
@@ -213,6 +218,7 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
                 else
                     clearSelection();
             }
+            setGeometryNeedUpdate();
         }
         break;
     case sf::Keyboard::Right:
@@ -232,6 +238,7 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
                 else
                     clearSelection();
             }
+            setGeometryNeedUpdate();
         }
         break;
     default:
@@ -240,7 +247,7 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
     m_caretAnimation->restart();
 }
 
-sf::Text TextBox::generateText()
+void TextBox::generateText()
 {
     auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
@@ -248,13 +255,19 @@ sf::Text TextBox::generateText()
     text.setFillColor(sf::Color::Black);
     float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
     text.setPosition(10.f - overflow, m_size.y / 4.f);
-    return text;
+    m_textDrawable = text;
+}
+
+void TextBox::updateGeometry(Renderer&)
+{
+    generateText();
 }
 
 void TextBox::clearSelection()
 {
     m_selectionStart = 0;
     m_selectionEnd = 0;
+    setGeometryNeedUpdate();
 }
 
 }

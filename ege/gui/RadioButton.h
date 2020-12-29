@@ -19,7 +19,9 @@ public:
     explicit RadioButton(Widget& parent)
     : CheckBox(parent) {}
 
-    virtual void renderOnly(Renderer& renderer);
+protected:
+    virtual void render(Renderer& renderer) const override;
+    virtual void updateGeometry(Renderer& renderer) override;
 
 private:
     virtual void onClick(EGE::Vec2d);
