@@ -48,7 +48,12 @@ public:
 
     void render(EGE::Renderer& renderer) const override
     {
-        renderer.renderCenteredText(getPosition().x, getPosition().y, *m_font, "MyObject: " + getName(), 18);
+        EGE::Renderer::TextWithBackgroundSettings settings;
+        settings.font_size = 18;
+        settings.text_align = EGE::Renderer::TextAlign::Center;
+        settings.color = sf::Color::White;
+        settings.background_color = sf::Color::Transparent;
+        renderer.renderTextWithBackground(getPosition().x, getPosition().y, *m_font, "MyObject: " + getName(), settings);
     }
 
     void setDead() { m_dead = true; }
@@ -165,11 +170,11 @@ TESTCASE(_2dCamera)
     // make camera animated
     auto timer = make<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
     timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
-                        cam->flyTo(b1 ? sf::Vector2f(0.f, 100.f) : sf::Vector2f(0.f, -100.f), 1.0);
+                        cam->flyTo(b1 ? sf::Vector2f(0.f, 100.f) : sf::Vector2f(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
                         b1 = !b1;
                        });
     // the first fly
-    cam->flyTo(sf::Vector2f(0.f, 100.f), 1.0);
+    cam->flyTo(sf::Vector2f(0.f, 100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
     cam->addTimer("camera fly timer", timer);
 
     // set scene camera and add it to scene (to be updated)
