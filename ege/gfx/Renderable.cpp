@@ -3,7 +3,7 @@
 namespace EGE
 {
 
-void Renderable::renderWithStates(Renderer& renderer, const RenderStates& states)
+void Renderable::renderWithStates(Renderer& renderer, const RenderStates& states) const
 {
     const RenderStates& oldStates = states;
     renderer.setStates(states);
@@ -11,17 +11,27 @@ void Renderable::renderWithStates(Renderer& renderer, const RenderStates& states
     renderer.setStates(oldStates);
 }
 
-void Renderable::doRender(Renderer& renderer, const RenderStates& states)
+void Renderable::setCustomView(sf::RenderTarget& target)
 {
-    auto target = renderer.getTarget();
     if(isCustomViewNeeded())
         target.setView(getCustomView(target));
+}
+
+void Renderable::doRender(Renderer& renderer, const RenderStates& states)
+{
+    auto& target = renderer.getTarget();
+    setCustomView(target);
+    doUpdateGeometry(renderer);
+    renderWithStates(renderer, states);
+}
+
+void Renderable::doUpdateGeometry(Renderer& renderer)
+{
     if(geometryNeedUpdate())
     {
-        updateGeometry();
+        updateGeometry(renderer);
         m_geometryNeedUpdate = false;
     }
-    renderWithStates(renderer, states);
 }
 
 }
