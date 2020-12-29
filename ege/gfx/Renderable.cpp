@@ -22,7 +22,10 @@ void Renderable::doRender(Renderer& renderer, const RenderStates& states)
     auto& target = renderer.getTarget();
     setCustomView(target);
     doUpdateGeometry(renderer);
-    renderWithStates(renderer, states);
+    if(states != RenderStates())
+        renderWithStates(renderer, states);
+    else
+        render(renderer);
 }
 
 void Renderable::doUpdateGeometry(Renderer& renderer)
