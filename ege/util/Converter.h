@@ -25,6 +25,9 @@ public:
     virtual bool out(OutputStreamType& output, const Object& object) const = 0;
 };
 
+// Common Types
+typedef Converter<std::istream, std::ostream> IOStreamConverter;
+
 namespace Internal
 {
 

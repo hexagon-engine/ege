@@ -12,7 +12,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-class JSONConverter : public Converter<std::istream, std::ostream>
+class JSONConverter : public IOStreamConverter
 {
 public:
     virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const;
