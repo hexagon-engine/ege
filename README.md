@@ -35,11 +35,10 @@ The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFM
    * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox) and modal dialogs
 * **loop** - Basic event loop utility
    * EventLoop - event system
-   * Timers
+   * Timers & clocks
 * **main** - Engine-global functionality & configuration (ASSERT etc.)
 * **network** - Low-level network library (opening sockets etc.)
-   * TCP sockets and listeners
-   * SFML packet wrapper
+   * TCP sockets and listeners (SFML Packet compatible)
 * **profiler** - Utility for profiling
 * **resources** - ResourceManager for loading textures, fonts, shaders etc.
 * **scene** - Library for managing scenes and adding objects to it.
@@ -47,6 +46,7 @@ The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFM
    * Basic texture renderer
    * Particle system
    * Tilemap renderer
+   * Scene saving and loading from file (TODO: map editor)
 * **sfml** - Dummy module for linking SFML
 * **tilemap** - Tilemaps
    * Tilemaps: abstract, fixed sized, dynamic sized (chunked)
