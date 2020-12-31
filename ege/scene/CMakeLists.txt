@@ -15,6 +15,8 @@ set(SOURCES
 	"Scene.h"
 	"Scene2D.cpp"
 	"Scene2D.h"
+	"SceneLoader.cpp"
+	"SceneLoader.h"
 	"SceneObject.cpp"
 	"SceneObject.h"
 	"SceneWidget.cpp"

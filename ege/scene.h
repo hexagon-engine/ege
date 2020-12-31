@@ -12,6 +12,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/scene/ParticleSystem2D.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/Scene.h>
+#include <ege/scene/SceneLoader.h>
 #include <ege/scene/SceneObject2D.h>
 #include <ege/scene/SceneObject.h>
 #include <ege/scene/SceneWidget.h>

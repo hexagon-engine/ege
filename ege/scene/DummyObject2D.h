@@ -18,7 +18,7 @@ namespace EGE
 class DummyObject2D : public SceneObject2D
 {
 public:
-    DummyObject2D(std::shared_ptr<EGE::Scene> owner, std::string name)
+    DummyObject2D(Scene2D& owner, std::string name)
     : SceneObject2D(owner, name) {}
 
     void setSize(Vec2d size)

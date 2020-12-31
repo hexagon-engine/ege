@@ -26,7 +26,7 @@ template<class CoordType>
 class CameraObject
 {
 public:
-    CameraObject(std::shared_ptr<EGE::Scene> parent)
+    CameraObject(EGE::Scene& parent)
     : m_parent(parent) {}
 
     CoordType getEyePosition() { return CoordType(); };
@@ -47,7 +47,7 @@ protected:
     float m_fov = 0.f;
     float m_zoom = 1.f;
     CoordType m_size;
-    std::shared_ptr<EGE::Scene> m_parent;
+    EGE::Scene& m_parent;
     ScalingMode m_scalingMode = ScalingMode::None;
     std::shared_ptr<EGE::SceneObject> m_following;
 };

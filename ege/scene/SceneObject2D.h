@@ -18,12 +18,14 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+class Scene2D;
+
 class SceneObject2D : public SceneObject
 {
 
 public:
-    SceneObject2D(std::shared_ptr<EGE::Scene> owner, std::string typeId)
-    : SceneObject(owner, typeId) {}
+    SceneObject2D(Scene2D& owner, String typeId)
+    : SceneObject((Scene&)owner, typeId) {}
 
     virtual void setPosition(Vec2d position)
     {

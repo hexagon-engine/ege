@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
 #include <ege/scene/Scene.h>
+#include <ege/scene/SceneLoader.h>
 
 namespace EGE
 {
@@ -26,7 +27,7 @@ public:
         bool clear();
         bool load();
 
-        GameplayObjectRegistry<std::string, std::function<std::shared_ptr<SceneObject>(std::shared_ptr<EGE::Scene>)>> sceneObjectCreators;
+        SceneLoader::SceneObjectCreatorRegistry sceneObjectCreators;
 
     private:
         EGEGame* m_game;
@@ -38,7 +39,12 @@ public:
 
     std::shared_ptr<Scene> getScene() { return m_scene; }
 
-    std::shared_ptr<GPOM> getGameplayObjectManager() { return m_gameplayObjectManager; }
+    GPOM& getGameplayObjectManager() { return m_gameplayObjectManager; }
+
+    void registerSceneObjectCreator(String typeId, SceneLoader::SceneObjectCreator creator)
+    {
+        m_gameplayObjectManager.sceneObjectCreators.addEntry(typeId, creator);
+    }
 
     virtual bool initialize();
 
@@ -51,7 +57,7 @@ public:
     std::string getVersionString() { return m_versionString; }
 
 private:
-    std::shared_ptr<GPOM> m_gameplayObjectManager;
+    GPOM m_gameplayObjectManager;
     std::shared_ptr<Scene> m_scene;
     int m_version = 0; // 0 - "unknown"
     std::string m_versionString = "EGE Generic";

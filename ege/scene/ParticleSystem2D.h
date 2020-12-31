@@ -27,7 +27,7 @@ public:
     class Particle
     {
     public:
-        Particle(ParticleSystem2D* _system)
+        Particle(ParticleSystem2D& _system)
         : system(_system) {}
 
         void update();
@@ -35,7 +35,7 @@ public:
 
         Vec2d position;
         unsigned ttl = 0;
-        ParticleSystem2D* system;
+        ParticleSystem2D& system;
 
         // TODO: it should be better a flat pointer (memory performance)
         std::unique_ptr<UserData> userData = nullptr;
@@ -43,7 +43,7 @@ public:
 
     friend class Particle;
 
-    ParticleSystem2D(std::shared_ptr<EGE::Scene> owner, sf::FloatRect spawnRect)
+    ParticleSystem2D(Scene2D& owner, sf::FloatRect spawnRect)
     : SceneObject2D(owner, "EGE::ParticleSystem2D"), m_spawnRect(spawnRect) {}
 
     virtual sf::FloatRect getBoundingBox() const

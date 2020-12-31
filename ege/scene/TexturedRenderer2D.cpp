@@ -14,7 +14,7 @@ void TexturedRenderer2D::updateGeometry(Renderer&)
 {
     //DBG(SCENE_DEBUG, "TexturedObject2D::updateGeometry");
     // Update texture
-    ResourceManager* resManager = m_sceneObject.getOwner()->getLoop()->getResourceManager().get();
+    ResourceManager* resManager = m_sceneObject.getOwner().getLoop()->getResourceManager().get();
     ASSERT(resManager);
     m_texture = resManager->getTexture(m_textureName).get();
     ASSERT(m_texture);

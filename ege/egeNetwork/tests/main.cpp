@@ -47,11 +47,11 @@ TESTCASE(converter)
 class MyObject : public EGE::SceneObject2D
 {
 public:
-    MyObject(std::shared_ptr<EGE::Scene> owner, bool playerControlled = false)
+    MyObject(EGE::Scene2D& owner, bool playerControlled = false)
     : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
     {
         // only server side!
-        if(!playerControlled && owner->isHeadless())
+        if(!playerControlled && owner.isHeadless())
         {
             auto timer = make<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
             timer->setCallback([this](std::string, EGE::Timer*) {
@@ -164,7 +164,8 @@ public:
         EGE::EGEServer::onLogin(client, data);
 
         // Spawn SceneObject that will be controlled by this client.
-        auto sceneObject = make<MyObject>(getScene(), true);
+        ASSERT(getScene());
+        auto sceneObject = make<MyObject>((EGE::Scene2D&)*getScene(), true);
         std::cerr << "Adding Object to Scene" << std::endl;
         getScene()->addObject(sceneObject);
 
@@ -215,7 +216,7 @@ TESTCASE(server)
 
         auto timer = make<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
         timer->setCallback([scene](std::string, EGE::Timer*) {
-                                auto object = make<MyObject>(scene);
+                                auto object = make<MyObject>(*scene);
                                 object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
                                 scene->addObject(object);
                            });
@@ -305,7 +306,7 @@ public:
         gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
         // Register SceneObject types for Client.
-        m_client->addSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE_OBJECT_CREATOR(MyObject));
+        m_client->registerSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
 
         // Set exit handler for Client. It will be called when client is disconnected.
         m_client->setExitHandler([this](int retVal) {
@@ -317,7 +318,7 @@ public:
         addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(getWindow(), m_client));
 
         // Initialize Camera.
-        m_camera = make<EGE::CameraObject2D>(scene);
+        m_camera = make<EGE::CameraObject2D>(*scene);
         m_camera->setScalingMode(EGE::ScalingMode::Centered);
         scene->setCamera(m_camera);
 

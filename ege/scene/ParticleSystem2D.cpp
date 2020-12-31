@@ -20,11 +20,15 @@ void ParticleSystem2D::render(Renderer& renderer) const
 
 void ParticleSystem2D::onUpdate(long long tickCounter)
 {
-    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->startSection("particleSystem");
+    if(!getOwner().isHeadless())
+        getOwner().getLoop()->getProfiler()->startSection("particleSystem");
+
     SceneObject2D::onUpdate(tickCounter);
 
     // update existing particles
-    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->startSection("update");
+    if(!getOwner().isHeadless())
+        getOwner().getLoop()->getProfiler()->startSection("update");
+
     for(auto it = m_particles.begin(); it != m_particles.end();)
     {
         auto current = it;
@@ -41,7 +45,9 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     }
 
     // spawn new particles
-    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endStartSection("spawn");
+    if(!getOwner().isHeadless())
+        getOwner().getLoop()->getProfiler()->endStartSection("spawn");
+
     if(m_spawnChance == 1)
         spawnParticle();
     else if(m_spawnChance > 1)
@@ -55,9 +61,11 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
         if(val < m_spawnChance)
             spawnParticle();
     }
-    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endSection();
+    if(!getOwner().isHeadless())
+        getOwner().getLoop()->getProfiler()->endSection();
 
-    if(!getOwner()->isHeadless()) getOwner()->getLoop()->getProfiler()->endSection();
+    if(!getOwner().isHeadless())
+        getOwner().getLoop()->getProfiler()->endSection();
 }
 
 Vec2d ParticleSystem2D::randomPosition()
@@ -78,13 +86,13 @@ void ParticleSystem2D::Particle::update()
 {
     ttl--;
 
-    if(system->m_particleUpdater)
-        system->m_particleUpdater(*this);
+    if(system.m_particleUpdater)
+        system.m_particleUpdater(*this);
 }
 
 void ParticleSystem2D::spawnParticle()
 {
-    Particle particle(this);
+    Particle particle(*this);
     particle.position = randomPosition();
     particle.ttl = m_particleTTL;
 

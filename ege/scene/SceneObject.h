@@ -23,7 +23,7 @@ class Scene;
 class SceneObject : public Animatable, public GameplayObject, public Controllable, public Renderable
 {
 public:
-    SceneObject(std::shared_ptr<EGE::Scene> owner, std::string typeId)
+    SceneObject(EGE::Scene& owner, std::string typeId)
     : GameplayObject(typeId), m_owner(owner) {}
 
     virtual void onUpdate(long long tickCounter);
@@ -66,14 +66,14 @@ public:
     bool getExtendedChangedFlag() const { return m_extendedChanged; }
 
     void setDead() { m_dead = true; }
-    std::shared_ptr<EGE::Scene> getOwner() const { return m_owner; }
+    EGE::Scene& getOwner() const { return m_owner; }
     void setRenderer(std::shared_ptr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
 
 protected:
     void setMainChanged(bool flag = true) { m_mainChanged = flag; }
     void setExtendedChanged(bool flag = true) { m_extendedChanged = flag; }
 
-    std::shared_ptr<EGE::Scene> m_owner;
+    Scene& m_owner;
     bool m_dead = false;
     long long m_id = 0;
     std::string m_name;

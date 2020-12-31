@@ -20,7 +20,7 @@ template<class TMap>
 class TilemapRenderer2D : public ObjectRenderer
 {
 public:
-    TilemapRenderer2D(SceneObject& sceneObject, std::shared_ptr<TMap> tilemap)
+    TilemapRenderer2D(SceneObject2D& sceneObject, std::shared_ptr<TMap> tilemap)
     : ObjectRenderer(sceneObject), m_tileMap(tilemap) { setLayerCount(1); }
 
     void setAtlasTextureName(std::string name, Size layer = 0)
@@ -212,13 +212,11 @@ public:
         ASSERT(chunkSize.y != 0);
 
         SceneObject2D& sceneObject = (SceneObject2D&)m_sceneObject;
-
-        Scene2D* scene = (Scene2D*)sceneObject.getOwner().get();
-        ASSERT(scene);
+        Scene2D& scene = (Scene2D&)sceneObject.getOwner();
 
         // TODO: allow setting tilemap bounds
-        Vec2d beginCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
-        Vec2d endCoord = scene->mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
+        Vec2d beginCoord = scene.mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
+        Vec2d endCoord = scene.mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
         Vec2d objPos = sceneObject.getPosition();
 
         Vector2<MaxInt> beginChunk = {
@@ -236,7 +234,7 @@ public:
 
     virtual void updateGeometry(Renderer&) override
     {
-        auto resourceManager = m_sceneObject.getOwner()->getLoop()->getResourceManager();
+        auto resourceManager = m_sceneObject.getOwner().getLoop()->getResourceManager();
         ASSERT(resourceManager);
 
         for(Size s = 0; s < m_layerCount; s++)

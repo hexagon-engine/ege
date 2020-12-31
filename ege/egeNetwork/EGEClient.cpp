@@ -224,10 +224,9 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     if(!getScene()) //scene not created
         return EventResult::Success;
 
-    EGEGame::GPOM* gpom = getGameplayObjectManager().get();
-    ASSERT(gpom);
+    EGEGame::GPOM& gpom = getGameplayObjectManager();
 
-    auto func = gpom->sceneObjectCreators.findById(typeId);
+    auto func = gpom.sceneObjectCreators.findById(typeId);
     if(!func) //game version mismatch?
     {
         err() << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?";
@@ -235,7 +234,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     }
 
     // Call `func' that was registered by user.
-    std::shared_ptr<SceneObject> sceneObject = (*func)(getScene());
+    std::shared_ptr<SceneObject> sceneObject = (*func)(*getScene());
     sceneObject->setObjectId(id); // Don't assign ID automatically!
     sceneObject->deserialize(object);
     getScene()->addObject(sceneObject);
@@ -289,21 +288,6 @@ EventResult EGEClient::onLoad()
 {
     if(!EGEGame::initialize())
         return EventResult::Failure;
-
-    // Add all SceneObjectCreators
-    {
-        auto gpom = getGameplayObjectManager();
-        for(auto pr: m_sceneObjectCreators)
-        {
-            // TODO: Make some alias for it.
-            gpom->sceneObjectCreators.add(pr.first, std::make_unique<std::function<std::shared_ptr<EGE::SceneObject>(std::shared_ptr<EGE::Scene> scene)>>(
-                                        [pr](std::shared_ptr<EGE::Scene> scene)
-                                        {
-                                            return pr.second(scene);
-                                        }
-                                    ));
-        }
-    }
 
     // Run client thread
     auto clientNetworkWorker = [this]()->int {
