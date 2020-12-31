@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include "Scene.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/util/ObjectString.h>
 
 namespace EGE
@@ -41,12 +42,16 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
     if(_m.is<ObjectMap::ValueType>())
         s &= deserializeMain(_m.to<ObjectMap>().value());
     else
+    {
+        err(LogLevel::Verbose) << "No main data key in SceneObject data!";
         return false;
+    }
 
     if(_x.is<ObjectMap::ValueType>())
         s &= deserializeExtended(_x.to<ObjectMap>().value());
     else
-        return false;
+        err(LogLevel::Verbose) << "No extended data key in SceneObject data!";
+        // They are not required
 
     return s;
 }
