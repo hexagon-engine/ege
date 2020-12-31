@@ -5,6 +5,8 @@ Copyright (c) Sppmacd 2020
 
 #include "Scene.h"
 
+#include <ege/debug/Logger.h>
+
 #include <algorithm>
 
 namespace EGE
@@ -80,6 +82,18 @@ IdType Scene::addObject(std::shared_ptr<SceneObject> object)
             ++m_greatestId;
         object->setObjectId(m_greatestId);
     }
+    else
+    {
+        if(m_greatestId < object->getObjectId())
+            m_greatestId = object->getObjectId();
+    }
+
+    if(m_objects.find(object->getObjectId()) != m_objects.end())
+    {
+        // It's NOT normal!
+        log(LogLevel::Error) << "Duplicate SceneObject ID: " << object->getObjectId();
+        return object->getObjectId();
+    }
 
     m_objects.insert(std::make_pair(object->getObjectId(), object));
 
@@ -91,14 +105,15 @@ IdType Scene::addObject(std::shared_ptr<SceneObject> object)
 
 IdType Scene::addStaticObject(std::shared_ptr<SceneObject> object)
 {
-    if(!object->getObjectId())
+    ASSERT_WITH_MESSAGE(object->getObjectId(), "Static SceneObjects must have assigned ID in scene data file");
+    if(m_greatestStaticId < object->getObjectId())
+        m_greatestStaticId = object->getObjectId();
+
+    if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
-        // On server, give entities negative IDs to separate client and server objects.
-        if(!getLoop())
-            --m_greatestId;
-        else
-            ++m_greatestId;
-        object->setObjectId(m_greatestId);
+        // It's normal for static objects when static objects were saved!
+        log(LogLevel::Verbose) << "Duplicate SceneObject ID: " << object->getObjectId();
+        return object->getObjectId();
     }
 
     m_staticObjects.insert(std::make_pair(object->getObjectId(), object));

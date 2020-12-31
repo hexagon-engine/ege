@@ -53,6 +53,7 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
         err(LogLevel::Verbose) << "No extended data key in SceneObject data!";
         // They are not required
 
+    m_changedSinceLoad = false;
     return s;
 }
 

@@ -41,11 +41,11 @@ public:
 
     bool isDead() const { return m_dead; }
 
-    long long getObjectId() const { return m_id; }
-    void setObjectId(long long id) { if(!m_id) m_id = id; }
+    IdType getObjectId() const { return m_id; }
+    void setObjectId(IdType id) { if(!m_id) m_id = id; }
 
     std::string getName() const { return m_name; }
-    void setName(std::string name) { m_name = name; }
+    void setName(std::string name) { m_name = name; setChanged(); }
 
     virtual std::shared_ptr<ObjectMap> serialize() const;
     virtual bool deserialize(std::shared_ptr<ObjectMap>);
@@ -64,21 +64,24 @@ public:
 
     bool getMainChangedFlag() const { return m_mainChanged; }
     bool getExtendedChangedFlag() const { return m_extendedChanged; }
+    bool didChangeSinceLoad() const { return m_changedSinceLoad; }
 
     void setDead() { m_dead = true; }
-    EGE::Scene& getOwner() const { return m_owner; }
+    Scene& getOwner() const { return m_owner; }
     void setRenderer(std::shared_ptr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
 
 protected:
-    void setMainChanged(bool flag = true) { m_mainChanged = flag; }
-    void setExtendedChanged(bool flag = true) { m_extendedChanged = flag; }
+    void setMainChanged() { m_mainChanged = true; setChanged(); }
+    void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
+    void setChanged() { m_changedSinceLoad = true; }
 
     Scene& m_owner;
     bool m_dead = false;
-    long long m_id = 0;
+    IdType m_id = 0;
     std::string m_name;
     bool m_mainChanged = true;
     bool m_extendedChanged = true;
+    bool m_changedSinceLoad = false;
     std::shared_ptr<ObjectRenderer> m_renderer;
 
     friend class ObjectRenderer;

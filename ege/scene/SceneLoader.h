@@ -33,7 +33,8 @@ public:
     : m_scene(scene), m_registry(registry) {}
 
     SharedPtr<ObjectMap> serializeSceneObjects() const;
-    bool deserializeSceneObjects(SharedPtr<ObjectMap> data, bool isStatic);
+    bool deserializeSceneObjects(SharedPtr<ObjectMap> data);
+    bool deserializeStaticSceneObjects(SharedPtr<ObjectMap> data);
 
     // Used for game saves
     bool saveScene(String fileName, const IOStreamConverter& converter = JSONConverter()) const;
@@ -43,6 +44,8 @@ public:
     bool loadStaticObjects(String fileName, const IOStreamConverter& converter = JSONConverter());
 
 private:
+    SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
+
     Scene& m_scene;
     SceneObjectCreatorRegistry& m_registry;
 };

@@ -483,6 +483,14 @@ TESTCASE(sceneLoader)
     scene->addObject(camera);
     scene->setCamera(camera);
 
+    // Change something in loaded static objects
+    {
+        auto so1 = scene->getStaticObject(1);
+        so1->setName("SO1");
+        auto so2 = scene->getStaticObject(2);
+        so2->setName("SO2");
+    }
+
     // Assign Resource Manager
     loop.setResourceManager(make<MyResourceManager>());
 

@@ -16,8 +16,9 @@ namespace EGE
 SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
 {
     auto data = make<ObjectMap>();
-    auto objects = make<ObjectList>();
 
+    // Add dynamic objects
+    auto objects = make<ObjectList>();
     for(auto& sObj : m_scene.m_objects)
     {
         auto entry = sObj.second->serialize();
@@ -26,11 +27,83 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         objects->addObject(entry);
     }
     data->addObject("objects", objects);
+
+    // Add static objects (if changed)
+    auto staticObjects = make<ObjectList>();
+    for(auto& sObj : m_scene.m_staticObjects)
+    {
+        if(sObj.second->didChangeSinceLoad())
+        {
+            auto entry = sObj.second->serialize();
+            entry->addInt("id", sObj.second->getObjectId());
+            entry->addString("typeId", sObj.second->getId());
+            staticObjects->addObject(entry);
+        }
+    }
+    data->addObject("staticObjects", staticObjects);
+
     return data;
 }
 
-bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data, bool isStatic)
+SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> objMap)
 {
+    if(!objMap.hasValue())
+    {
+        err() << "SceneObject description is not a Map!";
+        return nullptr;
+    }
+
+    auto typeId = objMap.value()->getObject("typeId").as<String>();
+    auto numId = objMap.value()->getObject("id").as<MaxInt>();
+    if(!typeId.hasValue())
+    {
+        err() << "SceneObject has no valid type ID!";
+        return nullptr;
+    }
+    if(!numId.hasValue())
+    {
+        err() << "SceneObject has no valid ID!";
+        return nullptr;
+    }
+
+    auto creator = m_registry.findById(typeId.value());
+    if(!creator)
+    {
+        err() << "No SOC found for " << typeId.value();
+        return nullptr;
+    }
+
+    SharedPtr<SceneObject> sceneObject = (*creator)(m_scene);
+    sceneObject->setObjectId(numId.value());
+
+    if(!sceneObject->deserialize(objMap.value()))
+    {
+        err() << "Failed to deserialize SceneObject!";
+        return nullptr;
+    }
+
+    return sceneObject;
+}
+
+bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
+{
+    // Load all static objects that changed from installation scene
+    auto staticObjects = data->getObject("staticObjects").to<ObjectList>();
+    if(!staticObjects.hasValue())
+        return false;
+
+    for(auto obj: *staticObjects.value())
+    {
+        auto objMap = Object::cast<ObjectMap>(obj);
+        auto sceneObject = loadObject(objMap);
+
+        if(!sceneObject)
+            continue;
+
+        m_scene.addStaticObject(sceneObject);
+    }
+
+    // Load all "dynamic" objects
     auto objects = data->getObject("objects").to<ObjectList>();
     if(!objects.hasValue())
         return false;
@@ -38,45 +111,33 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data, bool isStat
     for(auto obj: *objects.value())
     {
         auto objMap = Object::cast<ObjectMap>(obj);
-        if(!objMap.hasValue())
-        {
-            err() << "SceneObject description is not a Map!";
-            continue;
-        }
+        auto sceneObject = loadObject(objMap);
 
-        auto typeId = objMap.value()->getObject("typeId").as<String>();
-        auto numId = objMap.value()->getObject("id").as<MaxInt>();
-        if(!typeId.hasValue())
-        {
-            err() << "SceneObject has no valid type ID!";
+        if(!sceneObject)
             continue;
-        }
-        if(!numId.hasValue())
-        {
-            err() << "SceneObject has no valid ID!";
+
+        m_scene.addObject(sceneObject);
+    }
+
+    return true;
+}
+
+bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
+{
+    // Load all objects and add them as static objects.
+    auto objects = data->getObject("objects").to<ObjectList>();
+    if(!objects.hasValue())
+        return false;
+
+    for(auto obj: *objects.value())
+    {
+        auto objMap = Object::cast<ObjectMap>(obj);
+        auto sceneObject = loadObject(objMap);
+
+        if(!sceneObject)
             continue;
-        }
 
-        auto creator = m_registry.findById(typeId.value());
-        if(!creator)
-        {
-            err() << "No SOC found for " << typeId.value();
-            continue;
-        }
-
-        SharedPtr<SceneObject> sceneObject = (*creator)(m_scene);
-        sceneObject->setObjectId(numId.value());
-
-        if(!sceneObject->deserialize(objMap.value()))
-        {
-            err() << "Failed to deserialize SceneObject!";
-            continue;
-        }
-
-        if(!isStatic)
-            m_scene.addObject(sceneObject);
-        else
-            m_scene.addStaticObject(sceneObject);
+        m_scene.addStaticObject(sceneObject);
     }
 
     return true;
@@ -126,7 +187,7 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
         return false;
     }
 
-    return deserializeSceneObjects(objectMap.value(), false);
+    return deserializeSceneObjects(objectMap.value());
 }
 
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
@@ -153,7 +214,7 @@ bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& co
         return false;
     }
 
-    return deserializeSceneObjects(objectMap.value(), true);
+    return deserializeStaticSceneObjects(objectMap.value());
 }
 
 }
