@@ -69,7 +69,7 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
     auto creator = m_registry.findById(typeId.value());
     if(!creator)
     {
-        err() << "No SOC found for " << typeId.value();
+        log(LogLevel::Warning) << "No SOC found for " << typeId.value();
         return nullptr;
     }
 
@@ -187,7 +187,12 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
         return false;
     }
 
-    return deserializeSceneObjects(objectMap.value());
+    if(!deserializeSceneObjects(objectMap.value()))
+    {
+        err() << "Scene loading failed - failed to load data!";
+        return false;
+    }
+    return true;
 }
 
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
@@ -214,7 +219,21 @@ bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& co
         return false;
     }
 
-    return deserializeStaticSceneObjects(objectMap.value());
+    if(!deserializeStaticSceneObjects(objectMap.value()))
+    {
+        err() << "Static object loading failed - failed to load data!";
+        return false;
+    }
+    return true;
+}
+
+bool SceneLoader::loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter)
+{
+    if(!loadScene(saveName, converter))
+        // It's nothing wrong, we just create a new save!
+        log(LogLevel::Warning) << "Empty or invalid save: " << saveName;
+
+    return loadStaticObjects(sceneName, converter);;
 }
 
 }

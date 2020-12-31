@@ -466,14 +466,10 @@ TESTCASE(sceneLoader)
     auto scene = make<EGE::Scene2D>(&loop);
 
     EGE::SceneLoader loader(*scene, registry);
-    if(!loader.loadStaticObjects("res/scenes/test.json"))
+    if(!loader.loadSceneAndSave("saves/test.json", "res/scenes/test.json"))
     {
         log() << "Failed to load scene!";
-    }
-
-    if(!loader.loadScene("saves/test.json"))
-    {
-        log() << "Loading new save :)";
+        return 1;
     }
 
     // Add camera

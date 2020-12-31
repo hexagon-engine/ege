@@ -43,6 +43,11 @@ public:
     // Used for predefined scenes
     bool loadStaticObjects(String fileName, const IOStreamConverter& converter = JSONConverter());
 
+    // Load save and predefined scene at once, in proper order
+    // (that allows overwriting predefined objects with save
+    // objects if ID's are duplicated).
+    bool loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter = JSONConverter());
+
 private:
     SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
 
