@@ -91,11 +91,10 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
 
 bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 {
-    // TODO: change it to ObjectSerializers!
-    m_position = Serializers::toVector2(object->getObject("p").to<ObjectMap>().value());
-    m_origin = Serializers::toVector2(object->getObject("o").to<ObjectMap>().value());
-    m_scale = Serializers::toVector2(object->getObject("s").to<ObjectMap>().value());
-    m_motion = Serializers::toVector2(object->getObject("m").to<ObjectMap>().value());
+    m_position = Serializers::toVector2(object->getObject("p").to<ObjectMap>().valueOr({}));
+    m_origin = Serializers::toVector2(object->getObject("o").to<ObjectMap>().valueOr({}));
+    m_scale = Serializers::toVector2(object->getObject("s").to<ObjectMap>().valueOr({}));
+    m_motion = Serializers::toVector2(object->getObject("m").to<ObjectMap>().valueOr({}));
     m_rotation = object->getObject("rot").as<Float>().valueOr(0);
 
     return SceneObject::deserializeMain(object);
