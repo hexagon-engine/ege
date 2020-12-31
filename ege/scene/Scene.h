@@ -25,15 +25,17 @@ public:
     explicit Scene(GUIGameLoop* loop)
     : m_loop(loop) {}
 
-    typedef std::map<long long, std::shared_ptr<SceneObject>> ObjectMap;
+    typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
 
-    virtual void onUpdate(long long tickCounter);
+    virtual void onUpdate(TickCount tickCounter);
 
-    long long addObject(std::shared_ptr<SceneObject> object);
+    IdType addObject(std::shared_ptr<SceneObject> object);
+    IdType addStaticObject(std::shared_ptr<SceneObject> object);
 
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
-    std::shared_ptr<SceneObject> getObject(long long id);
+    std::shared_ptr<SceneObject> getObject(IdType id);
+    std::shared_ptr<SceneObject> getStaticObject(IdType id);
 
     ObjectMap::const_iterator begin() const { return m_objects.begin(); }
     ObjectMap::const_iterator end() const { return m_objects.end(); }
@@ -53,12 +55,16 @@ public:
     bool isHeadless() { return !getLoop(); }
 
 protected:
+    friend class SceneLoader;
+
     virtual void render(Renderer& renderer) const override;
 
     ObjectMap m_objects;
+    ObjectMap m_staticObjects;
 
 private:
-    long long m_greatestId = 0;
+    IdType m_greatestId = 0;
+    IdType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
     std::function<void(std::shared_ptr<SceneObject>)> m_addObjectCallback;

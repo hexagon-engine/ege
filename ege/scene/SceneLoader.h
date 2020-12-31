@@ -29,16 +29,21 @@ public:
         }
     };
 
-    SceneLoader(SceneObjectCreatorRegistry& registry)
-    : m_registry(registry) {}
+    SceneLoader(Scene& scene, SceneObjectCreatorRegistry& registry)
+    : m_scene(scene), m_registry(registry) {}
 
-    SharedPtr<ObjectMap> serializeScene(Scene& scene) const;
-    bool deserializeScene(SharedPtr<ObjectMap> data, Scene& scene) const;
+    SharedPtr<ObjectMap> serializeSceneObjects() const;
+    bool deserializeSceneObjects(SharedPtr<ObjectMap> data, bool isStatic);
 
-    bool saveScene(String fileName, Scene& scene, const IOStreamConverter& converter = JSONConverter()) const;
-    bool loadScene(String fileName, Scene& scene, const IOStreamConverter& converter = JSONConverter()) const;
+    // Used for game saves
+    bool saveScene(String fileName, const IOStreamConverter& converter = JSONConverter()) const;
+    bool loadScene(String fileName, const IOStreamConverter& converter = JSONConverter());
+
+    // Used for predefined scenes
+    bool loadStaticObjects(String fileName, const IOStreamConverter& converter = JSONConverter());
 
 private:
+    Scene& m_scene;
     SceneObjectCreatorRegistry& m_registry;
 };
 

@@ -14,6 +14,7 @@
 #include <ege/scene/TilemapRenderer2D.h>
 #include <ege/tilemap/ChunkedTileMap2D.h>
 #include <ege/tilemap/FixedTileMap2D.h>
+#include <ege/util/system.h>
 
 // my object definition
 class MyObject : public EGE::SceneObject2D
@@ -464,9 +465,16 @@ TESTCASE(sceneLoader)
     // Load some scene
     auto scene = make<EGE::Scene2D>(&loop);
 
-    EGE::SceneLoader loader(registry);
-    if(!loader.loadScene("res/scenes/test.json", *scene))
-        return 1;
+    EGE::SceneLoader loader(*scene, registry);
+    if(!loader.loadStaticObjects("res/scenes/test.json"))
+    {
+        log() << "Failed to load scene!";
+    }
+
+    if(!loader.loadScene("saves/test.json"))
+    {
+        log() << "Loading new save :)";
+    }
 
     // Add camera
     auto camera = make<EGE::CameraObject2D>(*scene);
@@ -488,7 +496,8 @@ TESTCASE(sceneLoader)
         return 2;
 
     // Try save scene
-    if(!loader.saveScene("res/scenes/test.json", *scene))
+    EGE::System::createDirectory("saves");
+    if(!loader.saveScene("saves/test.json"))
         return 3;
 
     return 0;

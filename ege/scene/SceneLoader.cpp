@@ -13,12 +13,12 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-SharedPtr<ObjectMap> SceneLoader::serializeScene(Scene& scene) const
+SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
 {
     auto data = make<ObjectMap>();
     auto objects = make<ObjectList>();
 
-    for(auto& sObj : scene)
+    for(auto& sObj : m_scene.m_objects)
     {
         auto entry = sObj.second->serialize();
         entry->addInt("id", sObj.second->getObjectId());
@@ -29,7 +29,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeScene(Scene& scene) const
     return data;
 }
 
-bool SceneLoader::deserializeScene(SharedPtr<ObjectMap> data, Scene& scene) const
+bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data, bool isStatic)
 {
     auto objects = data->getObject("objects").to<ObjectList>();
     if(!objects.hasValue())
@@ -64,7 +64,7 @@ bool SceneLoader::deserializeScene(SharedPtr<ObjectMap> data, Scene& scene) cons
             continue;
         }
 
-        SharedPtr<SceneObject> sceneObject = (*creator)(scene);
+        SharedPtr<SceneObject> sceneObject = (*creator)(m_scene);
         sceneObject->setObjectId(numId.value());
 
         if(!sceneObject->deserialize(objMap.value()))
@@ -73,13 +73,16 @@ bool SceneLoader::deserializeScene(SharedPtr<ObjectMap> data, Scene& scene) cons
             continue;
         }
 
-        scene.addObject(sceneObject);
+        if(!isStatic)
+            m_scene.addObject(sceneObject);
+        else
+            m_scene.addStaticObject(sceneObject);
     }
 
     return true;
 }
 
-bool SceneLoader::saveScene(String fileName, Scene& scene, const IOStreamConverter& converter) const
+bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter) const
 {
     log() << "Saving scene to " << fileName;
     std::ofstream file(fileName);
@@ -89,7 +92,7 @@ bool SceneLoader::saveScene(String fileName, Scene& scene, const IOStreamConvert
         return false;
     }
 
-    auto object = serializeScene(scene);
+    auto object = serializeSceneObjects();
     if(!object)
     {
         err() << "Scene loading failed - failed to generate data!";
@@ -99,7 +102,7 @@ bool SceneLoader::saveScene(String fileName, Scene& scene, const IOStreamConvert
     return converter.out(file, *object);
 }
 
-bool SceneLoader::loadScene(String fileName, Scene& scene, const IOStreamConverter& converter) const
+bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 {
     log() << "Loading scene from " << fileName;
     std::ifstream file(fileName);
@@ -123,7 +126,34 @@ bool SceneLoader::loadScene(String fileName, Scene& scene, const IOStreamConvert
         return false;
     }
 
-    return deserializeScene(objectMap.value(), scene);
+    return deserializeSceneObjects(objectMap.value(), false);
+}
+
+bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
+{
+    log() << "Loading static objects from " << fileName;
+    std::ifstream file(fileName);
+    if(!file.good())
+    {
+        err() << "Static object loading failed - failed to open file!";
+        return false;
+    }
+
+    SharedPtr<Object> object;
+    if(!converter.in(file, object))
+    {
+        err() << "Static object loading failed - failed to parse file data!";
+        return false;
+    }
+
+    auto objectMap = object->cast<ObjectMap>(object);
+    if(!objectMap.hasValue())
+    {
+        err() << "Static object loading failed - invalid data format!";
+        return false;
+    }
+
+    return deserializeSceneObjects(objectMap.value(), true);
 }
 
 }
