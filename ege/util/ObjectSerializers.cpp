@@ -27,6 +27,8 @@ std::shared_ptr<Object> object(std::string t)          { return make<ObjectStrin
 
 Vec2d toVector2(std::shared_ptr<ObjectMap> map)
 {
+    if(!map)
+        return {};
     auto x = map->getObject("x").as<Float>().valueOr(0);
     auto y = map->getObject("y").as<Float>().valueOr(0);
     return Vec2d(x, y);
@@ -34,6 +36,8 @@ Vec2d toVector2(std::shared_ptr<ObjectMap> map)
 
 Vec3d toVector3(std::shared_ptr<ObjectMap> map)
 {
+    if(!map)
+        return {};
     auto x = map->getObject("x").as<Float>().valueOr(0);
     auto y = map->getObject("y").as<Float>().valueOr(0);
     auto z = map->getObject("z").as<Float>().valueOr(0);
