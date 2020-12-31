@@ -43,7 +43,13 @@ public:
     virtual SharedPtr<Object> copy() const { return make<Object>(); }
 
     template<class T>
-    static Optional<SharedPtr<T>> cast(SharedPtr<Object> object) { return std::dynamic_pointer_cast<T>(object); }
+    static Optional<SharedPtr<T>> cast(SharedPtr<Object> object)
+    {
+        auto ptr = std::dynamic_pointer_cast<T>(object);
+        if(!ptr)
+            return {};
+        return ptr;
+    }
 };
 
 }
