@@ -13,18 +13,15 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-SharedPtr<Scene> Scene::fromFiles(String saveFile, String sceneFile, GUIGameLoop* loop,
-                                  const SceneLoader::SceneObjectCreatorRegistry& registry,
-                                  const IOStreamConverter& converter)
+bool Scene::loadfromFile(String saveFile, String sceneFile,
+                         const SceneLoader::SceneObjectCreatorRegistry& registry,
+                         const IOStreamConverter& converter)
 {
-    auto scene = make<Scene>(loop);
-    SceneLoader loader(*scene, registry);
-    if(loader.loadSceneAndSave(saveFile, sceneFile, converter))
-        return nullptr;
-    return scene;
+    SceneLoader loader(*this, registry);
+    return loader.loadSceneAndSave(saveFile, sceneFile, converter);
 }
 
-bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter()) const
+bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter)
 {
     SceneLoader loader(*this, registry);
     return loader.saveScene(saveFile, converter);

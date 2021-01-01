@@ -30,11 +30,12 @@ public:
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
 
-    static SharedPtr<Scene> fromFiles(String saveFile, String sceneFile, GUIGameLoop* loop,
-                                      const SceneLoader::SceneObjectCreatorRegistry& registry,
-                                      const IOStreamConverter& converter = JSONConverter());
+    bool loadfromFile(String saveFile, String sceneFile
+                      const SceneLoader::SceneObjectCreatorRegistry& registry,
+                      const IOStreamConverter& converter = JSONConverter());
 
-    bool saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter()) const;
+    // TODO: Make this const !
+    bool saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter());
 
     virtual void onUpdate(TickCount tickCounter);
 
