@@ -125,6 +125,7 @@ protected:
 
     Set<SceneObject*> m_children;
     SceneObject* m_parent = nullptr;
+    IdType m_parentId = 0;
 
     friend class ObjectRenderer;
     friend class Scene;

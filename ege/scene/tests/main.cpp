@@ -88,12 +88,12 @@ public:
     {
         // add our 'test' shader
         EGE::RenderStates myStates = renderer.getStates();
-        auto shader = getOwner().getLoop()->getResourceManager()->getShader("test");
+        /*auto shader = getOwner().getLoop()->getResourceManager()->getShader("test");
         double disturb1 = (float)std::sin(getOwner().getLoop()->time(EGE::Time::Unit::Seconds) * 5.14);
         double disturb2 = (float)std::sin(getOwner().getLoop()->time(EGE::Time::Unit::Seconds) * 1.14);
         shader->setUniform("disturb1", (float)disturb1);
         shader->setUniform("disturb2", (float)disturb2);
-        myStates.sfStates().shader = shader.get();
+        myStates.sfStates().shader = shader.get();*/
 
         sf::VertexArray varr(sf::Quads, 4);
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color::Red));

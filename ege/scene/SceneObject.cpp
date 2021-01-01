@@ -50,6 +50,12 @@ SceneObject::~SceneObject()
 
 void SceneObject::onUpdate(long long tickCounter)
 {
+    if(m_parentId && !m_parent)
+    {
+        setParent(getOwner().getObject(m_parentId).get());
+        m_parentId = 0;
+    }
+
     (void) tickCounter;
     EventLoop::onUpdate();
 }
@@ -105,7 +111,7 @@ bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
     auto parentId = data->getObject("parent").as<MaxUint>();
     if(parentId.hasValue())
     {
-        setParent(getOwner().getObject(parentId.value()).get());
+        m_parentId = parentId.value();
     }
     return true;
 }
@@ -123,9 +129,11 @@ bool SceneObject::deserializeExtended(std::shared_ptr<ObjectMap>)
 
 void SceneObject::setParent(SceneObject* object)
 {
+    log(LogLevel::Debug) << "SceneObject::setParent(" << object << ")";
     if(m_parent)
         m_parent->m_children.erase(this);
 
+    setMainChanged();
     m_parent = object;
     if(!object)
         return;
