@@ -3,6 +3,8 @@ EGE - Extendable Game Engine
 Copyright (c) Sppmacd 2020
 */
 
+#pragma once
+
 // It should be included only from Vector.h!
 #if !defined(VECTOR_H) || defined(VECTOR_H_END)
 #error "VectorOperations should not be included directly"
