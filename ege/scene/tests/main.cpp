@@ -81,8 +81,8 @@ private:
 class MyBackground : public EGE::SceneObject2D
 {
 public:
-    MyBackground(EGE::Scene2D& owner, std::string name)
-    : EGE::SceneObject2D(owner, name) {}
+    MyBackground(EGE::Scene2D& owner, std::string name = "")
+    : EGE::SceneObject2D(owner, "MyBackground") { setName(name); }
 
     void render(EGE::Renderer& renderer) const override
     {
@@ -461,6 +461,7 @@ TESTCASE(sceneLoader)
     // Setup typeID registry
     EGE::SceneLoader::SceneObjectCreatorRegistry registry;
     registry.addEntry("MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
+    registry.addEntry("MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground));
 
     // Load some scene
     auto scene = make<EGE::Scene2D>(&loop);
@@ -481,9 +482,9 @@ TESTCASE(sceneLoader)
 
     // Change something in loaded static objects
     {
-        auto so1 = scene->getStaticObject(1);
+        auto so1 = scene->getStaticObject(2);
         so1->setName("SO1");
-        auto so2 = scene->getStaticObject(2);
+        auto so2 = scene->getStaticObject(3);
         so2->setName("SO2");
     }
 
@@ -504,6 +505,60 @@ TESTCASE(sceneLoader)
     if(!loader.saveScene("saves/test.json"))
         return 3;
 
+    return 0;
+}
+
+TESTCASE(parenting)
+{
+    // Setup registry
+    EGE::SceneLoader::SceneObjectCreatorRegistry registry;
+    registry.addEntry("MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
+    registry.addEntry("MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground));
+
+    // Setup loop and load scene
+    EGE::GUIGameLoop loop;
+    auto scene = make<EGE::Scene2D>(&loop);
+    if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json", registry))
+        return 1;
+
+    // Add camera
+    {
+        auto camera = make<EGE::CameraObject2D>(*scene);
+        camera->setPosition({0, 0});
+        camera->setScalingMode(EGE::ScalingMode::Centered);
+        camera->setParent(scene->getStaticObject(1).get());
+
+        // Add some animation
+        auto anim = make<EGE::Animation>(camera.get(), EGE::Time(1.4, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        anim->addKeyframe(0, -1);
+        anim->addKeyframe(0.25, 1);
+        anim->addKeyframe(0.5, 0);
+        anim->addKeyframe(0.75, 1);
+        anim->addKeyframe(1, -1);
+        anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutSine);
+
+        camera->addAnimation(anim, [](EGE::Animation* obj, double fac) {
+            EGE::CameraObject2D* cam = (EGE::CameraObject2D*)obj->getLoop();
+            cam->setPosition({0, fac * 50});
+        });
+
+        scene->addObject(camera);
+        scene->setCamera(camera);
+    }
+
+    // Assign ResourceManager & open window & GUI
+    loop.setResourceManager(make<MyResourceManager>());
+    loop.openWindow(sf::VideoMode(600, 600), "Parenting");
+    auto gui = make<EGE::GUIScreen>(loop);
+    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+    loop.setCurrentGUIScreen(gui);
+
+    // Run game
+    loop.run();
+
+    // Save scene
+    if(!scene->saveToFile("saves/parenting.json", registry))
+        return 2;
     return 0;
 }
 

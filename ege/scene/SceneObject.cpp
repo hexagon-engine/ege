@@ -7,11 +7,15 @@ Copyright (c) Sppmacd 2020
 
 #include "Scene.h"
 
-#include <ege/debug/Logger.h>
 #include <ege/util/ObjectString.h>
 
 namespace EGE
 {
+
+SceneObject::~SceneObject()
+{
+    log(LogLevel::Debug) << "SceneObject::~SceneObject() " << this;
+}
 
 void SceneObject::onUpdate(long long tickCounter)
 {
@@ -59,12 +63,19 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
 
 std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 {
-    return nullptr;
+    auto data = make<ObjectMap>();
+    if(m_parent)
+        data->addInt("parent", m_parent->getObjectId());
+    return data;
 }
 
-bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap>)
+bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
 {
-    // nothing
+    auto parentId = data->getObject("parent").as<MaxUint>();
+    if(parentId.hasValue())
+    {
+        setParent(getOwner().getObject(parentId.value()).get());
+    }
     return true;
 }
 
@@ -77,6 +88,18 @@ bool SceneObject::deserializeExtended(std::shared_ptr<ObjectMap>)
 {
     // nothing
     return true;
+}
+
+void SceneObject::setParent(SceneObject* object)
+{
+    if(m_parent)
+        m_parent->m_children.erase(this);
+
+    m_parent = object;
+    if(!object)
+        return;
+
+    m_parent->m_children.insert(this);
 }
 
 }

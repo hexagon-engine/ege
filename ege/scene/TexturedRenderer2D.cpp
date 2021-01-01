@@ -26,7 +26,7 @@ void TexturedRenderer2D::updateGeometry(Renderer&)
 
 sf::FloatRect TexturedRenderer2D::getBoundingBox() const
 {
-    auto sceneObject = (SceneObject2D&)m_sceneObject;
+    auto& sceneObject = (SceneObject2D&)m_sceneObject;
 
     Vec2d origin = sceneObject.getOrigin();
     if(m_centered)

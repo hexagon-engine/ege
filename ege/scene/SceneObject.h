@@ -9,6 +9,7 @@ Copyright (c) Sppmacd 2020
 
 #include <SFML/Graphics.hpp>
 #include <ege/controller/Controllable.h>
+#include <ege/debug/Logger.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gfx/Renderable.h>
 #include <ege/gpo/GameplayObject.h>
@@ -20,11 +21,16 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public GameplayObject, public Controllable, public Renderable
+class SceneObject : public Animatable, public GameplayObject, public Controllable, public Renderable, public sf::NonCopyable
 {
 public:
     SceneObject(EGE::Scene& owner, std::string typeId)
-    : GameplayObject(typeId), m_owner(owner) {}
+    : GameplayObject(typeId), m_owner(owner)
+    {
+        log(LogLevel::Debug) << "SceneObject::SceneObject(" << typeId << ") " << this;
+    }
+
+    virtual ~SceneObject();
 
     virtual void onUpdate(long long tickCounter);
 
@@ -70,6 +76,8 @@ public:
     Scene& getOwner() const { return m_owner; }
     void setRenderer(std::shared_ptr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
 
+    void setParent(SceneObject* object);
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
@@ -84,7 +92,11 @@ protected:
     bool m_changedSinceLoad = false;
     std::shared_ptr<ObjectRenderer> m_renderer;
 
+    Set<SceneObject*> m_children;
+    SceneObject* m_parent = nullptr;
+
     friend class ObjectRenderer;
+    friend class Scene;
 };
 
 }

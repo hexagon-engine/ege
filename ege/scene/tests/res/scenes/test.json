@@ -1,8 +1,28 @@
 {
   "objects": [
     {
+      "typeId": "MyBackground",
+      "id": 101,
+      "m": {
+        "p": {
+          "x": -25,
+          "y": -25
+        }
+      }
+    },
+    {
+      "typeId": "MyBackground",
+      "id": 102,
+      "m": {
+        "p": {
+          "x": 25,
+          "y": 25
+        }
+      }
+    },
+    {
       "typeId": "MyObject",
-      "id": 1,
+      "id": 2,
       "m": {
         "ip": {
           "x": -50,
@@ -12,7 +32,7 @@
     },
     {
       "typeId": "MyObject",
-      "id": 2,
+      "id": 3,
       "m": {
         "ip": {
           "x": 50,

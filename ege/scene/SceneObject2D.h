@@ -36,7 +36,7 @@ public:
         }
         m_position = position;
     }
-    Vec2d getPosition() const { return m_position; }
+    Vec2d getPosition() const;
 
     virtual void setMotion(Vec2d motion)
     {

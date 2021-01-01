@@ -1,0 +1,24 @@
+{
+  "objects": [
+    {
+      "typeId": "MyBackground",
+      "id": 2,
+      "m": {
+        "ip": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "typeId": "MyObject",
+      "id": 1,
+      "m": {
+        "ip": {
+          "x": 0,
+          "y": 50
+        }
+      }
+    }
+  ]
+}

@@ -13,7 +13,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
-bool Scene::loadfromFile(String saveFile, String sceneFile,
+bool Scene::loadFromFile(String saveFile, String sceneFile,
                          const SceneLoader::SceneObjectCreatorRegistry& registry,
                          const IOStreamConverter& converter)
 {
@@ -66,6 +66,20 @@ void Scene::onUpdate(TickCount tickCounter)
                     log(LogLevel::Debug) << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
                     if(m_removeObjectCallback)
                         m_removeObjectCallback(object.second);
+
+                    // Set all children dead
+                    if(object.second->m_children.size() > 0)
+                    {
+                        log(LogLevel::Debug) << "SceneObject is dead: Removing " << object.second->m_children.size() << " children of " << object.second;
+                        for(auto& so: object.second->m_children)
+                        {
+                            so->setDead();
+                        }
+                    }
+
+                    // Remove object from its parent's children list
+                    if(object.second->m_parent)
+                        object.second->m_parent->m_children.erase(object.second.get());
 
                     objects.erase(oldIt);
 

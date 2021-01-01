@@ -8,6 +8,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/gpo/GameplayObjectRegistry.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Types.h>
+#include <ege/scene/SceneObject.h>
 #include <functional>
 
 #define EGE_SCENE2D_OBJECT_CREATOR(clazz) [](EGE::Scene& scene) { return make<clazz>((EGE::Scene2D&)scene); }

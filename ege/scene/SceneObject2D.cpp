@@ -13,6 +13,17 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+Vec2d SceneObject2D::getPosition() const
+{
+    if(m_parent)
+    {
+        SceneObject2D* parent = dynamic_cast<SceneObject2D*>(m_parent);
+        if(parent)
+            return m_position + parent->getPosition();
+    }
+    return m_position;
+}
+
 bool SceneObject2D::moveTo(Vec2d pos, bool notify)
 {
     // TODO: collisions

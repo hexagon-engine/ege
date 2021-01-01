@@ -7,17 +7,17 @@ Copyright (c) Sppmacd 2020
 
 #include <SFML/Graphics.hpp>
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
-#include <ege/scene/SceneObject.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/scene/SceneLoader.h>
+#include <ege/scene/SceneObject.h>
 #include <ege/util/Converter.h>
 #include <ege/util/JSONConverter.h>
 #include <functional>
 #include <map>
 #include <memory>
 
-#define SCENE_DEBUG 00
+#define SCENE_DEBUG 0
 
 namespace EGE
 {
@@ -30,7 +30,7 @@ public:
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
 
-    bool loadfromFile(String saveFile, String sceneFile
+    bool loadFromFile(String saveFile, String sceneFile,
                       const SceneLoader::SceneObjectCreatorRegistry& registry,
                       const IOStreamConverter& converter = JSONConverter());
 
