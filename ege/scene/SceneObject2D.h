@@ -94,7 +94,20 @@ public:
         return rect;
     }
 
-    double getRotation() const { return m_rotation; }
+    enum RotationMode
+    {
+        Inherit, // Object angle is parent angle + own angle
+        Lock     // Parent angle is ignored
+    };
+
+    void setRotationMode(RotationMode mode)
+    {
+        m_rotationMode = mode;
+        setGeometryNeedUpdate();
+    }
+    RotationMode getRotationMode() { return m_rotationMode; }
+
+    double getRotation() const;
     void setRotation(double rotation)
     {
         m_rotation = rotation;
@@ -132,6 +145,7 @@ protected:
     Vec2d m_origin;
     Vec2d m_motion;
     Vec2d m_scale = {1, 1};
+    RotationMode m_rotationMode = RotationMode::Inherit;
 
 private:
     Vec2d m_position;

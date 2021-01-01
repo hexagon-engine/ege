@@ -52,7 +52,8 @@ void SceneObject::onUpdate(long long tickCounter)
 {
     if(m_parentId && !m_parent)
     {
-        setParent(getOwner().getObject(m_parentId).get());
+        setParent(m_parentType == Type::Dynamic ? getOwner().getObject(m_parentId).get()
+                  : getOwner().getStaticObject(m_parentId).get());
         m_parentId = 0;
     }
 
@@ -84,7 +85,7 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
         s &= deserializeMain(_m.to<ObjectMap>().value());
     else
     {
-        err(LogLevel::Verbose) << "No main data key in SceneObject data!";
+        err(LogLevel::Error) << "No main data key in SceneObject data!";
         return false;
     }
 
@@ -102,17 +103,17 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 {
     auto data = make<ObjectMap>();
     if(m_parent)
+    {
         data->addInt("parent", m_parent->getObjectId());
+        data->addString("parentType", m_parentType == Type::Static ? "static" : "dynamic");
+    }
     return data;
 }
 
 bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
 {
-    auto parentId = data->getObject("parent").as<MaxUint>();
-    if(parentId.hasValue())
-    {
-        m_parentId = parentId.value();
-    }
+    m_parentId = data->getObject("parent").as<MaxUint>().valueOr(0);
+    m_parentType = data->getObject("parentType").as<String>().valueOr("dynamic") == "static" ? Type::Static : Type::Dynamic;
     return true;
 }
 

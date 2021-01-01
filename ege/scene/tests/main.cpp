@@ -508,12 +508,56 @@ TESTCASE(sceneLoader)
     return 0;
 }
 
+class SimpleRectangleObject : public EGE::SceneObject2D
+{
+public:
+    SimpleRectangleObject(EGE::Scene2D& scene)
+    : EGE::SceneObject2D(scene, "SimpleRectangleObject")
+    {
+        auto anim = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        anim->addKeyframe(0.0, -1.0);
+        anim->addKeyframe(0.5, 1.0);
+        anim->addKeyframe(1.0, -1.0);
+        anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
+        addAnimation(anim, [this](EGE::Animation*, double val) {
+                        setPosition(m_initialPosition + EGE::Vec2d(val * 10.f, 0));
+                     });
+    }
+
+    virtual void setPosition(EGE::Vec2d position)
+    {
+        if(m_initialPosition == EGE::Vec2d())
+            m_initialPosition = position;
+        EGE::SceneObject2D::setPosition(position);
+    }
+
+    virtual void render(EGE::Renderer& renderer) const
+    {
+        sf::RectangleShape rs(sf::Vector2f(20, 20));
+        rs.setOrigin(10, 10);
+        auto pos = getPosition();
+        rs.setPosition({(float)pos.x, (float)pos.y});
+        rs.setRotation(getRotation());
+        renderer.getTarget().draw(rs);
+    }
+
+    virtual void onUpdate(long long tickCounter)
+    {
+        EGE::SceneObject2D::onUpdate(tickCounter);
+        if(!m_parent)
+            setRotation(m_rotation + 0.01);
+    }
+
+    EGE::Vec2d m_initialPosition;
+};
+
 TESTCASE(parenting)
 {
     // Setup registry
     EGE::SceneLoader::SceneObjectCreatorRegistry registry;
     registry.addEntry("MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
     registry.addEntry("MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground));
+    registry.addEntry("SimpleRectangleObject", EGE_SCENE2D_OBJECT_CREATOR(SimpleRectangleObject));
 
     // Setup loop and load scene
     EGE::GUIGameLoop loop;
@@ -526,22 +570,6 @@ TESTCASE(parenting)
         auto camera = make<EGE::CameraObject2D>(*scene);
         camera->setPosition({0, 0});
         camera->setScalingMode(EGE::ScalingMode::Centered);
-        camera->setParent(scene->getStaticObject(1).get());
-
-        // Add some animation
-        auto anim = make<EGE::Animation>(camera.get(), EGE::Time(1.4, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
-        anim->addKeyframe(0, -1);
-        anim->addKeyframe(0.25, 1);
-        anim->addKeyframe(0.5, 0);
-        anim->addKeyframe(0.75, 1);
-        anim->addKeyframe(1, -1);
-        anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutSine);
-
-        camera->addAnimation(anim, [](EGE::Animation* obj, double fac) {
-            EGE::CameraObject2D* cam = (EGE::CameraObject2D*)obj->getLoop();
-            cam->setPosition({0, fac * 50});
-        });
-
         scene->addObject(camera);
         scene->setCamera(camera);
     }

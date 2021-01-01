@@ -61,6 +61,12 @@ public:
         log(LogLevel::Debug) << "SceneObject::SceneObject(" << typeId << ") " << this;
     }
 
+    enum Type
+    {
+        Static,
+        Dynamic
+    };
+
     virtual ~SceneObject();
 
     virtual void onUpdate(long long tickCounter);
@@ -126,6 +132,7 @@ protected:
     Set<SceneObject*> m_children;
     SceneObject* m_parent = nullptr;
     IdType m_parentId = 0;
+    Type m_parentType = Type::Dynamic;
 
     friend class ObjectRenderer;
     friend class Scene;

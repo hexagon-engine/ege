@@ -30,6 +30,42 @@
           "y": 10
         }
       }
+    },
+    {
+      "typeId": "SimpleRectangleObject",
+      "id": 4,
+      "m": {
+        "p": {
+          "x": -50,
+          "y": 50
+        }
+      }
+    },
+    {
+      "typeId": "MyObject",
+      "id": 5,
+      "m": {
+        "parent": 4,
+        "parentType": "static",
+        "ip": {
+          "x": 0,
+          "y": -30
+        }
+      },
+      "rm": 1
+    },
+    
+    {
+      "typeId": "SimpleRectangleObject",
+      "id": 6,
+      "m": {
+        "parent": 5,
+        "parentType": "static",
+        "p": {
+          "x": 0,
+          "y": -30
+        },
+      }
     }
   ]
 }

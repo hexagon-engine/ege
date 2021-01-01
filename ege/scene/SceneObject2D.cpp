@@ -50,9 +50,20 @@ Vec2d SceneObject2D::getPosition() const
     {
         SceneObject2D* parent = dynamic_cast<SceneObject2D*>(m_parent);
         if(parent)
-            return m_position + parent->getPosition();
+            return VectorOperations::rotate(m_position + parent->getPosition(), -parent->getRotation(), parent->getPosition());
     }
     return m_position;
+}
+
+double SceneObject2D::getRotation() const
+{
+    if(m_parent)
+    {
+        SceneObject2D* parent = dynamic_cast<SceneObject2D*>(m_parent);
+        if(parent && m_rotationMode == RotationMode::Inherit)
+            return m_rotation + parent->getRotation();
+    }
+    return m_rotation;
 }
 
 bool SceneObject2D::moveTo(Vec2d pos, bool notify)
@@ -122,6 +133,7 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
     data->addObject("s", Serializers::fromVector2(m_scale));
     data->addObject("m", Serializers::fromVector2(m_motion));
     data->addFloat("rot", m_rotation);
+    data->addUnsignedInt("rm", (MaxUint)m_rotationMode);
 
     auto superData = SceneObject::serializeMain();
 
@@ -138,6 +150,7 @@ bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
     m_scale = Serializers::toVector2(object->getObject("s").to<ObjectMap>().valueOr({}));
     m_motion = Serializers::toVector2(object->getObject("m").to<ObjectMap>().valueOr({}));
     m_rotation = object->getObject("rot").as<Float>().valueOr(0);
+    m_rotationMode = (RotationMode)object->getObject("rm").as<MaxUint>().valueOr(m_rotationMode);
 
     return SceneObject::deserializeMain(object);
 }
