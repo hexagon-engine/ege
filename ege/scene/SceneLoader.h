@@ -6,9 +6,9 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/gpo/GameplayObjectRegistry.h>
-#include <ege/scene/Scene.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Types.h>
+#include <functional>
 
 #define EGE_SCENE2D_OBJECT_CREATOR(clazz) [](EGE::Scene& scene) { return make<clazz>((EGE::Scene2D&)scene); }
 
@@ -29,7 +29,7 @@ public:
         }
     };
 
-    SceneLoader(Scene& scene, SceneObjectCreatorRegistry& registry)
+    SceneLoader(Scene& scene, const SceneObjectCreatorRegistry& registry)
     : m_scene(scene), m_registry(registry) {}
 
     SharedPtr<ObjectMap> serializeSceneObjects() const;
@@ -52,7 +52,7 @@ private:
     SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
 
     Scene& m_scene;
-    SceneObjectCreatorRegistry& m_registry;
+    const SceneObjectCreatorRegistry& m_registry;
 };
 
 }

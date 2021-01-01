@@ -7,6 +7,7 @@ Copyright (c) Sppmacd 2020
 
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
+#include <ege/scene/Scene.h>
 
 #include <fstream>
 
