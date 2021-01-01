@@ -13,6 +13,7 @@ Copyright (c) Sppmacd 2020
 #include <ege/util/ObjectInt.h>
 #include <ege/util/Random.h>
 #include <ege/util/system.h>
+#include <SFML/Network.hpp>
 
 namespace EGE
 {
@@ -62,8 +63,8 @@ sf::Packet EGEPacket::toSFMLPacket()
     sf::Packet packet;
     packet << (unsigned int)m_type;
 
-    if(m_args.get())
-        packet << objectOut(*m_args, EGEPacketConverter());
+    if(m_args)
+        EGEPacketConverter().out(packet, *m_args);
 
     return packet;
 }
