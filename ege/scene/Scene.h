@@ -10,6 +10,9 @@ Copyright (c) Sppmacd 2020
 #include <ege/scene/SceneObject.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
+#include <ege/scene/SceneLoader.h>
+#include <ege/util/Converter.h>
+#include <ege/util/JSONConverter.h>
 #include <functional>
 #include <map>
 #include <memory>
@@ -26,6 +29,12 @@ public:
     : m_loop(loop) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
+
+    static SharedPtr<Scene> fromFiles(String saveFile, String sceneFile, GUIGameLoop* loop,
+                                      const SceneLoader::SceneObjectCreatorRegistry& registry,
+                                      const IOStreamConverter& converter = JSONConverter());
+
+    bool saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter()) const;
 
     virtual void onUpdate(TickCount tickCounter);
 

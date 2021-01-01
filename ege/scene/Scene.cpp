@@ -5,12 +5,30 @@ Copyright (c) Sppmacd 2020
 
 #include "Scene.h"
 
-#include <ege/debug/Logger.h>
+#include "SceneLoader.h"
 
 #include <algorithm>
+#include <ege/debug/Logger.h>
 
 namespace EGE
 {
+
+SharedPtr<Scene> Scene::fromFiles(String saveFile, String sceneFile, GUIGameLoop* loop,
+                                  const SceneLoader::SceneObjectCreatorRegistry& registry,
+                                  const IOStreamConverter& converter)
+{
+    auto scene = make<Scene>(loop);
+    SceneLoader loader(*scene, registry);
+    if(loader.loadSceneAndSave(saveFile, sceneFile, converter))
+        return nullptr;
+    return scene;
+}
+
+bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter()) const
+{
+    SceneLoader loader(*this, registry);
+    return loader.saveScene(saveFile, converter);
+}
 
 void Scene::render(Renderer& renderer) const
 {
@@ -48,6 +66,7 @@ void Scene::onUpdate(TickCount tickCounter)
                 if(!isHeadless()) m_loop->getProfiler()->endStartSection("deadCheck");
                 if(object.second->isDead())
                 {
+                    log(LogLevel::Debug) << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
                     if(m_removeObjectCallback)
                         m_removeObjectCallback(object.second);
 
