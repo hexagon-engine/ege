@@ -2,7 +2,7 @@
   "objects": [
     {
       "typeId": "MyBackground",
-      "id": 2,
+      "name": "bg1",
       "m": {
         "ip": {
           "x": 0,
@@ -12,7 +12,7 @@
     },
     {
       "typeId": "MyObject",
-      "id": 1,
+      "name": "myo1",
       "m": {
         "ip": {
           "x": 0,
@@ -22,9 +22,9 @@
     },
     {
       "typeId": "MyBackground",
-      "id": 3,
+      "name": "bg2",
       "m": {
-        "parent": 1,
+        "parent": "bg1",
         "p": {
           "x": 0,
           "y": 10
@@ -33,7 +33,7 @@
     },
     {
       "typeId": "SimpleRectangleObject",
-      "id": 4,
+      "name": "simple1",
       "m": {
         "p": {
           "x": -50,
@@ -43,24 +43,22 @@
     },
     {
       "typeId": "MyObject",
-      "id": 5,
+      "name": "myoS",
       "m": {
-        "parent": 4,
-        "parentType": "static",
+        "parent": "simple1",
         "ip": {
           "x": 0,
           "y": -30
-        }
+        },
+        "rm": 1
       },
-      "rm": 1
     },
     
     {
       "typeId": "SimpleRectangleObject",
-      "id": 6,
+      "name": "simple3",
       "m": {
-        "parent": 5,
-        "parentType": "static",
+        "parent": "myoS",
         "p": {
           "x": 0,
           "y": -30

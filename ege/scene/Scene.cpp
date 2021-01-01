@@ -39,6 +39,7 @@
 #include "SceneLoader.h"
 
 #include <algorithm>
+#include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 
 namespace EGE
@@ -49,12 +50,22 @@ bool Scene::loadFromFile(String saveFile, String sceneFile,
                          const IOStreamConverter& converter)
 {
     SceneLoader loader(*this, registry);
-    return loader.loadSceneAndSave(saveFile, sceneFile, converter);
+    bool success = loader.loadSceneAndSave(saveFile, sceneFile, converter);
+
+    return success;
 }
 
 bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter)
 {
     SceneLoader loader(*this, registry);
+
+    log() << "Objects: ";
+    for(auto it: m_objects)
+        printObject(it.second->serialize());
+    log() << "Static Objects: ";
+    for(auto it: m_staticObjects)
+        printObject(it.second->serialize());
+
     return loader.saveScene(saveFile, converter);
 }
 
@@ -112,6 +123,7 @@ void Scene::onUpdate(TickCount tickCounter)
                     if(object.second->m_parent)
                         object.second->m_parent->m_children.erase(object.second.get());
 
+                    m_objectsByName.erase(object.second->getName());
                     objects.erase(oldIt);
 
                     if(objects.empty())
@@ -155,8 +167,16 @@ IdType Scene::addObject(std::shared_ptr<SceneObject> object)
         log(LogLevel::Error) << "Duplicate SceneObject ID: " << object->getObjectId();
         return object->getObjectId();
     }
+    if(m_objectsByName.find(object->getName()) != m_objectsByName.end())
+    {
+        // If it happens, fix your code!
+        CRASH_WITH_MESSAGE("Duplicate SceneObject name");
+    }
 
     m_objects.insert(std::make_pair(object->getObjectId(), object));
+    if(object->getName().empty())
+        object->setName("SO" + std::to_string(object->getObjectId()));
+    m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
 
     if(m_addObjectCallback)
         m_addObjectCallback(object);
@@ -164,20 +184,46 @@ IdType Scene::addObject(std::shared_ptr<SceneObject> object)
     return object->getObjectId();
 }
 
-IdType Scene::addStaticObject(std::shared_ptr<SceneObject> object)
+IdType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite)
 {
-    ASSERT_WITH_MESSAGE(object->getObjectId(), "Static SceneObjects must have assigned ID in scene data file");
-    if(m_greatestStaticId < object->getObjectId())
-        m_greatestStaticId = object->getObjectId();
+    ASSERT_WITH_MESSAGE(!object->getName().empty(), "Static SceneObjects must have assigned name in scene data file");
+
+    if(!object->getObjectId())
+    {
+        // On server, give entities negative IDs to separate client and server objects.
+        if(!getLoop())
+            --m_greatestStaticId;
+        else
+            ++m_greatestStaticId;
+        object->setObjectId(m_greatestStaticId);
+    }
+    else
+    {
+        if(m_greatestStaticId < object->getObjectId())
+            m_greatestStaticId = object->getObjectId();
+    }
 
     if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
+        log(LogLevel::Error) << "Duplicate SceneObject ID: " << object->getObjectId();
+        return object->getObjectId();
+    }
+    auto it = m_objectsByName.find(object->getName());
+    if(it != m_objectsByName.end())
+    {
         // It's normal for static objects when static objects were saved!
-        log(LogLevel::Verbose) << "Duplicate SceneObject ID: " << object->getObjectId();
+        log(LogLevel::Verbose) << "Duplicate SceneObject name: " << object->getName();
+        if(overwrite)
+        {
+            log(LogLevel::Debug) << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
+            m_objectsByName[it->second->getName()] = object.get();
+            m_staticObjects[it->second->getObjectId()] = object;
+        }
         return object->getObjectId();
     }
 
     m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
+    m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
     return object->getObjectId();
 }
 
@@ -197,6 +243,7 @@ std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
     return getObjects([typeId](SceneObject* object)->bool { return object->getId() == typeId; });
 }
+
 std::shared_ptr<SceneObject> Scene::getObject(IdType id)
 {
     auto it = m_objects.find(id);
@@ -209,6 +256,14 @@ std::shared_ptr<SceneObject> Scene::getStaticObject(IdType id)
 {
     auto it = m_staticObjects.find(id);
     if(it != m_staticObjects.end())
+        return it->second;
+    return nullptr;
+}
+
+SceneObject* Scene::getObjectByName(String id)
+{
+    auto it = m_objectsByName.find(id);
+    if(it != m_objectsByName.end())
         return it->second;
     return nullptr;
 }

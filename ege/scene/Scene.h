@@ -60,6 +60,7 @@ public:
     : m_loop(loop) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
+    typedef StringMap<SceneObject*> ObjectMapByName;
 
     bool loadFromFile(String saveFile, String sceneFile,
                       const SceneLoader::SceneObjectCreatorRegistry& registry,
@@ -70,13 +71,17 @@ public:
 
     virtual void onUpdate(TickCount tickCounter);
 
+    // %overwrite - overwrite object instead of skipping when name conflict arises
     IdType addObject(std::shared_ptr<SceneObject> object);
-    IdType addStaticObject(std::shared_ptr<SceneObject> object);
+    IdType addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite = false);
 
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
+
     std::shared_ptr<SceneObject> getObject(IdType id);
     std::shared_ptr<SceneObject> getStaticObject(IdType id);
+
+    SceneObject* getObjectByName(String name);
 
     ObjectMap::const_iterator begin() const { return m_objects.begin(); }
     ObjectMap::const_iterator end() const { return m_objects.end(); }
@@ -102,6 +107,8 @@ protected:
 
     ObjectMap m_objects;
     ObjectMap m_staticObjects;
+    ObjectMapByName m_objectsByName;
+    ObjectMapByName m_staticObjectsByName;
 
 private:
     IdType m_greatestId = 0;

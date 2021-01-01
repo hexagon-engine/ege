@@ -2,7 +2,7 @@
   "objects": [
     {
       "typeId": "MyBackground",
-      "id": 101,
+      "name": "101",
       "m": {
         "p": {
           "x": -25,
@@ -12,7 +12,7 @@
     },
     {
       "typeId": "MyBackground",
-      "id": 102,
+      "name": "102",
       "m": {
         "p": {
           "x": 25,
@@ -22,7 +22,7 @@
     },
     {
       "typeId": "MyObject",
-      "id": 2,
+      "name": "2",
       "m": {
         "ip": {
           "x": -50,
@@ -32,7 +32,7 @@
     },
     {
       "typeId": "MyObject",
-      "id": 3,
+      "name": "3",
       "m": {
         "ip": {
           "x": 50,

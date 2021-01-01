@@ -38,6 +38,7 @@
 
 #include "Scene.h"
 
+#include <ege/debug/Dump.h>
 #include <ege/util/ObjectString.h>
 
 namespace EGE
@@ -48,17 +49,15 @@ SceneObject::~SceneObject()
     log(LogLevel::Debug) << "SceneObject::~SceneObject() " << this;
 }
 
-void SceneObject::onUpdate(long long tickCounter)
+void SceneObject::onUpdate(long long)
 {
-    if(m_parentId && !m_parent)
+    if(!m_parentId.empty() && !m_parent)
     {
-        setParent(m_parentType == Type::Dynamic ? getOwner().getObject(m_parentId).get()
-                  : getOwner().getStaticObject(m_parentId).get());
-        m_parentId = 0;
+        setParent(getOwner().getObjectByName(m_parentId));
+        m_parentId = "";
     }
 
-    (void) tickCounter;
-    EventLoop::onUpdate();
+    Animatable::onUpdate();
 }
 
 std::shared_ptr<ObjectMap> SceneObject::serialize() const
@@ -103,17 +102,14 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 {
     auto data = make<ObjectMap>();
     if(m_parent)
-    {
-        data->addInt("parent", m_parent->getObjectId());
-        data->addString("parentType", m_parentType == Type::Static ? "static" : "dynamic");
-    }
+        data->addString("parent", m_parent->getName());
+
     return data;
 }
 
 bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
 {
-    m_parentId = data->getObject("parent").as<MaxUint>().valueOr(0);
-    m_parentType = data->getObject("parentType").as<String>().valueOr("dynamic") == "static" ? Type::Static : Type::Dynamic;
+    m_parentId = data->getObject("parent").as<String>().valueOr("");
     return true;
 }
 

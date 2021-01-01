@@ -54,7 +54,6 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
     for(auto& sObj : m_scene.m_objects)
     {
         auto entry = sObj.second->serialize();
-        entry->addInt("id", sObj.second->getObjectId());
         entry->addString("typeId", sObj.second->getId());
         objects->addObject(entry);
     }
@@ -67,7 +66,6 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         if(sObj.second->didChangeSinceLoad())
         {
             auto entry = sObj.second->serialize();
-            entry->addInt("id", sObj.second->getObjectId());
             entry->addString("typeId", sObj.second->getId());
             staticObjects->addObject(entry);
         }
@@ -86,15 +84,9 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
     }
 
     auto typeId = objMap.value()->getObject("typeId").as<String>();
-    auto numId = objMap.value()->getObject("id").as<MaxInt>();
     if(!typeId.hasValue())
     {
         err() << "SceneObject has no valid type ID!";
-        return nullptr;
-    }
-    if(!numId.hasValue())
-    {
-        err() << "SceneObject has no valid ID!";
         return nullptr;
     }
 
@@ -106,8 +98,6 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
     }
 
     SharedPtr<SceneObject> sceneObject = (*creator)(m_scene);
-    sceneObject->setObjectId(numId.value());
-
     if(!sceneObject->deserialize(objMap.value()))
     {
         err() << "Failed to deserialize SceneObject!";
@@ -132,7 +122,7 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
         if(!sceneObject)
             continue;
 
-        m_scene.addStaticObject(sceneObject);
+        m_scene.addStaticObject(sceneObject, true);
     }
 
     // Load all "dynamic" objects
@@ -261,11 +251,17 @@ bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& co
 
 bool SceneLoader::loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter)
 {
+    if(!loadStaticObjects(sceneName, converter))
+    {
+        log(LogLevel::Critical) << "Failed to load predefined scene!";
+        return false;
+    }
+
     if(!loadScene(saveName, converter))
-        // It's nothing wrong, we just create a new save!
+        // It's nothing wrong, we will just create a new save!
         log(LogLevel::Warning) << "Empty or invalid save: " << saveName;
 
-    return loadStaticObjects(sceneName, converter);;
+    return true;
 }
 
 }

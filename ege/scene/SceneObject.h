@@ -55,7 +55,7 @@ class Scene;
 class SceneObject : public Animatable, public GameplayObject, public Controllable, public Renderable, public sf::NonCopyable
 {
 public:
-    SceneObject(EGE::Scene& owner, std::string typeId)
+    SceneObject(EGE::Scene& owner, String typeId)
     : GameplayObject(typeId), m_owner(owner)
     {
         log(LogLevel::Debug) << "SceneObject::SceneObject(" << typeId << ") " << this;
@@ -131,7 +131,7 @@ protected:
 
     Set<SceneObject*> m_children;
     SceneObject* m_parent = nullptr;
-    IdType m_parentId = 0;
+    String m_parentId;
     Type m_parentType = Type::Dynamic;
 
     friend class ObjectRenderer;
