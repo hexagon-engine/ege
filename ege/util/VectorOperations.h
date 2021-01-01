@@ -117,6 +117,32 @@ PolarVector2<T> toPolar(Vector2<T> cartesian)
     return PolarVector2<T>(angleTo(Vector2<T>(), cartesian), distanceTo(Vector2<T>(), cartesian));
 }
 
+// 2D Transforms
+template<class T>
+Vector2<T> scale(Vector2<T> in, Vector2<T> factors, Vector2<T> center = {})
+{
+    Vector2<T> tmp = in - center;
+    tmp.x *= factors.x;
+    tmp.y *= factors.y;
+    return tmp + center;
+}
+
+template<class T>
+Vector2<T> scale(Vector2<T> in, T factor, Vector2<T> center = {})
+{
+    return scale(in, {factor, factor}, center);
+}
+
+template<class T>
+Vector2<T> rotate(Vector2<T> in, double angle, Vector2<T> center = {})
+{
+    Vector2<T> tmp = in - center;
+    Vector2<T> out;
+    out.x = std::cos(Math::deg2rad(-angle)) * tmp.x - std::sin(Math::deg2rad(-angle)) * tmp.y;
+    out.y = std::sin(Math::deg2rad(-angle)) * tmp.x + std::cos(Math::deg2rad(-angle)) * tmp.y;
+    return out + center;
+}
+
 } // namespace VectorOperations
 
 //// 2D VECTORS

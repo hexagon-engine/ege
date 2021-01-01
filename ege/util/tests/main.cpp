@@ -148,6 +148,15 @@ TESTCASE(vectors)
     EGE::Vec2i vec1(4, 3);
     EGE::Vec2i vec2(3, 4);
     EXPECT_EQUAL(EGE::VectorOperations::length(vec1), EGE::VectorOperations::length(vec2));
+
+    // Transforms
+    EXPECT_EQUAL(EGE::VectorOperations::scale(vec1, 2), EGE::Vec2i(8, 6));
+    auto rot = EGE::VectorOperations::rotate(vec1, 90);
+    DUMP(1, rot.x);
+    DUMP(1, rot.y);
+    double v = EGE::VectorOperations::distanceTo(EGE::VectorOperations::rotate(vec1, 90), EGE::Vec2i(3, -4));
+    DUMP(1, v);
+    EXPECT(v < 0.01);
     return 0;
 }
 
