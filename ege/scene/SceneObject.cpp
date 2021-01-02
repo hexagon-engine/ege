@@ -55,6 +55,7 @@ void SceneObject::onUpdate(long long)
     {
         setParent(getOwner().getObjectByName(m_parentId));
         m_parentId = "";
+        m_changedSinceLoad = false;
     }
 
     Animatable::onUpdate();
