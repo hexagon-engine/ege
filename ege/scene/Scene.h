@@ -108,7 +108,6 @@ protected:
     ObjectMap m_objects;
     ObjectMap m_staticObjects;
     ObjectMapByName m_objectsByName;
-    ObjectMapByName m_staticObjectsByName;
 
 private:
     IdType m_greatestId = 0;

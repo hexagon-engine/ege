@@ -57,6 +57,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         entry->addString("typeId", sObj.second->getId());
         objects->addObject(entry);
     }
+    log(LogLevel::Debug) << "SceneLoader finished saving " << objects->size() << " objects";
     data->addObject("objects", objects);
 
     // Add static objects (if changed)
@@ -70,6 +71,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
             staticObjects->addObject(entry);
         }
     }
+    log(LogLevel::Debug) << "SceneLoader finished saving " << staticObjects->size() << " static objects";
     data->addObject("staticObjects", staticObjects);
 
     return data;
@@ -141,6 +143,8 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
         m_scene.addObject(sceneObject);
     }
 
+    log(LogLevel::Debug) << "SceneLoader finished loading with " << m_scene.m_objects.size() << " objects";
+
     return true;
 }
 
@@ -161,6 +165,8 @@ bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 
         m_scene.addStaticObject(sceneObject);
     }
+
+    log(LogLevel::Debug) << "SceneLoader finished loading with " << m_scene.m_staticObjects.size() << " static objects";
 
     return true;
 }

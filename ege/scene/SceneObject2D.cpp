@@ -146,7 +146,6 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
 
 bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
 {
-    printObject(object);
     m_position = Serializers::toVector2(object->getObject("p").to<ObjectMap>().valueOr({}));
     m_origin = Serializers::toVector2(object->getObject("o").to<ObjectMap>().valueOr({}));
     m_scale = Serializers::toVector2(object->getObject("s").to<ObjectMap>().valueOr({}));

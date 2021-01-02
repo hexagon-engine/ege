@@ -216,8 +216,14 @@ IdType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwrit
         if(overwrite)
         {
             log(LogLevel::Debug) << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
-            m_objectsByName[it->second->getName()] = object.get();
-            m_staticObjects[it->second->getObjectId()] = object;
+            auto& oldObject = m_objectsByName[it->second->getName()];
+
+            // Remove old object and add new (with new ID etc.)
+            m_staticObjects.erase(oldObject->getObjectId());
+            m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
+
+            // Set another 'object by name'.
+            oldObject = object.get();
         }
         return object->getObjectId();
     }
