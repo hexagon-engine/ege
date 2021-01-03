@@ -46,11 +46,11 @@ namespace EGE
 class CompoundWidget : public Widget
 {
 public:
-    explicit CompoundWidget(Widget& parent)
-    : Widget(parent) {}
+    explicit CompoundWidget(Widget& parent, String id = "CompoundWidget")
+    : Widget(parent, id) {}
 
-    explicit CompoundWidget(GUIGameLoop& loop)
-    : Widget(loop) {}
+    explicit CompoundWidget(GUIGameLoop& loop, String id = "CompoundWidget (root)")
+    : Widget(loop, id) {}
 
     // System Events -- are passed to all child widgets
     virtual void onClose() override {}
@@ -76,8 +76,9 @@ public:
     // GUI-specific Events
     virtual void onCommand(const Command& command) override
     {
-        if(m_parent)
-            m_parent->onCommand(command);
+        auto parent = getParentWidget();
+        if(parent)
+            parent->onCommand(command);
     }
 
     // Widget Events
@@ -85,12 +86,12 @@ public:
 
     virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
 
-    void addWidget(std::shared_ptr<Widget> widget);
+    void addWidget(SharedPtr<Widget> widget);
     void removeWidget(Widget* widget);
 
 private:
-    std::vector<std::shared_ptr<Widget>> m_childWidgets;
-    std::shared_ptr<Widget> m_focusedWidget;
+    Widget* m_focusedWidget = nullptr;
+    Vector<SharedPtr<Widget>> m_childWidgets;
 };
 
 }

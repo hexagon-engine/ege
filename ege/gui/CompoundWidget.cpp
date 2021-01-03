@@ -38,6 +38,8 @@
 
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
@@ -88,18 +90,22 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 
 void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
-    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
+    Vec2d position = Vec2d(event.x, event.y);
+    log(LogLevel::Debug) << "CompoundWidget::onMouseButtonPress(" << position.x << "," << position.y << ")";
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
 
         // Change focused widget.
+        log(LogLevel::Debug) << "  Widget " << widget->getId() << " pos(" << widget->getAbsolutePosition().x << "," << widget->getAbsolutePosition().y << ")"
+        << " size(" << widget->getSize().x << "," << widget->getSize().y << ")";
         if(widget->isMouseOver(position) && event.button == sf::Mouse::Left)
         {
+            log(LogLevel::Debug) << "- isMouseOver!";
             if(m_focusedWidget)
                 m_focusedWidget->onLossFocus();
 
-            m_focusedWidget = widget;
+            m_focusedWidget = widget.get();
             m_focusedWidget->onGainFocus();
 
             sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
@@ -110,7 +116,7 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 
 void CompoundWidget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 {
-    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
+    EGE::Vec2d position = Vec2d(event.x, event.y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
@@ -121,7 +127,7 @@ void CompoundWidget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 
 void CompoundWidget::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
-    EGE::Vec2d position(event.x - getPosition().x, event.y - getPosition().y);
+    Vec2d position = Vec2d(event.x, event.y);
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
@@ -222,8 +228,7 @@ void CompoundWidget::onUpdate(long long tickCounter)
 
 void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
-    // Render widget self
-    Widget::doRender(renderer, states);
+    // TODO: render background??
 
     // Render child widgets
     // TODO: draw only visible widgets
@@ -232,15 +237,18 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
         setCustomView(renderer.getTarget());
         widget->doRender(renderer, states);
     }
+
+    // Render widget self
+    Widget::doRender(renderer, states);
 }
 
-void CompoundWidget::addWidget(std::shared_ptr<Widget> widget)
+void CompoundWidget::addWidget(SharedPtr<Widget> widget)
 {
     // deferredInvoke to allow adding and removing widgets inside event handlers
-    deferredInvoke([this,widget]() {
+    deferredInvoke([this, widget]() {
         DUMP(GUI_DEBUG, "addWidget");
         DUMP(GUI_DEBUG, widget.get());
-        ASSERT(widget.get());
+        ASSERT(widget);
         widget->onLoad();
 
         // allow widgets know about window's size when creating
@@ -249,24 +257,26 @@ void CompoundWidget::addWidget(std::shared_ptr<Widget> widget)
         widget->onResize(event);
 
         m_childWidgets.push_back(widget);
+        setGeometryNeedUpdate();
     });
 }
 
 void CompoundWidget::removeWidget(Widget* widget)
 {
     // deferredInvoke to allow adding and removing widgets inside event handlers
-    deferredInvoke([this,widget]() {
+    deferredInvoke([this, widget]() {
         for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
         {
             if(it->get() == widget)
             {
-                if(widget == m_focusedWidget.get())
+                if(widget == m_focusedWidget)
                     m_focusedWidget = nullptr;
 
                 m_childWidgets.erase(it);
                 return;
             }
         }
+        setGeometryNeedUpdate();
     });
 }
 

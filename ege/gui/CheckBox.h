@@ -47,8 +47,8 @@ namespace EGE
 class CheckBox : public Button
 {
 public:
-    explicit CheckBox(Widget& parent)
-    : Button(parent) {}
+    explicit CheckBox(Widget& parent, String id = "CheckBox")
+    : Button(parent, id) {}
 
     void setChecked(bool checked = true)
     {
@@ -70,7 +70,6 @@ protected:
     virtual void render(Renderer& renderer) const override;
     virtual void updateGeometry(Renderer& renderer) override;
 
-    virtual void setSize(EGE::Vec2d) {}
     virtual void onClick(EGE::Vec2d);
 };
 

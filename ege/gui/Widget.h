@@ -38,6 +38,7 @@
 
 #include "Animatable.h"
 #include "Animation.h"
+#include "LayoutElement.h"
 
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/gfx/Renderable.h>
@@ -51,7 +52,7 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Widget : public Animatable, public DefaultSystemEventHandler, public Renderable
+class Widget : public Animatable, public DefaultSystemEventHandler, public Renderable, public LayoutElement
 {
 public:
     class Command
@@ -70,53 +71,57 @@ public:
         std::string m_id;
     };
 
-    explicit Widget(Widget& parent)
+    explicit Widget(Widget& parent, String id = "Widget")
     : DefaultSystemEventHandler(parent.getWindow())
-    , m_parent(&parent)
-    , m_gameLoop(parent.m_gameLoop) {}
+    , LayoutElement(&parent, id)
+    , m_gameLoop(parent.m_gameLoop)
+    , m_parentWidget(&parent) {}
 
     // for non-parented widgets, e.g. GUIScreen
-    explicit Widget(GUIGameLoop& gameLoop);
-
-    virtual void setPosition(EGE::Vec2d position) { m_position = position; }
-    EGE::Vec2d getPosition() const { return m_position; }
+    // NOTE: For layouting, they must have fixed (px or A) size set!
+    explicit Widget(GUIGameLoop& gameLoop, String id = "Widget (root)");
 
     GUIGameLoop& getLoop() const { return m_gameLoop; }
-
-    virtual void setSize(EGE::Vec2d size) { m_size = size; }
-    EGE::Vec2d getSize() const { return m_size; }
-
-    Widget* getParent() { return m_parent; }
 
     virtual sf::FloatRect getBoundingBox();
     virtual sf::FloatRect getViewport(sf::RenderTarget& target) const;
 
     virtual void onUpdate(long long tickCounter);
-    virtual void onLoad() {};
+
+    virtual void onLoad() {}
     virtual void onCommand(const Command&) {}
+
+    virtual void onResize(sf::Event::SizeEvent& event) override;
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
     virtual void onLossFocus() override;
     virtual void onGainFocus() override;
 
-    virtual bool isMouseOver(EGE::Vec2d position);
+    virtual bool isMouseOver(Vec2d position);
     virtual sf::View getCustomView(sf::RenderTarget& target) const override;
     virtual bool isCustomViewNeeded() const { return true; }
 
     bool hasFocus() const { return m_hasFocus; }
 
+    Widget* getParentWidget() const { return m_parentWidget; }
+
+    virtual void setPosition(LVec2d position) override { LayoutElement::setPosition(position); setGeometryNeedUpdate(); }
+    virtual void setSize(LVec2d size) override  { LayoutElement::setSize(size); setGeometryNeedUpdate(); }
+    virtual void setPadding(LVec2d padding) override  { LayoutElement::setPadding(padding); setGeometryNeedUpdate(); }
+
 protected:
     virtual void render(Renderer& renderer) const override;
+    virtual void updateGeometry(Renderer& renderer) override;
 
-    EGE::Vec2d m_size;
-    Widget* m_parent;
+    void runLayoutUpdate();
+
     bool m_mouseOver = false;
     bool m_leftClicked = false;
     GUIGameLoop& m_gameLoop;
+    Widget* m_parentWidget;
 
 private:
-    EGE::Vec2d m_position;
     bool m_hasFocus = false;
 };
 
@@ -126,12 +131,6 @@ class DummyWidget : public Widget
 public:
     DummyWidget(Widget& parent)
     : Widget(parent) {}
-
-    void setSize(EGE::Vec2d size)
-    {
-        m_size = size;
-    }
-
 };
 
 }

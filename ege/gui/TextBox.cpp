@@ -49,8 +49,8 @@
 namespace EGE
 {
 
-TextBox::TextBox(Widget& parent)
-: Widget(parent)
+TextBox::TextBox(Widget& parent, String id)
+: Widget(parent, id)
 {
     m_caretAnimation = make<Animation>(this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
     m_caretAnimation->addKeyframe(0.0, 1.0);
@@ -77,12 +77,12 @@ void TextBox::render(Renderer& renderer) const
     // selection
     float selStart = m_textDrawable.findCharacterPos(m_selectionStart).x;
     float selEnd = m_textDrawable.findCharacterPos(m_selectionEnd).x - selStart;
-    renderer.renderRectangle(selStart, 3.f, selEnd, m_size.y - 6.f, sf::Color(17, 168, 219, 127));
+    renderer.renderRectangle(selStart, 3.f, selEnd, getSize().y - 6.f, sf::Color(17, 168, 219, 127));
 
     // caret
     if(hasFocus() && m_caretShown)
     {
-        sf::RectangleShape rsCaret(sf::Vector2f(1.f, m_size.y - 6.f));
+        sf::RectangleShape rsCaret(sf::Vector2f(1.f, getSize().y - 6.f));
         rsCaret.setPosition(m_textDrawable.findCharacterPos(m_caretPos).x, 3.f);
         rsCaret.setFillColor(sf::Color::Black);
         renderer.getTarget().draw(rsCaret);
@@ -90,6 +90,8 @@ void TextBox::render(Renderer& renderer) const
 
     // border
     renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+
+    Widget::render(renderer);
 }
 
 void TextBox::onMouseEnter()
@@ -280,17 +282,18 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
 
 void TextBox::generateText()
 {
-    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
-    sf::Text text(m_text, *font, m_size.y / 2.f);
+    sf::Text text(m_text, *font, getSize().y / 2.f);
     text.setFillColor(sf::Color::Black);
-    float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (m_size.x - 20.f));
-    text.setPosition(10.f - overflow, m_size.y / 4.f);
+    float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (getSize().x - 20.f));
+    text.setPosition(10.f - overflow, getSize().y / 4.f);
     m_textDrawable = text;
 }
 
-void TextBox::updateGeometry(Renderer&)
+void TextBox::updateGeometry(Renderer& renderer)
 {
+    Widget::updateGeometry(renderer);
     generateText();
 }
 

@@ -90,15 +90,8 @@ public:
     {
         auto label = make<EGE::Label>(*this);
         label->setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
-        label->setPosition(EGE::Vec2d(40.f, 0.f));
         label->setFontSize(15);
         addWidget(label);
-    }
-
-    void onResize(sf::Event::SizeEvent& event)
-    {
-        EGE::Widget::onResize(event);
-        m_size = EGE::Vec2d(event.width - 80.f, 32.f);
     }
 
     void render(EGE::Renderer& renderer) const override
@@ -125,6 +118,7 @@ public:
 
     void onLoad()
     {
+        layoutDirection = EGE::LayoutElement::Direction::Vertical;
         DEBUG_PRINT("MyGuiScreen onLoad");
         size_t s = 0;
         for(auto& _color: MyGameplayObjectManager::instance->colors)
@@ -132,7 +126,7 @@ public:
             DEBUG_PRINT(_color.first.baseId.c_str());
             DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
             auto widget = make<ColorWidget>(*this, _color.first, _color.second.get());
-            widget->setPosition(EGE::Vec2d(40.f, 40.f * s + 40.f));
+            widget->setSize({"0N", "0N"});
             m_widgets.push_back(widget);
             addWidget(widget);
             s++;

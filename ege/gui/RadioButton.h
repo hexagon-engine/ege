@@ -47,8 +47,8 @@ namespace EGE
 class RadioButton : public CheckBox
 {
 public:
-    explicit RadioButton(Widget& parent)
-    : CheckBox(parent) {}
+    explicit RadioButton(Widget& parent, String id = "RadioButton")
+    : CheckBox(parent, id) {}
 
 protected:
     virtual void render(Renderer& renderer) const override;

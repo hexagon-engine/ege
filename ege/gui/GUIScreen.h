@@ -48,12 +48,12 @@ namespace EGE
 class GUIScreen : public CompoundWidget
 {
 public:
-    explicit GUIScreen(GUIGameLoop& gameLoop)
-    : CompoundWidget(gameLoop) {}
+    explicit GUIScreen(GUIGameLoop& gameLoop, String id = "GUIScreen (root)")
+    : CompoundWidget(gameLoop, id) {}
 
     // for modal dialogs
-    explicit GUIScreen(Widget& parent)
-    : CompoundWidget(parent) {}
+    explicit GUIScreen(Widget& parent, String id = "GUIScreen")
+    : CompoundWidget(parent, id) {}
 
     // System Events -- are passed to all child widgets
     virtual void onClose() override;

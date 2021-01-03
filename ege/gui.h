@@ -49,6 +49,8 @@
 #include <ege/gui/GUIResourceManager.h>
 #include <ege/gui/GUIScreen.h>
 #include <ege/gui/Label.h>
+#include <ege/gui/LayoutElement.h>
+#include <ege/gui/LayoutSize.h>
 #include <ege/gui/RadioButton.h>
 #include <ege/gui/ScrollBar.h>
 #include <ege/gui/TextBox.h>

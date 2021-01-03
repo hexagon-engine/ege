@@ -55,8 +55,7 @@ void GUIScreen::onClose()
 void GUIScreen::onResize(sf::Event::SizeEvent& event)
 {
     // Ensure that GUI is resized to cover entire target
-    setPosition(EGE::Vec2d());
-    setSize(EGE::Vec2d(event.width, event.height));
+    setSize({(double)event.width, (double)event.height});
 
     if(m_dialog)
     {
@@ -310,8 +309,8 @@ void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
 
 void GUIScreen::exitDialog(int code)
 {
-    m_parent->deferredInvoke([this, code] {
-        GUIScreen* parent = (GUIScreen*)m_parent;
+    getParentWidget()->deferredInvoke([this, code] {
+        GUIScreen* parent = dynamic_cast<GUIScreen*>(getParentWidget());
         ASSERT(parent);
         parent->onDialogExit(this, code);
         onUnload();

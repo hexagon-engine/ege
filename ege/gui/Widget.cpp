@@ -38,6 +38,7 @@
 
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <SFML/Graphics.hpp>
@@ -45,45 +46,36 @@
 namespace EGE
 {
 
-Widget::Widget(GUIGameLoop& gameLoop)
+Widget::Widget(GUIGameLoop& gameLoop, String id)
 : DefaultSystemEventHandler(gameLoop.getWindow())
-, m_parent(nullptr)
-, m_gameLoop(gameLoop) {}
+, LayoutElement(nullptr, id)
+, m_gameLoop(gameLoop)
+, m_parentWidget(nullptr) {}
 
 sf::FloatRect Widget::getBoundingBox()
 {
-    return sf::FloatRect(m_position.x, m_position.y, m_size.x, m_size.y);
+    return sf::FloatRect(getAbsolutePosition().x, getAbsolutePosition().y, getSize().x, getSize().y);
 }
 sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
 {
-    EGE::Vec2d parentPosition;
-
-    DUMP(0, m_parent);
-    if(m_parent)
-    {
-        parentPosition = (EGE::Vec2d)m_parent->getPosition();
-    }
-
-    DUMP(0, m_size.x);
-    DUMP(0, m_size.y);
+    DUMP(0, getSize().x);
+    DUMP(0, getSize().y);
 
     sf::Vector2u windowSize;
     windowSize = target.getSize();
 
-    EGE::Vec2d widgetPosition = parentPosition + getPosition();
+    EGE::Vec2d widgetPosition = getAbsolutePosition();
 
-    DUMP(0, parentPosition.x);
-    DUMP(0, parentPosition.y);
     DUMP(0, widgetPosition.x);
     DUMP(0, widgetPosition.y);
 
     sf::FloatRect currentRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
-                  m_size.x / windowSize.x, m_size.y / windowSize.y);
+                  getSize().x / windowSize.x, getSize().y / windowSize.y);
 
-    if(m_parent)
+    if(getParentWidget())
     {
         sf::FloatRect intersection;
-        currentRect.intersects((sf::FloatRect)m_parent->getViewport(target), intersection);
+        currentRect.intersects((sf::FloatRect)getParentWidget()->getViewport(target), intersection);
         return intersection;
     }
     else
@@ -96,14 +88,14 @@ void Widget::render(Renderer& renderer) const
     if constexpr(WIDGET_DEBUG)
     {
         // TODO: Use Renderer's methods
-        sf::RectangleShape rs(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
+        sf::RectangleShape rs(sf::Vector2f(getSize().x, getSize().y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(sf::Vector2f(1.f, 1.f));
         rs.setOutlineColor(sf::Color::Cyan);
 
         if(hasFocus())
         {
             rs.setOutlineThickness(2.f);
-            rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(4.f, 4.f));
+            rs.setSize(sf::Vector2f(getSize().x, getSize().y) - sf::Vector2f(4.f, 4.f));
             rs.setPosition(sf::Vector2f(2.f, 2.f));
         }
         else
@@ -115,7 +107,14 @@ void Widget::render(Renderer& renderer) const
         if(m_leftClicked)
             rs.setOutlineColor(sf::Color::Green);
         renderer.getTarget().draw(rs);
+
+        //renderer.renderText(0, 0, *getLoop().getResourceManager()->getDefaultFont(), std::to_string(getPosition().x) + "," + std::to_string(getPosition().y), 10, sf::Color::Black);
     }
+}
+
+void Widget::onResize(sf::Event::SizeEvent&)
+{
+    setGeometryNeedUpdate();
 }
 
 void Widget::onMouseMove(sf::Event::MouseMoveEvent& event)
@@ -180,6 +179,26 @@ void Widget::onUpdate(long long tickCounter)
 {
     (void)tickCounter;
     EventLoop::onUpdate();
+}
+
+void Widget::updateGeometry(Renderer&)
+{
+    log(LogLevel::Info) << "Geometry Update for " << getId();
+
+    // Layouting
+    if(!getParent())
+    {
+        log(LogLevel::Notice) << "Run Layout Update!! " << getId();
+        calculateLayout();
+    }
+}
+
+void Widget::runLayoutUpdate()
+{
+    if(m_parentWidget)
+        m_parentWidget->runLayoutUpdate();
+    else
+        calculateLayout();
 }
 
 }

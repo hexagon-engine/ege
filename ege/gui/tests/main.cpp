@@ -155,16 +155,11 @@ public:
         m_vals.push_back(val);
     }
 
-    void setSize(EGE::Vec2d size)
-    {
-        m_size = size;
-    }
-
     void render(EGE::Renderer& renderer) const override
     {
         sf::RenderTarget& target = renderer.getTarget();
 
-        sf::RectangleShape rs(sf::Vector2f(m_size.x - 2.f, m_size.y - 2.f));
+        sf::RectangleShape rs(sf::Vector2f(getSize().x - 2.f, getSize().y - 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineThickness(1.f);
         rs.setOutlineColor(sf::Color::White);
@@ -175,7 +170,7 @@ public:
         int c = 0;
         for(double v: m_vals)
         {
-            varr.append(sf::Vertex(sf::Vector2f((double)c * m_size.x / m_max, v * (m_size.y / 12.f) + m_size.y / 2.f), sf::Color::Red));
+            varr.append(sf::Vertex(sf::Vector2f((double)c * getSize().x / m_max, v * (getSize().y / 12.f) + getSize().y / 2.f), sf::Color::Red));
             c++;
         }
         target.draw(varr);
@@ -203,157 +198,165 @@ public:
         getWindow().setFramerateLimit(60);
         DEBUG_PRINT("MyResourceManager onLoad");
 
-        auto button = make<EGE::Button>(*this);
-        button->setLabel("T.e.s.t&");
-        button->setPosition(EGE::Vec2d(50.f, 50.f));
-        button->setSize(EGE::Vec2d(200.f, 40.f));
-        button->setCallback([this]() {
-            if(!timerRunning)
-            {
-                DEBUG_PRINT("clicked");
+        setPadding({10, 10});
+        layoutDirection = EGE::LayoutElement::Direction::Vertical;
 
-                addWidget(button2);
-                timerRunning = true;
-                addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback([this](std::string, EGE::Timer*) {
-                    removeWidget(button2.get());
-                    timerRunning = false;
-                }));
-            }
-        });
-        addWidget(button);
-
-        button2 = make<EGE::Button>(*this);
-        button2->setLabel("T.e.s.t&:2");
-        button2->setPosition(EGE::Vec2d(50.f, 100.f));
-        button2->setSize(EGE::Vec2d(200.f, 40.f));
-
-        auto labelLeft = make<EGE::Label>(*this);
-        labelLeft->setString("Label Left");
-        labelLeft->setPosition(EGE::Vec2d(40.f, 150.f));
-        addWidget(labelLeft);
-
-        auto labelCenter = make<EGE::Label>(*this);
-        labelCenter->setString("Label Center");
-        labelCenter->setPosition(EGE::Vec2d(165.f, 200.f));
-        labelCenter->setTextAlign(EGE::Label::Align::Center);
-        addWidget(labelCenter);
-
-        auto labelRight = make<EGE::Label>(*this);
-        labelRight->setString("Label Right");
-        labelRight->setPosition(EGE::Vec2d(290.f, 250.f));
-        labelRight->setTextAlign(EGE::Label::Align::Right);
-        addWidget(labelRight);
-
-        labelAnimated = make<EGE::Label>(*this);
-        labelAnimated->setString("Animation");
-        labelAnimated->setPosition(EGE::Vec2d(150.f, 300.f));
-        labelAnimated->setTextAlign(EGE::Label::Align::Center);
-        addWidget(labelAnimated);
-
-        ball = make<EGE::Label>(*this);
-        ball->setString("O");
-        ball->setPosition(EGE::Vec2d(0.f, 0.f));
-        ball->setTextAlign(EGE::Label::Align::Center);
-        addWidget(ball);
 
         labelFPS = make<EGE::Label>(*this);
         labelFPS->setString("FPS: 0.0");
-        labelFPS->setPosition(EGE::Vec2d(10.f, 10.f));
         labelFPS->setTextAlign(EGE::Label::Align::Center);
+        labelFPS->setSize({"0N", "0a"});
         addWidget(labelFPS);
 
-        auto myTextBox = make<EGE::TextBox>(*this);
-        myTextBox->setPosition(EGE::Vec2d(40.f, 400.f));
-        myTextBox->setSize(EGE::Vec2d(440.f, 25.f));
-        addWidget(myTextBox);
+        auto widgets = make<EGE::CompoundWidget>(*this);
+        addWidget(widgets);
 
-        auto myFrame = make<EGE::Frame>(*this);
-        myFrame->setSize(EGE::Vec2d(460.f, 470.f));
-        myFrame->setPosition(EGE::Vec2d(30.f, 20.f));
-        myFrame->setLabel("Widget test");
-        addWidget(myFrame);
+        {
+            auto myFrame = make<EGE::Frame>(*widgets);
+            myFrame->setLabel("Widget test");
+            myFrame->layoutDirection = EGE::LayoutElement::Direction::Vertical;
+            myFrame->setSize({"1N", "1N"});
+            widgets->addWidget(myFrame);
 
-        auto checkBox = make<EGE::CheckBox>(*this);
-        checkBox->setPosition(EGE::Vec2d(40.f, 440.f));
-        checkBox->setLabel("CheckBox");
-        addWidget(checkBox);
+            {
+                auto button = make<EGE::Button>(*myFrame);
+                button->setLabel("T.e.s.t&");
+                //button->setSize(EGE::Vec2d(200.f, 40.f));
+                button->setCallback([this, myFrame]() {
+                    if(!timerRunning)
+                    {
+                        DEBUG_PRINT("clicked");
 
-        auto radioButton = make<EGE::RadioButton>(*this);
-        radioButton->setPosition(EGE::Vec2d(40.f, 460.f));
-        radioButton->setLabel("RadioButton");
-        addWidget(radioButton);
+                        myFrame->addWidget(button2);
+                        timerRunning = true;
+                        addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback([this, myFrame](std::string, EGE::Timer*) {
+                            myFrame->removeWidget(button2.get());
+                            timerRunning = false;
+                        }));
+                    }
+                });
+                myFrame->addWidget(button);
 
-        auto scrollBar = make<EGE::ScrollBar>(*this);
-        scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
-        scrollBar->setType(EGE::ScrollBar::Type::Vertical);
-        scrollBar->setLength(500.f);
-        scrollBar->setUpdateCallback([](double val) {
-                                        std::cerr << "scrollbar.value=" << val << std::endl;
-                                     });
-        addWidget(scrollBar);
+                button2 = make<EGE::Button>(*myFrame);
+                button2->setLabel("T.e.s.t&:2");
+                //button2->setSize(EGE::Vec2d(200.f, 40.f));
 
-        graph = make<AnimationGraphWidget>(*this);
-        graph->setPosition(EGE::Vec2d(300.f, 100.f));
-        graph->setSize(EGE::Vec2d(100.f, 100.f));
-        graph->setMax(600.f);
-        addWidget(graph);
+                auto labelLeft = make<EGE::Label>(*myFrame);
+                labelLeft->setString("Label Left");
+                myFrame->addWidget(labelLeft);
 
-        auto anim = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
-        anim->addKeyframe(0.0, 1.0);
-        anim->addKeyframe(0.1, 5.0);
-        anim->addKeyframe(0.5, -3.0);
-        anim->addKeyframe(1.0, 6.0);
-        addAnimation(anim, [this](EGE::Animation*, double val) {
-                        graph->addVal(val);
-                     });
+                auto labelCenter = make<EGE::Label>(*myFrame);
+                labelCenter->setString("Label Center");
+                labelCenter->setTextAlign(EGE::Label::Align::Center);
+                myFrame->addWidget(labelCenter);
 
-        graph2 = make<AnimationGraphWidget>(*this);
-        graph2->setPosition(EGE::Vec2d(300.f, 210.f));
-        graph2->setSize(EGE::Vec2d(100.f, 100.f));
-        graph2->setMax(600.f);
-        addWidget(graph2);
+                auto labelRight = make<EGE::Label>(*myFrame);
+                labelRight->setString("Label Right");
+                labelRight->setTextAlign(EGE::Label::Align::Right);
+                myFrame->addWidget(labelRight);
 
-        auto anim2 = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
-        anim2->addKeyframe(0.0, 1.0);
-        anim2->addKeyframe(0.1, 5.0);
-        anim2->addKeyframe(0.5, -3.0);
-        anim2->addKeyframe(1.0, 6.0);
-        anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutCirc);
-        addAnimation(anim2, [this](EGE::Animation*, double val) {
-                        graph2->addVal(val);
-                     });
+                labelAnimated = make<EGE::Label>(*myFrame);
+                labelAnimated->setString("Animation");
+                labelAnimated->setTextAlign(EGE::Label::Align::Center);
+                myFrame->addWidget(labelAnimated);
 
-        auto anim3 = make<EGE::Animation>(this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
-        anim3->addKeyframe(0.0, -1.0);
-        anim3->addKeyframe(1.0, 1.0);
-        anim3->setEasingFunction([](double x)->double {
-                                                return ((x-0.5)*(x-0.5));
-                                                } );
-        addAnimation(anim3, [this](EGE::Animation*, double val) {
-                        ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
-                     });
+                ball = make<EGE::Label>(*myFrame);
+                ball->setString("O");
+                ball->setTextAlign(EGE::Label::Align::Center);
+                myFrame->addWidget(ball);
 
-        auto animLabel = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
-        animLabel->addKeyframe(0.0, -1.0);
-        animLabel->addKeyframe(0.5, 1.0);
-        animLabel->addKeyframe(1.0, -1.0);
-        animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
-        animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
-        addAnimation(animLabel, [this](EGE::Animation*, double val) {
-                        labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
-                     });
+                auto myTextBox = make<EGE::TextBox>(*myFrame);
+                //myTextBox->setSize(EGE::Vec2d(440.f, 25.f));
+                myFrame->addWidget(myTextBox);
+
+                auto checkBox = make<EGE::CheckBox>(*myFrame);
+                checkBox->setLabel("CheckBox");
+                myFrame->addWidget(checkBox);
+
+                auto radioButton = make<EGE::RadioButton>(*myFrame);
+                radioButton->setLabel("RadioButton");
+                myFrame->addWidget(radioButton);
+
+                /*
+                auto scrollBar = make<EGE::ScrollBar>(*myFrame);
+                scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
+                scrollBar->setType(EGE::ScrollBar::Type::Vertical);
+                scrollBar->setLength(500.f);
+                scrollBar->setUpdateCallback([](double val) {
+                                                std::cerr << "scrollbar.value=" << val << std::endl;
+                                             });
+                addWidget(scrollBar);*/
+            }
+
+            auto myFrame2 = make<EGE::Frame>(*widgets);
+            myFrame2->setLabel("Animation test");
+            myFrame2->layoutDirection = EGE::LayoutElement::Direction::Vertical;
+            myFrame2->setSize({"1N", "1N"});
+            widgets->addWidget(myFrame2);
+
+            {
+                graph = make<AnimationGraphWidget>(*myFrame2);
+                //graph->setSize(EGE::Vec2d(100.f, 100.f));
+                graph->setMax(600.f);
+                myFrame2->addWidget(graph);
+
+                auto anim = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                anim->addKeyframe(0.0, 1.0);
+                anim->addKeyframe(0.1, 5.0);
+                anim->addKeyframe(0.5, -3.0);
+                anim->addKeyframe(1.0, 6.0);
+                addAnimation(anim, [this](EGE::Animation*, double val) {
+                                graph->addVal(val);
+                             });
+
+                graph2 = make<AnimationGraphWidget>(*myFrame2);
+                //graph2->setSize(EGE::Vec2d(100.f, 100.f));
+                graph2->setMax(600.f);
+                myFrame2->addWidget(graph2);
+
+                auto anim2 = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                anim2->addKeyframe(0.0, 1.0);
+                anim2->addKeyframe(0.1, 5.0);
+                anim2->addKeyframe(0.5, -3.0);
+                anim2->addKeyframe(1.0, 6.0);
+                anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutCirc);
+                addAnimation(anim2, [this](EGE::Animation*, double val) {
+                                graph2->addVal(val);
+                             });
+
+                auto anim3 = make<EGE::Animation>(this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
+                anim3->addKeyframe(0.0, -1.0);
+                anim3->addKeyframe(1.0, 1.0);
+                anim3->setEasingFunction([](double x)->double {
+                                                        return ((x-0.5)*(x-0.5));
+                                                        } );
+                addAnimation(anim3, [this](EGE::Animation*, double val) {
+                                //ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
+                             });
+
+                auto animLabel = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+                animLabel->addKeyframe(0.0, -1.0);
+                animLabel->addKeyframe(0.5, 1.0);
+                animLabel->addKeyframe(1.0, -1.0);
+                animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
+                animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
+                addAnimation(animLabel, [this](EGE::Animation*, double val) {
+                                //labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
+                             });
+            }
+        }
     }
 
     virtual void onResize(sf::Event::SizeEvent& event)
     {
         EGE::GUIScreen::onResize(event);
-        labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
+        //labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
     }
 
     virtual void onUpdate(long long tickCounter)
     {
         EGE::GUIScreen::onUpdate(tickCounter);
-        labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop().getLatestFrameTime().asSeconds())));
+        //labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop().getLatestFrameTime().asSeconds())));
     }
 };
 

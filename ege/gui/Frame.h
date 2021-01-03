@@ -37,26 +37,21 @@
 #pragma once
 
 #include <ege/gfx/RenderStates.h>
-#include <ege/gui/Widget.h>
+#include <ege/gui/CompoundWidget.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
 {
 
-class Frame : public Widget
+class Frame : public CompoundWidget
 {
 public:
-    explicit Frame(Widget& parent)
-    : Widget(parent) {}
+    explicit Frame(Widget& parent, String id = "Frame")
+    : CompoundWidget(parent, id) { setPadding({10.0, 30.0}); }
 
     void setLabel(sf::String label)
     {
         m_label = label;
-    }
-
-    virtual sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect();
     }
 
 protected:

@@ -58,19 +58,7 @@ void Label::setFontSize(int size)
     setGeometryNeedUpdate();
 }
 
-void Label::setPosition(EGE::Vec2d position)
-{
-    setPositionInternal(position);
-    m_textPosition = position;
-    setGeometryNeedUpdate();
-};
-
-void Label::setPositionInternal(EGE::Vec2d position)
-{
-    Widget::setPosition(position);
-}
-
-void Label::updateGeometry(Renderer&)
+void Label::updateGeometry(Renderer& renderer)
 {
     // FIXME: label is weirdly clipped (':('; '???')
     ASSERT(getLoop().getResourceManager());
@@ -80,25 +68,37 @@ void Label::updateGeometry(Renderer&)
     }
     sf::Text text(m_string, *m_font, m_fontSize);
     sf::FloatRect bounds = text.getLocalBounds();
-    bounds.height += 7.f * m_fontSize / 15.f; //SFML text bounds bug??
+    bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
     bounds.width += 1.f * m_fontSize / 15.f;
-    m_size = EGE::Vec2d(bounds.width, bounds.height);
+
+    if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
+    {
+        // Set to text bounds.
+        setSize({bounds.width, bounds.height});
+    }
+
+    // Layouting
+    runLayoutUpdate();
+
+    Vec2d position;
+
     switch(m_align)
     {
         case Align::Left:
             text.setOrigin(0.f, 0.f);
-            setPositionInternal(EGE::Vec2d(m_textPosition.x, m_textPosition.y));
+            position = Vec2d();
             break;
         case Align::Center:
-            text.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-            setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width / 2.f, m_textPosition.y - bounds.height / 2.f));
+            text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
+            position = getSize() / 2.0;
             break;
         case Align::Right:
             text.setOrigin(bounds.width, bounds.height);
-            setPositionInternal(EGE::Vec2d(m_textPosition.x - bounds.width, m_textPosition.y - bounds.height));
+            position = getSize();
             break;
     }
-    text.setPosition(sf::Vector2f(m_textPosition.x, m_textPosition.y) - sf::Vector2f(getPosition().x, getPosition().y));
+
+    text.setPosition(position.x, position.y);
     text.setFillColor(m_color);
     m_text = text;
 }
@@ -106,6 +106,8 @@ void Label::updateGeometry(Renderer&)
 void Label::render(Renderer& renderer) const
 {
     renderer.getTarget().draw(m_text);
+
+    Widget::render(renderer);
 }
 
 }

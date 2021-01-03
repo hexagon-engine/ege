@@ -56,6 +56,7 @@ void Button::onTouchEnd(sf::Event::TouchEvent& event)
 void Button::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
+    auto size = getSize();
 
     // base
     if(m_leftClicked)
@@ -64,18 +65,18 @@ void Button::render(Renderer& renderer) const
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(192, 192, 192));
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(2.f, 2.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(200, 200, 200));
         target.draw(rs);
 
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
@@ -86,13 +87,13 @@ void Button::render(Renderer& renderer) const
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(210, 210, 210));
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
@@ -103,26 +104,28 @@ void Button::render(Renderer& renderer) const
         rs.setOutlineThickness(1.f);
 
         rs.setFillColor(sf::Color(200, 200, 200));
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(2.f, 2.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
         target.draw(rs);
 
         rs.setFillColor(sf::Color::Transparent);
-        rs.setSize(sf::Vector2f(m_size.x, m_size.y) - sf::Vector2f(1.f, 1.f));
+        rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
         target.draw(rs);
     }
 
     // label
-    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 18);
-    text.setPosition((int)m_size.x / 2, (int)m_size.y / 2);
+    text.setPosition((int)size.x / 2, (int)size.y / 2);
     text.setOrigin((int)text.getLocalBounds().width / 2, (int)text.getLocalBounds().height / 2);
     text.setFillColor(sf::Color::Black);
     target.draw(text);
+
+    Widget::render(renderer);
 }
 
 void Button::handleClick(EGE::Vec2d position)
@@ -137,7 +140,7 @@ void Button::handleClick(EGE::Vec2d position)
 
 void Button::onClick(EGE::Vec2d)
 {
-    m_parent->onCommand(Command(this));
+    getParentWidget()->onCommand(Command(this));
 }
 
 }

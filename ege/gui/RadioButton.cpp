@@ -87,12 +87,14 @@ void RadioButton::render(Renderer& renderer) const
     }
 
     // label
-    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
     text.setPosition(20.f, 0.f);
     text.setFillColor(sf::Color::Black);
     target.draw(text);
+
+    Widget::render(renderer);
 }
 
 void RadioButton::onClick(EGE::Vec2d pos)
@@ -107,13 +109,17 @@ void RadioButton::onClick(EGE::Vec2d pos)
     */
 }
 
-void RadioButton::updateGeometry(Renderer&)
+void RadioButton::updateGeometry(Renderer& renderer)
 {
-    auto font = m_parent->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
 
-    m_size = EGE::Vec2d(text.getLocalBounds().width + 25.f, 25.f);
+    if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
+        setSize(Vec2d(text.getLocalBounds().width + 25.0, 25.0));
+
+    // Layouting
+    runLayoutUpdate();
 }
 
 }

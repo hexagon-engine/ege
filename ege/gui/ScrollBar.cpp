@@ -91,14 +91,17 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::updateGeometry(Renderer&)
+void ScrollBar::updateGeometry(Renderer& renderer)
 {
     switch(m_type)
     {
-        case Type::Horizontal: m_size = EGE::Vec2d(m_length, 20.f); break;
-        case Type::Vertical: m_size = EGE::Vec2d(20.f, m_length); break;
+        case Type::Horizontal: setSize(Vec2d(m_length, 20.0)); break;
+        case Type::Vertical: setSize(Vec2d(20.0, m_length)); break;
         default: CRASH(); break;
     }
+
+    // Layouting
+    runLayoutUpdate();
 }
 
 sf::FloatRect ScrollBar::getKnobBounds() const
@@ -119,15 +122,17 @@ sf::FloatRect ScrollBar::getKnobBounds() const
 void ScrollBar::render(Renderer& renderer) const
 {
     // background
-    renderer.renderRectangle(0.0, 20.0, m_size.x, m_size.y - 40.0, sf::Color(175, 175, 175));
+    renderer.renderRectangle(0.0, 20.0, getSize().x, getSize().y - 40.0, sf::Color(175, 175, 175));
 
     // scroll buttons
     renderer.renderButtonLike(0.0, 0.0, 20.0, 20.0);
-    renderer.renderButtonLike(0.0, m_size.y - 20.0, 20.0, 20.0);
+    renderer.renderButtonLike(0.0, getSize().y - 20.0, 20.0, 20.0);
 
     // knob
     sf::FloatRect rect = getKnobBounds();
     renderer.renderButtonLike(rect.left, rect.top, rect.width, rect.height);
+
+    Widget::render(renderer);
 }
 
 }

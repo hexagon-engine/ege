@@ -61,8 +61,8 @@ public:
         Button* m_button;
     };
 
-    explicit Button(Widget& parent)
-    : Widget(parent) {}
+    explicit Button(Widget& parent, String id = "Button")
+    : Widget(parent, id) {}
 
     virtual void setLabel(sf::String label)
     {
