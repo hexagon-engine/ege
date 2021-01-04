@@ -71,10 +71,15 @@ void Label::updateGeometry(Renderer& renderer)
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
     bounds.width += 1.f * m_fontSize / 15.f;
 
-    if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
+    if(getRawSize().x.unit() == EGE_LAYOUT_AUTO)
     {
         // Set to text bounds.
-        setSize({bounds.width, bounds.height});
+        setSize({bounds.width, getRawSize().y});
+    }
+    if(getRawSize().y.unit() == EGE_LAYOUT_AUTO)
+    {
+        // Set to text bounds.
+        setSize({getRawSize().x, bounds.height});
     }
 
     // Layouting
