@@ -68,7 +68,7 @@ protected:
     sf::String m_string;
     Align m_align = Align::Left;
     int m_fontSize = 15;
-    sf::Color m_color = sf::Color::White;
+    sf::Color m_color = sf::Color::Black;
     sf::Text m_text;
     std::shared_ptr<sf::Font> m_font;
 };
