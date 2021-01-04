@@ -205,7 +205,7 @@ public:
         labelFPS = make<EGE::Label>(*this);
         labelFPS->setString("FPS: 0.0");
         labelFPS->setTextAlign(EGE::Label::Align::Center);
-        labelFPS->setSize({"0N", "0a"});
+        labelFPS->setSize({"1N", "1a"});
         addWidget(labelFPS);
 
         auto widgets = make<EGE::CompoundWidget>(*this);
@@ -215,7 +215,7 @@ public:
             auto myFrame = make<EGE::Frame>(*widgets);
             myFrame->setLabel("Widget test");
             myFrame->layoutDirection = EGE::LayoutElement::Direction::Vertical;
-            myFrame->setSize({"1N", "1N"});
+            myFrame->setSize({"66%", "0N"});
             widgets->addWidget(myFrame);
 
             {
