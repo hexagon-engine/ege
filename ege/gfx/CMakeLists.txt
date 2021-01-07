@@ -7,6 +7,8 @@ set(SOURCES
 	"Renderable.h"
 	"RenderStates.cpp"
 	"RenderStates.h"
+	"Text.cpp"
+	"Text.h"
 	"ThemeRenderer.cpp"
 	"ThemeRenderer.h"
 )

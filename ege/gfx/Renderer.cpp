@@ -38,6 +38,8 @@
 
 #include <SFML/OpenGL.hpp>
 
+#include "Text.h"
+
 namespace EGE
 {
 
@@ -65,37 +67,34 @@ void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, in
 
 void Renderer::renderTextWithBackground(double x, double y, sf::Font& font, sf::String str, Renderer::TextWithBackgroundSettings settings)
 {
-    sf::Text text(str, font, settings.font_size);
-    text.setPosition(x, y);
+    Text text(str.toUtf32(), font);
+    text.settings.position = Vec2d(x, y);
+    text.settings.fontSize = settings.font_size;
+    text.settings.padding = settings.padding;
+    text.settings.scale = settings.scale;
+
+    Vec2d textSize = text.getSize();
 
     switch(settings.text_align)
     {
     case Renderer::TextAlign::Left:
         break;
     case Renderer::TextAlign::Center:
-        text.setOrigin(text.getLocalBounds().getSize() / 2.f);
+        text.settings.position -= textSize / 2.0;
         break;
     case Renderer::TextAlign::Right:
-        text.setOrigin(text.getLocalBounds().getSize());
+        text.settings.position -= textSize;
         break;
     default:
         CRASH();
     }
 
-    auto textRect = text.getGlobalBounds();
-    textRect.height += 5.f * settings.font_size / 15.f; //SFML text bounds bug??
-    textRect.width += 1.f * settings.font_size / 15.f;
-
     // Background
-    renderRectangle(textRect.left - settings.padding,
-                    textRect.top - settings.padding,
-                    textRect.width + settings.padding * 2,
-                    textRect.height + settings.padding * 2,
-                    settings.background_color);
+    renderRectangle(x, y, textSize.x, textSize.y, settings.background_color);
 
     // Text
-    text.setFillColor(sf::Color(settings.color.r * 255, settings.color.g * 255, settings.color.b * 255, settings.color.a * 255));
-    getTarget().draw(text, m_states.sfStates());
+    text.settings.color = settings.color;
+    text.render(*this);
 }
 
 void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size)
@@ -107,7 +106,7 @@ void Renderer::renderCenteredText(double x, double y, sf::Font& font, sf::String
     getTarget().draw(text, m_states.sfStates());
 }
 
-void Renderer::renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect)
+void Renderer::renderTexturedRectangle(double x, double y, double width, double height, const sf::Texture& texture, sf::IntRect textureRect)
 {
     if(textureRect == sf::IntRect())
         textureRect = sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y);

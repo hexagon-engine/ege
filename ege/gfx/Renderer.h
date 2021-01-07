@@ -72,7 +72,8 @@ public:
     void renderRectangle(double x, double y, double width, double height, ColorRGBA color, ColorRGBA outlineColor = Colors::transparent);
 
     // scale - resolution scale, used when rendering small text with big resolution
-    void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, ColorRGBA color = Colors::white, float scale = 1.f);
+    // TODO: Deprecate it
+    [[deprecated]] void renderText(double x, double y, sf::Font& font, sf::String str, int size = 16, ColorRGBA color = Colors::white, float scale = 1.f);
 
     enum TextAlign
     {
@@ -88,13 +89,16 @@ public:
         int font_size = 16;
         double padding = 5.0;
         TextAlign text_align = Left;
+        float scale = 1.f;
 
         TextWithBackgroundSettings() {};
     };
 
+    // TODO: Replace TextWithBackgroundSettings with Text::Settings
     void renderTextWithBackground(double x, double y, sf::Font& font, sf::String str, TextWithBackgroundSettings settings = {});
-    void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
-    void renderTexturedRectangle(double x, double y, double width, double height, sf::Texture& texture, sf::IntRect textureRect = {});
+    [[deprecated]] void renderCenteredText(double x, double y, sf::Font& font, sf::String str, int size = 16);
+
+    void renderTexturedRectangle(double x, double y, double width, double height, const sf::Texture& texture, sf::IntRect textureRect = {});
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
     void renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type);
 
