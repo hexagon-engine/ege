@@ -109,17 +109,15 @@ void RadioButton::onClick(EGE::Vec2d pos)
     */
 }
 
-void RadioButton::updateGeometry(Renderer&)
+void RadioButton::updateLayout()
 {
-    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
+    Widget::updateLayout();
+    auto font = getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
-
     if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
         setSize(Vec2d(text.getLocalBounds().width + 25.0, 25.0));
 
-    // Layouting
-    runLayoutUpdate();
 }
 
 }

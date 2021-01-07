@@ -87,7 +87,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
         }
 
         // Add elements with known size to layout
-        if(element.position.unit() == EGE_LAYOUT_PIXELS && element.size.unit() == EGE_LAYOUT_PIXELS)
+        if(element.position.unit() == EGE_LAYOUT_PIXELS && element.size.unit() == EGE_LAYOUT_PIXELS) // Known position & size
         {
             // Do nothing. Everything it's done.
             _OutputDimensions object;
@@ -96,8 +96,9 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             object.padding = element.padding.value();
             output[s] = object;
             log(LogLevel::Debug) << "Add immediately!!";
+            continue;
         }
-        else if(element.size.unit() != EGE_LAYOUT_FILL)
+        else if(element.size.unit() != EGE_LAYOUT_FILL) // Known size but unknown position
         {
             log(LogLevel::Debug) << "Count";
             // Do nothing but count to used elements

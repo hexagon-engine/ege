@@ -87,7 +87,7 @@ void CheckBox::render(Renderer& renderer) const
     }
 
     // label
-    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
     text.setPosition(20.f, 0.f);
@@ -97,17 +97,17 @@ void CheckBox::render(Renderer& renderer) const
     Widget::render(renderer);
 }
 
-void CheckBox::updateGeometry(Renderer&)
+void CheckBox::updateLayout()
 {
+    Widget::updateLayout();
+
     // label (generate)
-    auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
+    auto font = getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(getLabel(), *font, 12);
 
     if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
         setSize(LVec2d({text.getLocalBounds().width + 25.f, EGE_LAYOUT_PIXELS}, {25.f, EGE_LAYOUT_PIXELS}));
-
-    runLayoutUpdate();
 }
 
 void CheckBox::onClick(EGE::Vec2d position)

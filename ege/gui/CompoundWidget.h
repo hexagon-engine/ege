@@ -89,6 +89,9 @@ public:
     void addWidget(SharedPtr<Widget> widget);
     void removeWidget(Widget* widget);
 
+protected:
+    virtual void updateLayout() override;
+
 private:
     Widget* m_focusedWidget = nullptr;
     Vector<SharedPtr<Widget>> m_childWidgets;

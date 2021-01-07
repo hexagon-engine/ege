@@ -297,6 +297,9 @@ void GUIScreen::onUpdate(long long tickCounter)
 
 void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
 {
+    // Update layout
+    updateLayout();
+
     // Actually draw child widgets
     CompoundWidget::doRender(renderer, states);
 

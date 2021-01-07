@@ -52,7 +52,7 @@ public:
 
 protected:
     virtual void render(Renderer& renderer) const override;
-    virtual void updateGeometry(Renderer& renderer) override;
+    virtual void updateLayout() override;
 
 private:
     virtual void onClick(EGE::Vec2d);

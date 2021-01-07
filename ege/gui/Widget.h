@@ -110,6 +110,12 @@ public:
     virtual void setSize(LVec2d size) override  { LayoutElement::setSize(size); setGeometryNeedUpdate(); }
     virtual void setPadding(LVec2d padding) override  { LayoutElement::setPadding(padding); setGeometryNeedUpdate(); }
 
+    // Called before calculating layout, when rendering.
+    // In this method, the widget is required to set up
+    // all data needed to calculate layout (e.g set content
+    // size).
+    virtual void updateLayout();
+
 protected:
     virtual void render(Renderer& renderer) const override;
     virtual void updateGeometry(Renderer& renderer) override;

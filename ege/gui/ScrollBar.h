@@ -107,7 +107,7 @@ protected:
     bool m_knobDragged = false;
 
     sf::FloatRect getKnobBounds() const;
-    virtual void updateGeometry(Renderer& renderer) override;
+    virtual void updateLayout() override;
 
     std::function<void(double)> m_updateCallback;
     double m_value = 0.0;

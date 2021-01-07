@@ -68,7 +68,7 @@ protected:
     bool m_checked = false;
 
     virtual void render(Renderer& renderer) const override;
-    virtual void updateGeometry(Renderer& renderer) override;
+    virtual void updateLayout() override;
 
     virtual void onClick(EGE::Vec2d);
 };

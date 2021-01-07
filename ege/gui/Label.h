@@ -64,6 +64,7 @@ public:
 protected:
     virtual void render(Renderer& renderer) const override;
     virtual void updateGeometry(Renderer& renderer) override;
+    virtual void updateLayout() override;
 
     sf::String m_string;
     Align m_align = Align::Left;

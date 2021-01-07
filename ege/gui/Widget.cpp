@@ -195,10 +195,15 @@ void Widget::updateGeometry(Renderer&)
 
 void Widget::runLayoutUpdate()
 {
+    log(LogLevel::Notice) << "runLayoutUpdate() " << getId();
     if(m_parentWidget)
         m_parentWidget->runLayoutUpdate();
     else
         calculateLayout();
+}
+
+void Widget::updateLayout()
+{
 }
 
 }

@@ -91,8 +91,9 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::updateGeometry(Renderer&)
+void ScrollBar::updateLayout()
 {
+    Widget::updateLayout();
     switch(m_type)
     {
         case Type::Horizontal: setSize(Vec2d(m_length, 20.0)); break;
@@ -100,8 +101,6 @@ void ScrollBar::updateGeometry(Renderer&)
         default: CRASH(); break;
     }
 
-    // Layouting
-    runLayoutUpdate();
 }
 
 sf::FloatRect ScrollBar::getKnobBounds() const

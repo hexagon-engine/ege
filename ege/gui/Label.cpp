@@ -58,9 +58,38 @@ void Label::setFontSize(int size)
     setGeometryNeedUpdate();
 }
 
-void Label::updateGeometry(Renderer&)
+void Label::updateGeometry(Renderer& renderer)
 {
-    // FIXME: label is weirdly clipped (':('; '???')
+    Widget::updateGeometry(renderer);
+    Vec2d position;
+
+    sf::Text text(m_string, *m_font, m_fontSize);
+    sf::FloatRect bounds = text.getLocalBounds();
+    bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
+    bounds.width += 1.f * m_fontSize / 15.f;
+    switch(m_align)
+    {
+        case Align::Left:
+            text.setOrigin(0.f, 0.f);
+            position = Vec2d();
+            break;
+        case Align::Center:
+            text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
+            position = getSize() / 2.0;
+            break;
+        case Align::Right:
+            text.setOrigin(bounds.width, bounds.height);
+            position = getSize();
+            break;
+    }
+
+    text.setPosition(position.x, position.y);
+    text.setFillColor(m_color);
+}
+
+void Label::updateLayout()
+{
+    Widget::updateLayout();
     ASSERT(getLoop().getResourceManager());
     if(!m_font)
     {
@@ -81,30 +110,6 @@ void Label::updateGeometry(Renderer&)
         // Set to text bounds.
         setSize({getRawSize().x, bounds.height});
     }
-
-    // Layouting
-    runLayoutUpdate();
-
-    Vec2d position;
-
-    switch(m_align)
-    {
-        case Align::Left:
-            text.setOrigin(0.f, 0.f);
-            position = Vec2d();
-            break;
-        case Align::Center:
-            text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
-            position = getSize() / 2.0;
-            break;
-        case Align::Right:
-            text.setOrigin(bounds.width, bounds.height);
-            position = getSize();
-            break;
-    }
-
-    text.setPosition(position.x, position.y);
-    text.setFillColor(m_color);
     m_text = text;
 }
 
