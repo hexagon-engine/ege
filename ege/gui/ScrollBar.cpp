@@ -45,11 +45,11 @@ namespace EGE
 void ScrollBar::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     Widget::onMouseButtonPress(event);
-    EGE::Vec2d tmp1(event.x - getPosition().x, event.y - getPosition().y);
+    EGE::Vec2d relative(event.x - getAbsolutePosition().x, event.y - getAbsolutePosition().y);
     auto bounds = getKnobBounds();
-    m_dragPos = tmp1 - EGE::Vec2d(bounds.getPosition().x, bounds.getPosition().y);
+    m_dragPos = relative - EGE::Vec2d(bounds.getPosition().x, bounds.getPosition().y);
     m_dragValue = m_value;
-    if(getKnobBounds().contains(sf::Vector2f(tmp1.x, tmp1.y)))
+    if(getKnobBounds().contains(sf::Vector2f(relative.x, relative.y)))
         m_knobDragged = true;
 }
 
@@ -66,7 +66,7 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     {
         // calculate relative mouse position
         EGE::Vec2d rel(event.x, event.y);
-        rel -= getPosition();
+        rel -= getAbsolutePosition();
 
         // save value relatively to sb type and starting drag pos
         double rv = 0.0;
