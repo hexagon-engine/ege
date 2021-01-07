@@ -45,6 +45,7 @@ namespace EGE
 
 Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(LayoutElement::_InputDimensions& thisDimensions, Vector<LayoutElement::_InputDimensions>& dimensions)
 {
+    log(LogLevel::Verbose) << "-- calculateMainDimension() --";
     if(dimensions.empty())
     {
         log(LogLevel::Debug) << "No children to layout!";
@@ -58,11 +59,14 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     size_t usedElements = 0;
 
     Vector<_OutputDimensions> output;
+    output.resize(dimensions.size());
 
     // Known size & position
     // FIXME: Avoid copying
-    for(_InputDimensions& element: dimensions)
+    for(size_t s = 0; s < dimensions.size(); s++)
     {
+        auto& element = dimensions[s];
+        log(LogLevel::Verbose) << "-- Setup --";
         // Convert % to px
         if(element.position.unit() == EGE_LAYOUT_PERCENT)
         {
@@ -90,7 +94,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             object.position = element.position.value();
             object.size = element.size.value();
             object.padding = element.padding.value();
-            output.push_back(object);
+            output[s] = object;
             log(LogLevel::Debug) << "Add immediately!!";
         }
         else if(element.size.unit() != EGE_LAYOUT_FILL)
@@ -129,8 +133,10 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     last.position = LayoutSizeD("0px");
     last.size = LayoutSizeD("0px");
 
-    for(_InputDimensions& element: dimensions)
+    for(size_t s = 0; s < dimensions.size(); s++)
     {
+        auto& element = dimensions[s];
+        log(LogLevel::Verbose) << "-- Left-align CMD --";
         if(element.align == LayoutAlign::Left)
         {
             log(LogLevel::Debug) << "align=left u=" << element.position.unit() << " su=" << element.size.unit();
@@ -152,7 +158,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.position = element.position.value() + thisDimensions.padding.value();
                 object.size = element.size.value();
                 object.padding = element.padding.value();
-                output.push_back(object);
+                output[s] = object;
                 log(LogLevel::Debug) << "Add align=left";
 
                 last = element;
@@ -165,9 +171,11 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     next.position = LayoutSizeD("0px");
     next.size = LayoutSizeD(thisDimensions.size.value(), EGE_LAYOUT_PIXELS);
 
-    for(long long s = dimensions.size() - 1; s >= 0; s--)
+    for(size_t s = 0; s < dimensions.size(); s++)
     {
-        _InputDimensions& element = dimensions[s];
+        auto& element = dimensions[s];
+        log(LogLevel::Verbose) << "-- Right-align CMD --";
+
         if(element.align == LayoutAlign::Right)
         {
             log(LogLevel::Debug) << "align=right u=" << element.position.unit() << " su=" << element.size.unit();
@@ -189,7 +197,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.position = element.position.value() + thisDimensions.padding.value();
                 object.size = element.size.value();
                 object.padding = element.padding.value();
-                output.push_back(object);
+                output[s] = object;
                 log(LogLevel::Debug) << "Add align=right";
 
                 // TODO: this should be outside this "if"?
