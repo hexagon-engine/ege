@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <ege/util/Color.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Equation.h>
 #include <ege/util/EquationSystem.h>
