@@ -1,10 +1,14 @@
 set(SOURCES
+	"DefaultThemeRenderer.cpp"
+	"DefaultThemeRenderer.h"
 	"Renderer.cpp"
 	"Renderer.h"
 	"Renderable.cpp"
 	"Renderable.h"
 	"RenderStates.cpp"
 	"RenderStates.h"
+	"ThemeRenderer.cpp"
+	"ThemeRenderer.h"
 )
 
 ege_add_module(gfx)

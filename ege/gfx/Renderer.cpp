@@ -163,55 +163,6 @@ void Renderer::renderPrimitives(const std::vector<Vertex>& points, sf::Primitive
     getTarget().draw(varr, m_states.sfStates());
 }
 
-void Renderer::renderButtonLike(double x, double y, double width, double height)
-{
-    sf::RectangleShape rs;
-    rs.setOutlineThickness(1.f);
-
-    rs.setFillColor(sf::Color(209, 209, 209));
-    rs.setSize(sf::Vector2f(width - 2.f, height - 2.f));
-    rs.setPosition(sf::Vector2f(x + 1.f, y + 1.f));
-    rs.setOutlineColor(sf::Color(255, 255, 255));
-    getTarget().draw(rs, m_states.sfStates());
-
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setSize(sf::Vector2f(width - 1.f, height - 1.f));
-    rs.setPosition(sf::Vector2f(x, y));
-    rs.setOutlineColor(sf::Color(60, 60, 60));
-    getTarget().draw(rs, m_states.sfStates());
-}
-
-void Renderer::renderTextBoxLikeBackground(double x, double y, double width, double height)
-{
-    sf::RectangleShape rs;
-    rs.setFillColor(sf::Color(255, 255, 255));
-    rs.setOutlineThickness(1.f);
-
-    // background
-    rs.setPosition(x + 2.f, y + 2.f);
-    rs.setOutlineColor(sf::Color(60, 60, 60));
-    rs.setSize(sf::Vector2f(width, height) - sf::Vector2f(4.f, 4.f));
-    getTarget().draw(rs);
-}
-
-void Renderer::renderTextBoxLikeBorder(double x, double y, double width, double height)
-{
-    sf::RectangleShape rs;
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setOutlineThickness(1.f);
-
-    // border
-    rs.setSize(sf::Vector2f(width, height) - sf::Vector2f(3.f, 3.f));
-    rs.setPosition(x + 1.f, y + 1.f);
-    rs.setOutlineColor(sf::Color(173, 173, 173));
-    getTarget().draw(rs);
-
-    rs.setSize(sf::Vector2f(width, height) - sf::Vector2f(2.f, 2.f));
-    rs.setPosition(x + 1.f, y + 1.f);
-    rs.setOutlineColor(sf::Color(210, 210, 210));
-    getTarget().draw(rs);
-}
-
 void Renderer::applyStates()
 {
     glEnable(GL_TEXTURE_2D);

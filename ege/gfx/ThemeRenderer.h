@@ -36,9 +36,17 @@
 
 #pragma once
 
-#include <ege/gfx/DefaultThemeRenderer.h>
-#include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
+namespace EGE
+{
 
+class Renderer;
+
+class ThemeRenderer
+{
+public:
+    virtual void renderButtonLike(Renderer& renderer, double x, double y, double width, double height) = 0;
+    virtual void renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height) = 0;
+    virtual void renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height) = 0;
+};
+
+}

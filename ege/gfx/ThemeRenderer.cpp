@@ -34,11 +34,10 @@
 *
 */
 
-#pragma once
+#include "ThemeRenderer.h"
 
-#include <ege/gfx/DefaultThemeRenderer.h>
-#include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
+namespace EGE
+{
+    // currently nothing
+}
 

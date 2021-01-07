@@ -34,11 +34,28 @@
 *
 */
 
-#pragma once
+#include "DefaultThemeRenderer.h"
+#include "Renderer.h"
 
-#include <ege/gfx/DefaultThemeRenderer.h>
-#include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
+namespace EGE
+{
+
+void DefaultThemeRenderer::renderButtonLike(Renderer& renderer, double x, double y, double width, double height)
+{
+    renderer.renderRectangle(x + 1, y + 1, width - 2, height - 2, sf::Color(209, 209, 209), sf::Color(255, 255, 255));
+    renderer.renderRectangle(x, y, width - 1, height - 1, sf::Color::Transparent, sf::Color(60, 60, 60));
+}
+
+void DefaultThemeRenderer::renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height)
+{
+    renderer.renderRectangle(x + 2, y + 2, width - 4, height - 4, sf::Color::White, sf::Color(60, 60, 60));
+}
+
+void DefaultThemeRenderer::renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height)
+{
+    renderer.renderRectangle(x + 1, y + 1, width - 3, height - 3, sf::Color::Transparent, sf::Color(173, 173, 173));
+    renderer.renderRectangle(x + 1, y + 1, width - 2, height - 2, sf::Color::Transparent, sf::Color(210, 210, 210));
+}
+
+}
 

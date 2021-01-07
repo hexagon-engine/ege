@@ -36,9 +36,11 @@
 
 #pragma once
 
+#include "DefaultThemeRenderer.h"
 #include "RenderStates.h"
 
 #include <ege/util/Vector.h>
+#include <ege/util/Types.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -62,7 +64,7 @@ class Renderer
 {
 public:
     Renderer(sf::RenderTarget& target)
-    : m_target(target) {}
+    : m_target(target) { setThemeRenderer(std::make_unique<DefaultThemeRenderer>()); }
 
     // Common renderers.
     // For more complex shapes, use SFML sf::Drawables.
@@ -95,14 +97,16 @@ public:
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
     void renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type);
 
-    // GUI theme renderers
-    void renderButtonLike(double x, double y, double width, double height);
-    void renderTextBoxLikeBorder(double x, double y, double width, double height);
-    void renderTextBoxLikeBackground(double x, double y, double width, double height);
-
     sf::RenderTarget& getTarget() { return m_target; }
     void setStates(const RenderStates& states) { m_states = states; }
     const RenderStates& getStates() { return m_states; }
+
+    void setThemeRenderer(UniquePtr<ThemeRenderer> themeRenderer) { m_themeRenderer.swap(themeRenderer); }
+    ThemeRenderer* getThemeRenderer() { return m_themeRenderer.get(); }
+
+    virtual void renderButtonLike(double x, double y, double width, double height) { m_themeRenderer->renderButtonLike(*this, x, y, width, height); }
+    virtual void renderTextBoxLikeBorder(double x, double y, double width, double height) { m_themeRenderer->renderTextBoxLikeBorder(*this, x, y, width, height); }
+    virtual void renderTextBoxLikeBackground(double x, double y, double width, double height) { m_themeRenderer->renderTextBoxLikeBackground(*this, x, y, width, height); }
 
 private:
     void applyStates();
@@ -115,6 +119,7 @@ private:
 
     sf::RenderTarget& m_target;
     RenderStates m_states;
+    UniquePtr<ThemeRenderer> m_themeRenderer;
 };
 
 }
