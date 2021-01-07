@@ -58,7 +58,7 @@ void Label::setFontSize(int size)
     setGeometryNeedUpdate();
 }
 
-void Label::updateGeometry(Renderer& renderer)
+void Label::updateGeometry(Renderer&)
 {
     // FIXME: label is weirdly clipped (':('; '???')
     ASSERT(getLoop().getResourceManager());

@@ -91,7 +91,7 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     }
 }
 
-void ScrollBar::updateGeometry(Renderer& renderer)
+void ScrollBar::updateGeometry(Renderer&)
 {
     switch(m_type)
     {

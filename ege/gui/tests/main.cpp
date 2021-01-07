@@ -277,7 +277,6 @@ public:
                 radioButton->setLabel("RadioButton");
                 myFrame->addWidget(radioButton);
 
-                /*
                 auto scrollBar = make<EGE::ScrollBar>(*myFrame);
                 scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
                 scrollBar->setType(EGE::ScrollBar::Type::Vertical);
@@ -285,7 +284,7 @@ public:
                 scrollBar->setUpdateCallback([](double val) {
                                                 std::cerr << "scrollbar.value=" << val << std::endl;
                                              });
-                addWidget(scrollBar);*/
+                myFrame->addWidget(scrollBar);
             }
 
             auto myFrame2 = make<EGE::Frame>(*widgets);
@@ -330,7 +329,7 @@ public:
                 anim3->setEasingFunction([](double x)->double {
                                                         return ((x-0.5)*(x-0.5));
                                                         } );
-                addAnimation(anim3, [this](EGE::Animation*, double val) {
+                addAnimation(anim3, [this](EGE::Animation*, double) {
                                 //ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
                              });
 
@@ -340,7 +339,7 @@ public:
                 animLabel->addKeyframe(1.0, -1.0);
                 animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
                 animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
-                addAnimation(animLabel, [this](EGE::Animation*, double val) {
+                addAnimation(animLabel, [this](EGE::Animation*, double) {
                                 //labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
                              });
             }
@@ -386,7 +385,7 @@ TESTCASE(_widgets)
     gameLoop.openWindow(sf::VideoMode(500, 500), "EGE GUI Test (widgets)");
     gameLoop.setResourceManager(make<MyResourceManager2>());
     gameLoop.setCurrentGUIScreen(make<MyGuiScreen2>(gameLoop));
-    gameLoop.setBackgroundColor(sf::Color(209, 200, 192));
+    gameLoop.setBackgroundColor(sf::Color(160, 160, 160));
     return gameLoop.run();
 }
 

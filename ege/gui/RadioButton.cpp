@@ -109,7 +109,7 @@ void RadioButton::onClick(EGE::Vec2d pos)
     */
 }
 
-void RadioButton::updateGeometry(Renderer& renderer)
+void RadioButton::updateGeometry(Renderer&)
 {
     auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
