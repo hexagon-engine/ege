@@ -54,8 +54,8 @@ public:
         EGE::Renderer::TextWithBackgroundSettings settings;
         settings.font_size = 18;
         settings.text_align = EGE::Renderer::TextAlign::Center;
-        settings.color = sf::Color::White;
-        settings.background_color = sf::Color::Transparent;
+        settings.color = EGE::Colors::white;
+        settings.background_color = EGE::Colors::transparent;
         renderer.renderTextWithBackground(getPosition().x, getPosition().y, *m_font, "MyObject: " + getName(), settings);
     }
 

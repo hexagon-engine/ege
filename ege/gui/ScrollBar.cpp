@@ -121,7 +121,7 @@ sf::FloatRect ScrollBar::getKnobBounds() const
 void ScrollBar::render(Renderer& renderer) const
 {
     // background
-    renderer.renderRectangle(0.0, 20.0, getSize().x, getSize().y - 40.0, sf::Color(175, 175, 175));
+    renderer.renderRectangle(0.0, 20.0, getSize().x, getSize().y - 40.0, ColorRGBA::fromBytes(175, 175, 175));
 
     // scroll buttons
     renderer.renderButtonLike(0.0, 0.0, 20.0, 20.0);

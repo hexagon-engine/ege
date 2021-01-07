@@ -65,7 +65,7 @@ TextBox::TextBox(Widget& parent, String id)
 void TextBox::render(Renderer& renderer) const
 {
     sf::RectangleShape rs;
-    rs.setFillColor(sf::Color(255, 255, 255));
+    rs.setFillColor(sf::Color::White);
     rs.setOutlineThickness(1.f);
 
     // background
@@ -77,7 +77,7 @@ void TextBox::render(Renderer& renderer) const
     // selection
     float selStart = m_textDrawable.findCharacterPos(m_selectionStart).x;
     float selEnd = m_textDrawable.findCharacterPos(m_selectionEnd).x - selStart;
-    renderer.renderRectangle(selStart, 3.f, selEnd, getSize().y - 6.f, sf::Color(17, 168, 219, 127));
+    renderer.renderRectangle(selStart, 3.f, selEnd, getSize().y - 6.f, ColorRGBA::fromBytes(17, 168, 219, 127));
 
     // caret
     if(hasFocus() && m_caretShown)

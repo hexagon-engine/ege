@@ -121,7 +121,7 @@ void SceneObject2D::render(Renderer& renderer) const
     if constexpr(SCENEOBJECT2D_DEBUG)
     {
         sf::FloatRect rect(getBoundingBox());
-        renderer.renderRectangle(rect.left + 1, rect.top + 1, rect.width - 2, rect.height - 2, sf::Color::Transparent, sf::Color::Cyan);
+        renderer.renderRectangle(rect.left + 1, rect.top + 1, rect.width - 2, rect.height - 2, Colors::transparent, Colors::cyan);
     }
 }
 

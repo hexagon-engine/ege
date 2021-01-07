@@ -41,24 +41,24 @@
 namespace EGE
 {
 
-void Renderer::renderRectangle(double x, double y, double width, double height, sf::Color color, sf::Color outlineColor)
+void Renderer::renderRectangle(double x, double y, double width, double height, ColorRGBA color, ColorRGBA outlineColor)
 {
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
-    rs.setFillColor(color);
-    if(outlineColor != sf::Color::Transparent)
+    rs.setFillColor(sf::Color(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
+    if(outlineColor != Colors::transparent)
     {
-        rs.setOutlineColor(outlineColor);
+        rs.setOutlineColor(sf::Color(outlineColor.r * 255, outlineColor.g * 255, outlineColor.b * 255, outlineColor.a * 255));
         rs.setOutlineThickness(1.f);
     }
     getTarget().draw(rs, m_states.sfStates());
 }
 
-void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size, sf::Color color, float scale)
+void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, int size, ColorRGBA color, float scale)
 {
     sf::Text text(str, font, size * scale);
     text.setPosition(x, y);
-    text.setFillColor(color);
+    text.setFillColor(sf::Color(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
     text.setScale(1.f / scale, 1.f / scale);
     getTarget().draw(text, m_states.sfStates());
 }
@@ -94,7 +94,7 @@ void Renderer::renderTextWithBackground(double x, double y, sf::Font& font, sf::
                     settings.background_color);
 
     // Text
-    text.setFillColor(settings.color);
+    text.setFillColor(sf::Color(settings.color.r * 255, settings.color.g * 255, settings.color.b * 255, settings.color.a * 255));
     getTarget().draw(text, m_states.sfStates());
 }
 
