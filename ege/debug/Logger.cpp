@@ -42,6 +42,7 @@
 namespace EGE
 {
 
+// Global operators
 std::ostream& operator<<(std::ostream& input, LogColor color)
 {
     // TODO: make it portable
@@ -162,18 +163,24 @@ std::ostream& operator<<(std::ostream& input, LogBackground color)
     return input;
 }
 
-Logger::Logger(std::ostream& output, LogLevel level, std::string streamName)
+// LoggerHelper
+namespace Internal
+{
+
+_LoggerHelper::_LoggerHelper(std::ostream* output, LogLevel level, std::string streamName)
 : m_stream(output)
 {
-    m_stream << LogColor::Magenta << "EGE/" << streamName << " " << LogColor::Bright_Yellow << prefix(level) << color(level) << background(level);
+    if(m_stream)
+        *m_stream << LogColor::Magenta << "EGE/" << streamName << " " << LogColor::Bright_Yellow << prefix(level) << color(level) << background(level);
 }
 
-Logger::~Logger()
+_LoggerHelper::~_LoggerHelper()
 {
-    m_stream << LogColor::Reset << LogBackground::Reset << std::endl;
+    if(m_stream)
+        *m_stream << LogColor::Reset << LogBackground::Reset << std::endl;
 }
 
-LogColor Logger::color(LogLevel level)
+LogColor _LoggerHelper::color(LogLevel level)
 {
     switch(level)
     {
@@ -199,7 +206,7 @@ LogColor Logger::color(LogLevel level)
     }
 }
 
-LogBackground Logger::background(LogLevel level)
+LogBackground _LoggerHelper::background(LogLevel level)
 {
     switch(level)
     {
@@ -218,7 +225,7 @@ LogBackground Logger::background(LogLevel level)
     }
 }
 
-std::string Logger::prefix(LogLevel level)
+std::string _LoggerHelper::prefix(LogLevel level)
 {
     std::string prefix;
 
@@ -256,34 +263,47 @@ std::string Logger::prefix(LogLevel level)
     return prefix;
 }
 
-namespace Log
-{
+} // Internal
 
-std::ostream* g_errorStream = &std::cerr;
-std::ostream* g_logStream = &std::cout;
+Logger g_mainLogger(&std::cout, "STDOUT");
+Logger g_errLogger(&std::cerr, "STDERR");
 
-void setErrorStream(std::ostream& output)
+// Logger
+Internal::_LoggerHelper Logger::log(LogLevel level)
 {
-    g_errorStream = &output;
+    if(!m_output || m_filteredLevels.count(level))
+        return {};
+
+    return Internal::_LoggerHelper(m_output, level, m_streamName);
 }
 
-void setLogStream(std::ostream& output)
+void Logger::filterLevel(LogLevel level, bool filter)
 {
-    g_logStream = &output;
+    if(filter)
+        m_filteredLevels.insert(level);
+    else
+        m_filteredLevels.erase(level);
 }
 
-} // Log
-
-Logger err(LogLevel level)
+//
+Internal::_LoggerHelper log(LogLevel level)
 {
-    Logger logger(*Log::g_errorStream, level, "STDERR");
-    return logger;
+    return g_mainLogger.log(level);
 }
 
-Logger log(LogLevel level)
+Internal::_LoggerHelper err(LogLevel level)
 {
-    Logger logger(*Log::g_logStream, level, "STDOUT");
-    return logger;
+    return g_errLogger.log(level);
+}
+
+Logger& mainLogger()
+{
+    return g_mainLogger;
+}
+
+Logger& errLogger()
+{
+    return g_errLogger;
 }
 
 } // EGE

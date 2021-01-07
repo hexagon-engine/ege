@@ -37,6 +37,7 @@
 #pragma once
 
 #include <ostream>
+#include <set>
 
 namespace EGE
 {
@@ -102,16 +103,21 @@ enum class LogBackground
 
 std::ostream& operator<<(std::ostream& input, LogColor color);
 
-class Logger
+namespace Internal
+{
+
+class _LoggerHelper
 {
 public:
-    Logger(std::ostream& output, LogLevel level, std::string streamName = "LOG");
-    ~Logger();
+    _LoggerHelper() {}
+    _LoggerHelper(std::ostream* output, LogLevel level, std::string streamName);
+    ~_LoggerHelper();
 
     template<class T>
-    Logger& operator<<(const T& t)
+    _LoggerHelper& operator<<(const T& t)
     {
-        m_stream << t;
+        if(m_stream)
+            *m_stream << t;
         return *this;
     }
 
@@ -120,19 +126,34 @@ private:
     static LogColor color(LogLevel level);
     static LogBackground background(LogLevel level);
 
-    std::ostream& m_stream;
+    std::ostream* m_stream = nullptr;
 };
 
-namespace Log
+} // Internal
+
+class Logger
 {
+public:
+    Logger(std::ostream* output, std::string streamName = "LOG")
+    : m_output(output), m_streamName(streamName) {}
 
-void setErrorStream(std::ostream& output);
-void setLogStream(std::ostream& output);
+    void setOutput(std::ostream* output) { m_output = output; }
+    std::ostream* getOutput() { return m_output; }
+    std::string getName() { return m_streamName; }
+    void filterLevel(LogLevel level, bool filter = true);
+    Internal::_LoggerHelper log(LogLevel level);
 
-}
+private:
+    std::ostream* m_output;
+    std::string m_streamName;
+    std::set<LogLevel> m_filteredLevels = { LogLevel::Debug, LogLevel::Verbose };
+};
 
-Logger err(LogLevel level = LogLevel::Error);
-Logger log(LogLevel level = LogLevel::Info);
+Internal::_LoggerHelper err(LogLevel level = LogLevel::Error);
+Internal::_LoggerHelper log(LogLevel level = LogLevel::Info);
+
+Logger& errLogger();
+Logger& mainLogger();
 
 }
 
