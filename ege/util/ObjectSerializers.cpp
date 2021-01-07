@@ -75,6 +75,28 @@ Vec3d toVector3(std::shared_ptr<ObjectMap> map)
     return Vec3d(x, y, z);
 }
 
+SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color)
+{
+    SharedPtr<ObjectMap> map = make<ObjectMap>();
+    map->addObject("r", object(color.r));
+    map->addObject("g", object(color.g));
+    map->addObject("b", object(color.b));
+    map->addObject("a", object(color.a));
+    return map;
+}
+
+ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
+{
+    if(!map)
+        return {};
+    auto r = map->getObject("r").as<Float>().valueOr(0);
+    auto g = map->getObject("g").as<Float>().valueOr(0);
+    auto b = map->getObject("b").as<Float>().valueOr(0);
+    auto a = map->getObject("a").as<Float>().valueOr(0);
+    return ColorRGBA(r, g, b, a);
+
+}
+
 } // Serializers
 
 }

@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include "Object.h"
 #include "ObjectFloat.h"
 #include "ObjectInt.h"
@@ -112,6 +113,10 @@ SharedPtr<ObjectMap> fromVector3(Vector3<T> vec)
     return map;
 }
 Vec3d toVector3(SharedPtr<ObjectMap> map);
+
+// EGE::ColorRGBA
+SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color);
+ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map);
 
 }
 
