@@ -20,8 +20,8 @@ void Renderable::setCustomView(sf::RenderTarget& target)
 void Renderable::doRender(Renderer& renderer, const RenderStates& states)
 {
     auto& target = renderer.getTarget();
-    setCustomView(target);
     doUpdateGeometry(renderer);
+    setCustomView(target);
     if(states != RenderStates())
         renderWithStates(renderer, states);
     else

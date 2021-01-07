@@ -63,4 +63,10 @@ void SceneWidget::onUpdate(long long tickCounter)
     }
 }
 
+void SceneWidget::updateGeometry(Renderer&)
+{
+    if(m_scene)
+        m_scene->setSize(getSize());
+}
+
 }

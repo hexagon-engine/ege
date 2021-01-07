@@ -38,6 +38,8 @@
 
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
@@ -299,6 +301,15 @@ void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
 {
     // Update layout
     updateLayout();
+
+    // Ensure layout is calculated!
+    // FIXME: it's a bit hacky, it should be automatically updated
+    // in updateGeometry()
+    if(geometryNeedUpdate())
+    {
+        runLayoutUpdate();
+        log() << "Resulting layout: size(" << getSize().x << "," << getSize().y << ")";
+    }
 
     // Actually draw child widgets
     CompoundWidget::doRender(renderer, states);

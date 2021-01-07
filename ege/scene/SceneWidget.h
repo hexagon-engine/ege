@@ -51,7 +51,6 @@ public:
     : Widget(parent, "SceneWidget"), m_initialScene(initialScene) {}
 
     virtual void render(Renderer& renderer) const override;
-
     virtual void onUpdate(long long tickCounter);
 
     void setScene(std::shared_ptr<Scene> scene)
@@ -62,10 +61,10 @@ public:
         m_scene->setSize(getSize());
     }
 
-    std::shared_ptr<Scene> getScene()
-    {
-        return m_scene;
-    }
+    std::shared_ptr<Scene> getScene() { return m_scene; }
+
+protected:
+    virtual void updateGeometry(Renderer&) override;
 
 private:
     std::shared_ptr<Scene> m_scene;

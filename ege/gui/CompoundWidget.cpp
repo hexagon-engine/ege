@@ -45,8 +45,10 @@ namespace EGE
 
 void CompoundWidget::onResize(sf::Event::SizeEvent& event)
 {
+    log(LogLevel::Debug) << "CompoundWidget::onResize(" << event.width << "," << event.height << ") on " << getId();
     for(auto widget: m_childWidgets)
     {
+        log(LogLevel::Debug) << "  Widget " << widget->getId();
         ASSERT(widget);
         widget->onResize(event);
     }
@@ -228,6 +230,7 @@ void CompoundWidget::onUpdate(long long tickCounter)
 
 void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
+    log(LogLevel::Debug) << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
     // TODO: render background??
     // TODO: draw only visible widgets
 
@@ -235,6 +238,7 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     for(auto widget: m_childWidgets)
     {
         setCustomView(renderer.getTarget());
+        log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
         widget->doRender(renderer, states);
     }
 
