@@ -100,6 +100,11 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
         }
         else
         {
+            if(element.position.unit() == EGE_LAYOUT_PIXELS) // Known position, but unknown size !!!
+            {
+                // TODO
+                element.position.setUnit(EGE_LAYOUT_FILL); // Ignore for now
+            }
             log(LogLevel::Debug) << "Calculate size fill u=" << element.position.unit() << " su=" << element.size.unit();
             continue;
         }
