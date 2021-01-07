@@ -53,12 +53,13 @@ public:
     // Render with setting view and states.
     virtual void doRender(Renderer& renderer, const RenderStates& states = {});
 
+    bool geometryNeedUpdate() const { return m_geometryNeedUpdate; }
+
 protected:
     virtual void render(Renderer& renderer) const = 0;
 
     void setGeometryNeedUpdate(bool val = true) { m_geometryNeedUpdate = val; }
 
-    bool geometryNeedUpdate() const { return m_geometryNeedUpdate; }
     virtual void updateGeometry(Renderer&) {}
 
     virtual bool isCustomViewNeeded() const { return false; }
