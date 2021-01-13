@@ -70,13 +70,13 @@ public:
     virtual void onData(std::shared_ptr<ObjectMap>) {}
 
     virtual EventResult onReceive(std::shared_ptr<Packet> packet);
-    EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId);
-    EventResult updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id);
+    EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id, std::string typeId);
+    EventResult updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id);
 
     virtual void setScene(std::shared_ptr<Scene> scene);
 
     virtual EventResult onLoad();
-    virtual void onTick(long long tickCount);
+    virtual void onTick(TickCount);
 
     virtual void onExit(int) {}
     virtual EventResult onFinish(int exitCode);
@@ -101,23 +101,23 @@ public:
     void setExitHandler(std::function<void(int)> func) { m_exitHandler = func; }
 
     std::shared_ptr<ClientNetworkController> getDefaultController() { return m_defaultController; }
-    std::shared_ptr<ClientNetworkController> getController(long long objectId);
+    std::shared_ptr<ClientNetworkController> getController(UidType objectId);
     std::shared_ptr<SceneObject> getDefaultControlledObject();
-    std::shared_ptr<SceneObject> getControlledObject(long long objectId);
+    std::shared_ptr<SceneObject> getControlledObject(UidType objectId);
 
     virtual std::shared_ptr<ClientNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }
     void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
     void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
 
-    void requestObject(long long id);
+    void requestObject(UidType id);
 
 private:
-    std::map<long long, EGEPacket::Type> m_uidMap;
+    std::map<UidType, EGEPacket::Type> m_uidMap;
     std::shared_ptr<AsyncTask> m_clientTask;
     std::shared_ptr<ClientNetworkController> m_defaultController;
-    std::map<long long, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
+    std::map<UidType, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
     std::function<void(int)> m_exitHandler;
-    std::set<long long> m_requestedObjects;
+    std::set<UidType> m_requestedObjects;
     sf::IpAddress m_ip;
     unsigned short m_port;
 };

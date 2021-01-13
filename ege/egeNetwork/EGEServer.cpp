@@ -285,7 +285,7 @@ void EGEServer::onExit(int exitCode)
     close();
 }
 
-void EGEServer::onTick(long long)
+void EGEServer::onTick(TickCount)
 {
     sf::Lock lock(m_clientsAccessMutex);
 
@@ -391,7 +391,7 @@ void EGEServer::setDefaultController(EGEClientConnection* client, std::shared_pt
     client->send(EGEPacket::generateSDefaultControllerId(sceneObject));
 }
 
-std::shared_ptr<ServerNetworkController> EGEServer::getController(long long objectId)
+std::shared_ptr<ServerNetworkController> EGEServer::getController(UidType objectId)
 {
     return m_controllersForObjects[objectId];
 }

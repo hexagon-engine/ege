@@ -144,7 +144,7 @@ void Scene::onUpdate(TickCount tickCounter)
     if(!isHeadless()) m_loop->getProfiler()->endSection();
 }
 
-IdType Scene::addObject(std::shared_ptr<SceneObject> object)
+UidType Scene::addObject(std::shared_ptr<SceneObject> object)
 {
     if(!object->getObjectId())
     {
@@ -184,7 +184,7 @@ IdType Scene::addObject(std::shared_ptr<SceneObject> object)
     return object->getObjectId();
 }
 
-IdType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite)
+UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite)
 {
     ASSERT_WITH_MESSAGE(!object->getName().empty(), "Static SceneObjects must have assigned name in scene data file");
 
@@ -250,7 +250,7 @@ std::vector<SceneObject*> Scene::getObjects(std::string typeId)
     return getObjects([typeId](SceneObject* object)->bool { return object->getId() == typeId; });
 }
 
-std::shared_ptr<SceneObject> Scene::getObject(IdType id)
+std::shared_ptr<SceneObject> Scene::getObject(UidType id)
 {
     auto it = m_objects.find(id);
     if(it != m_objects.end())
@@ -258,7 +258,7 @@ std::shared_ptr<SceneObject> Scene::getObject(IdType id)
     return nullptr;
 }
 
-std::shared_ptr<SceneObject> Scene::getStaticObject(IdType id)
+std::shared_ptr<SceneObject> Scene::getStaticObject(UidType id)
 {
     auto it = m_staticObjects.find(id);
     if(it != m_staticObjects.end())

@@ -84,8 +84,8 @@ public:
 
     bool isDead() const { return m_dead; }
 
-    IdType getObjectId() const { return m_id; }
-    void setObjectId(IdType id) { if(!m_id) m_id = id; }
+    UidType getObjectId() const { return m_id; }
+    void setObjectId(UidType id) { if(!m_id) m_id = id; }
 
     std::string getName() const { return m_name; }
     void setName(std::string name) { m_name = name; setChanged(); }
@@ -122,7 +122,7 @@ protected:
 
     Scene& m_owner;
     bool m_dead = false;
-    IdType m_id = 0;
+    UidType m_id = 0;
     std::string m_name;
     bool m_mainChanged = true;
     bool m_extendedChanged = true;

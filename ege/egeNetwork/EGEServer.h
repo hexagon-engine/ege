@@ -76,7 +76,7 @@ public:
     virtual void onData(EGEClientConnection*, std::shared_ptr<ObjectMap>) {}
 
     virtual EventResult onLoad();
-    virtual void onTick(long long tickCount);
+    virtual void onTick(TickCount tickCount);
 
     virtual void onExit(int exitCode);
     virtual EventResult onFinish(int) { return EventResult::Success; }
@@ -84,7 +84,7 @@ public:
     void kickClientWithReason(EGEClientConnection* client, std::string reason);
     virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket);
     virtual void setScene(std::shared_ptr<Scene> scene);
-    std::shared_ptr<ServerNetworkController> getController(long long objectId);
+    std::shared_ptr<ServerNetworkController> getController(UidType objectId);
 
     void setDefaultController(EGEClientConnection* client, std::shared_ptr<SceneObject> sceneObject);
 
@@ -93,7 +93,7 @@ public:
     void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
 
 private:
-    std::map<long long, std::shared_ptr<ServerNetworkController>> m_controllersForObjects;
+    std::map<UidType, std::shared_ptr<ServerNetworkController>> m_controllersForObjects;
 };
 
 }

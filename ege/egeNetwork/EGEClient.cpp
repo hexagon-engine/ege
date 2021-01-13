@@ -55,7 +55,7 @@ EGEClient::~EGEClient()
 bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
 {
     // FIXME: some assertion?
-    long long uid = packet->getArgs()->getObject("uid").as<MaxInt>().valueOr(0);
+    UidType uid = packet->getArgs()->getObject("uid").as<MaxInt>().valueOr(0);
     m_uidMap[uid] = packet->getType();
     return send(packet);
 }
@@ -250,7 +250,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
     return EventResult::Success;
 }
 
-EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id, std::string typeId)
+EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id, std::string typeId)
 {
     if(!getScene()) //scene not created
         return EventResult::Success;
@@ -273,7 +273,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     return EventResult::Success;
 }
 
-EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, long long id)
+EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id)
 {
     if(!getScene()) //scene not created
         return EventResult::Success;
@@ -361,7 +361,7 @@ EventResult EGEClient::onFinish(int exitCode)
     return EventResult::Success;
 }
 
-void EGEClient::onTick(long long tickCount)
+void EGEClient::onTick(TickCount tickCount)
 {
     if(!isConnected())
         exit(tickCount);
@@ -386,7 +386,7 @@ void EGEClient::disconnect()
     }*/
 }
 
-std::shared_ptr<ClientNetworkController> EGEClient::getController(long long objectId)
+std::shared_ptr<ClientNetworkController> EGEClient::getController(UidType objectId)
 {
     return m_controllersForObjects[objectId];
 }
@@ -396,7 +396,7 @@ std::shared_ptr<SceneObject> EGEClient::getDefaultControlledObject()
     return std::dynamic_pointer_cast<SceneObject>(getDefaultController());
 }
 
-std::shared_ptr<SceneObject> EGEClient::getControlledObject(long long objectId)
+std::shared_ptr<SceneObject> EGEClient::getControlledObject(UidType objectId)
 {
     return std::dynamic_pointer_cast<SceneObject>(getController(objectId));
 }
@@ -444,7 +444,7 @@ void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const Contro
     controller->handleRequest(data);
 }
 
-void EGEClient::requestObject(long long id)
+void EGEClient::requestObject(UidType id)
 {
     if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Requesting object " << id << " from server";
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));

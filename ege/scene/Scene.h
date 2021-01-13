@@ -72,14 +72,14 @@ public:
     virtual void onUpdate(TickCount tickCounter);
 
     // %overwrite - overwrite object instead of skipping when name conflict arises
-    IdType addObject(std::shared_ptr<SceneObject> object);
-    IdType addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite = false);
+    UidType addObject(std::shared_ptr<SceneObject> object);
+    UidType addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite = false);
 
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
 
-    std::shared_ptr<SceneObject> getObject(IdType id);
-    std::shared_ptr<SceneObject> getStaticObject(IdType id);
+    std::shared_ptr<SceneObject> getObject(UidType id);
+    std::shared_ptr<SceneObject> getStaticObject(UidType id);
 
     SceneObject* getObjectByName(String name);
 
@@ -110,8 +110,8 @@ protected:
     ObjectMapByName m_objectsByName;
 
 private:
-    IdType m_greatestId = 0;
-    IdType m_greatestStaticId = 0;
+    UidType m_greatestId = 0;
+    UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
     std::function<void(std::shared_ptr<SceneObject>)> m_addObjectCallback;
