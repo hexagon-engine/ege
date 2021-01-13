@@ -60,6 +60,40 @@ TESTCASE(gameLoop)
     return gameLoop.run();
 }
 
+TESTCASE(_eventPerfTest)
+{
+    EGE::EventLoop loop;
+    for(size_t s = 0; s < 1024000; s++)
+    {
+        loop.fire<TickEvent>(s);
+    }
+    return 0;
+}
+
+TESTCASE(_eventPerfTest_Handler)
+{
+    EGE::EventLoop loop;
+    loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });
+    for(size_t s = 0; s < 1024000; s++)
+    {
+        loop.fire<TickEvent>(s);
+    }
+    return 0;
+}
+
+TESTCASE(_eventPerfTest_3Handlers)
+{
+    EGE::EventLoop loop;
+    loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });
+    loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Failure; });
+    loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });
+    for(size_t s = 0; s < 1024000; s++)
+    {
+        loop.fire<TickEvent>(s);
+    }
+    return 0;
+}
+
 EGE::EventResult timerEventTest(EGE::TimerEvent& event)
 {
     std::cerr << "-- TimerEventTest: " << event.getTimer()->getName() << std::endl;
