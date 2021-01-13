@@ -53,11 +53,10 @@ public:
         // only server side!
         if(!playerControlled && owner.isHeadless())
         {
-            auto timer = make<EGE::Timer>(this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds));
-            timer->setCallback([this](std::string, EGE::Timer*) {
-                                    std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
-                                    m_dead = true;
-                               });
+            auto timer = make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds), [this](std::string, EGE::Timer*) {
+                std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
+                m_dead = true;
+            });
 
             addTimer("timer", timer);
             m_motion = EGE::Vec2d(rand() % 5 - 2, rand() % 5 - 2);
@@ -214,13 +213,11 @@ TESTCASE(server)
 
         auto scene = make<EGE::Scene2D>(nullptr);
 
-        auto timer = make<EGE::Timer>(&server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
-        timer->setCallback([scene](std::string, EGE::Timer*) {
-                                auto object = make<MyObject>(*scene);
-                                object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
-                                scene->addObject(object);
-                           });
-
+        auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
+            auto object = make<MyObject>(*scene);
+            object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
+            scene->addObject(object);
+        });
         server.addTimer("timer", timer);
 
         server.setScene(scene);

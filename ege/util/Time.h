@@ -50,11 +50,7 @@ public:
         Seconds
     };
 
-    Time()
-    : m_value(0)
-    , m_unit(Unit::Seconds) {}
-
-    Time(MaxFloat value, Unit unit = Unit::Seconds)
+    Time(MaxFloat value = 0, Unit unit = Unit::Seconds)
     : m_value(value)
     , m_unit(unit) {}
 

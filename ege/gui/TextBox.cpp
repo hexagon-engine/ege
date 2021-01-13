@@ -52,7 +52,7 @@ namespace EGE
 TextBox::TextBox(Widget& parent, String id)
 : Widget(parent, id)
 {
-    m_caretAnimation = make<Animation>(this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
+    m_caretAnimation = make<Animation>(*this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
     m_caretAnimation->addKeyframe(0.0, 1.0);
     m_caretAnimation->addKeyframe(0.5, 0.0);
     m_caretAnimation->addKeyframe(1.0, 1.0);

@@ -30,7 +30,7 @@ public:
         setName(name);
 
         // make object animated (it can be done now by flyTo())
-        auto anim = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        auto anim = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, -1.0);
         anim->addKeyframe(0.5, 1.0);
         anim->addKeyframe(1.0, -1.0);
@@ -143,10 +143,9 @@ TESTCASE(simple)
     scene->addObject(removedObject);
 
     // set Test Object to be removed after 5 seconds
-    removedObject->addTimer("makeTestObjectDead", &((new EGE::Timer(removedObject.get(), EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
-                                     ->setCallback([scene, removedObject](std::string, EGE::Timer*) {
-                                                   removedObject->setDead();
-                                                })), EGE::GameLoop::TimerImmediateStart::Yes);
+    removedObject->addTimer("makeTestObjectDead", make<EGE::Timer>(*removedObject, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [scene, removedObject](std::string, EGE::Timer*) {
+        removedObject->setDead();
+    }));
 
     // assign scene to GUI
     gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
@@ -184,11 +183,11 @@ TESTCASE(_2dCamera)
     cam->setScalingMode(EGE::ScalingMode::Centered);
 
     // make camera animated
-    auto timer = make<EGE::Timer>(cam.get(), EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds));
-    timer->setCallback([cam, &b1](std::string, EGE::Timer*) {
-                        cam->flyTo(b1 ? EGE::Vec2d(0.f, 100.f) : EGE::Vec2d(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
-                        b1 = !b1;
-                       });
+    auto timer = make<EGE::Timer>(*cam, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [cam, &b1](std::string, EGE::Timer*) {
+        cam->flyTo(b1 ? EGE::Vec2d(0.f, 100.f) : EGE::Vec2d(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
+        b1 = !b1;
+    });
+
     // the first fly
     cam->flyTo(EGE::Vec2d(0.f, 100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
     cam->addTimer("camera fly timer", timer);
@@ -213,10 +212,9 @@ TESTCASE(_2dCamera)
     scene->addObject(texturedObject);
 
     // set Test Object to be removed after 5 seconds
-    removedObject->addTimer("makeTestObjectDead", &((new EGE::Timer(removedObject.get(), EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds)))
-                                     ->setCallback([scene, removedObject](std::string, EGE::Timer*) {
-                                                   removedObject->setDead();
-                                                })), EGE::GameLoop::TimerImmediateStart::Yes);
+    removedObject->addTimer("makeTestObjectDead", make<EGE::Timer>(*removedObject, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [scene, removedObject](std::string, EGE::Timer*) {
+        removedObject->setDead();
+    }));
 
     // assign scene to GUI
     gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
@@ -514,7 +512,7 @@ public:
     SimpleRectangleObject(EGE::Scene2D& scene)
     : EGE::SceneObject2D(scene, "SimpleRectangleObject")
     {
-        auto anim = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+        auto anim = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, -1.0);
         anim->addKeyframe(0.5, 1.0);
         anim->addKeyframe(1.0, -1.0);

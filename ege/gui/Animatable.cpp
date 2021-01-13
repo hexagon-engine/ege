@@ -56,9 +56,9 @@ void Animatable::addAnimation(std::shared_ptr<Animation> animation, std::functio
                                 });
     }
 
-    Timer* timer = new Timer(this, Timer::Mode::Limited, animation->getDelay());
-    timer->setCallback([animation, name, this](std::string, Timer*) { addTimer("EGE::Animatable: " + name, animation); });
-    addTimer("EGE::Animatable Delay: " + name, timer);
+    addTimer("EGE::Animatable Delay: " + name, make<Timer>(*this, Timer::Mode::Limited, animation->getDelay(), [animation, name, this](std::string, Timer*) {
+        addTimer("EGE::Animatable: " + name, animation);
+    }));
 }
 
 void Animatable::removeAnimations(std::string name)

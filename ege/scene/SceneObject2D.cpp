@@ -88,28 +88,28 @@ bool SceneObject2D::moveTo(Vec2d pos, bool notify)
 bool SceneObject2D::flyTo(Vec2d toPos, double time, std::function<double(double)> easing)
 {
     // TODO: collisions
-    auto animation = make<Animation>(this, EGE::Time(time, EGE::Time::Unit::Seconds));
+    auto animation = make<Animation>(*this, EGE::Time(time, EGE::Time::Unit::Seconds));
     animation->setEasingFunction(easing);
     animation->addKeyframe(0,0);
     animation->addKeyframe(1,1);
     animation->setCallback([this, toPos](std::string, EGE::Timer* timer) {
-                    SceneObject2D* obj = (SceneObject2D*)timer->getLoop();
-                    if(!obj->moveTo(toPos))
-                    {
-                        DBG(1, "SceneObject2D collided during flyTo finalizing");
-                    }
-                 });
+        SceneObject2D& obj = (SceneObject2D&)timer->getLoop();
+        if(!obj.moveTo(toPos))
+        {
+            DBG(1, "SceneObject2D collided during flyTo finalizing");
+        }
+    });
     Vec2d prevPos = getPosition();
     addAnimation(animation, [prevPos, this, time, toPos](EGE::Animation* anim, double val) {
-                    SceneObject2D* obj = (SceneObject2D*)anim->getLoop();
-                    Vec2d diff = toPos - prevPos;
-                    Vec2d pos = Vec2d(val * diff.x, val * diff.y) + prevPos;
-                    DUMP(1, val);
-                    if(!obj->moveTo(pos))
-                    {
-                        DBG(1, "SceneObject2D collided during flyTo");
-                    }
-                 });
+        SceneObject2D& obj = (SceneObject2D&)anim->getLoop();
+        Vec2d diff = toPos - prevPos;
+        Vec2d pos = Vec2d(val * diff.x, val * diff.y) + prevPos;
+        DUMP(1, val);
+        if(!obj.moveTo(pos))
+        {
+            DBG(1, "SceneObject2D collided during flyTo");
+        }
+    });
     return true;
 }
 

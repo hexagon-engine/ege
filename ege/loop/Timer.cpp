@@ -48,7 +48,7 @@ namespace EGE
 
 void Timer::start()
 {
-    m_startTime = m_loop->time(m_interval.getUnit());
+    m_startTime = m_loop.time(m_interval.getUnit());
     m_started = true;
     m_iterations = 0;
     m_remainingIterations = m_iterations + 1;
@@ -65,7 +65,7 @@ Timer::Finished Timer::update()
     DUMP(TIMER_DEBUG, (long long)m_startTime);
     DUMP(TIMER_DEBUG, m_interval.getUnit() == Time::Unit::Ticks);
 
-    double time = m_loop->time(m_interval.getUnit());
+    double time = m_loop.time(m_interval.getUnit());
     DUMP(TIMER_DEBUG, (long long)time);
 
     if(m_updateCallback)
@@ -96,7 +96,7 @@ Timer::Finished Timer::update()
 }
 Time Timer::getElapsedTime()
 {
-    return Time(m_loop->time(m_interval.getUnit()) - m_startTime, m_interval.getUnit());
+    return Time(m_loop.time(m_interval.getUnit()) - m_startTime, m_interval.getUnit());
 }
 void Timer::restart()
 {

@@ -48,7 +48,7 @@ namespace EGE
 class Animation : public Timer
 {
 public:
-    Animation(EventLoop* loop, Time duration, Timer::Mode mode = Timer::Mode::Limited)
+    Animation(EventLoop& loop, Time duration, Timer::Mode mode = Timer::Mode::Limited)
     : Timer(loop, mode, duration) {}
 
     // time is value from 0 (start()) to 1 (start() + duration)

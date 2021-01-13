@@ -81,12 +81,9 @@ TESTCASE(guiChange)
     gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
 
     gameLoop.setCurrentGUIScreen(gui);
-
-    auto timer = make<EGE::Timer>(&gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds));
-    timer->setCallback([gui2, &gameLoop](std::string, EGE::Timer*) {
+    gameLoop.addTimer("changeGUI", make<EGE::Timer>(gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [gui2, &gameLoop](std::string, EGE::Timer*) {
         gameLoop.setCurrentGUIScreen(gui2);
-    });
-    gameLoop.addTimer("changeGUI", timer, EGE::GameLoop::TimerImmediateStart::Yes);
+    }));
 
     return gameLoop.run();
 }
@@ -229,7 +226,7 @@ public:
 
                         myFrame->addWidget(button2);
                         timerRunning = true;
-                        addTimer("TimerHideWidget", &(new EGE::Timer(this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds)))->setCallback([this, myFrame](std::string, EGE::Timer*) {
+                        addTimer("TimerHideWidget", make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds), [this, myFrame](std::string, EGE::Timer*) {
                             myFrame->removeWidget(button2.get());
                             timerRunning = false;
                         }));
@@ -299,7 +296,7 @@ public:
                 graph->setMax(600.f);
                 myFrame2->addWidget(graph);
 
-                auto anim = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                auto anim = make<EGE::Animation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim->addKeyframe(0.0, 1.0);
                 anim->addKeyframe(0.1, 5.0);
                 anim->addKeyframe(0.5, -3.0);
@@ -313,7 +310,7 @@ public:
                 graph2->setMax(600.f);
                 myFrame2->addWidget(graph2);
 
-                auto anim2 = make<EGE::Animation>(this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                auto anim2 = make<EGE::Animation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim2->addKeyframe(0.0, 1.0);
                 anim2->addKeyframe(0.1, 5.0);
                 anim2->addKeyframe(0.5, -3.0);
@@ -323,7 +320,7 @@ public:
                                 graph2->addVal(val);
                              });
 
-                auto anim3 = make<EGE::Animation>(this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
+                auto anim3 = make<EGE::Animation>(*this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
                 anim3->addKeyframe(0.0, -1.0);
                 anim3->addKeyframe(1.0, 1.0);
                 anim3->setEasingFunction([](double x)->double {
@@ -333,7 +330,7 @@ public:
                                 //ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
                              });
 
-                auto animLabel = make<EGE::Animation>(this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+                auto animLabel = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
                 animLabel->addKeyframe(0.0, -1.0);
                 animLabel->addKeyframe(0.5, 1.0);
                 animLabel->addKeyframe(1.0, -1.0);
