@@ -48,7 +48,7 @@ public:
     virtual void onTick(long long)
     {
         //DEBUG_PRINT("onTick");
-        m_window->callEvents(this);
+        m_window->callEvents(*this);
         if(!m_window->isOpen())
             exit();
         m_window->clear();
@@ -117,7 +117,7 @@ public:
 EGE::EventResult MyGameLoop::onLoad()
 {
     m_window = make<EGE::SFMLSystemWindow>();
-    addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(*m_window));
+    events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(*m_window);
     m_window->create(sf::VideoMode(256, 256), "EGE Test");
     return EGE::EventResult::Success;
 }

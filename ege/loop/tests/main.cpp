@@ -29,7 +29,7 @@ void MyGameLoop::onUpdate(long long tickCount)
     DEBUG_PRINT("onTick");
 
     TickEvent event(tickCount);
-    fireEvent(event);
+    events<TickEvent>().fire(event);
 
     if(tickCount == 2)
         EXPECT(event.isCanceled());
@@ -54,8 +54,8 @@ EGE::EventResult eventTest2(TickEvent&)
 TESTCASE(gameLoop)
 {
     MyGameLoop gameLoop;
-    gameLoop.addEventHandler("TickEvent", make<EGE::SimpleEventHandler<TickEvent>>(eventTest));
-    gameLoop.addEventHandler("TickEvent", make<EGE::SimpleEventHandler<TickEvent>>(eventTest2));
+    gameLoop.events<TickEvent>().add(eventTest);
+    gameLoop.events<TickEvent>().add(eventTest2);
 
     return gameLoop.run();
 }

@@ -42,6 +42,7 @@
 
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <functional>
 
 namespace EGE
 {
@@ -49,24 +50,29 @@ namespace EGE
 class EventHandler
 {
 public:
+    virtual Event::EventType type() = 0;
     virtual EventResult handle(Event& event) { (void)event; return EventResult::Failure; }
 };
 
-template<class EventClassType>
+template<class Evt>
 class SimpleEventHandler : public EventHandler
 {
 public:
-    typedef EventResult(*Handler)(EventClassType& event);
+    typedef std::function<EventResult(Evt&)> Handler;
 
     explicit SimpleEventHandler(Handler handler)
         : m_handler(handler)
     {}
 
+    virtual Event::EventType type() { return Evt::type(); }
+
     virtual EventResult handle(Event& event) override
     {
-        EventClassType* event2 = (EventClassType*)(&event);
+        auto event2 = dynamic_cast<Evt*>(&event);
         ASSERT(event2);
-        return m_handler(*event2);
+        if(m_handler)
+            return m_handler(*event2);
+        CRASH_WITH_MESSAGE("You need to give a handler or override `handle' function");
     }
 
 private:

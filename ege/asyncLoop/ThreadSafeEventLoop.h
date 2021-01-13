@@ -46,16 +46,48 @@
 namespace EGE
 {
 
+// TODO: Actually it's not thread-safe when we have only EventLoop pointer!!!
 class ThreadSafeEventLoop : public AsyncLoop
 {
 public:
-    // from EVENT LOOP
-    virtual void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
+    template<class EvtT>
+    class _ThreadSafeEventArray
+    {
+    public:
+        _ThreadSafeEventArray(EventArray<EvtT>& earr, sf::Mutex& mutex)
+        : m_array(earr), m_mutex(mutex) {}
 
-    // NOTE: removing event handlers in event handler is UB
-    virtual void removeEventHandler(EventHandler* handler);
+        void clear() { sf::Lock lock(m_mutex); m_array.clear(); }
 
-    virtual EventResult fireEvent(Event& event);
+        _ThreadSafeEventArray<EvtT>& remove(EventHandler& handler) { sf::Lock lock(m_mutex); m_array.remove(handler); return *this; }
+
+        template<class Evt = EvtT>
+        _ThreadSafeEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler) { sf::Lock lock(m_mutex); m_array.add(handler); return *this; }
+
+        template<typename EvtHandler, typename... Args>
+        _ThreadSafeEventArray<EvtT>& addHandler(Args&&... args)
+        {
+            sf::Lock lock(m_mutex);
+            m_array.template addHandler<EvtHandler>(std::forward<Args>(args)...);
+            return *this;
+        }
+
+        template<class Evt = EvtT, class... Args>
+        EventResult fire(Args&&... args) { sf::Lock lock(m_mutex); return m_array.fire(args...); }
+
+        EventResult fire(EvtT& event) { sf::Lock lock(m_mutex); return m_array.fire(event); }
+        _ThreadSafeEventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler) { sf::Lock lock(m_mutex); m_array.addHandler(handler); return *this; }
+
+    private:
+        EventArray<EvtT>& m_array;
+        sf::Mutex& m_mutex;
+    };
+
+    template<class Evt>
+    _ThreadSafeEventArray<Evt> events()
+    {
+        return _ThreadSafeEventArray<Evt>(EventLoop::events<Evt>(), m_eventHandlerMutex);
+    }
 
     virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart start = EventLoop::TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
@@ -68,6 +100,7 @@ public:
 
     // unsafe due to thread termination
     virtual void removeAsyncTasks(std::string name = "");
+
     virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
     virtual void safeRemoveAsyncTasks();
 

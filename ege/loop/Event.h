@@ -38,10 +38,10 @@
 
 #include <string>
 
-#define EGE_EVENT(type) \
+#define EGE_EVENT(_type) \
 public: \
-    static EGE::Event::EventType getTypeStatic() { return type; } \
-    virtual EGE::Event::EventType getType() { return getTypeStatic(); } \
+    static EGE::Event::EventType type() { return _type; } \
+    virtual EGE::Event::EventType getType() { return type(); } \
 
 namespace EGE
 {

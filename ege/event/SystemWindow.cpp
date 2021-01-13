@@ -43,14 +43,13 @@
 namespace EGE
 {
 
-void SFMLSystemWindow::callEvents(EventLoop* loop, SFMLSystemWindow::WaitForEvents wait)
+void SFMLSystemWindow::callEvents(EventLoop& loop, SFMLSystemWindow::WaitForEvents wait)
 {
     if(wait == SFMLSystemWindow::WaitForEvents::Yes)
     {
         sf::Event event;
         ASSERT(waitEvent(event));
-        SystemEvent sysEvent(event);
-        ASSERT(loop->fireEvent(sysEvent) == EventResult::Success);
+        ASSERT(loop.fire<SystemEvent>(event) == EventResult::Success);
     }
     else
     {
@@ -58,7 +57,7 @@ void SFMLSystemWindow::callEvents(EventLoop* loop, SFMLSystemWindow::WaitForEven
         while(pollEvent(event))
         {
             SystemEvent sysEvent(event);
-            ASSERT(loop->fireEvent(sysEvent) == EventResult::Success);
+            ASSERT(loop.fire<SystemEvent>(event) == EventResult::Success);
         }
     }
 }
@@ -72,6 +71,7 @@ void SFMLSystemWindow::initialize()
     if(rc != GLEW_OK)
     {
         err(LogLevel::Crash) << "GLEW initialization failed: " << glewGetErrorString(rc);
+        return;
     }
     m_glExtensions = true;
 }

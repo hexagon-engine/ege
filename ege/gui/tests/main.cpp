@@ -343,13 +343,13 @@ public:
         }
     }
 
-    virtual void onResize(sf::Event::SizeEvent& event)
+    virtual void onResize(sf::Event::SizeEvent& event) override
     {
         EGE::GUIScreen::onResize(event);
         //labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
     }
 
-    virtual void onUpdate(long long tickCounter)
+    virtual void onUpdate(long long tickCounter) override
     {
         EGE::GUIScreen::onUpdate(tickCounter);
         //labelFPS->setString("FPS: " + std::to_string((int)(1.f / getLoop().getLatestFrameTime().asSeconds())));

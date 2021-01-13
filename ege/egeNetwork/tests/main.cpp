@@ -269,9 +269,6 @@ public:
         }
     }
 
-    // It's done by GUIScreen.
-    virtual void onClose() {}
-
 private:
     std::shared_ptr<MyClient> m_client;
 };
@@ -312,7 +309,7 @@ public:
                                  });
 
         // Add keybind handler. It will pass keyboard events to Controller.
-        addEventHandler(EGE::SystemEvent::getTypeStatic(), make<MySystemEventHandler>(getWindow(), m_client));
+        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);
 
         // Initialize Camera.
         m_camera = make<EGE::CameraObject2D>(*scene);

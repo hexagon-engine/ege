@@ -46,7 +46,7 @@ class SystemWindow
 {
 public:
     EGE_ENUM_YES_NO(WaitForEvents);
-    virtual void callEvents(EventLoop* loop, WaitForEvents wait) = 0;
+    virtual void callEvents(EventLoop& loop, WaitForEvents wait) = 0;
 };
 
 class SFMLSystemWindow : public SystemWindow, public sf::RenderWindow
@@ -56,7 +56,7 @@ public:
     : sf::RenderWindow()
     {}
 
-    virtual void callEvents(EventLoop* loop, WaitForEvents wait = WaitForEvents::No);
+    virtual void callEvents(EventLoop& loop, WaitForEvents wait = WaitForEvents::No);
 
     bool areGLExtensionsEnabled() { return m_glExtensions; }
 

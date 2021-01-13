@@ -43,9 +43,12 @@
 namespace EGE
 {
 
-class SystemEventHandler : public EventHandler
+class SystemEventHandler : public SimpleEventHandler<SystemEvent>
 {
 public:
+    SystemEventHandler()
+    : SimpleEventHandler({}) {}
+
     virtual EventResult handle(Event& event) override;
 
     virtual void onClose() {}

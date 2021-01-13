@@ -51,36 +51,9 @@
 namespace EGE
 {
 
-void EventLoop::addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler)
+EventLoop::EventArray<Event>& EventLoop::events(Event::EventType type)
 {
-    m_eventHandlers.insert(std::make_pair(type, handler));
-}
-
-void EventLoop::removeEventHandler(EventHandler* handler)
-{
-    for(auto it = m_eventHandlers.begin(); it != m_eventHandlers.end(); it++)
-    {
-        if(it->second.get() == handler)
-        {
-            m_eventHandlers.erase(it);
-            return;
-        }
-    }
-}
-
-EventResult EventLoop::fireEvent(Event& event)
-{
-    EventResult result = EventResult::Success;
-    Event::EventType type = event.getType();
-    ASSERT(!type.empty());
-    for(auto& pr: m_eventHandlers)
-    {
-        ASSERT(!pr.first.empty());
-        //std::cerr << "GameLoop: " << pr.first << " == " << type << std::endl;
-        if(pr.first == type)
-            (bool&)result |= (bool)pr.second->handle(event);
-    }
-    return result;
+    return m_eventHandlers[type];
 }
 
 void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
@@ -90,7 +63,7 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     if(immediateStart == EventLoop::TimerImmediateStart::Yes)
     {
         TimerEvent event(TimerEvent::Start, timer.get());
-        fireEvent(event);
+        events<TimerEvent>().fire(event);
         if(event.isCanceled())
         {
             return;
@@ -100,12 +73,13 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     if(!timer->getCallback())
     {
         timer->setCallback([this](std::string, Timer* _timer) {
-                                TimerEvent event(TimerEvent::Tick, _timer);
-                                fireEvent(event);
-                                if(event.isCanceled())
-                                    return;
-                                this->onTimerTick(_timer);
-                           });
+            TimerEvent event(TimerEvent::Tick, _timer);
+            events<TimerEvent>().fire(event);
+
+            if(event.isCanceled())
+                return;
+            this->onTimerTick(_timer);
+       });
     }
     m_timers.insert(std::make_pair(name, timer));
 }
@@ -147,7 +121,7 @@ void EventLoop::updateTimers()
         if(timer.second.get()->update() == Timer::Finished::Yes)
         {
             TimerEvent event(TimerEvent::Finish, timer.second.get());
-            fireEvent(event);
+            events<TimerEvent>().fire(event);
             if(event.isCanceled())
                 continue;
 

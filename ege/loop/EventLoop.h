@@ -53,14 +53,78 @@ class EventLoop
 public:
     EGE_ENUM_YES_NO(TimerImmediateStart);
 
-    virtual void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
+    template<class EvtT = Event>
+    class EventArray
+    {
+    public:
+        void clear() { m_handlers.clear(); }
 
-    // NOTE: removing event handlers in event handler is UB
-    // TODO: it's slow
-    virtual void removeEventHandler(EventHandler* handler);
+        template<class Evt = EvtT>
+        EventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
+        {
+            return addHandler<SimpleEventHandler<Evt>>(handler);
+        }
 
-    virtual size_t getEventHandlerCount() { return m_eventHandlers.size(); }
-    virtual EventResult fireEvent(Event& event);
+        EventArray<EvtT>& remove(EventHandler& handler)
+        {
+            ASSERT(!m_inEventHandler);
+            for(size_t s = 0; s < m_handlers.size(); s++)
+            {
+                if(m_handlers[s].get() == &handler)
+                {
+                    m_handlers.erase(m_handlers.begin() + s);
+                    return *this;
+                }
+            }
+            return *this;
+        }
+
+        template<class EvtHandler, class... Args>
+        EventArray<EvtT>& addHandler(Args&&... args)
+        {
+            return addHandler(make<EvtHandler>(args...));
+        }
+
+        EventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler)
+        {
+            m_handlers.push_back(handler);
+            return *this;
+        }
+
+        template<class Evt = EvtT, class... Args>
+        EventResult fire(Args&&... args)
+        {
+            Evt event(args...);
+            return fire(event);
+        }
+
+        EventResult fire(EvtT& event)
+        {
+            EventResult result = EventResult::Success;
+            m_inEventHandler = true;
+            for(auto& pr: m_handlers)
+            {
+                (bool&)result |= (bool)pr->handle(event);
+            }
+            m_inEventHandler = false;
+            return result;
+        }
+
+    private:
+        friend class EventLoop;
+
+        SharedPtrVector<EventHandler> m_handlers;
+        bool m_inEventHandler = false;
+    };
+
+    template<class Evt>
+    EventArray<Evt>& events() { return (EventArray<Evt>&)events(Evt::type()); }
+
+    template<class Evt>
+    EventResult fire(Evt& evt) { return events<Evt>().fire(evt); }
+
+    template<class Evt, class... Args>
+    EventResult fire(Args&&... args) { return events<Evt>().fire(args...); }
 
     virtual void onTimerFinish(Timer*) {}
     virtual void onTimerTick(Timer*) {}
@@ -86,10 +150,8 @@ public:
         m_subLoop = loop;
         return true;
     }
-    std::shared_ptr<EventLoop> getSubLoop()
-    {
-        return m_subLoop;
-    }
+
+    std::shared_ptr<EventLoop> getSubLoop() { return m_subLoop; }
 
 protected:
     virtual void updateTimers();
@@ -98,9 +160,11 @@ protected:
     int m_exitCode = 0;
 
 private:
+    EventArray<Event>& events(Event::EventType type);
+
     int m_ticks = 0;
     std::multimap<std::string, std::shared_ptr<Timer>> m_timers;
-    std::multimap<Event::EventType, std::shared_ptr<EventHandler>> m_eventHandlers;
+    Map<Event::EventType, EventArray<Event>> m_eventHandlers;
     std::shared_ptr<EventLoop> m_subLoop;
     std::queue<std::function<void()>> m_deferredInvokes;
 };

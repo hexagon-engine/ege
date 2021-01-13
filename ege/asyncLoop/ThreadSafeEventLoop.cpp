@@ -39,24 +39,6 @@
 namespace EGE
 {
 
-void ThreadSafeEventLoop::addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler)
-{
-    sf::Lock lock(m_eventHandlerMutex);
-    EventLoop::addEventHandler(type, handler);
-}
-
-void ThreadSafeEventLoop::removeEventHandler(EventHandler* handler)
-{
-    sf::Lock lock(m_eventHandlerMutex);
-    EventLoop::removeEventHandler(handler);
-}
-
-EventResult ThreadSafeEventLoop::fireEvent(Event& event)
-{
-    sf::Lock lock(m_eventHandlerMutex);
-    return EventLoop::fireEvent(event);
-}
-
 void ThreadSafeEventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
 {
     sf::Lock lock(m_timerMutex);

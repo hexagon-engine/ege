@@ -87,7 +87,7 @@ void GUIGameLoop::onTick(long long tickCount)
         DBG(GUI_DEBUG, "initPendingGUI");
         if(m_currentGui)
         {
-            removeEventHandler(m_currentGui.get());
+            events<SystemEvent>().remove(*m_currentGui);
             // it's 'delete'd by eventhandler
             m_currentGui->onUnload();
         }
@@ -99,7 +99,7 @@ void GUIGameLoop::onTick(long long tickCount)
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
 
-        addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
+        events<SystemEvent>().addHandler(m_currentGui);
         m_pendingGui = nullptr;
     }
 
@@ -108,7 +108,7 @@ void GUIGameLoop::onTick(long long tickCount)
     {
         m_profiler->endStartSection("systemEvents");
         DBG(0, "systemEvents");
-        m_systemWindow.callEvents(this, SystemWindow::WaitForEvents::No);
+        m_systemWindow.callEvents(*this, SystemWindow::WaitForEvents::No);
     }
 
     m_profiler->endStartSection("guiUpdate");
@@ -138,7 +138,8 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
 
     if(init == GUIGameLoop::GUIScreenImmediateInit::Yes)
     {
-        removeEventHandler(m_currentGui.get());
+        events<SystemEvent>().remove(*m_currentGui);
+
         // it's 'delete'd by eventhandler
         if(m_currentGui)
            m_currentGui->onUnload();
@@ -151,7 +152,7 @@ void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScre
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
 
-        addEventHandler(SystemEvent::getTypeStatic(), m_currentGui);
+        events<SystemEvent>().addHandler(m_currentGui);
     }
     else
         m_pendingGui = screen;
