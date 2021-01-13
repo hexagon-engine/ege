@@ -46,7 +46,7 @@
 #include <ege/util/ObjectMap.h>
 #include <memory>
 
-#define EGESERVER_DEBUG 1
+#define EGESERVER_DEBUG 0
 #define PING_DEBUG 0
 
 namespace EGE

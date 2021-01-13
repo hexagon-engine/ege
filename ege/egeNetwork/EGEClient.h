@@ -50,7 +50,7 @@
 #include <memory>
 #include <set>
 
-#define EGECLIENT_DEBUG 1
+#define EGECLIENT_DEBUG 0
 
 namespace EGE
 {
