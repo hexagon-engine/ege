@@ -70,6 +70,7 @@ public:
         registerObject("magenta", 255, 0, 255);
         registerObject("yellow", 255, 255, 0);
         registerObject("white", 255, 255, 255);
+        colors.freeze();
         return true;
     }
 };

@@ -69,6 +69,8 @@ public:
     {
         registerMyObject(std::make_unique<MyObjectTest>("testObject", -123, "addd"));
         numeric = registerMyObject(std::make_unique<MyObject>("unknownObject", 54, "araer"));
+        m_myObjectRegistry.replace("testObject", nullptr);
+        m_myObjectRegistry.freeze();
         return true;
     }
 
@@ -102,11 +104,8 @@ TESTCASE(simple)
     manager.reload();
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("unknownObject")->getInt(), 54);
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("unknownObject")->type(), "unknown");
-    EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject")->type(), "test");
-    EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject")->getString(), "addd");
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("nonexistent"), nullptr);
     EXPECT_EQUAL(manager.m_myObjectRegistry.findByNumericId(manager.numeric)->getString(), "araer");
-    manager.m_myObjectRegistry.replace("testObject", nullptr);
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject"), nullptr);
 
     return 0;

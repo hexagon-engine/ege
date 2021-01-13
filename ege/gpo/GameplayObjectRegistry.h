@@ -100,11 +100,15 @@ public:
     // the object doesn't exist or another error occured.
     ObjT* findByNumericId(const IdType id) const;
 
-    // Returns count of objects registered in this registry.
     int count() const;
 
     typename ArrayType::iterator begin() { return m_objects.begin(); }
     typename ArrayType::iterator end() { return m_objects.end(); }
+
+    // Disable modifying registry. It must be done in Gameplay Object
+    // Manager, before any object is accessed.
+    void freeze() { m_frozen = true; }
+    bool isFrozen() { return m_frozen; }
 
 private:
     typedef Map<IdT, typename ArrayType::iterator> ArrayByIdType;
@@ -114,6 +118,7 @@ private:
     ArrayType m_objects;
     ArrayByIdType m_objectsByBaseId;
     ArrayByNIdType m_objectsByNumericId;
+    bool m_frozen = false;
 
     IdType m_greatestNumericId = 0;
 };

@@ -46,6 +46,7 @@ namespace EGE
 EGE_GPOREGISTRY_TEMPLATE
 void GameplayObjectRegistry<IdT, ObjT>::clear()
 {
+    ASSERT_WITH_MESSAGE(!m_frozen, "Cannot modify GPO registry if it's frozen");
     m_objects.clear();
     m_objectsByBaseId.clear();
     m_objectsByNumericId.clear();
@@ -55,6 +56,7 @@ void GameplayObjectRegistry<IdT, ObjT>::clear()
 EGE_GPOREGISTRY_TEMPLATE
 RegistryError GameplayObjectRegistry<IdT, ObjT>::add(const IdT& id, UniquePtr<ObjT> obj, IdType numeric)
 {
+    ASSERT_WITH_MESSAGE(!m_frozen, "Cannot modify GPO registry if it's frozen");
     if(numeric != 0)
     {
         // Check if object already exists, if so, return error.
@@ -90,6 +92,7 @@ RegistryError GameplayObjectRegistry<IdT, ObjT>::add(const IdT& id, UniquePtr<Ob
 EGE_GPOREGISTRY_TEMPLATE
 void GameplayObjectRegistry<IdT, ObjT>::replace(const IdT& id, UniquePtr<ObjT> obj)
 {
+    ASSERT_WITH_MESSAGE(!m_frozen, "Cannot modify GPO registry if it's frozen");
     auto it = m_objectsByBaseId.find(id);
     if(it == m_objectsByBaseId.end())
         return;
@@ -99,6 +102,7 @@ void GameplayObjectRegistry<IdT, ObjT>::replace(const IdT& id, UniquePtr<ObjT> o
 EGE_GPOREGISTRY_TEMPLATE
 ObjT* GameplayObjectRegistry<IdT, ObjT>::findById(const IdT& id) const
 {
+    ASSERT_WITH_MESSAGE(m_frozen, "Registry is not frozen");
     auto it = m_objectsByBaseId.find(id);
     if(it == m_objectsByBaseId.end())
         return nullptr;
@@ -108,6 +112,7 @@ ObjT* GameplayObjectRegistry<IdT, ObjT>::findById(const IdT& id) const
 EGE_GPOREGISTRY_TEMPLATE
 ObjT* GameplayObjectRegistry<IdT, ObjT>::findByNumericId(const IdType id) const
 {
+    ASSERT_WITH_MESSAGE(m_frozen, "Registry is not frozen");
     auto it = m_objectsByNumericId.find(id);
     if(it == m_objectsByNumericId.end())
         return nullptr;
