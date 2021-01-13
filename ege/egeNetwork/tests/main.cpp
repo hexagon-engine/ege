@@ -303,10 +303,11 @@ public:
         m_client->registerSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
 
         // Set exit handler for Client. It will be called when client is disconnected.
-        m_client->setExitHandler([this](int retVal) {
-                                    std::cerr << "CLIENT CLOSED, R=" << retVal << std::endl;
-                                    exit(retVal);
-                                 });
+        m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent& event) {
+            std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
+            exit(event.returnValue);
+            return EGE::EventResult::Success;
+        });
 
         // Add keybind handler. It will pass keyboard events to Controller.
         events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);

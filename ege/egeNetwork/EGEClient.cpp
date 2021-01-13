@@ -343,9 +343,7 @@ EventResult EGEClient::onLoad()
         log() << "001F EGE/egeNetwork: Closing client";
 
         exit(state.returnCode);
-
-        if(m_exitHandler)
-            m_exitHandler(state.returnCode);
+        fire<ExitEvent>(state.returnCode);
     };
 
     m_clientTask = make<AsyncTask>(clientNetworkWorker, clientNetworkCallback);

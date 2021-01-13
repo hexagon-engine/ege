@@ -55,6 +55,15 @@
 namespace EGE
 {
 
+class ExitEvent : public Event
+{
+public:
+    ExitEvent(int rv)
+    : returnValue(rv) {}
+
+    int returnValue;
+};
+
 class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop, public EGEGame
 {
 public:
@@ -98,8 +107,6 @@ public:
     virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
     virtual void disconnect();
 
-    void setExitHandler(std::function<void(int)> func) { m_exitHandler = func; }
-
     std::shared_ptr<ClientNetworkController> getDefaultController() { return m_defaultController; }
     std::shared_ptr<ClientNetworkController> getController(UidType objectId);
     std::shared_ptr<SceneObject> getDefaultControlledObject();
@@ -116,7 +123,6 @@ private:
     std::shared_ptr<AsyncTask> m_clientTask;
     std::shared_ptr<ClientNetworkController> m_defaultController;
     std::map<UidType, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
-    std::function<void(int)> m_exitHandler;
     std::set<UidType> m_requestedObjects;
     sf::IpAddress m_ip;
     unsigned short m_port;
