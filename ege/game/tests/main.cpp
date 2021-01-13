@@ -80,16 +80,14 @@ class ColorWidget : public EGE::CompoundWidget
 {
 public:
     MyColor* m_color;
-    typedef EGE::GameplayObjectRegistry<std::string, MyColor> GPORObjc;
-    GPORObjc::IdTEntry m_id;
+    typedef EGE::GameplayObjectRegistry<EGE::String, MyColor> GPORObjc;
 
-    ColorWidget(EGE::Widget& parent, GPORObjc::IdTEntry id, MyColor* color)
+    ColorWidget(EGE::Widget& parent, size_t index, MyColor* color)
     : EGE::CompoundWidget(parent)
     , m_color(color)
-    , m_id(id)
     {
         auto label = make<EGE::Label>(*this);
-        label->setString(std::to_string(m_id.numericId) + ": " + m_id.baseId);
+        label->setString(std::to_string(index) + ": " + color->getId());
         label->setFontSize(15);
         addWidget(label);
     }
@@ -120,12 +118,10 @@ public:
     {
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
         DEBUG_PRINT("MyGuiScreen onLoad");
-        size_t s = 0;
-        for(auto& _color: MyGameplayObjectManager::instance->colors)
+        size_t s = 1;
+        for(auto& color: MyGameplayObjectManager::instance->colors)
         {
-            DEBUG_PRINT(_color.first.baseId.c_str());
-            DEBUG_PRINT(std::to_string(_color.first.numericId).c_str());
-            auto widget = make<ColorWidget>(*this, _color.first, _color.second.get());
+            auto widget = make<ColorWidget>(*this, s, color.get());
             widget->setSize({"0N", "0N"});
             m_widgets.push_back(widget);
             addWidget(widget);

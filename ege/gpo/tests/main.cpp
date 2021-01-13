@@ -106,7 +106,7 @@ TESTCASE(simple)
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject")->getString(), "addd");
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("nonexistent"), nullptr);
     EXPECT_EQUAL(manager.m_myObjectRegistry.findByNumericId(manager.numeric)->getString(), "araer");
-    manager.m_myObjectRegistry.remove("testObject");
+    manager.m_myObjectRegistry.replace("testObject", nullptr);
     EXPECT_EQUAL(manager.m_myObjectRegistry.findById("testObject"), nullptr);
 
     return 0;

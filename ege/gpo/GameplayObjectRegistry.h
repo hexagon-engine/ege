@@ -57,12 +57,7 @@ enum class RegistryError : int
 
 // Gameplay Object Registry.
 //
-// Requirements for IdT:
-//
-// * must have IdT::IdT() <default constructor>
-// * must have copy constructor or assigment operator
-// * must have operator==(const IdT&, const IdT&)
-// The best for it will be number primitive type e.g. int.
+// Requirements for IdT: same as for std::map key
 //
 // The ObjT:
 // * SHOULD be derived from GameplayObject
@@ -73,110 +68,54 @@ public:
     struct IdTEntry
     {
         IdT baseId;
-        size_t numericId;
+        IdType numericId;
     };
 
     // TODO: binary search of gpos?
-    typedef std::vector<std::pair<IdTEntry, EGE::UniquePtr<ObjT>>> ArrayType;
+    typedef List<UniquePtr<ObjT>> ArrayType;
 
-    GameplayObjectRegistry();
+    GameplayObjectRegistry() = default;
 
     // non-copyable
     GameplayObjectRegistry(const GameplayObjectRegistry<IdT, ObjT>& obj) = delete;
 
-    virtual ~GameplayObjectRegistry();
-
     // Deallocates and removes all elements from registry.
-    virtual void clear();
+    void clear();
 
     // Adds a new object to registry.
     // Returns negative value if object exists (or another error occured),
     // positive otherwise.
     // If %numeric is not specified or equal 0, the ID is automatically
     // generated and the return value is an ID of object.
-    virtual RegistryError add(IdT id, EGE::UniquePtr<ObjT> obj, size_t numeric = 0);
+    RegistryError add(const IdT& id, UniquePtr<ObjT> obj, IdType numeric = 0);
+
+    // Replaces an object in registry.
+    void replace(const IdT& id, UniquePtr<ObjT> obj);
 
     // Returns an object that has specified base %id. Returns NULL if
     // the object doesn't exist or another error occured.
-    virtual ObjT* findById(const IdT& id) const;
+     ObjT* findById(const IdT& id) const;
 
     // Returns an object that has specified numeric %id. Returns NULL if
     // the object doesn't exist or another error occured.
-    virtual ObjT* findByNumericId(const size_t id) const;
-
-    // Returns an ID of %obj. Returns IdT() if object doesn't exist
-    // or another error occured.
-    virtual IdTEntry getIdOf(ObjT* obj) const;
-
-    // Removes an object with specified %id.
-    virtual void remove(const IdT& id);
-
-    // Removes an object with specified %id.
-    virtual void removeByNumericId(const size_t id);
-
-    // Removes (but not deallocates) object with the same pointer
-    // that specified.
-    virtual void remove(ObjT* obj);
+    ObjT* findByNumericId(const IdType id) const;
 
     // Returns count of objects registered in this registry.
-    virtual int count() const;
+    int count() const;
 
-    // Returns a reference to internal array. Can be useful for
-    // iterating on elements.
-    virtual const ArrayType& arr() const;
-
-    virtual typename ArrayType::iterator begin()
-    {
-        return m_objects.begin();
-    }
-    virtual typename ArrayType::iterator end()
-    {
-        return m_objects.end();
-    }
+    typename ArrayType::iterator begin() { return m_objects.begin(); }
+    typename ArrayType::iterator end() { return m_objects.end(); }
 
 private:
+    typedef Map<IdT, typename ArrayType::iterator> ArrayByIdType;
+    typedef Map<IdType, typename ArrayType::iterator> ArrayByNIdType;
+    typedef Map<ObjT*, typename ArrayType::iterator> ArrayByObjectType;
+
     ArrayType m_objects;
-    size_t m_greatestNumericId;
-};
+    ArrayByIdType m_objectsByBaseId;
+    ArrayByNIdType m_objectsByNumericId;
 
-// Specialization for void - do not deallocate!!
-template<class IdT>
-class GameplayObjectRegistry<IdT, void>
-{
-public:
-    struct IdTEntry
-    {
-        IdT baseId;
-        size_t numericId;
-    };
-
-    typedef std::vector<std::pair<IdTEntry, void*>> ArrayType;
-
-    // Deallocates and removes all elements from registry.
-    virtual void clear();
-
-    // Removes an object with specified %id.
-    virtual void removeByNumericId(const size_t id);
-
-    // Removes an object with specified %id.
-    virtual void remove(const IdT& id);
-
-    // Removes (but not deallocates) object with the same pointer
-    // that specified.
-    virtual void remove(void* obj);
-
-    virtual typename ArrayType::iterator begin()
-    {
-        return m_objects.begin();
-    }
-    virtual typename ArrayType::iterator end()
-    {
-        return m_objects.end();
-    }
-
-private:
-    ArrayType m_objects;
-    IdT m_greatestNumericId;
+    IdType m_greatestNumericId = 0;
 };
 
 }

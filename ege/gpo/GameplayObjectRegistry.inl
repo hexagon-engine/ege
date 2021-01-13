@@ -44,53 +44,35 @@ namespace EGE
 {
 
 EGE_GPOREGISTRY_TEMPLATE
-GameplayObjectRegistry<IdT, ObjT>::GameplayObjectRegistry()
-{
-    m_greatestNumericId = 0;
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-GameplayObjectRegistry<IdT, ObjT>::~GameplayObjectRegistry()
-{
-    clear();
-}
-
-EGE_GPOREGISTRY_TEMPLATE
 void GameplayObjectRegistry<IdT, ObjT>::clear()
 {
     m_objects.clear();
+    m_objectsByBaseId.clear();
+    m_objectsByNumericId.clear();
     m_greatestNumericId = 0;
 }
 
 EGE_GPOREGISTRY_TEMPLATE
-RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, EGE::UniquePtr<ObjT> obj, size_t numeric)
+RegistryError GameplayObjectRegistry<IdT, ObjT>::add(const IdT& id, UniquePtr<ObjT> obj, IdType numeric)
 {
     if(numeric != 0)
     {
-        // TODO: optimize it
         // Check if object already exists, if so, return error.
-        for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-        {
-            if(it->first.baseId == id)
-                return RegistryError::ObjectExists;
-            if(it->first.numericId == numeric)
-                return RegistryError::NumericIdExists;
-        }
+        if(m_objectsByNumericId.find(numeric) != m_objectsByNumericId.end())
+            return RegistryError::NumericIdExists;
+        if(m_objectsByBaseId.find(id) != m_objectsByBaseId.end())
+            return RegistryError::ObjectExists;
 
         // Try to add object.
         try
         {
-            m_objects.push_back(std::make_pair(IdTEntry{id,numeric}, std::move(obj)));
-        }
-        catch(std::exception& e)
-        {
-            std::cerr << "000C EGE/gpo: std::exception caught in GameplayObjectRegistry::add(): " << e.what() << std::endl;
-            return RegistryError::Unknown;
+            m_objects.push_back(std::move(obj));
+            m_objectsByNumericId.insert(std::make_pair(numeric, --m_objects.end()));
+            m_objectsByBaseId.insert(std::make_pair(id, --m_objects.end()));
         }
         catch(...)
         {
-            std::cerr << "000D EGE/gpo: unknown exception caught in GameplayObjectRegistry::add()" << std::endl;
-            return RegistryError::Unknown;
+            CRASH_WITH_MESSAGE("Exception in GameplayObjectRegistry::add()");
         }
 
         if(m_greatestNumericId < numeric)
@@ -106,132 +88,36 @@ RegistryError GameplayObjectRegistry<IdT, ObjT>::add(IdT id, EGE::UniquePtr<ObjT
 }
 
 EGE_GPOREGISTRY_TEMPLATE
+void GameplayObjectRegistry<IdT, ObjT>::replace(const IdT& id, UniquePtr<ObjT> obj)
+{
+    auto it = m_objectsByBaseId.find(id);
+    if(it == m_objectsByBaseId.end())
+        return;
+    *it->second = std::move(obj);
+}
+
+EGE_GPOREGISTRY_TEMPLATE
 ObjT* GameplayObjectRegistry<IdT, ObjT>::findById(const IdT& id) const
 {
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.baseId == id)
-            return it->second.get();
-    }
-    return nullptr;
+    auto it = m_objectsByBaseId.find(id);
+    if(it == m_objectsByBaseId.end())
+        return nullptr;
+    return (*it->second).get();
 }
 
 EGE_GPOREGISTRY_TEMPLATE
-ObjT* GameplayObjectRegistry<IdT, ObjT>::findByNumericId(const size_t id) const
+ObjT* GameplayObjectRegistry<IdT, ObjT>::findByNumericId(const IdType id) const
 {
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.numericId == id)
-            return it->second.get();
-    }
-    return nullptr;
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-typename GameplayObjectRegistry<IdT, ObjT>::IdTEntry GameplayObjectRegistry<IdT, ObjT>::getIdOf(ObjT* obj) const
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->second.get() == obj)
-            return it->first;
-    }
-    return IdTEntry{IdT(), 0};
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-void GameplayObjectRegistry<IdT, ObjT>::remove(const IdT& id)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.baseId == id)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-void GameplayObjectRegistry<IdT, ObjT>::removeByNumericId(const size_t id)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.numericId == id)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-void GameplayObjectRegistry<IdT, ObjT>::remove(ObjT* obj)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->second.get() == obj)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
+    auto it = m_objectsByNumericId.find(id);
+    if(it == m_objectsByNumericId.end())
+        return nullptr;
+    return (*it->second).get();
 }
 
 EGE_GPOREGISTRY_TEMPLATE
 int GameplayObjectRegistry<IdT, ObjT>::count() const
 {
     return m_objects.size();
-}
-
-EGE_GPOREGISTRY_TEMPLATE
-const typename GameplayObjectRegistry<IdT, ObjT>::ArrayType& GameplayObjectRegistry<IdT, ObjT>::arr() const
-{
-    return m_objects;
-}
-
-// VOID
-
-// don't deallocate void objects
-template<class IdT>
-void GameplayObjectRegistry<IdT, void>::clear()
-{
-    m_objects.clear();
-}
-template<class IdT>
-void GameplayObjectRegistry<IdT, void>::remove(const IdT& id)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.baseId == id)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
-}
-template<class IdT>
-void GameplayObjectRegistry<IdT, void>::removeByNumericId(const size_t id)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->first.numericId == id)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
-}
-template<class IdT>
-void GameplayObjectRegistry<IdT, void>::remove(void* obj)
-{
-    for(auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        if(it->second == obj)
-        {
-            m_objects.erase(it);
-            return;
-        }
-    }
 }
 
 }
