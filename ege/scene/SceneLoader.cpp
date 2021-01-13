@@ -92,14 +92,14 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
         return nullptr;
     }
 
-    auto creator = m_registry.findById(typeId.value());
-    if(!creator)
+    auto creator = m_registry.find(typeId.value());
+    if(creator == m_registry.end())
     {
         log(LogLevel::Warning) << "No SOC found for " << typeId.value();
         return nullptr;
     }
 
-    SharedPtr<SceneObject> sceneObject = (*creator)(m_scene);
+    SharedPtr<SceneObject> sceneObject = creator->second(m_scene);
     if(!sceneObject->deserialize(objMap.value()))
     {
         err() << "Failed to deserialize SceneObject!";

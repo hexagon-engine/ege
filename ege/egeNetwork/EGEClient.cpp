@@ -257,15 +257,15 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
 
     EGEGame::GPOM& gpom = getGameplayObjectManager();
 
-    auto func = gpom.sceneObjectCreators.findById(typeId);
-    if(!func) //game version mismatch?
+    auto func = gpom.sceneObjectCreators.find(typeId);
+    if(func == gpom.sceneObjectCreators.end()) //game version mismatch?
     {
         err() << "Not found '" << typeId << "' in GPOM! Did you forget to add SceneObjectCreator?";
         return EventResult::Failure;
     }
 
     // Call `func' that was registered by user.
-    std::shared_ptr<SceneObject> sceneObject = (*func)(*getScene());
+    std::shared_ptr<SceneObject> sceneObject = func->second(*getScene());
     sceneObject->setObjectId(id); // Don't assign ID automatically!
     sceneObject->deserialize(object);
     getScene()->addObject(sceneObject);

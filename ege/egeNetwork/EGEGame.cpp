@@ -51,7 +51,7 @@ bool EGEGame::GPOM::clear()
 
 bool EGEGame::GPOM::load()
 {
-    sceneObjectCreators.addEntry("EGE::CameraObject2D", EGE_SCENE2D_OBJECT_CREATOR(CameraObject2D));
+    sceneObjectCreators.insert(std::make_pair("EGE::CameraObject2D", EGE_SCENE2D_OBJECT_CREATOR(CameraObject2D)));
     return true;
 }
 

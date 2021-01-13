@@ -457,9 +457,10 @@ TESTCASE(sceneLoader)
     EGE::GUIGameLoop loop;
 
     // Setup typeID registry
-    EGE::SceneLoader::SceneObjectCreatorRegistry registry;
-    registry.addEntry("MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
-    registry.addEntry("MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground));
+    EGE::SceneLoader::SceneObjectCreatorRegistry registry = {
+        { "MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject) },
+        { "MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground) }
+    };
 
     // Load some scene
     auto scene = make<EGE::Scene2D>(&loop);
@@ -552,10 +553,12 @@ public:
 TESTCASE(parenting)
 {
     // Setup registry
-    EGE::SceneLoader::SceneObjectCreatorRegistry registry;
-    registry.addEntry("MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
-    registry.addEntry("MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground));
-    registry.addEntry("SimpleRectangleObject", EGE_SCENE2D_OBJECT_CREATOR(SimpleRectangleObject));
+
+    EGE::SceneLoader::SceneObjectCreatorRegistry registry = {
+        { "MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject) },
+        { "MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground) },
+        { "SimpleRectangleObject", EGE_SCENE2D_OBJECT_CREATOR(SimpleRectangleObject) }
+    };
 
     // Setup loop and load scene
     EGE::GUIGameLoop loop;

@@ -74,7 +74,7 @@ public:
 
     void registerSceneObjectCreator(String typeId, SceneLoader::SceneObjectCreator creator)
     {
-        m_gameplayObjectManager.sceneObjectCreators.addEntry(typeId, creator);
+        m_gameplayObjectManager.sceneObjectCreators.insert(std::make_pair(typeId, creator));
     }
 
     virtual bool initialize();

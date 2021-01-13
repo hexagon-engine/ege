@@ -60,7 +60,7 @@ enum class RegistryError : int
 // Requirements for IdT: same as for std::map key
 //
 // The ObjT:
-// * SHOULD be derived from GameplayObject
+// * MUST be derived from GameplayObject
 EGE_GPOREGISTRY_TEMPLATE
 class GameplayObjectRegistry
 {

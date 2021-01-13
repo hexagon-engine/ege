@@ -122,6 +122,7 @@ ObjT* GameplayObjectRegistry<IdT, ObjT>::findByNumericId(const IdType id) const
 EGE_GPOREGISTRY_TEMPLATE
 int GameplayObjectRegistry<IdT, ObjT>::count() const
 {
+    ASSERT_WITH_MESSAGE(m_frozen, "Registry is not frozen");
     return m_objects.size();
 }
 

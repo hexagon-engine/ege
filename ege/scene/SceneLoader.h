@@ -51,15 +51,7 @@ class SceneLoader
 {
 public:
     typedef std::function<SharedPtr<SceneObject>(Scene&)> SceneObjectCreator;
-
-    class SceneObjectCreatorRegistry : public GameplayObjectRegistry<String, SceneObjectCreator>
-    {
-    public:
-        RegistryError addEntry(String typeId, SceneObjectCreator creator)
-        {
-            return add(typeId, std::make_unique<SceneObjectCreator>(creator));
-        }
-    };
+    typedef Map<String, SceneObjectCreator> SceneObjectCreatorRegistry;
 
     SceneLoader(Scene& scene, const SceneObjectCreatorRegistry& registry)
     : m_scene(scene), m_registry(registry) {}
