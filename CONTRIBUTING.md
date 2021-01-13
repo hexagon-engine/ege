@@ -33,7 +33,7 @@ class MyClass
   int m_myField1 = 0;
   Vec2d m_myVector {0.0, 5.0};
 };
-```c++
+```
 - Use `setXX` for setters and `getXX` for getters. If the class is a frequently used type (like `EGE::Vec2d`), omit `get` prefix. For these types, make name as
 short as possible, but it should still show the purpose of the class. Use `const` for getters. Move
 all method definitions to source files, except they are one-line (often setter and getters).
