@@ -54,18 +54,13 @@ public:
     : m_value(0)
     , m_unit(Unit::Seconds) {}
 
-    Time(MaxFloat value, Unit unit)
+    Time(MaxFloat value, Unit unit = Unit::Seconds)
     : m_value(value)
     , m_unit(unit) {}
 
-    MaxFloat getValue() const
-    {
-        return m_value;
-    }
-    Unit getUnit() const
-    {
-        return m_unit;
-    }
+    MaxFloat getValue() const { return m_value; }
+    Unit getUnit() const { return m_unit; }
+
     Time operator+(MaxFloat _2);
     Time& operator+=(MaxFloat _2);
 

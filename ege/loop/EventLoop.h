@@ -53,12 +53,6 @@ class EventLoop
 public:
     EGE_ENUM_YES_NO(TimerImmediateStart);
 
-    void addEventHandler(Event::EventType type, EventHandler* handler)
-    {
-        ASSERT(handler);
-        addEventHandler(type, std::shared_ptr<EventHandler>(handler));
-    }
-
     virtual void addEventHandler(Event::EventType type, std::shared_ptr<EventHandler> handler);
 
     // NOTE: removing event handlers in event handler is UB
@@ -70,12 +64,6 @@ public:
 
     virtual void onTimerFinish(Timer*) {}
     virtual void onTimerTick(Timer*) {}
-
-    void addTimer(const std::string& name, Timer* timer, TimerImmediateStart start = TimerImmediateStart::Yes)
-    {
-        ASSERT(timer);
-        addTimer(name, std::shared_ptr<Timer>(timer), start);
-    }
 
     virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
