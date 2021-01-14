@@ -38,6 +38,7 @@
 
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/ObjectBoolean.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectString.h>
 
@@ -147,7 +148,6 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSSceneDeletion(std::shared_ptr<Obj
 
 std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data) //SResult
 {
-    log() << "generateCSceneObjectControl: " << object->getObjectId();
     std::shared_ptr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object->getObjectId()));
     std::shared_ptr<ObjectMap> args_data = make<ObjectMap>();
@@ -191,6 +191,14 @@ std::shared_ptr<EGEPacket> EGEPacket::generate_Version(int value, std::string st
     args->addInt("value", value);
     args->addString("string", str);
     return make<EGEPacket>(EGEPacket::Type::_Version, args);
+}
+
+std::shared_ptr<EGEPacket> EGEPacket::generateSAdditionalControllerId(SceneObject& object, bool remove)
+{
+    std::shared_ptr<ObjectMap> args = make<ObjectMap>();
+    args->addInt("id", object.getObjectId());
+    args->addObject("remove", make<ObjectBoolean>(remove));
+    return make<EGEPacket>(EGEPacket::Type::SAdditionalControllerId, args);
 }
 
 }

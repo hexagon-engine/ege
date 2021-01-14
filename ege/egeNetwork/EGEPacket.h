@@ -79,7 +79,8 @@ public:
         SDefaultControllerId = 0x0e,
         CSceneObjectRequest = 0x0f,
         SSceneObjectControl = 0x10,
-        _Version = 0x11 // defined for EGEGame.
+        _Version = 0x11, // defined for EGEGame.
+        SAdditionalControllerId = 0x12
     };
 
     static std::string typeString(Type type);
@@ -112,6 +113,7 @@ public:
     static long long generateUID();
     static void appendUID(std::shared_ptr<ObjectMap> packetArgs);
 
+    // TODO: Use flat pointers / references for these functions!
     static std::shared_ptr<EGEPacket> generate_Data(std::shared_ptr<ObjectMap> data);
     static std::shared_ptr<EGEPacket> generate_Ping();
     static std::shared_ptr<EGEPacket> generate_Pong();
@@ -131,6 +133,7 @@ public:
     static std::shared_ptr<EGEPacket> generateCSceneObjectRequest(long long id);
     static std::shared_ptr<EGEPacket> generateSSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
     static std::shared_ptr<EGEPacket> generate_Version(int value, std::string str);
+    static std::shared_ptr<EGEPacket> generateSAdditionalControllerId(SceneObject& object, bool remove);
 
 private:
     Type m_type;

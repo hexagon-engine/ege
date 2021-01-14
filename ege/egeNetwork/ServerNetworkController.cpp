@@ -44,7 +44,7 @@ namespace EGE
 
 void ServerNetworkController::sendRequest(const ControlObject& data)
 {
-    m_server->sendToAll(EGEPacket::generateSSceneObjectControl(std::static_pointer_cast<SceneObject>(getObject()), data));
+    m_server.sendToAll(EGEPacket::generateSSceneObjectControl(std::static_pointer_cast<SceneObject>(getObject()), data));
 }
 
 }

@@ -54,6 +54,8 @@ public:
         if(!playerControlled && owner.isHeadless())
         {
             auto timer = make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds), [this](std::string, EGE::Timer*) {
+                if(getObjectId() == -1)
+                    return;
                 std::cerr << "[[[ object " << getObjectId() << " was removed ]]]" << std::endl;
                 m_dead = true;
             });
@@ -106,7 +108,7 @@ public:
 class MyObjectServerController : public EGE::ServerNetworkController
 {
 public:
-    MyObjectServerController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEServer* server)
+    MyObjectServerController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEServer& server)
     : EGE::ServerNetworkController(object, server) {}
 
     virtual void handleRequest(const EGE::ControlObject& data) override
@@ -124,7 +126,7 @@ public:
 class MyObjectClientController : public EGE::ClientNetworkController
 {
 public:
-    MyObjectClientController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEClient* client)
+    MyObjectClientController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEClient& client)
     : EGE::ClientNetworkController(object, client) {}
 
     virtual void handleRequest(const EGE::ControlObject& data) override
@@ -150,7 +152,7 @@ public:
         if(object->getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectServerController
-            return make<MyObjectServerController>(object, this);
+            return make<MyObjectServerController>(object, *this);
         }
 
         // object cannot be controlled
@@ -170,6 +172,7 @@ public:
 
         // Set SceneObject to be controlled by this Client.
         setDefaultController(client, sceneObject);
+        addAdditionalController(*client, *getScene()->getObject(-1));
 
         return EGE::EventResult::Success;
     }
@@ -186,7 +189,7 @@ public:
         if(object->getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectClientController
-            return make<MyObjectClientController>(object, this);
+            return make<MyObjectClientController>(object, *this);
         }
 
         // object cannot be controlled

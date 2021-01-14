@@ -48,8 +48,8 @@ class EGEClient;
 class ClientNetworkController : public Controller
 {
 public:
-    ClientNetworkController(std::shared_ptr<SceneObject> object, EGEClient* client)
-    : Controller(std::static_pointer_cast<Controllable>(object)), m_client(client) { ASSERT(object); ASSERT(client); }
+    ClientNetworkController(std::shared_ptr<SceneObject> object, EGEClient& client)
+    : Controller(std::static_pointer_cast<Controllable>(object)), m_client(client) { ASSERT(object); }
 
     // send request to SERVER.
     virtual void sendRequest(const ControlObject& data);
@@ -58,7 +58,7 @@ public:
     virtual void onSetDefault() {}
 
 private:
-    EGEClient* m_client;
+    EGEClient& m_client;
 };
 
 }

@@ -242,6 +242,18 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             send(EGEPacket::generate_Version(getVersion(), getVersionString()));
         }
         break;
+    case EGEPacket::Type::SAdditionalControllerId:
+        {
+            UidType id = egePacket->getArgs()->getObject("id").as<MaxInt>().valueOr(0);
+            bool remove = egePacket->getArgs()->getObject("remove").as<Boolean>().valueOr(true);
+            log() << "SAdditionalControllerId " << id << " " << remove;
+
+            if(remove)
+                removeAdditionalController(id);
+            else
+                addAdditionalController(id);
+        }
+        break;
     default:
         err() << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
@@ -426,6 +438,12 @@ void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const Contro
         if(m_defaultController)
             m_defaultController->sendRequest(data);
 
+        return;
+    }
+
+    if(m_defaultController->getObject() != object && !hasAdditionalController(object->getObjectId()))
+    {
+        log(LogLevel::Warning) << "Client has no additional or default controller for object " << object->getObjectId();
         return;
     }
 

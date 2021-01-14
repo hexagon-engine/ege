@@ -88,11 +88,15 @@ public:
 
     void setDefaultController(EGEClientConnection* client, std::shared_ptr<SceneObject> sceneObject);
 
+    void addAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
+    void removeAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
+
     virtual std::shared_ptr<ServerNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }
     void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
     void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
 
     virtual bool canControlObject(ServerNetworkController* controller, EGEClientConnection* client);
+
 private:
     std::map<UidType, std::shared_ptr<ServerNetworkController>> m_controllersForObjects;
 };

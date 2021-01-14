@@ -98,6 +98,10 @@ public:
         m_controlledSceneObjectId = id;
     }
 
+    void addAdditionalController(UidType id) { m_additionalControllers.insert(id); }
+    void removeAdditionalController(UidType id) { m_additionalControllers.erase(id); }
+    bool hasAdditionalController(UidType id) { return m_additionalControllers.count(id); }
+
     bool agentVerCheckSucceeded() { return m_agentVerCheck; }
     bool protVerCheckSucceeded() { return m_agentVerCheck; }
     void setAgentVerCheckSuccess() { m_agentVerCheck = true; }
@@ -107,6 +111,7 @@ private:
     UidType m_controlledSceneObjectId = 0;
     Time m_lastRecv;
     Time m_createTime;
+    Set<UidType> m_additionalControllers;
 
     bool m_pinged = false;
     bool m_agentVerCheck = false;

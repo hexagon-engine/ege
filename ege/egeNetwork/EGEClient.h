@@ -118,12 +118,17 @@ public:
 
     void requestObject(UidType id);
 
+    void addAdditionalController(UidType id) { m_additionalControllers.insert(id); }
+    void removeAdditionalController(UidType id) { m_additionalControllers.erase(id); }
+    bool hasAdditionalController(UidType id) { return m_additionalControllers.count(id); }
+
 private:
     std::map<UidType, EGEPacket::Type> m_uidMap;
     std::shared_ptr<AsyncTask> m_clientTask;
     std::shared_ptr<ClientNetworkController> m_defaultController;
     std::map<UidType, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
     std::set<UidType> m_requestedObjects;
+    Set<UidType> m_additionalControllers;
     sf::IpAddress m_ip;
     unsigned short m_port;
 };

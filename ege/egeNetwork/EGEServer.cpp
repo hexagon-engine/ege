@@ -193,7 +193,9 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             if(!getScene()) // cannot control object when no scene is created!
                 return EventResult::Failure;
 
-            log() << "Trying to control object: " <<  id.value();
+            if constexpr(EGESERVER_DEBUG)
+                log() << "Trying to control object: " <<  id.value();
+
             auto controller = getController(id.value());
 
             if(!canControlObject(controller.get(), egeClient))
@@ -422,7 +424,19 @@ void EGEServer::requestControl(std::shared_ptr<SceneObject> object, const Contro
 bool EGEServer::canControlObject(ServerNetworkController* controller, EGEClientConnection* client)
 {
     auto so = (SceneObject*)controller->getObject().get();
-    return so->getObjectId() == client->getControlledSceneObject();
+    return so->getObjectId() == client->getControlledSceneObject() || client->hasAdditionalController(so->getObjectId());
+}
+
+void EGEServer::addAdditionalController(EGEClientConnection& client, SceneObject& sceneObject)
+{
+    client.addAdditionalController(sceneObject.getObjectId());
+    client.send(EGEPacket::generateSAdditionalControllerId(sceneObject, false));
+}
+
+void EGEServer::removeAdditionalController(EGEClientConnection& client, SceneObject& sceneObject)
+{
+    client.removeAdditionalController(sceneObject.getObjectId());
+    client.send(EGEPacket::generateSAdditionalControllerId(sceneObject, true));
 }
 
 }
