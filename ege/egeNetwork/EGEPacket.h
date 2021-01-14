@@ -48,7 +48,7 @@
 // It's reported by _ProtocolVersion packet.
 #define EGE_PROTOCOL_VERSION 0
 
-#define EGEPACKET_DEBUG 1
+#define EGEPACKET_DEBUG 0
 
 namespace EGE
 {

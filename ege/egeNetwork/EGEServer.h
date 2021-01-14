@@ -92,6 +92,7 @@ public:
     void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
     void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
 
+    virtual bool canControlObject(ServerNetworkController* controller, EGEClientConnection* client);
 private:
     std::map<UidType, std::shared_ptr<ServerNetworkController>> m_controllersForObjects;
 };

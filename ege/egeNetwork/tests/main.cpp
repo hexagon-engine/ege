@@ -200,6 +200,14 @@ public:
         _map->addInt("dir", dir);
         requestControl(nullptr, EGE::ControlObject("move", _map));
     }
+
+    void move2(bool moving, int dir)
+    {
+        std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
+        _map->addInt("moving", moving);
+        _map->addInt("dir", dir);
+        requestControl(getScene()->getObject(-1), EGE::ControlObject("move", _map));
+    }
 };
 
 TESTCASE(server)
@@ -247,6 +255,14 @@ public:
             break;
         case sf::Keyboard::W: m_client->move(true, 3);
             break;
+        case sf::Keyboard::Left: m_client->move2(true, 0);
+            break;
+        case sf::Keyboard::Down: m_client->move2(true, 1);
+            break;
+        case sf::Keyboard::Right: m_client->move2(true, 2);
+            break;
+        case sf::Keyboard::Up: m_client->move2(true, 3);
+            break;
         default:
             break;
         }
@@ -263,6 +279,14 @@ public:
         case sf::Keyboard::D: m_client->move(false, 2);
             break;
         case sf::Keyboard::W: m_client->move(false, 3);
+            break;
+        case sf::Keyboard::Left: m_client->move2(false, 0);
+            break;
+        case sf::Keyboard::Down: m_client->move2(false, 1);
+            break;
+        case sf::Keyboard::Right: m_client->move2(false, 2);
+            break;
+        case sf::Keyboard::Up: m_client->move2(false, 3);
             break;
         default:
             break;

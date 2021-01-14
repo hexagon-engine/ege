@@ -193,7 +193,14 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
             if(!getScene()) // cannot control object when no scene is created!
                 return EventResult::Failure;
 
+            log() << "Trying to control object: " <<  id.value();
             auto controller = getController(id.value());
+
+            if(!canControlObject(controller.get(), egeClient))
+            {
+                err() << "Client " << egeClient->getID() << " tried to use controller with ID " << id.value() << " without permission!";
+                return EventResult::Failure;
+            }
 
             if(controller)
                 controller->handleRequest(ControlObject(data_name.value(), data_args.to<ObjectMap>().value()));
@@ -323,7 +330,7 @@ void EGEServer::onTick(TickCount)
             // cleared when network thread receives any data from client.
             client->setPinged();
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
-        }
+        }bool canControlObject(SharedPtr<SceneObject> object, EGEClientConnection* client);
     }
 
     // Update scene, because it's not done in GameLoop.
@@ -410,6 +417,12 @@ void EGEServer::requestControl(std::shared_ptr<SceneObject> object, const Contro
     auto controller = getController(object->getObjectId());
     ASSERT(controller);
     controller->sendRequest(data);
+}
+
+bool EGEServer::canControlObject(ServerNetworkController* controller, EGEClientConnection* client)
+{
+    auto so = (SceneObject*)controller->getObject().get();
+    return so->getObjectId() == client->getControlledSceneObject();
 }
 
 }

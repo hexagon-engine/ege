@@ -147,6 +147,7 @@ std::shared_ptr<EGEPacket> EGEPacket::generateSSceneDeletion(std::shared_ptr<Obj
 
 std::shared_ptr<EGEPacket> EGEPacket::generateCSceneObjectControl(std::shared_ptr<SceneObject> object, const ControlObject& data) //SResult
 {
+    log() << "generateCSceneObjectControl: " << object->getObjectId();
     std::shared_ptr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object->getObjectId()));
     std::shared_ptr<ObjectMap> args_data = make<ObjectMap>();

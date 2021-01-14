@@ -89,11 +89,11 @@ public:
         m_pinged = ping;
     }
 
-    long long getControlledSceneObject()
+    UidType getControlledSceneObject()
     {
         return m_controlledSceneObjectId;
     }
-    void setControlledSceneObject(long long id)
+    void setControlledSceneObject(UidType id)
     {
         m_controlledSceneObjectId = id;
     }
@@ -104,7 +104,7 @@ public:
     void setProtVerCheckSuccess() { m_agentVerCheck = true; }
 
 private:
-    long long m_controlledSceneObjectId = 0;
+    UidType m_controlledSceneObjectId = 0;
     Time m_lastRecv;
     Time m_createTime;
 
