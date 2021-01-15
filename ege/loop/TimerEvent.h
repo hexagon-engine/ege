@@ -44,13 +44,10 @@ namespace EGE
 class TimerEvent : public Event
 {
 public:
-    TimerEvent(Timer& timer)
-    : m_timer(timer) {}
+    TimerEvent(Timer& _timer)
+    : timer(_timer) {}
 
-    Timer& getTimer() { return m_timer; }
-
-private:
-    Timer& m_timer;
+    Timer& timer;
 };
 
 class TimerFinishEvent : public TimerEvent

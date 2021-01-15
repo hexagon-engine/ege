@@ -94,25 +94,6 @@ TESTCASE(_eventPerfTest_3Handlers)
     return 0;
 }
 
-EGE::EventResult timerEventTest(EGE::TimerEvent& event)
-{
-    std::cerr << "-- TimerEventTest: " << event.getTimer()->getName() << std::endl;
-    switch(event.getEventType())
-    {
-    case EGE::TimerEvent::Finish:
-        DEBUG_PRINT("TimerEvent Finish");
-        break;
-    case EGE::TimerEvent::Start:
-        DEBUG_PRINT("TimerEvent Start");
-        break;
-    case EGE::TimerEvent::Tick:
-        DEBUG_PRINT("TimerEvent Tick");
-        break;
-    }
-
-    return EGE::EventResult::Success;
-}
-
 class MyGameLoop2 : public MyGameLoop
 {
 public:
@@ -158,6 +139,19 @@ TESTCASE(time)
         loop.exit();
     }));
     loop.addTimer("test-events", make<Timer>(loop, Timer::Mode::Infinite, 1.0));
+
+    loop.events<EGE::TimerStartEvent>().add([](EGE::TimerStartEvent& event) {
+        std::cerr << "Timer started: " << event.timer.getName() << std::endl;
+        return EGE::EventResult::Success;
+    });
+    loop.events<EGE::TimerTickEvent>().add([](EGE::TimerTickEvent& event) {
+        std::cerr << "Timer tick: " << event.timer.getName() << std::endl;
+        return EGE::EventResult::Success;
+    });
+    loop.events<EGE::TimerFinishEvent>().add([](EGE::TimerFinishEvent& event) {
+        std::cerr << "Timer finished: " << event.timer.getName() << std::endl;
+        return EGE::EventResult::Success;
+    });
 
     return loop.run();
 }
