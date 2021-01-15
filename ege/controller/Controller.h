@@ -48,15 +48,12 @@ namespace EGE
 class Controller
 {
 public:
-    Controller(std::shared_ptr<Controllable> object)
+    Controller(Controllable& object)
     : m_object(object) {}
 
     virtual ~Controller() {}
 
-    std::shared_ptr<Controllable> getObject()
-    {
-        return m_object;
-    }
+    Controllable& getObject() { return m_object; }
 
     // handle requests from opposite side
     virtual void handleRequest(const ControlObject& data) = 0;
@@ -65,7 +62,7 @@ public:
     virtual void sendRequest(const ControlObject& data) = 0;
 
 private:
-    std::shared_ptr<Controllable> m_object;
+    Controllable& m_object;
 };
 
 }

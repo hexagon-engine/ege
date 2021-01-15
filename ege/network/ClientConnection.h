@@ -48,7 +48,7 @@ class Server;
 class ClientConnection : public NetworkEndpoint
 {
 public:
-    ClientConnection(Server* server, std::shared_ptr<sf::TcpSocket> socket)
+    ClientConnection(Server& server, std::shared_ptr<sf::TcpSocket> socket)
     : m_server(server)
     {
         m_socket = socket;
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    Server* m_server;
+    Server& m_server;
     int m_id = 0;
 };
 

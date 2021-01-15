@@ -63,22 +63,22 @@ public:
     // synchronous
     bool sendTo(std::shared_ptr<Packet> packet, int id);
     bool sendToAll(std::shared_ptr<Packet> packet);
-    bool sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection*)> predicate);
+    bool sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection&)> predicate);
 
     std::weak_ptr<ClientConnection> getClient(int id);
-    std::vector<std::weak_ptr<ClientConnection>> getClients(std::function<bool(ClientConnection*)> predicate);
+    std::vector<std::weak_ptr<ClientConnection>> getClients(std::function<bool(ClientConnection&)> predicate);
 
     // removes client from array and disconnects it
-    void kickClient(ClientConnection* client);
+    void kickClient(ClientConnection& client);
 
     // accepts new clients, removes disconnected clients, etc.
     void select();
 
-    virtual EventResult onClientConnect(ClientConnection*) { return EventResult::Failure; }
-    virtual EventResult onClientDisconnect(ClientConnection*) { return EventResult::Failure; }
-    virtual EventResult onReceive(ClientConnection*, std::shared_ptr<Packet>) { return EventResult::Failure; }
+    virtual EventResult onClientConnect(ClientConnection&) { return EventResult::Failure; }
+    virtual EventResult onClientDisconnect(ClientConnection&) { return EventResult::Failure; }
+    virtual EventResult onReceive(ClientConnection&, std::shared_ptr<Packet>) { return EventResult::Failure; }
 
-    virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket) = 0;
+    virtual std::shared_ptr<ClientConnection> makeClient(Server& server, std::shared_ptr<sf::TcpSocket> socket) = 0;
 
     ClientMap::iterator begin()
     {

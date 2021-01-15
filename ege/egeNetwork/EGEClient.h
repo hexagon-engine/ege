@@ -112,9 +112,9 @@ public:
     std::shared_ptr<SceneObject> getDefaultControlledObject();
     std::shared_ptr<SceneObject> getControlledObject(UidType objectId);
 
-    virtual std::shared_ptr<ClientNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }
-    void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
-    void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
+    virtual std::shared_ptr<ClientNetworkController> makeController(SceneObject&) = 0;
+    void control(SceneObject* object, const ControlObject& data);
+    void requestControl(SceneObject* object, const ControlObject& data);
 
     void requestObject(UidType id);
 

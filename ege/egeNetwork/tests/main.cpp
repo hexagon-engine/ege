@@ -108,36 +108,36 @@ public:
 class MyObjectServerController : public EGE::ServerNetworkController
 {
 public:
-    MyObjectServerController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEServer& server)
+    MyObjectServerController(EGE::SceneObject& object, EGE::EGEServer& server)
     : EGE::ServerNetworkController(object, server) {}
 
     virtual void handleRequest(const EGE::ControlObject& data) override
     {
         std::string type = data.getType();
-        MyObject* object = (MyObject*)getObject().get();
+        auto& object = (MyObject&)getObject();
         bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
         int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
 
         if(type == "move")
-            object->move(moving, dir);
+            object.move(moving, dir);
     }
 };
 
 class MyObjectClientController : public EGE::ClientNetworkController
 {
 public:
-    MyObjectClientController(std::shared_ptr<EGE::SceneObject> object, EGE::EGEClient& client)
+    MyObjectClientController(EGE::SceneObject& object, EGE::EGEClient& client)
     : EGE::ClientNetworkController(object, client) {}
 
     virtual void handleRequest(const EGE::ControlObject& data) override
     {
         std::string type = data.getType();
-        MyObject* object = (MyObject*)getObject().get();
+        auto& object = (MyObject&)getObject();
         bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
         int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
 
         if(type == "move")
-            object->move(moving, dir);
+            object.move(moving, dir);
     }
 };
 
@@ -147,9 +147,9 @@ public:
     MyServer()
     : EGE::EGEServer(rand() % 63536 + 2000) { setVersion(1); setVersionString("EGE Test"); }
 
-    virtual std::shared_ptr<EGE::ServerNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
+    virtual std::shared_ptr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object->getId() == "test-egeNetwork:MyObject")
+        if(object.getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectServerController
             return make<MyObjectServerController>(object, *this);
@@ -159,7 +159,7 @@ public:
         return nullptr;
     }
 
-    virtual EGE::EventResult onLogin(EGE::EGEClientConnection* client, std::shared_ptr<EGE::ObjectMap> data)
+    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, std::shared_ptr<EGE::ObjectMap> data)
     {
         // Synchronize client with server.
         EGE::EGEServer::onLogin(client, data);
@@ -171,8 +171,8 @@ public:
         getScene()->addObject(sceneObject);
 
         // Set SceneObject to be controlled by this Client.
-        setDefaultController(client, sceneObject);
-        addAdditionalController(*client, *getScene()->getObject(-1));
+        setDefaultController(client, sceneObject.get());
+        addAdditionalController(client, *getScene()->getObject(-1));
 
         return EGE::EventResult::Success;
     }
@@ -184,9 +184,9 @@ public:
     MyClient(unsigned short port)
     : EGE::EGEClient(sf::IpAddress::LocalHost, port) { setVersion(1); setVersionString("EGE Test"); }
 
-    virtual std::shared_ptr<EGE::ClientNetworkController> makeController(std::shared_ptr<EGE::SceneObject> object)
+    virtual std::shared_ptr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object->getId() == "test-egeNetwork:MyObject")
+        if(object.getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectClientController
             return make<MyObjectClientController>(object, *this);
@@ -209,7 +209,7 @@ public:
         std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
         _map->addInt("moving", moving);
         _map->addInt("dir", dir);
-        requestControl(getScene()->getObject(-1), EGE::ControlObject("move", _map));
+        requestControl(getScene()->getObject(-1).get(), EGE::ControlObject("move", _map));
     }
 };
 
@@ -358,9 +358,8 @@ public:
         auto controller = m_client->getDefaultController();
         if(controller)
         {
-            EGE::SceneObject2D* obj = (EGE::SceneObject2D*)controller->getObject().get();
-            if(obj)
-                m_camera->setPosition(obj->getPosition());
+            auto& obj = (EGE::SceneObject2D&)controller->getObject();
+            m_camera->setPosition(obj.getPosition());
         }
     }
 };

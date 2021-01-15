@@ -48,8 +48,8 @@ class EGEServer;
 class ServerNetworkController : public Controller
 {
 public:
-    ServerNetworkController(std::shared_ptr<SceneObject> object, EGEServer& server)
-    : Controller(std::static_pointer_cast<Controllable>(object)), m_server(server) { ASSERT(object); }
+    ServerNetworkController(SceneObject& object, EGEServer& server)
+    : Controller((Controllable&)object), m_server(server) {}
 
     // send request to CLIENT.
     virtual void sendRequest(const ControlObject& data);

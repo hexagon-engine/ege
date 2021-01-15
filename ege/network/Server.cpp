@@ -78,16 +78,16 @@ bool Server::sendTo(std::shared_ptr<Packet> packet, int id)
 
 bool Server::sendToAll(std::shared_ptr<Packet> packet)
 {
-    return sendTo(packet, [](ClientConnection*)->bool { return true; });
+    return sendTo(packet, [](ClientConnection&) { return true; });
 }
 
-bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection*)> predicate)
+bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection&)> predicate)
 {
     bool success = true;
     sf::Lock lock(m_clientsAccessMutex);
     for(auto pr: m_clients)
     {
-        if(predicate(pr.second.get()))
+        if(predicate(*pr.second))
         {
             pr.second->send(packet);
         }
@@ -101,13 +101,13 @@ std::weak_ptr<ClientConnection> Server::getClient(int id)
     return m_clients[id];
 }
 
-std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bool(ClientConnection*)> predicate)
+std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bool(ClientConnection&)> predicate)
 {
     std::vector<std::weak_ptr<ClientConnection>> clients;
     sf::Lock lock(m_clientsAccessMutex);
     for(auto pr: m_clients)
     {
-        if(predicate(pr.second.get()))
+        if(predicate(*pr.second))
             clients.push_back(pr.second);
     }
     return clients;
@@ -115,7 +115,7 @@ std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bo
 
 int Server::addClient(std::shared_ptr<ClientConnection> client)
 {
-    EventResult result = onClientConnect(client.get());
+    EventResult result = onClientConnect(*client);
     if(result == EventResult::Failure)
     {
         err(LogLevel::Error) << "0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)";
@@ -132,22 +132,22 @@ int Server::addClient(std::shared_ptr<ClientConnection> client)
     return m_lastClientUid;
 }
 
-void Server::kickClient(ClientConnection* client)
+void Server::kickClient(ClientConnection& client)
 {
     // Don't kick already kicked clients!
-    if(!client || client->getSocket().expired())
+    if(client.getSocket().expired())
         return;
 
-    err(LogLevel::Info) << "001B EGE/network: Kicking client (" << client->getSocket().lock()->getRemoteAddress() << ":" << client->getSocket().lock()->getRemotePort() << ")";
+    err(LogLevel::Info) << "001B EGE/network: Kicking client (" << client.getSocket().lock()->getRemoteAddress() << ":" << client.getSocket().lock()->getRemotePort() << ")";
     onClientDisconnect(client);
 
     // close socket etc.
-    m_selector.remove(*client->getSocket().lock().get());
-    client->kick();
+    m_selector.remove(*client.getSocket().lock().get());
+    client.kick();
 
     // remove client from array
     sf::Lock lock(m_clientsAccessMutex);
-    m_clients.erase(m_clients.find(client->getID()));
+    m_clients.erase(m_clients.find(client.getID()));
 }
 
 #include <string.h>
@@ -165,7 +165,7 @@ void Server::select()
 
             if(status2 == sf::Socket::Done)
             {
-                std::shared_ptr<ClientConnection> client = makeClient(this, socket);
+                std::shared_ptr<ClientConnection> client = makeClient(*this, socket);
                 if(client)
                 {
                     int id = addClient(client);
@@ -190,11 +190,11 @@ void Server::select()
                         std::shared_ptr<Packet> packet = pr.second->receive();
                         if(packet)
                         {
-                            EventResult result = onReceive(pr.second.get(), packet);
+                            EventResult result = onReceive(*pr.second, packet);
                             if(result == EventResult::Failure)
                             {
                                 err(LogLevel::Error) << "0014 EGE/network: Event Receive failed (rejected by EventHandler)";
-                                kickClient(pr.second.get());
+                                kickClient(*pr.second);
 
                                 // FIXME: update `it' instead of giving up on one client !! :)
                                 break;
@@ -202,7 +202,7 @@ void Server::select()
                         }
                         else
                         {
-                            kickClient(pr.second.get());
+                            kickClient(*pr.second);
 
                             // FIXME: update `it' instead of giving up on one client !! :)
                             break;
@@ -222,7 +222,7 @@ void Server::select()
                     if(!pr.second->isConnected())
                     {
                         err(LogLevel::Info) << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect";
-                        kickClient(pr.second.get());
+                        kickClient(*pr.second);
 
                         // FIXME: update `it' instead of giving up on one client !! :)
                         break;

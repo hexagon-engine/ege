@@ -51,10 +51,10 @@ namespace EGE
 class EGEClientConnection : public ClientConnection, public SFMLNetworkImpl
 {
 public:
-    EGEClientConnection(EGEServer* server, std::shared_ptr<sf::TcpSocket> socket)
+    EGEClientConnection(EGEServer& server, std::shared_ptr<sf::TcpSocket> socket)
     : ClientConnection(server, socket)
-    , m_lastRecv(server->time(Time::Unit::Seconds), Time::Unit::Seconds)
-    , m_createTime(server->time(Time::Unit::Seconds), Time::Unit::Seconds) {}
+    , m_lastRecv(server.time(Time::Unit::Seconds))
+    , m_createTime(server.time(Time::Unit::Seconds)) {}
 
     virtual bool send(std::shared_ptr<Packet> packet)
     {

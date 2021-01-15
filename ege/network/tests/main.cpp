@@ -57,7 +57,7 @@ private:
 class MyClientConnection : public EGE::ClientConnection, public EGE::SFMLNetworkImpl
 {
 public:
-    MyClientConnection(EGE::Server* server, std::shared_ptr<sf::TcpSocket> socket)
+    MyClientConnection(EGE::Server& server, std::shared_ptr<sf::TcpSocket> socket)
     : EGE::ClientConnection(server, socket) {}
 
     std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
@@ -82,7 +82,7 @@ public:
     MyServer()
     : EGE::Server(PORT) {}
 
-    std::shared_ptr<EGE::ClientConnection> makeClient(EGE::Server* server, std::shared_ptr<sf::TcpSocket> socket)
+    std::shared_ptr<EGE::ClientConnection> makeClient(EGE::Server& server, std::shared_ptr<sf::TcpSocket> socket)
     {
         return make<MyClientConnection>(server, socket);
     }

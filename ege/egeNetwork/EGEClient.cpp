@@ -316,7 +316,7 @@ void EGEClient::setScene(std::shared_ptr<Scene> scene)
 
     scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
                                    // Add controller to controller map.
-                                   m_controllersForObjects[object->getObjectId()] = makeController(object);
+                                   m_controllersForObjects[object->getObjectId()] = makeController(*object.get());
                                 });
     scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
                                    // Remove controller from controller map.
@@ -411,7 +411,7 @@ std::shared_ptr<SceneObject> EGEClient::getControlledObject(UidType objectId)
     return std::dynamic_pointer_cast<SceneObject>(getController(objectId));
 }
 
-void EGEClient::control(std::shared_ptr<SceneObject> object, const ControlObject& data)
+void EGEClient::control(SceneObject* object, const ControlObject& data)
 {
     if(!object)
     {
@@ -431,7 +431,7 @@ void EGEClient::control(std::shared_ptr<SceneObject> object, const ControlObject
     controller->handleRequest(data);
 }
 
-void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data)
+void EGEClient::requestControl(SceneObject* object, const ControlObject& data)
 {
     if(!object)
     {
@@ -441,7 +441,7 @@ void EGEClient::requestControl(std::shared_ptr<SceneObject> object, const Contro
         return;
     }
 
-    if(m_defaultController->getObject() != object && !hasAdditionalController(object->getObjectId()))
+    if(&m_defaultController->getObject() != object && !hasAdditionalController(object->getObjectId()))
     {
         log(LogLevel::Warning) << "Client has no additional or default controller for object " << object->getObjectId();
         return;

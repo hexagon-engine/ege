@@ -60,20 +60,20 @@ public:
     EGEServer(int port)
     : Server(port) {}
 
-    virtual EventResult onClientConnect(ClientConnection* client);
-    virtual EventResult onClientDisconnect(ClientConnection* client);
-    virtual EventResult onReceive(ClientConnection* client, std::shared_ptr<Packet> packet);
+    virtual EventResult onClientConnect(ClientConnection& client);
+    virtual EventResult onClientDisconnect(ClientConnection& client);
+    virtual EventResult onReceive(ClientConnection& client, std::shared_ptr<Packet> packet);
 
     // to be overridden by user
     // args: client, reason message
-    virtual void onClientDisconnect(ClientConnection*, std::string) {}
+    virtual void onClientDisconnect(ClientConnection&, std::string) {}
 
-    virtual std::shared_ptr<ObjectMap> getLoginData(ClientConnection*) { return nullptr; }
+    virtual std::shared_ptr<ObjectMap> getLoginData(ClientConnection&) { return nullptr; }
 
     // Accept all logins by default, without doing anything with userData!
     // Arguments:                     client                userData
-    virtual EventResult onLogin(EGEClientConnection*, std::shared_ptr<ObjectMap>);
-    virtual void onData(EGEClientConnection*, std::shared_ptr<ObjectMap>) {}
+    virtual EventResult onLogin(EGEClientConnection&, std::shared_ptr<ObjectMap>);
+    virtual void onData(EGEClientConnection&, std::shared_ptr<ObjectMap>) {}
 
     virtual EventResult onLoad();
     virtual void onTick(TickCount tickCount);
@@ -81,21 +81,21 @@ public:
     virtual void onExit(int exitCode);
     virtual EventResult onFinish(int) { return EventResult::Success; }
 
-    void kickClientWithReason(EGEClientConnection* client, std::string reason);
-    virtual std::shared_ptr<ClientConnection> makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket);
+    void kickClientWithReason(EGEClientConnection& client, std::string reason);
+    virtual std::shared_ptr<ClientConnection> makeClient(Server& server, std::shared_ptr<sf::TcpSocket> socket);
     virtual void setScene(std::shared_ptr<Scene> scene);
     std::shared_ptr<ServerNetworkController> getController(UidType objectId);
 
-    void setDefaultController(EGEClientConnection* client, std::shared_ptr<SceneObject> sceneObject);
+    void setDefaultController(EGEClientConnection& client, SceneObject* sceneObject);
 
     void addAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
     void removeAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
 
-    virtual std::shared_ptr<ServerNetworkController> makeController(std::shared_ptr<SceneObject>) { return nullptr; }
-    void control(std::shared_ptr<SceneObject> object, const ControlObject& data);
-    void requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data);
+    virtual std::shared_ptr<ServerNetworkController> makeController(SceneObject&) { return nullptr; }
+    void control(SceneObject& object, const ControlObject& data);
+    void requestControl(SceneObject& object, const ControlObject& data);
 
-    virtual bool canControlObject(ServerNetworkController* controller, EGEClientConnection* client);
+    virtual bool canControlObject(ServerNetworkController& controller, EGEClientConnection& client);
 
 private:
     std::map<UidType, std::shared_ptr<ServerNetworkController>> m_controllersForObjects;

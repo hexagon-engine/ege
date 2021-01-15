@@ -50,27 +50,27 @@
 namespace EGE
 {
 
-EventResult EGEServer::onClientConnect(ClientConnection* client)
+EventResult EGEServer::onClientConnect(ClientConnection& client)
 {
     sf::Lock lock(m_clientsAccessMutex);
 
     // FIXME: should it be asynchronous?
-    if(!client->send(EGEPacket::generate_Ping()))
+    if(!client.send(EGEPacket::generate_Ping()))
         return EventResult::Failure;
-    if(!client->send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION)))
+    if(!client.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION)))
         return EventResult::Failure;
-    if(!client->send(EGEPacket::generate_Version(getVersion(), getVersionString())))
+    if(!client.send(EGEPacket::generate_Version(getVersion(), getVersionString())))
         return EventResult::Failure;
-    if(!client->send(EGEPacket::generateSLoginRequest(getLoginData(client))))
+    if(!client.send(EGEPacket::generateSLoginRequest(getLoginData(client))))
         return EventResult::Failure;
 
     return EventResult::Success;
 }
 
-EventResult EGEServer::onClientDisconnect(ClientConnection* client)
+EventResult EGEServer::onClientDisconnect(ClientConnection& client)
 {
     sf::Lock lock(m_clientsAccessMutex);
-    if(!client->send(EGEPacket::generateSDisconnectReason("Disconnected")))
+    if(!client.send(EGEPacket::generateSDisconnectReason("Disconnected")))
         return EventResult::Failure;
 
     return EventResult::Success;
@@ -86,33 +86,35 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
     }
 
     scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
-                                    // Add controller to controller map.
-                                    m_controllersForObjects[object->getObjectId()] = makeController(object);
-                                    sendToAll(EGEPacket::generateSSceneObjectCreation(object, object->getId()));
-                                });
+        // Add controller to controller map.
+        m_controllersForObjects[object->getObjectId()] = makeController(*object);
+        sendToAll(EGEPacket::generateSSceneObjectCreation(*object, object->getId()));
+    });
+
     scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
-                                    // Remove controller from controller map.
-                                    auto it = m_controllersForObjects.find(object->getObjectId());
-                                    if(it != m_controllersForObjects.end())
-                                        m_controllersForObjects.erase(it);
+        // Remove controller from controller map.
+        auto it = m_controllersForObjects.find(object->getObjectId());
+        if(it != m_controllersForObjects.end())
+            m_controllersForObjects.erase(it);
 
-                                    sendToAll(EGEPacket::generateSSceneObjectDeletion(object->getObjectId()));
+        sendToAll(EGEPacket::generateSSceneObjectDeletion(object->getObjectId()));
 
-                                    // Notify players that were controlling the object that object was removed.
-                                    sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [object](ClientConnection* client)->bool {
-                                            EGEClientConnection* egeClient = (EGEClientConnection*)client;
-                                            if(egeClient->getControlledSceneObject() == object->getObjectId())
-                                            {
-                                                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient << " about deletion of controller for " << object->getObjectId();
-                                                return true;
-                                            }
-                                            return false;
-                                           });
-                                });
+        // Notify players that were controlling the object that object was removed.
+        sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [object](ClientConnection& client)->bool {
+            EGEClientConnection& egeClient = (EGEClientConnection&)client;
+            if(egeClient.getControlledSceneObject() == object->getObjectId())
+            {
+                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << object->getObjectId();
+                return true;
+            }
+            return false;
+        });
+    });
+
     EGEGame::setScene(scene);
 }
 
-EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packet> packet)
+EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packet> packet)
 {
     sf::Lock lock(m_clientsAccessMutex);
     EGEPacket* egePacket = (EGEPacket*)packet.get();
@@ -123,19 +125,19 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
         printObject(egePacket->getArgs());
     }
 
-    EGEClientConnection* egeClient = (EGEClientConnection*)client;
+    EGEClientConnection& egeClient = (EGEClientConnection&)client;
 
-    if(PING_DEBUG && egeClient->wasPinged())
+    if(PING_DEBUG && egeClient.wasPinged())
         std::cerr << "%%%%% Client is now responding. clearing ping flag %%%%%" << std::endl;
 
-    egeClient->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
-    egeClient->setPinged(false);
+    egeClient.setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
+    egeClient.setPinged(false);
 
     // Version check
-    if((!egeClient->agentVerCheckSucceeded() || !egeClient->protVerCheckSucceeded())
-    && time(Time::Unit::Seconds) - egeClient->getCreateTime().getValue() > 10)
+    if((!egeClient.agentVerCheckSucceeded() || !egeClient.protVerCheckSucceeded())
+    && time(Time::Unit::Seconds) - egeClient.getCreateTime().getValue() > 10)
     {
-        log(LogLevel::Error) << "Version check timed out for client " << egeClient->getID();
+        log(LogLevel::Error) << "Version check timed out for client " << egeClient.getID();
         return EventResult::Failure;
     }
 
@@ -145,13 +147,13 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
         onData(egeClient, egePacket->getArgs());
         break;
     case EGEPacket::Type::_Ping:
-        egeClient->send(EGEPacket::generate_Pong());
+        egeClient.send(EGEPacket::generate_Pong());
         break;
     case EGEPacket::Type::_Pong:
         break;
     case EGEPacket::Type::_ProtocolVersion:
         {
-            egeClient->send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
+            egeClient.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
             int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
@@ -160,8 +162,8 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 kickClientWithReason(egeClient, "Invalid protocol version (need " + std::to_string(EGE_PROTOCOL_VERSION) + ", got " + std::to_string(value) + ")");
                 return EventResult::Failure;
             }
-            egeClient->send(EGEPacket::generate_Pong());
-            egeClient->setProtVerCheckSuccess();
+            egeClient.send(EGEPacket::generate_Pong());
+            egeClient.setProtVerCheckSuccess();
         }
         break;
     case EGEPacket::Type::CLogin:
@@ -198,9 +200,9 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
 
             auto controller = getController(id.value());
 
-            if(!canControlObject(controller.get(), egeClient))
+            if(!canControlObject(*controller, egeClient))
             {
-                err() << "Client " << egeClient->getID() << " tried to use controller with ID " << id.value() << " without permission!";
+                err() << "Client " << egeClient.getID() << " tried to use controller with ID " << id.value() << " without permission!";
                 return EventResult::Failure;
             }
 
@@ -226,9 +228,9 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 return EventResult::Failure;
 
             err(LogLevel::Debug) << "SceneObject requested: " << id.value();
-            egeClient->send(EGEPacket::generateSSceneObjectCreation(sceneObject, sceneObject->getId()));
-            if(egeClient->getControlledSceneObject() == id.value())
-                egeClient->send(EGEPacket::generateSDefaultControllerId(sceneObject));
+            egeClient.send(EGEPacket::generateSSceneObjectCreation(*sceneObject, sceneObject->getId()));
+            if(egeClient.getControlledSceneObject() == id.value())
+                egeClient.send(EGEPacket::generateSDefaultControllerId(sceneObject.get()));
         }
         break;
     case EGEPacket::Type::_Version:
@@ -248,7 +250,7 @@ EventResult EGEServer::onReceive(ClientConnection* client, std::shared_ptr<Packe
                 return EventResult::Failure;
             }
 
-            egeClient->setAgentVerCheckSuccess();
+            egeClient.setAgentVerCheckSuccess();
         }
         break;
     default:
@@ -350,18 +352,18 @@ void EGEServer::onTick(TickCount)
             if(sceneObject->getMainChangedFlag())
             {
                 sceneObject->clearMainChangedFlag();
-                sendToAll(EGEPacket::generateSSceneObjectUpdate_Main(sceneObject));
+                sendToAll(EGEPacket::generateSSceneObjectUpdate_Main(*sceneObject));
             }
             if(sceneObject->getExtendedChangedFlag())
             {
                 sceneObject->clearExtendedChangedFlag();
-                sendToAll(EGEPacket::generateSSceneObjectUpdate_Extended(sceneObject));
+                sendToAll(EGEPacket::generateSSceneObjectUpdate_Extended(*sceneObject));
             }
         }
     }
 }
 
-EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<ObjectMap>)
+EventResult EGEServer::onLogin(EGEClientConnection& client, std::shared_ptr<ObjectMap>)
 {
     // Send SceneObject data to Client.
     auto scene = getScene();
@@ -369,7 +371,7 @@ EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<Obje
     {
         for(auto object: *scene)
         {
-            bool success = client->send(EGEPacket::generateSSceneObjectCreation(object.second, object.second->getId()));
+            bool success = client.send(EGEPacket::generateSSceneObjectCreation(*object.second, object.second->getId()));
             if(!success)
                 return EventResult::Failure;
         }
@@ -378,26 +380,22 @@ EventResult EGEServer::onLogin(EGEClientConnection* client, std::shared_ptr<Obje
     return EventResult::Success;
 }
 
-void EGEServer::kickClientWithReason(EGEClientConnection* client, std::string reason)
+void EGEServer::kickClientWithReason(EGEClientConnection& client, std::string reason)
 {
-    ASSERT(client);
-    client->send(EGEPacket::generateSDisconnectReason(reason));
+    client.send(EGEPacket::generateSDisconnectReason(reason));
     onClientDisconnect(client, reason);
     kickClient(client);
 }
 
-std::shared_ptr<ClientConnection> EGEServer::makeClient(Server* server, std::shared_ptr<sf::TcpSocket> socket)
+std::shared_ptr<ClientConnection> EGEServer::makeClient(Server& server, std::shared_ptr<sf::TcpSocket> socket)
 {
-    return std::shared_ptr<ClientConnection>((ClientConnection*)new EGEClientConnection((EGEServer*)server, socket));
+    return make<EGEClientConnection>((EGEServer&)server, socket);
 }
 
-void EGEServer::setDefaultController(EGEClientConnection* client, std::shared_ptr<SceneObject> sceneObject)
+void EGEServer::setDefaultController(EGEClientConnection& client, SceneObject* sceneObject)
 {
-    ASSERT(client);
-    ASSERT(sceneObject);
-    err(LogLevel::Verbose) << "EGEServer: Setting default controller for " << client << ": " << sceneObject->getObjectId();
-    client->setControlledSceneObject(sceneObject->getObjectId());
-    client->send(EGEPacket::generateSDefaultControllerId(sceneObject));
+    client.setControlledSceneObject(sceneObject ? sceneObject->getObjectId() : 0);
+    client.send(EGEPacket::generateSDefaultControllerId(sceneObject));
 }
 
 std::shared_ptr<ServerNetworkController> EGEServer::getController(UidType objectId)
@@ -405,26 +403,24 @@ std::shared_ptr<ServerNetworkController> EGEServer::getController(UidType object
     return m_controllersForObjects[objectId];
 }
 
-void EGEServer::control(std::shared_ptr<SceneObject> object, const ControlObject& data)
+void EGEServer::control(SceneObject& object, const ControlObject& data)
 {
-    ASSERT(object);
-    auto controller = getController(object->getObjectId());
+    auto controller = getController(object.getObjectId());
     ASSERT(controller);
     controller->handleRequest(data);
 }
 
-void EGEServer::requestControl(std::shared_ptr<SceneObject> object, const ControlObject& data)
+void EGEServer::requestControl(SceneObject& object, const ControlObject& data)
 {
-    ASSERT(object);
-    auto controller = getController(object->getObjectId());
+    auto controller = getController(object.getObjectId());
     ASSERT(controller);
     controller->sendRequest(data);
 }
 
-bool EGEServer::canControlObject(ServerNetworkController* controller, EGEClientConnection* client)
+bool EGEServer::canControlObject(ServerNetworkController& controller, EGEClientConnection& client)
 {
-    auto so = (SceneObject*)controller->getObject().get();
-    return so->getObjectId() == client->getControlledSceneObject() || client->hasAdditionalController(so->getObjectId());
+    auto& so = (SceneObject&)controller.getObject();
+    return so.getObjectId() == client.getControlledSceneObject() || client.hasAdditionalController(so.getObjectId());
 }
 
 void EGEServer::addAdditionalController(EGEClientConnection& client, SceneObject& sceneObject)
