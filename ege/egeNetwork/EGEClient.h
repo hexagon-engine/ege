@@ -58,6 +58,8 @@ namespace EGE
 class ExitEvent : public Event
 {
 public:
+    EGE_EVENT("ExitEvent");
+
     ExitEvent(int rv)
     : returnValue(rv) {}
 

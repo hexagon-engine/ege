@@ -56,7 +56,8 @@ class Event
 {
 public:
     typedef std::string EventType;
-    EGE_EVENT("EGE::Event (unknown)");
+
+    virtual EGE::Event::EventType getType() = 0;
 
     bool isCanceled() { return m_canceled; }
     void cancel() { m_canceled = true; }

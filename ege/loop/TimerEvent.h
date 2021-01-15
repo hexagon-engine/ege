@@ -44,25 +44,40 @@ namespace EGE
 class TimerEvent : public Event
 {
 public:
-    enum Type
-    {
-        Finish,
-        Start,
-        Tick
-    };
+    TimerEvent(Timer& timer)
+    : m_timer(timer) {}
 
-    TimerEvent(Type type, Timer* timer)
-    : m_timer(timer)
-    , m_type(type)
-    {
-        ASSERT(timer);
-    }
+    Timer& getTimer() { return m_timer; }
 
-    Timer* getTimer() { return m_timer; }
-    Type getEventType() { return m_type; }
 private:
-    Timer* m_timer;
-    Type m_type;
+    Timer& m_timer;
+};
+
+class TimerFinishEvent : public TimerEvent
+{
+public:
+    EGE_EVENT("TimerFinishEvent");
+
+    TimerFinishEvent(Timer& timer)
+    : TimerEvent(timer) {}
+};
+
+class TimerStartEvent : public TimerEvent
+{
+public:
+    EGE_EVENT("TimerStartEvent");
+
+    TimerStartEvent(Timer& timer)
+    : TimerEvent(timer) {}
+};
+
+class TimerTickEvent : public TimerEvent
+{
+public:
+    EGE_EVENT("TimerTickEvent");
+
+    TimerTickEvent(Timer& timer)
+    : TimerEvent(timer) {}
 };
 
 }

@@ -62,8 +62,8 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     timer->setName(name);
     if(immediateStart == EventLoop::TimerImmediateStart::Yes)
     {
-        TimerEvent event(TimerEvent::Start, timer.get());
-        events<TimerEvent>().fire(event);
+        TimerStartEvent event(*timer);
+        events<TimerStartEvent>().fire(event);
         if(event.isCanceled())
         {
             return;
@@ -73,8 +73,8 @@ void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, 
     if(!timer->getCallback())
     {
         timer->setCallback([this](std::string, Timer* _timer) {
-            TimerEvent event(TimerEvent::Tick, _timer);
-            events<TimerEvent>().fire(event);
+            TimerTickEvent event(*_timer);
+            events<TimerTickEvent>().fire(event);
 
             if(event.isCanceled())
                 return;
@@ -120,8 +120,8 @@ void EventLoop::updateTimers()
         auto timer = *it;
         if(timer.second.get()->update() == Timer::Finished::Yes)
         {
-            TimerEvent event(TimerEvent::Finish, timer.second.get());
-            events<TimerEvent>().fire(event);
+            TimerFinishEvent event(*timer.second);
+            events<TimerFinishEvent>().fire(event);
             if(event.isCanceled())
                 continue;
 
