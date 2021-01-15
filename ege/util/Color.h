@@ -61,6 +61,18 @@ public:
     bool operator!=(const ColorRGBA& other)
         { return !(*this == other); }
 
+    ColorRGBA operator+(const ColorRGBA& other)
+        { return ColorRGBA(r + other.r, g + other.g, b + other.b, a + other.a); }
+
+    ColorRGBA operator-(const ColorRGBA& other)
+        { return ColorRGBA(r - other.r, g - other.g, b - other.b, a - other.a); }
+
+    ColorRGBA operator*(double d)
+        { return ColorRGBA(r*d, g*d, b*d, a*d); }
+
+    ColorRGBA operator/(double d)
+        { return ColorRGBA(r*d, g*d, b*d, a*d); }
+
     float r, g, b, a;
 };
 
