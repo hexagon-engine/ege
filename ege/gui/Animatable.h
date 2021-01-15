@@ -47,7 +47,27 @@ namespace EGE
 class Animatable : public EventLoop
 {
 public:
-    void addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback, std::string name = "*");
+    template<class T>
+    void addAnimation(std::shared_ptr<Animation<T>> animation, std::function<void(Animation<T>&, T)> callback, std::string name = "*")
+    {
+        if(!animation->getUpdateCallback())
+        {
+            animation->setUpdateCallback([callback](std::string, Timer* timer) {
+                Animation<T>* anim = (Animation<T>*)timer;
+                double time = (timer->getElapsedTime().getValue()) / (timer->getInterval().getValue());
+                if(time < 0.0)
+                    return;
+                T val = anim->getValue(time);
+                DUMP(ANIMATION_DEBUG, val);
+                callback(*anim, val);
+            });
+        }
+
+        addTimer("EGE::Animatable Delay: " + name, make<Timer>(*this, Timer::Mode::Limited, animation->getDelay(), [animation, name, this](std::string, Timer*) {
+            addTimer("EGE::Animatable: " + name, animation);
+        }));
+    }
+
     void removeAnimations(std::string name);
 };
 

@@ -296,49 +296,49 @@ public:
                 graph->setMax(600.f);
                 myFrame2->addWidget(graph);
 
-                auto anim = make<EGE::Animation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                auto anim = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim->addKeyframe(0.0, 1.0);
                 anim->addKeyframe(0.1, 5.0);
                 anim->addKeyframe(0.5, -3.0);
                 anim->addKeyframe(1.0, 6.0);
-                addAnimation(anim, [this](EGE::Animation*, double val) {
-                                graph->addVal(val);
-                             });
+                addAnimation<EGE::MaxFloat>(anim, [this](EGE::NumberAnimation&, EGE::MaxFloat val) {
+                    graph->addVal(val);
+                });
 
                 graph2 = make<AnimationGraphWidget>(*myFrame2);
                 //graph2->setSize(EGE::Vec2d(100.f, 100.f));
                 graph2->setMax(600.f);
                 myFrame2->addWidget(graph2);
 
-                auto anim2 = make<EGE::Animation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
+                auto anim2 = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim2->addKeyframe(0.0, 1.0);
                 anim2->addKeyframe(0.1, 5.0);
                 anim2->addKeyframe(0.5, -3.0);
                 anim2->addKeyframe(1.0, 6.0);
                 anim2->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutCirc);
-                addAnimation(anim2, [this](EGE::Animation*, double val) {
-                                graph2->addVal(val);
-                             });
+                addAnimation<EGE::MaxFloat>(anim2, [this](EGE::NumberAnimation&, EGE::MaxFloat val) {
+                    graph2->addVal(val);
+                });
 
-                auto anim3 = make<EGE::Animation>(*this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
+                auto anim3 = make<EGE::NumberAnimation>(*this, EGE::Time(75, EGE::Time::Unit::Ticks), EGE::Timer::Mode::Infinite);
                 anim3->addKeyframe(0.0, -1.0);
                 anim3->addKeyframe(1.0, 1.0);
                 anim3->setEasingFunction([](double x)->double {
-                                                        return ((x-0.5)*(x-0.5));
-                                                        } );
-                addAnimation(anim3, [this](EGE::Animation*, double) {
-                                //ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
-                             });
+                    return ((x-0.5)*(x-0.5));
+                } );
+                addAnimation<EGE::MaxFloat>(anim3, [this](EGE::NumberAnimation&, EGE::MaxFloat) {
+                    //ball->setPosition(EGE::Vec2d(300.f, 400.f + val * 40.0));
+                });
 
-                auto animLabel = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
+                auto animLabel = make<EGE::NumberAnimation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
                 animLabel->addKeyframe(0.0, -1.0);
                 animLabel->addKeyframe(0.5, 1.0);
                 animLabel->addKeyframe(1.0, -1.0);
                 animLabel->setEasingFunction(EGE::AnimationEasingFunctions::easeOutBounce);
                 animLabel->setDelay(EGE::Time(2.0, EGE::Time::Unit::Seconds));
-                addAnimation(animLabel, [this](EGE::Animation*, double) {
-                                //labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
-                             });
+                addAnimation<EGE::MaxFloat>(animLabel, [this](EGE::NumberAnimation&, EGE::MaxFloat) {
+                    //labelAnimated->setPosition(EGE::Vec2d(150.f + val * 30.f, 300.f));
+                });
             }
         }
     }

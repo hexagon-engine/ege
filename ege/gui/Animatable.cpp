@@ -40,27 +40,9 @@
 
 namespace EGE
 {
-
-void Animatable::addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*,double)> callback, std::string name)
-{
-    if(!animation->getUpdateCallback())
-    {
-        animation->setUpdateCallback([callback](std::string, Timer* timer) {
-                                    Animation* anim = (Animation*)timer;
-                                    double time = (timer->getElapsedTime().getValue()) / (timer->getInterval().getValue());
-                                    if(time < 0.0)
-                                        return;
-                                    double val = anim->getValue(time);
-                                    DUMP(ANIMATION_DEBUG, val);
-                                    callback(anim, val);
-                                });
-    }
-
-    addTimer("EGE::Animatable Delay: " + name, make<Timer>(*this, Timer::Mode::Limited, animation->getDelay(), [animation, name, this](std::string, Timer*) {
-        addTimer("EGE::Animatable: " + name, animation);
-    }));
-}
-
+/*
+void Animatable::addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*, double)> callback, std::string name)
+*/
 void Animatable::removeAnimations(std::string name)
 {
     removeTimer("EGE::Animatable Delay: " + name);

@@ -30,14 +30,14 @@ public:
         setName(name);
 
         // make object animated (it can be done now by flyTo())
-        auto anim = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
-        anim->addKeyframe(0.0, -1.0);
-        anim->addKeyframe(0.5, 1.0);
-        anim->addKeyframe(1.0, -1.0);
+        auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
+        anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(20.0, 20.0));
+        anim->addKeyframe(0.5, m_initialPosition + EGE::Vec2d(20.0, 20.0));
+        anim->addKeyframe(1.0, m_initialPosition - EGE::Vec2d(20.0, 20.0));
         anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
-        addAnimation(anim, [this](EGE::Animation*, double val) {
-                        setPosition(m_initialPosition + EGE::Vec2d(val * 20.f, 0));
-                     });
+        addAnimation<EGE::Vec2d>(anim, [this](EGE::Vec2Animation&, EGE::Vec2d val) {
+            setPosition(val);
+        });
     }
 
     void updateGeometry(EGE::Renderer&) override
@@ -513,14 +513,14 @@ public:
     SimpleRectangleObject(EGE::Scene2D& scene)
     : EGE::SceneObject2D(scene, "SimpleRectangleObject")
     {
-        auto anim = make<EGE::Animation>(*this, EGE::Time(1.0, EGE::Time::Unit::Seconds), EGE::Timer::Mode::Infinite);
-        anim->addKeyframe(0.0, -1.0);
-        anim->addKeyframe(0.5, 1.0);
-        anim->addKeyframe(1.0, -1.0);
+        auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
+        anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(10.0, 0));
+        anim->addKeyframe(0.5, m_initialPosition + EGE::Vec2d(10.0, 0));
+        anim->addKeyframe(1.0, m_initialPosition - EGE::Vec2d(10.0, 0));
         anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
-        addAnimation(anim, [this](EGE::Animation*, double val) {
-                        setPosition(m_initialPosition + EGE::Vec2d(val * 10.f, 0));
-                     });
+        addAnimation<EGE::Vec2d>(anim, [this](EGE::Vec2Animation&, EGE::Vec2d val) {
+            setPosition(val);
+        });
     }
 
     virtual void setPosition(EGE::Vec2d position)

@@ -43,6 +43,7 @@
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
+#include <ege/util/Types.h>
 #include <iomanip>
 #include <iostream>
 
@@ -52,14 +53,14 @@ namespace EGE
 TextBox::TextBox(Widget& parent, String id)
 : Widget(parent, id)
 {
-    m_caretAnimation = make<Animation>(*this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
+    m_caretAnimation = make<NumberAnimation>(*this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);
     m_caretAnimation->addKeyframe(0.0, 1.0);
     m_caretAnimation->addKeyframe(0.5, 0.0);
     m_caretAnimation->addKeyframe(1.0, 1.0);
     m_caretAnimation->setEasingFunction(AnimationEasingFunctions::constant1);
-    addAnimation(m_caretAnimation, [this](Animation*, double val) {
-                    m_caretShown = (val == 0.0);
-                 });
+    addAnimation<MaxFloat>(m_caretAnimation, [this](NumberAnimation&, MaxFloat val) {
+        m_caretShown = (val == 0.0);
+    });
 }
 
 void TextBox::render(Renderer& renderer) const
