@@ -82,8 +82,20 @@ class MyBackground : public EGE::SceneObject2D
 {
 public:
     MyBackground(EGE::Scene2D& owner, std::string name = "")
-    : EGE::SceneObject2D(owner, "MyBackground") { setName(name); }
-
+    : EGE::SceneObject2D(owner, "MyBackground")
+    {
+        setName(name);
+        auto anim = make<EGE::RGBAnimation>(*this, 5.0, EGE::Timer::Mode::Infinite);
+        anim->addKeyframe(0.0, EGE::Colors::red);
+        anim->addKeyframe(0.25, EGE::Colors::cyan);
+        anim->addKeyframe(0.5, EGE::Colors::magenta);
+        anim->addKeyframe(0.75, EGE::Colors::white);
+        anim->addKeyframe(1.0, EGE::Colors::red);
+        anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
+        addAnimation<EGE::ColorRGBA>(anim, [this](EGE::RGBAnimation&, EGE::ColorRGBA val) {
+            m_color = val;
+        });
+    }
     void render(EGE::Renderer& renderer) const override
     {
         // add our 'test' shader
@@ -96,12 +108,14 @@ public:
         myStates.sfStates().shader = shader.get();*/
 
         sf::VertexArray varr(sf::Quads, 4);
-        varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color::Red));
+        varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y-100.f), sf::Color(m_color.r * 255, m_color.g * 255, m_color.b * 255, m_color.a * 255)));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y-100.f), sf::Color::Green));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x+100.f, getPosition().y+100.f), sf::Color::Blue));
         varr.append(sf::Vertex(sf::Vector2f(getPosition().x-100.f, getPosition().y+100.f), sf::Color::Yellow));
         renderer.getTarget().draw(varr, myStates.sfStates());
     }
+
+    EGE::ColorRGBA m_color;
 };
 
 // resource manager

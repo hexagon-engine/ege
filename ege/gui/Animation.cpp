@@ -40,11 +40,5 @@
 
 namespace EGE
 {
-/*
-void Animation::addKeyframe(double time, double value)
-
-bool Animation::isKeyframe(double time)
-
-double Animation::getValue(double time)
-*/
+    // currently nothing
 }

@@ -38,6 +38,7 @@
 
 #include <ege/loop/EventLoop.h>
 #include <ege/loop/Timer.h>
+#include <ege/util/Color.h>
 #include <ege/util/Vector.h>
 #include <vector>
 
@@ -47,8 +48,10 @@ namespace EGE
 {
 
 // T must have:
-//  operator*(const T&, MaxFloat)
+//  operator+(const T&, const T&)
 //  operator-(const T&, const T&)
+//  operator*(const T&, double)
+//  operator/(const T&, double)
 //
 // Example compatible types:
 //  * all primitives
@@ -101,8 +104,8 @@ public:
         if(!m_sorted)
         {
             std::sort(m_keyframes.begin(), m_keyframes.end(), [](std::pair<MaxFloat, T> _L, std::pair<MaxFloat, T> _R)->bool {
-                            return _L.first < _R.first;
-                      });
+                return _L.first < _R.first;
+            });
 
             // add "zero frame" and "last frame" if it doesn't exist
             if(!isKeyframe(0.0)) m_keyframes.insert(m_keyframes.begin(), std::make_pair(0.0, m_keyframes.front().second));
@@ -156,5 +159,6 @@ private:
 
 typedef Animation<MaxFloat> NumberAnimation;
 typedef Animation<Vec2d> Vec2Animation;
+typedef Animation<ColorRGBA> RGBAnimation;
 
 }
