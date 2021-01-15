@@ -85,30 +85,32 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
         return;
     }
 
-    scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
+    scene->events<AddObjectEvent>().add([this](AddObjectEvent& event) {
         // Add controller to controller map.
-        m_controllersForObjects[object->getObjectId()] = makeController(*object);
-        sendToAll(EGEPacket::generateSSceneObjectCreation(*object, object->getId()));
+        m_controllersForObjects[event.object.getObjectId()] = makeController(event.object);
+        sendToAll(EGEPacket::generateSSceneObjectCreation(event.object, event.object.getId()));
+        return EventResult::Success;
     });
 
-    scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
+    scene->events<RemoveObjectEvent>().add([this](RemoveObjectEvent& event) {
         // Remove controller from controller map.
-        auto it = m_controllersForObjects.find(object->getObjectId());
+        auto it = m_controllersForObjects.find(event.object.getObjectId());
         if(it != m_controllersForObjects.end())
             m_controllersForObjects.erase(it);
 
-        sendToAll(EGEPacket::generateSSceneObjectDeletion(object->getObjectId()));
+        sendToAll(EGEPacket::generateSSceneObjectDeletion(event.object.getObjectId()));
 
         // Notify players that were controlling the object that object was removed.
-        sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [object](ClientConnection& client)->bool {
+        sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [event](ClientConnection& client)->bool {
             EGEClientConnection& egeClient = (EGEClientConnection&)client;
-            if(egeClient.getControlledSceneObject() == object->getObjectId())
+            if(egeClient.getControlledSceneObject() == event.object.getObjectId())
             {
-                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << object->getObjectId();
+                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << event.object.getObjectId();
                 return true;
             }
             return false;
         });
+        return EventResult::Success;
     });
 
     EGEGame::setScene(scene);

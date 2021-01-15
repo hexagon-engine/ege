@@ -53,6 +53,34 @@
 namespace EGE
 {
 
+class ObjectEvent : public Event
+{
+public:
+    ObjectEvent(SceneObject& _object)
+    : object(_object) {}
+
+    SceneObject& object;
+};
+
+class AddObjectEvent : public ObjectEvent
+{
+public:
+    AddObjectEvent(SceneObject& _object)
+    : ObjectEvent(_object) {}
+
+    EGE_EVENT("AddObjectEvent");
+};
+
+class RemoveObjectEvent : public ObjectEvent
+{
+public:
+    RemoveObjectEvent(SceneObject& _object)
+    : ObjectEvent(_object) {}
+
+    EGE_EVENT("RemoveObjectEvent");
+};
+
+
 class Scene : public ThreadSafeEventLoop, public Renderable
 {
 public:
@@ -92,9 +120,6 @@ public:
     void setSize(Vec2d size) { m_size = size; }
     Vec2d getSize() const { return m_size; }
 
-    void setAddObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_addObjectCallback = func; }
-    void setRemoveObjectCallback(std::function<void(std::shared_ptr<SceneObject>)> func) { m_removeObjectCallback = func; }
-
     GUIGameLoop* getLoop() { return m_loop; }
 
     // We don't have GUI on servers!
@@ -114,8 +139,6 @@ private:
     UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
-    std::function<void(std::shared_ptr<SceneObject>)> m_addObjectCallback;
-    std::function<void(std::shared_ptr<SceneObject>)> m_removeObjectCallback;
 };
 
 }

@@ -106,8 +106,7 @@ void Scene::onUpdate(TickCount tickCounter)
                 if(object.second->isDead())
                 {
                     log(LogLevel::Debug) << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
-                    if(m_removeObjectCallback)
-                        m_removeObjectCallback(object.second);
+                    fire<RemoveObjectEvent>(*object.second);
 
                     // Set all children dead
                     if(object.second->m_children.size() > 0)
@@ -178,8 +177,7 @@ UidType Scene::addObject(std::shared_ptr<SceneObject> object)
         object->setName("SO" + std::to_string(object->getObjectId()));
     m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
 
-    if(m_addObjectCallback)
-        m_addObjectCallback(object);
+    fire<AddObjectEvent>(*object);
 
     return object->getObjectId();
 }

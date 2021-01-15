@@ -314,16 +314,18 @@ void EGEClient::setScene(std::shared_ptr<Scene> scene)
         return;
     }
 
-    scene->setAddObjectCallback([this](std::shared_ptr<SceneObject> object) {
-                                   // Add controller to controller map.
-                                   m_controllersForObjects[object->getObjectId()] = makeController(*object.get());
-                                });
-    scene->setRemoveObjectCallback([this](std::shared_ptr<SceneObject> object) {
-                                   // Remove controller from controller map.
-                                   auto it = m_controllersForObjects.find(object->getObjectId());
-                                   if(it != m_controllersForObjects.end())
-                                        m_controllersForObjects.erase(it);
-                                });
+    scene->events<AddObjectEvent>().add([this](AddObjectEvent& event) {
+        // Add controller to controller map.
+        m_controllersForObjects[event.object.getObjectId()] = makeController(event.object);
+        return EventResult::Success;
+    });
+    scene->events<RemoveObjectEvent>().add([this](RemoveObjectEvent& event) {
+        // Remove controller from controller map.
+        auto it = m_controllersForObjects.find(event.object.getObjectId());
+        if(it != m_controllersForObjects.end())
+            m_controllersForObjects.erase(it);
+        return EventResult::Success;
+    });
     EGEGame::setScene(scene);
 }
 
