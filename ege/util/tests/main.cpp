@@ -413,4 +413,21 @@ TESTCASE(colors)
     return 0;
 }
 
+TESTCASE(rect)
+{
+    EGE::RectD rect;
+    EXPECT(rect.empty());
+    EGE::RectD rect2a(10, 10, 20, 20);
+    EGE::RectD rect2b(20, 20, 20, 20);
+    EGE::RectD rect2i(20, 20, 10, 10);
+    EXPECT_EQUAL(rect2a.intersection(rect2b), rect2i);
+    EXPECT_EQUAL(rect2a * rect2b, rect2i);
+    EXPECT(rect2a.contains({20, 20}));
+    EXPECT(!rect2a.contains({9, 9}));
+    EXPECT(!rect2a.contains({31, 31}));
+    EXPECT(rect2a.contains({30, 30}));
+    EXPECT(rect2a.contains({10, 10}));
+    return 0;
+}
+
 RUN_TESTS(util)

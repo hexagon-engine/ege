@@ -36,6 +36,8 @@ set(SOURCES
 	"PointerUtils.h"
 	"Random.cpp"
 	"Random.h"
+	"Rect.cpp"
+	"Rect.h"
 	"Serializable.cpp"
 	"Serializable.h"
 	"StringUtils.h"
