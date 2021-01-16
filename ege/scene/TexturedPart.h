@@ -36,41 +36,27 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
-#include "Scene.h"
-
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include "Part.h"
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+class SceneObject2D;
+
+class TexturedPart : public Part
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    TexturedPart(SceneObject2D& object, Vec2d position, String texName)
+    : Part((SceneObject&)object), m_position(position), m_textureName(texName) {}
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    virtual void updateGeometry(Renderer& renderer) override;
+    virtual void render(Renderer& renderer) const override;
 
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
-
+    virtual SharedPtr<Part> copy() const override { return make<TexturedPart>((SceneObject2D&)getObject(), m_position, m_textureName); }
 private:
-    Vec2d m_size;
+    Vec2d m_position;
+    String m_textureName;
+    sf::Texture* m_texture;
 };
 
 }

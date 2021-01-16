@@ -53,6 +53,8 @@ namespace EGE
 class ParticleSystem2D : public SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(ParticleSystem2D, "EGE::ParticleSystem2D")
+
     class UserData {};
 
     class Particle
@@ -74,8 +76,8 @@ public:
 
     friend class Particle;
 
-    ParticleSystem2D(Scene2D& owner, sf::FloatRect spawnRect)
-    : SceneObject2D(owner, "EGE::ParticleSystem2D"), m_spawnRect(spawnRect) {}
+    ParticleSystem2D(Scene2D& owner, sf::FloatRect spawnRect = {})
+    : SceneObject2D(owner), m_spawnRect(spawnRect) {}
 
     virtual sf::FloatRect getBoundingBox() const
     {

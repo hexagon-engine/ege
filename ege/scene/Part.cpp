@@ -34,43 +34,9 @@
 *
 */
 
-#pragma once
-
-#include "SceneObject2D.h"
-#include "Scene.h"
-
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include "Part.h"
 
 namespace EGE
 {
-
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
-{
-public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
-
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
-
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
-
-private:
-    Vec2d m_size;
-};
-
+    // currently nothing...
 }

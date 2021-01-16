@@ -117,6 +117,19 @@ void Renderer::renderTexturedRectangle(double x, double y, double width, double 
     getTarget().draw(rs, m_states.sfStates());
 }
 
+void Renderer::renderCircle(double x, double y, double radius, ColorRGBA fillColor, ColorRGBA outlineColor)
+{
+    sf::CircleShape cs(radius);
+    cs.setPosition(x, y);
+    cs.setFillColor(sf::Color(fillColor.r * 255, fillColor.g * 255, fillColor.b * 255, fillColor.a * 255));
+    if(outlineColor != Colors::transparent)
+    {
+        cs.setOutlineColor(sf::Color(outlineColor.r * 255, outlineColor.g * 255, outlineColor.b * 255, outlineColor.a * 255));
+        cs.setOutlineThickness(1.f);
+    }
+    getTarget().draw(cs, m_states.sfStates());
+}
+
 void Renderer::renderPoints(const std::vector<Vertex>& points, float pointSize)
 {
     NOT_IMPLEMENTED("Use renderPrimitives()");

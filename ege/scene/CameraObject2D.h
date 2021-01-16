@@ -50,8 +50,10 @@ namespace EGE
 class CameraObject2D : public CameraObject<Vec2d>, public SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(CameraObject2D, "EGE::CameraObject2D")
+
     CameraObject2D(Scene2D& owner)
-    : CameraObject((Scene&)owner), SceneObject2D(owner, "EGE::CameraObject2D") {}
+    : CameraObject((Scene&)owner), SceneObject2D(owner) {}
 
     Vec2d getEyePosition() { return m_following ? ((SceneObject2D*)m_following.get())->getPosition() : getPosition(); }
     void setEyePosition(Vec2d position) { setPosition(position); }

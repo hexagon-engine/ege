@@ -36,41 +36,30 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
-#include "Scene.h"
+#include "Part.h"
 
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include <ege/util/Color.h>
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+class SceneObject2D;
+
+class CirclePart : public Part
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    CirclePart(SceneObject2D& object, Vec2d position, double radius, ColorRGBA fillColor = Colors::white, ColorRGBA outlineColor = Colors::transparent)
+    : Part((SceneObject&)object), m_position(position), m_radius(radius), m_fillColor(fillColor), m_outlineColor(outlineColor) {}
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    virtual void render(Renderer& renderer) const override;
 
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
+    virtual SharedPtr<Part> copy() const override { return make<CirclePart>((SceneObject2D&)getObject(), m_position, m_radius, m_fillColor, m_outlineColor); }
 
 private:
-    Vec2d m_size;
+    Vec2d m_position;
+    double m_radius;
+    ColorRGBA m_fillColor;
+    ColorRGBA m_outlineColor;
 };
 
 }

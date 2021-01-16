@@ -46,7 +46,7 @@ namespace EGE
 {
 
 bool Scene::loadFromFile(String saveFile, String sceneFile,
-                         const SceneLoader::SceneObjectCreatorRegistry& registry,
+                         const SceneLoader::SceneObjectRegistry& registry,
                          const IOStreamConverter& converter)
 {
     SceneLoader loader(*this, registry);
@@ -55,7 +55,7 @@ bool Scene::loadFromFile(String saveFile, String sceneFile,
     return success;
 }
 
-bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter)
+bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectRegistry& registry, const IOStreamConverter& converter)
 {
     SceneLoader loader(*this, registry);
 
@@ -77,12 +77,12 @@ void Scene::render(Renderer& renderer) const
 
     for(auto pr: m_staticObjects)
     {
-        pr.second->doRender(renderer);
+        pr.second->doRender(renderer, renderer.getStates());
     }
 
     for(auto pr: m_objects)
     {
-        pr.second->doRender(renderer);
+        pr.second->doRender(renderer, renderer.getStates());
     }
 }
 
@@ -245,7 +245,7 @@ std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> pr
 }
 std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
-    return getObjects([typeId](SceneObject* object)->bool { return object->getId() == typeId; });
+    return getObjects([typeId](SceneObject* object)->bool { return object->getType()->getId() == typeId; });
 }
 
 std::shared_ptr<SceneObject> Scene::getObject(UidType id)

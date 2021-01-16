@@ -91,11 +91,11 @@ public:
     typedef StringMap<SceneObject*> ObjectMapByName;
 
     bool loadFromFile(String saveFile, String sceneFile,
-                      const SceneLoader::SceneObjectCreatorRegistry& registry,
+                      const SceneLoader::SceneObjectRegistry& registry,
                       const IOStreamConverter& converter = JSONConverter());
 
     // TODO: Make this const !
-    bool saveToFile(String saveFile, const SceneLoader::SceneObjectCreatorRegistry& registry, const IOStreamConverter& converter = JSONConverter());
+    bool saveToFile(String saveFile, const SceneLoader::SceneObjectRegistry& registry, const IOStreamConverter& converter = JSONConverter());
 
     virtual void onUpdate(TickCount tickCounter);
 

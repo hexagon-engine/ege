@@ -36,10 +36,12 @@
 
 #pragma once
 
+#include "SceneObject.h"
+#include "SceneObjectType.h"
+
 #include <ege/gpo/GameplayObjectRegistry.h>
 #include <ege/util/Converter.h>
 #include <ege/util/Types.h>
-#include <ege/scene/SceneObject.h>
 #include <functional>
 
 #define EGE_SCENE2D_OBJECT_CREATOR(clazz) [](EGE::Scene& scene) { return make<clazz>((EGE::Scene2D&)scene); }
@@ -50,10 +52,9 @@ namespace EGE
 class SceneLoader
 {
 public:
-    typedef std::function<SharedPtr<SceneObject>(Scene&)> SceneObjectCreator;
-    typedef Map<String, SceneObjectCreator> SceneObjectCreatorRegistry;
+    typedef Map<String, SceneObjectType*> SceneObjectRegistry;
 
-    SceneLoader(Scene& scene, const SceneObjectCreatorRegistry& registry)
+    SceneLoader(Scene& scene, const SceneObjectRegistry& registry)
     : m_scene(scene), m_registry(registry) {}
 
     SharedPtr<ObjectMap> serializeSceneObjects() const;
@@ -76,7 +77,7 @@ private:
     SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
 
     Scene& m_scene;
-    const SceneObjectCreatorRegistry& m_registry;
+    const SceneObjectRegistry& m_registry;
 };
 
 }

@@ -22,9 +22,11 @@ class MyObject : public EGE::SceneObject2D
     std::shared_ptr<sf::Font> m_font;
 
 public:
+    EGE_SCENEOBJECT2D(MyObject, "MyObject")
+
     // Objects registered in Scene Object Creator must have its "empty" state!
     MyObject(EGE::Scene2D& owner, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
-    : EGE::SceneObject2D(owner, "MyObject"), m_initialPosition(pos)
+    : EGE::SceneObject2D(owner), m_initialPosition(pos)
     {
         setPosition(pos);
         setName(name);
@@ -81,8 +83,10 @@ private:
 class MyBackground : public EGE::SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(MyBackground, "MyBackground")
+
     MyBackground(EGE::Scene2D& owner, std::string name = "")
-    : EGE::SceneObject2D(owner, "MyBackground")
+    : EGE::SceneObject2D(owner)
     {
         setName(name);
         auto anim = make<EGE::RGBAnimation>(*this, 5.0, EGE::Timer::Mode::Infinite);
@@ -216,7 +220,7 @@ TESTCASE(_2dCamera)
     auto removedObject = make<MyObject>(*scene, "Test Object", EGE::Vec2d(100.f, 100.f));
     scene->addObject(removedObject);
 
-    auto texturedObject = make<EGE::SceneObject2D>(*scene, "Textured Object");
+    auto texturedObject = make<EGE::SceneObject2D>(*scene);
     auto renderer = make<EGE::TexturedRenderer2D>(*texturedObject);
     renderer->setTextureName("texture.png");
     renderer->center();
@@ -400,8 +404,10 @@ struct MyTile
 class MyTileMapObject : public EGE::SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(MyTileMapObject, "MyTileMapObject")
+
     MyTileMapObject(EGE::Scene2D& owner)
-    : EGE::SceneObject2D(owner, "mytilemapobject")
+    : EGE::SceneObject2D(owner)
     {
         m_tilemap = make<EGE::ChunkedTileMap2D<MyTile, 4, 4>>();
         //m_tilemap->initialize({0, 1}); // water
@@ -471,9 +477,9 @@ TESTCASE(sceneLoader)
     EGE::GUIGameLoop loop;
 
     // Setup typeID registry
-    EGE::SceneLoader::SceneObjectCreatorRegistry registry = {
-        { "MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject) },
-        { "MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground) }
+    EGE::SceneLoader::SceneObjectRegistry registry = {
+        { "MyObject", MyObject::type() },
+        { "MyBackground", MyBackground::type() },
     };
 
     // Load some scene
@@ -524,8 +530,10 @@ TESTCASE(sceneLoader)
 class SimpleRectangleObject : public EGE::SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(SimpleRectangleObject, "SimpleRectangleObject")
+
     SimpleRectangleObject(EGE::Scene2D& scene)
-    : EGE::SceneObject2D(scene, "SimpleRectangleObject")
+    : EGE::SceneObject2D(scene)
     {
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(10.0, 0));
@@ -557,6 +565,13 @@ public:
     virtual void onUpdate(long long tickCounter)
     {
         EGE::SceneObject2D::onUpdate(tickCounter);
+    }
+
+    }
+
+    virtual void onUpdate(long long tickCounter)
+    {
+        EGE::SceneObject2D::onUpdate(tickCounter);
         if(!m_parent)
             setRotation(m_rotation + 0.01);
     }
@@ -568,10 +583,10 @@ TESTCASE(parenting)
 {
     // Setup registry
 
-    EGE::SceneLoader::SceneObjectCreatorRegistry registry = {
-        { "MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject) },
-        { "MyBackground", EGE_SCENE2D_OBJECT_CREATOR(MyBackground) },
-        { "SimpleRectangleObject", EGE_SCENE2D_OBJECT_CREATOR(SimpleRectangleObject) }
+    EGE::SceneLoader::SceneObjectRegistry registry = {
+        { "MyObject", MyObject::type() },
+        { "MyBackground", MyBackground::type() },
+        { "SimpleRectangleObject", SimpleRectangleObject::type() }
     };
 
     // Setup loop and load scene

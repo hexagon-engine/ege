@@ -37,13 +37,13 @@
 #pragma once
 
 #include "ObjectRenderer.h"
+#include "SceneObjectType.h"
 
 #include <SFML/Graphics.hpp>
 #include <ege/controller/Controllable.h>
 #include <ege/debug/Logger.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gfx/Renderable.h>
-#include <ege/gpo/GameplayObject.h>
 #include <ege/gui/Animatable.h>
 #include <ege/util/Serializable.h>
 
@@ -52,14 +52,11 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public GameplayObject, public Controllable, public Renderable, public sf::NonCopyable
+class SceneObject : public Animatable, public Controllable, public Renderable, public sf::NonCopyable
 {
 public:
-    SceneObject(EGE::Scene& owner, String typeId)
-    : GameplayObject(typeId), m_owner(owner)
-    {
-        log(LogLevel::Debug) << "SceneObject::SceneObject(" << typeId << ") " << this;
-    }
+    SceneObject(Scene& owner)
+    : m_owner(owner) {}
 
     enum Type
     {
@@ -70,6 +67,7 @@ public:
     virtual ~SceneObject();
 
     virtual void onUpdate(long long tickCounter);
+    virtual void doRender(Renderer& renderer, const RenderStates& states);
 
     virtual void render(Renderer& renderer) const override
     {
@@ -115,6 +113,13 @@ public:
 
     void setParent(SceneObject* object);
 
+    void addPart(String name, SharedPtr<Part> part) { m_parts.insert(std::make_pair(name, part)); }
+
+    SharedPtrStringMap<Part>& getParts() { return m_parts; }
+    Part* getPart(String name);
+
+    virtual SceneObjectType* getType() const = 0;
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
@@ -136,6 +141,9 @@ protected:
 
     friend class ObjectRenderer;
     friend class Scene;
+
+private:
+    SharedPtrStringMap<Part> m_parts;
 };
 
 }

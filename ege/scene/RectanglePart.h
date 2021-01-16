@@ -36,41 +36,30 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
-#include "Scene.h"
+#include "Part.h"
 
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include <ege/util/Color.h>
+#include <ege/util/Rect.h>
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+class SceneObject2D;
+
+class RectanglePart : public Part
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    RectanglePart(SceneObject2D& object, RectD rect, ColorRGBA fillColor = Colors::white, ColorRGBA outlineColor = Colors::transparent)
+    : Part((SceneObject&)object), m_rect(rect), m_fillColor(fillColor), m_outlineColor(outlineColor) {}
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    virtual void render(Renderer& renderer) const override;
 
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
+    virtual SharedPtr<Part> copy() const override { return make<RectanglePart>((SceneObject2D&)getObject(), m_rect, m_fillColor, m_outlineColor); }
 
 private:
-    Vec2d m_size;
+    RectD m_rect;
+    ColorRGBA m_fillColor;
+    ColorRGBA m_outlineColor;
 };
 
 }

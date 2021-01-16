@@ -54,7 +54,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
     for(auto& sObj : m_scene.m_objects)
     {
         auto entry = sObj.second->serialize();
-        entry->addString("typeId", sObj.second->getId());
+        entry->addString("typeId", sObj.second->getType()->getId());
         objects->addObject(entry);
     }
     log(LogLevel::Debug) << "SceneLoader finished saving " << objects->size() << " objects";
@@ -67,7 +67,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         if(sObj.second->didChangeSinceLoad())
         {
             auto entry = sObj.second->serialize();
-            entry->addString("typeId", sObj.second->getId());
+            entry->addString("typeId", sObj.second->getType()->getId());
             staticObjects->addObject(entry);
         }
     }
@@ -99,7 +99,12 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
         return nullptr;
     }
 
-    SharedPtr<SceneObject> sceneObject = creator->second(m_scene);
+    SharedPtr<SceneObject> sceneObject = creator->second->createObject(m_scene);
+    if(!sceneObject)
+    {
+        err() << "Object refused creation!";
+        return nullptr;
+    }
     if(!sceneObject->deserialize(objMap.value()))
     {
         err() << "Failed to deserialize SceneObject!";

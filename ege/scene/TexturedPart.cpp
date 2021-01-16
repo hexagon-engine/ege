@@ -34,43 +34,27 @@
 *
 */
 
-#pragma once
+#include "TexturedPart.h"
 
-#include "SceneObject2D.h"
 #include "Scene.h"
-
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include "SceneObject.h"
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+void TexturedPart::updateGeometry(Renderer&)
 {
-public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
-
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
-
-    void setSize(Vec2d size)
+    if(!m_texture)
     {
-        m_size = size;
+        auto texture = getObject().getOwner().getLoop()->getResourceManager()->getTexture(m_textureName);
+        ASSERT(texture);
+        m_texture = &texture->getTexture();
     }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
+}
 
-    virtual void render(Renderer&) const override {}
-
-private:
-    Vec2d m_size;
-};
+void TexturedPart::render(Renderer& renderer) const
+{
+    renderer.renderTexturedRectangle(m_position.x, m_position.y, m_texture->getSize().x, m_texture->getSize().y, *m_texture);
+}
 
 }

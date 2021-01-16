@@ -49,6 +49,15 @@ SceneObject::~SceneObject()
     log(LogLevel::Debug) << "SceneObject::~SceneObject() " << this;
 }
 
+void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
+{
+    Renderable::doRender(renderer, states);
+
+    // Render all parts :)
+    for(auto it: getParts())
+        it.second->doRender(renderer, states);
+}
+
 void SceneObject::onUpdate(long long)
 {
     if(!m_parentId.empty() && !m_parent)
@@ -137,6 +146,14 @@ void SceneObject::setParent(SceneObject* object)
         return;
 
     m_parent->m_children.insert(this);
+}
+
+Part* SceneObject::getPart(String name)
+{
+    auto it = m_parts.find(name);
+    if(it != m_parts.end())
+        return it->second.get();
+    return nullptr;
 }
 
 }

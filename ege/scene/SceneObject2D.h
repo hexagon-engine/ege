@@ -55,8 +55,10 @@ class SceneObject2D : public SceneObject
 {
 
 public:
-    SceneObject2D(Scene2D& owner, String typeId)
-    : SceneObject((Scene&)owner, typeId) {}
+    EGE_SCENEOBJECT2D(SceneObject2D, "EGE::SceneObject2D")
+
+    SceneObject2D(Scene2D& owner)
+    : SceneObject((Scene&)owner) {}
 
     virtual void setPosition(Vec2d position)
     {

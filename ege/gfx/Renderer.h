@@ -101,6 +101,7 @@ public:
     void renderTexturedRectangle(double x, double y, double width, double height, const sf::Texture& texture, sf::IntRect textureRect = {});
     void renderPoints(const std::vector<Vertex>& points, float pointSize = 1.0);
     void renderPrimitives(const std::vector<Vertex>& points, sf::PrimitiveType type);
+    void renderCircle(double x, double y, double radius, ColorRGBA fillColor, ColorRGBA outlineColor);
 
     sf::RenderTarget& getTarget() { return m_target; }
     void setStates(const RenderStates& states) { m_states = states; }

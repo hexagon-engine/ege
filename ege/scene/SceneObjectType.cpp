@@ -34,43 +34,28 @@
 *
 */
 
-#pragma once
+#include "SceneObjectType.h"
 
-#include "SceneObject2D.h"
 #include "Scene.h"
-
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include "Scene2D.h"
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+SharedPtr<SceneObject> SceneObjectType2D::createObject(Scene& scene) const
 {
-public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
-
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
-
-    void setSize(Vec2d size)
+    ASSERT(dynamic_cast<Scene2D*>(&scene));
+    auto object = create2DObject((Scene2D&)scene);
+    for(auto it: m_parts)
     {
-        m_size = size;
+        object->addPart(it.first, it.second->copy());
     }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
+    return object;
+}
 
-    virtual void render(Renderer&) const override {}
-
-private:
-    Vec2d m_size;
-};
+SharedPtr<SceneObject2D> SceneObjectType2D::create2DObject(Scene2D& scene) const
+{
+    return make<SceneObject2D>(scene);
+}
 
 }

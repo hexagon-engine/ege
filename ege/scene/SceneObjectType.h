@@ -36,41 +36,49 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
-#include "Scene.h"
+#include <ege/gpo/GameplayObject.h>
+#include <ege/util/Types.h>
 
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include "Part.h"
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+class Scene;
+class Scene2D;
+class SceneObject2D;
+
+class SceneObjectType : public GameplayObject
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    SceneObjectType(String typeId)
+    : GameplayObject(typeId) {}
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    void addPart(String name, SharedPtr<Part> part) { m_parts.insert(std::make_pair(name, part)); }
+    virtual SharedPtr<SceneObject> createObject(Scene&) const { return nullptr; }
 
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
-
-private:
-    Vec2d m_size;
+protected:
+    SharedPtrStringMap<Part> m_parts;
 };
+
+class SceneObjectType2D : public SceneObjectType
+{
+public:
+    SceneObjectType2D(String typeId)
+    : SceneObjectType(typeId) {}
+
+    virtual SharedPtr<SceneObject> createObject(Scene& scene) const override;
+    virtual SharedPtr<SceneObject2D> create2DObject(Scene2D& scene) const;
+};
+
+#define EGE_SCENEOBJECT2D(_class, _typeId) \
+class Type : public EGE::SceneObjectType2D \
+{ \
+public: \
+    Type() : EGE::SceneObjectType2D(_typeId) {}\
+    virtual EGE::SharedPtr<EGE::SceneObject2D> create2DObject(EGE::Scene2D& scene) const { return make<_class>(scene); } \
+}; \
+static EGE::SceneObjectType* type() { static Type type; return &type; } \
+virtual EGE::SceneObjectType* getType() const override { return type(); } \
 
 }

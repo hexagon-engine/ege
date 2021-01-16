@@ -36,41 +36,26 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
-#include "Scene.h"
-
-#include <ege/gfx/RenderStates.h>
-#include <SFML/Graphics.hpp>
+#include <ege/gfx/Renderable.h>
 
 namespace EGE
 {
 
-// invisible wall :)
-class DummyObject2D : public SceneObject2D
+class SceneObject;
+
+class Part : public Renderable
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    Part(SceneObject& object)
+    : m_object(object) {}
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    SceneObject& getObject() const { return m_object; }
 
-    void setSize(Vec2d size)
-    {
-        m_size = size;
-    }
-    Vec2d getSize() const
-    {
-        return m_size;
-    }
-    sf::FloatRect getBoundingBox()
-    {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
-    }
-
-    virtual void render(Renderer&) const override {}
+    virtual SharedPtr<Part> copy() const = 0;
+    // TODO: bounding box, center of mass, ... for physics
 
 private:
-    Vec2d m_size;
+    SceneObject& m_object;
 };
 
 }
