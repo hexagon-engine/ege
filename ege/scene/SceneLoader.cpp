@@ -45,6 +45,48 @@
 namespace EGE
 {
 
+bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, const IOStreamConverter& converter)
+{
+    SharedPtr<Object> data;
+    std::fstream file(fileName);
+    if(!file.good())
+        return false; // couldn't open file
+
+    if(!(file >> objectIn(data, converter)))
+        return false; // invalid JSON
+
+    auto data_map = Object::cast<ObjectMap>(data);
+    if(!data_map.hasValue())
+        return false; // it's not a map!
+
+    for(auto& pr: *data_map.value())
+    {
+        auto sodata = Object::cast<ObjectMap>(pr.second);
+        if(!sodata.hasValue())
+            return false; // entry not a map
+
+        auto sd_baseClass = sodata.value()->getObject("baseClass").as<String>().valueOr("SceneObject2D");
+
+        SharedPtr<SceneObjectType> sotype;
+        if(sd_baseClass == "SceneObject2D")
+            sotype = make<SceneObjectType2D>(pr.first);
+        // TODO: SceneObjectTypeCreatorRegistry ??
+        else
+        {
+            err() << "Invalid base class for SceneObjectType!";
+            return false;
+        }
+        auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
+        if(!sd_data.hasValue())
+            return false; // data is not a map
+
+        if(!sotype->deserialize(sd_data.value()))
+            return false; // invalid sceneobjecttype!
+        registry[pr.first] = sotype;
+    }
+    return true;
+}
+
 SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
 {
     auto data = make<ObjectMap>();
@@ -92,8 +134,11 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
         return nullptr;
     }
 
-    auto creator = m_registry.find(typeId.value());
-    if(creator == m_registry.end())
+    auto registry = m_scene.getRegistry();
+    ASSERT(registry);
+
+    auto creator = registry->find(typeId.value());
+    if(creator == registry->end())
     {
         log(LogLevel::Warning) << "No SOC found for " << typeId.value();
         return nullptr;
@@ -116,6 +161,12 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
 
 bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
 {
+    if(!m_scene.getRegistry())
+    {
+        log(LogLevel::Error) << "Scene hasn't got assigned registry!";
+        return false;
+    }
+
     // Load all static objects that changed from installation scene
     auto staticObjects = data->getObject("staticObjects").to<ObjectList>();
     if(!staticObjects.hasValue())
@@ -155,6 +206,12 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
 
 bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 {
+    if(!m_scene.getRegistry())
+    {
+        log(LogLevel::Error) << "Scene hasn't got assigned registry!";
+        return false;
+    }
+
     // Load all objects and add them as static objects.
     auto objects = data->getObject("objects").to<ObjectList>();
     if(!objects.hasValue())

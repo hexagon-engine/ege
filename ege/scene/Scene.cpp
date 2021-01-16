@@ -46,18 +46,17 @@ namespace EGE
 {
 
 bool Scene::loadFromFile(String saveFile, String sceneFile,
-                         const SceneLoader::SceneObjectRegistry& registry,
                          const IOStreamConverter& converter)
 {
-    SceneLoader loader(*this, registry);
+    SceneLoader loader(*this);
     bool success = loader.loadSceneAndSave(saveFile, sceneFile, converter);
 
     return success;
 }
 
-bool Scene::saveToFile(String saveFile, const SceneLoader::SceneObjectRegistry& registry, const IOStreamConverter& converter)
+bool Scene::saveToFile(String saveFile, const IOStreamConverter& converter)
 {
-    SceneLoader loader(*this, registry);
+    SceneLoader loader(*this);
 
     log() << "Objects: ";
     for(auto it: m_objects)

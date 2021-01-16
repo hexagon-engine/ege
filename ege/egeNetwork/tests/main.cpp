@@ -47,8 +47,10 @@ TESTCASE(converter)
 class MyObject : public EGE::SceneObject2D
 {
 public:
+    EGE_SCENEOBJECT2D(MyObject, "test-egeNetwork:MyObject")
+
     MyObject(EGE::Scene2D& owner, bool playerControlled = false)
-    : EGE::SceneObject2D(owner, "test-egeNetwork:MyObject")
+    : EGE::SceneObject2D(owner)
     {
         // only server side!
         if(!playerControlled && owner.isHeadless())
@@ -149,7 +151,7 @@ public:
 
     virtual std::shared_ptr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getId() == "test-egeNetwork:MyObject")
+        if(object.getType()->getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectServerController
             return make<MyObjectServerController>(object, *this);
@@ -186,7 +188,7 @@ public:
 
     virtual std::shared_ptr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getId() == "test-egeNetwork:MyObject")
+        if(object.getType()->getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectClientController
             return make<MyObjectClientController>(object, *this);
@@ -304,6 +306,7 @@ class MyGameLoop : public EGE::GUIGameLoop
 {
     std::shared_ptr<MyClient> m_client;
     std::shared_ptr<EGE::CameraObject2D> m_camera;
+    EGE::SceneLoader::SceneObjectRegistry m_soRegistry;
     int m_port;
 
 public:
@@ -327,7 +330,9 @@ public:
         gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
         // Register SceneObject types for Client.
-        m_client->registerSceneObjectCreator("test-egeNetwork:MyObject", EGE_SCENE2D_OBJECT_CREATOR(MyObject));
+        m_soRegistry = {
+            { "test-egeNetwork:MyObject", MyObject::type() }
+        };
 
         // Set exit handler for Client. It will be called when client is disconnected.
         m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent& event) {

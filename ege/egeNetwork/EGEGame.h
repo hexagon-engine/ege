@@ -48,35 +48,9 @@ namespace EGE
 class EGEGame
 {
 public:
-    // gameplay object manager
-    class GPOM : public GameplayObjectManager
-    {
-    public:
-        GPOM(EGEGame* game)
-        : m_game(game) {}
-
-        bool clear();
-        bool load();
-
-        SceneLoader::SceneObjectCreatorRegistry sceneObjectCreators;
-
-    private:
-        EGEGame* m_game;
-    };
-
-    EGEGame();
-
     virtual void setScene(std::shared_ptr<Scene> scene);
 
     std::shared_ptr<Scene> getScene() { return m_scene; }
-
-    GPOM& getGameplayObjectManager() { return m_gameplayObjectManager; }
-
-    void registerSceneObjectCreator(String typeId, SceneLoader::SceneObjectCreator creator)
-    {
-        m_gameplayObjectManager.sceneObjectCreators.insert(std::make_pair(typeId, creator));
-    }
-
     virtual bool initialize();
 
     // Connection is accepted if <peer version == version>
@@ -88,7 +62,6 @@ public:
     std::string getVersionString() { return m_versionString; }
 
 private:
-    GPOM m_gameplayObjectManager;
     std::shared_ptr<Scene> m_scene;
     int m_version = 0; // 0 - "unknown"
     std::string m_versionString = "EGE Generic";

@@ -84,18 +84,16 @@ public:
 class Scene : public ThreadSafeEventLoop, public Renderable
 {
 public:
-    explicit Scene(GUIGameLoop* loop)
-    : m_loop(loop) {}
+    explicit Scene(GUIGameLoop* loop, SceneLoader::SceneObjectRegistry* registry = nullptr)
+    : m_loop(loop), m_registry(registry) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
     typedef StringMap<SceneObject*> ObjectMapByName;
 
-    bool loadFromFile(String saveFile, String sceneFile,
-                      const SceneLoader::SceneObjectRegistry& registry,
-                      const IOStreamConverter& converter = JSONConverter());
+    bool loadFromFile(String saveFile, String sceneFile, const IOStreamConverter& converter = JSONConverter());
 
     // TODO: Make this const !
-    bool saveToFile(String saveFile, const SceneLoader::SceneObjectRegistry& registry, const IOStreamConverter& converter = JSONConverter());
+    bool saveToFile(String saveFile, const IOStreamConverter& converter = JSONConverter());
 
     virtual void onUpdate(TickCount tickCounter);
 
@@ -125,6 +123,8 @@ public:
     // We don't have GUI on servers!
     bool isHeadless() { return !getLoop(); }
 
+    SceneLoader::SceneObjectRegistry* getRegistry() { return m_registry; }
+
 protected:
     friend class SceneLoader;
 
@@ -139,6 +139,7 @@ private:
     UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
+    SceneLoader::SceneObjectRegistry* m_registry;
 };
 
 }

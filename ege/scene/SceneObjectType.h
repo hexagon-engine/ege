@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include <ege/debug/Dump.h>
+#include <ege/debug/Logger.h>
 #include <ege/gpo/GameplayObject.h>
 #include <ege/util/Types.h>
 
@@ -56,6 +58,14 @@ public:
 
     void addPart(String name, SharedPtr<Part> part) { m_parts.insert(std::make_pair(name, part)); }
     virtual SharedPtr<SceneObject> createObject(Scene&) const { return nullptr; }
+
+    virtual bool deserialize(SharedPtr<ObjectMap> data)
+    {
+        // TODO: implement that!
+        log(LogLevel::Verbose) << "Loading SceneObjectType: " << getId();
+        printObject(data);
+        return true;
+    }
 
 protected:
     SharedPtrStringMap<Part> m_parts;
@@ -78,7 +88,7 @@ public: \
     Type() : EGE::SceneObjectType2D(_typeId) {}\
     virtual EGE::SharedPtr<EGE::SceneObject2D> create2DObject(EGE::Scene2D& scene) const { return make<_class>(scene); } \
 }; \
-static EGE::SceneObjectType* type() { static Type type; return &type; } \
-virtual EGE::SceneObjectType* getType() const override { return type(); } \
+static EGE::SharedPtr<EGE::SceneObjectType> type() { static auto type = make<Type>(); return type; } \
+virtual EGE::SceneObjectType* getType() const override { return type().get(); } \
 
 }

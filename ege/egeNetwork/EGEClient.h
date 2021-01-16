@@ -71,7 +71,6 @@ class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop, public
 public:
     EGEClient(sf::IpAddress addr, unsigned short port)
     : Client()
-    , EGEGame()
     , m_ip(addr)
     , m_port(port) {}
 

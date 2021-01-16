@@ -48,8 +48,8 @@ namespace EGE
 class Scene2D : public Scene
 {
 public:
-    explicit Scene2D(GUIGameLoop* loop)
-    : Scene(loop) {}
+    explicit Scene2D(GUIGameLoop* loop, SceneLoader::SceneObjectRegistry* registry = nullptr)
+    : Scene(loop, registry) {}
 
     void setCamera(std::weak_ptr<CameraObject2D> camera);
     std::weak_ptr<CameraObject2D> getCamera() { return m_camera; }

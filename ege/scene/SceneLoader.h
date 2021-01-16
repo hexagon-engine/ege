@@ -52,10 +52,12 @@ namespace EGE
 class SceneLoader
 {
 public:
-    typedef Map<String, SceneObjectType*> SceneObjectRegistry;
+    typedef SharedPtrStringMap<SceneObjectType> SceneObjectRegistry;
 
-    SceneLoader(Scene& scene, const SceneObjectRegistry& registry)
-    : m_scene(scene), m_registry(registry) {}
+    SceneLoader(Scene& scene)
+    : m_scene(scene) {}
+
+    static bool loadRegistry(SceneObjectRegistry&, String fileName, const IOStreamConverter& converter = JSONConverter());
 
     SharedPtr<ObjectMap> serializeSceneObjects() const;
     bool deserializeSceneObjects(SharedPtr<ObjectMap> data);
@@ -77,7 +79,6 @@ private:
     SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
 
     Scene& m_scene;
-    const SceneObjectRegistry& m_registry;
 };
 
 }

@@ -43,20 +43,6 @@
 namespace EGE
 {
 
-bool EGEGame::GPOM::clear()
-{
-    sceneObjectCreators.clear();
-    return true;
-}
-
-bool EGEGame::GPOM::load()
-{
-    sceneObjectCreators.insert(std::make_pair("EGE::CameraObject2D", EGE_SCENE2D_OBJECT_CREATOR(CameraObject2D)));
-    return true;
-}
-
-EGEGame::EGEGame()
-: m_gameplayObjectManager(this) {}
 
 void EGEGame::setScene(std::shared_ptr<Scene> scene)
 {
@@ -70,8 +56,7 @@ bool EGEGame::initialize()
         log(LogLevel::Warning) << "EGEGame: Version string is empty!";
         m_versionString = "Game";
     }
-
-    return m_gameplayObjectManager.load();
+    return true;
 }
 
 }

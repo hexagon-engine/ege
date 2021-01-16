@@ -477,15 +477,15 @@ TESTCASE(sceneLoader)
     EGE::GUIGameLoop loop;
 
     // Setup typeID registry
-    EGE::SceneLoader::SceneObjectRegistry registry = {
+    EGE::SceneLoader::SceneObjectRegistry registry {
         { "MyObject", MyObject::type() },
-        { "MyBackground", MyBackground::type() },
+        { "MyBackground", MyBackground::type() }
     };
 
     // Load some scene
-    auto scene = make<EGE::Scene2D>(&loop);
+    auto scene = make<EGE::Scene2D>(&loop, &registry);
 
-    EGE::SceneLoader loader(*scene, registry);
+    EGE::SceneLoader loader(*scene);
     if(!loader.loadSceneAndSave("saves/test.json", "res/scenes/test.json"))
     {
         log() << "Failed to load scene!";
@@ -565,13 +565,6 @@ public:
     virtual void onUpdate(long long tickCounter)
     {
         EGE::SceneObject2D::onUpdate(tickCounter);
-    }
-
-    }
-
-    virtual void onUpdate(long long tickCounter)
-    {
-        EGE::SceneObject2D::onUpdate(tickCounter);
         if(!m_parent)
             setRotation(m_rotation + 0.01);
     }
@@ -582,17 +575,21 @@ public:
 TESTCASE(parenting)
 {
     // Setup registry
-
-    EGE::SceneLoader::SceneObjectRegistry registry = {
+    EGE::SceneLoader::SceneObjectRegistry registry {
         { "MyObject", MyObject::type() },
         { "MyBackground", MyBackground::type() },
         { "SimpleRectangleObject", SimpleRectangleObject::type() }
     };
 
+    // Load other objects
+    if(!EGE::SceneLoader::loadRegistry(registry, "res/objects/registry.json"))
+        return 3;
+
     // Setup loop and load scene
     EGE::GUIGameLoop loop;
-    auto scene = make<EGE::Scene2D>(&loop);
-    if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json", registry))
+    auto scene = make<EGE::Scene2D>(&loop, &registry);
+
+    if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json"))
         return 1;
 
     // Add camera
@@ -615,7 +612,7 @@ TESTCASE(parenting)
     loop.run();
 
     // Save scene
-    if(!scene->saveToFile("saves/parenting.json", registry))
+    if(!scene->saveToFile("saves/parenting.json"))
         return 2;
     return 0;
 }
