@@ -52,10 +52,10 @@ public:
     GameplayObject(std::string id)
     : m_id(id) {}
 
-    std::string getId() const
-    {
-        return m_id;
-    }
+    std::string getId() const { return m_id; }
+
+    virtual SharedPtr<ObjectMap> serialize() const { return nullptr; }
+    virtual bool deserialize(SharedPtr<ObjectMap>) { return true; }
 };
 
 }
