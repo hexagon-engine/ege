@@ -55,6 +55,7 @@
 #include <ege/util/ObjectUnsignedInt.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/Random.h>
+#include <ege/util/Rect.h>
 #include <ege/util/Serializable.h>
 #include <ege/util/StringUtils.h>
 #include <ege/util/Time.h>
