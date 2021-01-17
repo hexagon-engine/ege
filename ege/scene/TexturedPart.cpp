@@ -54,7 +54,21 @@ void TexturedPart::updateGeometry(Renderer&)
 
 void TexturedPart::render(Renderer& renderer) const
 {
-    renderer.renderTexturedRectangle(m_position.x, m_position.y, m_texture->getSize().x, m_texture->getSize().y, *m_texture);
+    renderer.renderTexturedRectangle(position.x, position.y, m_texture->getSize().x, m_texture->getSize().y, *m_texture);
+}
+
+void TexturedPart::setTextureName(String tex)
+{
+    m_textureName = tex;
+    setGeometryNeedUpdate();
+}
+
+bool TexturedPart::deserialize(SharedPtr<ObjectMap> data)
+{
+    position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
+    m_textureName = data->getObject("textureName").as<String>().valueOr("");
+    setGeometryNeedUpdate();
+    return true;
 }
 
 }

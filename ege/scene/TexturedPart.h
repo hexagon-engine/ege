@@ -46,17 +46,22 @@ class SceneObject2D;
 class TexturedPart : public Part
 {
 public:
-    TexturedPart(SceneObject2D& object, Vec2d position, String texName)
-    : Part((SceneObject&)object), m_position(position), m_textureName(texName) {}
+    TexturedPart(SceneObject2D& object)
+    : Part((SceneObject&)object) {}
 
     virtual void updateGeometry(Renderer& renderer) override;
     virtual void render(Renderer& renderer) const override;
 
-    virtual SharedPtr<Part> copy() const override { return make<TexturedPart>((SceneObject2D&)getObject(), m_position, m_textureName); }
+    virtual bool deserialize(SharedPtr<ObjectMap>);
+
+    Vec2d position;
+
+    void setTextureName(String tex);
+    String getTextureName() { return m_textureName; }
+
 private:
-    Vec2d m_position;
     String m_textureName;
-    sf::Texture* m_texture;
+    sf::Texture* m_texture = nullptr;
 };
 
 }

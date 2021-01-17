@@ -53,7 +53,7 @@ public:
     EGE_SCENEOBJECT2D(CameraObject2D, "EGE::CameraObject2D")
 
     CameraObject2D(Scene2D& owner)
-    : CameraObject((Scene&)owner), SceneObject2D(owner) {}
+    : CameraObject((Scene&)owner), SceneObject2D(owner, *type()) {}
 
     Vec2d getEyePosition() { return m_following ? ((SceneObject2D*)m_following.get())->getPosition() : getPosition(); }
     void setEyePosition(Vec2d position) { setPosition(position); }

@@ -26,8 +26,9 @@ public:
 
     // Objects registered in Scene Object Creator must have its "empty" state!
     MyObject(EGE::Scene2D& owner, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
-    : EGE::SceneObject2D(owner), m_initialPosition(pos)
+    : EGE::SceneObject2D(owner, *type())
     {
+        m_initialPosition = pos;
         setPosition(pos);
         setName(name);
 
@@ -86,7 +87,7 @@ public:
     EGE_SCENEOBJECT2D(MyBackground, "MyBackground")
 
     MyBackground(EGE::Scene2D& owner, std::string name = "")
-    : EGE::SceneObject2D(owner)
+    : EGE::SceneObject2D(owner, *type())
     {
         setName(name);
         auto anim = make<EGE::RGBAnimation>(*this, 5.0, EGE::Timer::Mode::Infinite);
@@ -133,6 +134,7 @@ public:
         // it will be automatically loaded by engine.
         bool success = setDefaultFont("font.ttf");
         success &= (bool)loadTextureFromFile("texture.png").get();
+        success &= (bool)loadTextureFromFile("texturedPart.png").get();
         success &= (bool)loadShaderFromFile("test", "test.vert", "test.frag").get();
 
         // return true if all resources successfully loaded
@@ -157,6 +159,7 @@ TESTCASE(simple)
 
     // add some objects to scene
     scene->addObject(make<MyObject>(*scene, "My Object", EGE::Vec2d(200.f, 200.f)));
+
     auto removedObject = make<MyObject>(*scene, "Test Object", EGE::Vec2d(100.f, 100.f));
     scene->addObject(removedObject);
 
@@ -220,7 +223,8 @@ TESTCASE(_2dCamera)
     auto removedObject = make<MyObject>(*scene, "Test Object", EGE::Vec2d(100.f, 100.f));
     scene->addObject(removedObject);
 
-    auto texturedObject = make<EGE::SceneObject2D>(*scene);
+    EGE::SceneObjectType2D type("textured");
+    auto texturedObject = make<EGE::SceneObject2D>(*scene, type);
     auto renderer = make<EGE::TexturedRenderer2D>(*texturedObject);
     renderer->setTextureName("texture.png");
     renderer->center();
@@ -407,7 +411,7 @@ public:
     EGE_SCENEOBJECT2D(MyTileMapObject, "MyTileMapObject")
 
     MyTileMapObject(EGE::Scene2D& owner)
-    : EGE::SceneObject2D(owner)
+    : EGE::SceneObject2D(owner, *type())
     {
         m_tilemap = make<EGE::ChunkedTileMap2D<MyTile, 4, 4>>();
         //m_tilemap->initialize({0, 1}); // water
@@ -533,7 +537,7 @@ public:
     EGE_SCENEOBJECT2D(SimpleRectangleObject, "SimpleRectangleObject")
 
     SimpleRectangleObject(EGE::Scene2D& scene)
-    : EGE::SceneObject2D(scene)
+    : EGE::SceneObject2D(scene, *type())
     {
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(10.0, 0));

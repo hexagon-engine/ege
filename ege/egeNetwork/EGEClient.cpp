@@ -267,23 +267,11 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     if(!getScene()) //scene not created
         return EventResult::Success;
 
-    auto registry = getScene()->getRegistry();
-    if(!registry)
-    {
-        err() << "SceneObjectRegistry not set!";
+    SharedPtr<SceneObject> sceneObject = getScene()->createObject(typeId, object);
+    if(!sceneObject)
         return EventResult::Failure;
-    }
-    auto sobject = registry->find(typeId);
-    if(sobject == registry->end())
-    {
-        err() << "Not found SceneObjectType: " << typeId;
-        return EventResult::Failure;
-    }
 
-    // Call `func' that was registered by user.
-    std::shared_ptr<SceneObject> sceneObject = sobject->second->createObject(*getScene());
-    sceneObject->setObjectId(id); // Don't assign ID automatically!
-    sceneObject->deserialize(object);
+    sceneObject->setObjectId(id);
     getScene()->addObject(sceneObject);
 
     return EventResult::Success;

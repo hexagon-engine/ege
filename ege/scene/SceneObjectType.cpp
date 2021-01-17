@@ -42,20 +42,75 @@
 namespace EGE
 {
 
-SharedPtr<SceneObject> SceneObjectType2D::createObject(Scene& scene) const
+bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
 {
-    ASSERT(dynamic_cast<Scene2D*>(&scene));
-    auto object = create2DObject((Scene2D&)scene);
-    for(auto it: m_parts)
+    log(LogLevel::Info) << "Loading SceneObjectType: " << getId();
+
+    // Part list
+    auto d_parts = data->getObject("parts").to<ObjectList>();
+    if(d_parts.hasValue())
     {
-        object->addPart(it.first, it.second->copy());
+        for(auto& dd_part: *d_parts.value())
+        {
+            auto dd_part_map = Object::cast<ObjectMap>(dd_part);
+            if(!dd_part_map.hasValue())
+            {
+                err() << "Part is not a map";
+                return false;
+            }
+
+            auto part_type = dd_part_map.value()->getObject("type").as<String>();
+            if(!part_type.hasValue())
+            {
+                err() << "Part type not set";
+                return false;
+            }
+
+            auto part_name = dd_part_map.value()->getObject("name").as<String>();
+            if(!part_name.hasValue())
+            {
+                err() << "Part name not set";
+                return false;
+            }
+
+            PartStub partstub;
+            String part_type_s = part_type.value();
+
+            if(!partstub.deserialize(dd_part_map.value()))
+            {
+                err() << "Invalid PartStub";
+                return false;
+            }
+
+            log() << "Adding Part: " << part_name.value();
+            m_parts[part_name.value()] = partstub;
+        }
     }
-    return object;
+    log() << "Total part count: " << m_parts.size();
+    return true;
 }
 
-SharedPtr<SceneObject2D> SceneObjectType2D::create2DObject(Scene2D& scene) const
+SharedPtr<SceneObject> SceneObjectType2D::createEmptyObject(Scene& scene) const
 {
-    return make<SceneObject2D>(scene);
+    ASSERT(dynamic_cast<Scene2D*>(&scene));
+    auto sceneObject = createEmptyObject((Scene2D&)scene);
+    return sceneObject;
+}
+
+void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
+{
+    // Parts
+    log() << "Adding parts to " << object.getName();
+    for(auto it: m_parts)
+    {
+        log() << "  * " << it.first;
+        object.addPart(it.first, it.second.makeInstance(object));
+    }
+}
+
+SharedPtr<SceneObject2D> SceneObjectType2D::createEmptyObject(Scene2D& scene) const
+{
+    return make<SceneObject2D>(scene, *this);
 }
 
 }

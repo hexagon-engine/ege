@@ -50,38 +50,57 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
     SharedPtr<Object> data;
     std::fstream file(fileName);
     if(!file.good())
+    {
+        err() << "Failed to open registry file";
         return false; // couldn't open file
+    }
 
     if(!(file >> objectIn(data, converter)))
+    {
+        err() << "Invalid registry JSON";
         return false; // invalid JSON
+    }
 
     auto data_map = Object::cast<ObjectMap>(data);
     if(!data_map.hasValue())
+    {
+        err() << "Data must be a map";
         return false; // it's not a map!
+    }
 
     for(auto& pr: *data_map.value())
     {
         auto sodata = Object::cast<ObjectMap>(pr.second);
         if(!sodata.hasValue())
+        {
+            err() << "Data entry must be a map";
             return false; // entry not a map
+        }
 
         auto sd_baseClass = sodata.value()->getObject("baseClass").as<String>().valueOr("SceneObject2D");
 
         SharedPtr<SceneObjectType> sotype;
         if(sd_baseClass == "SceneObject2D")
             sotype = make<SceneObjectType2D>(pr.first);
-        // TODO: SceneObjectTypeCreatorRegistry ??
         else
         {
-            err() << "Invalid base class for SceneObjectType!";
+            err() << "Invalid base class for SceneObjectType";
             return false;
         }
+
         auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
         if(!sd_data.hasValue())
+        {
+            err() << "Registry entry must be a map";
             return false; // data is not a map
+        }
 
+        log() << "Loading data for SceneObjectType: " << pr.first;
         if(!sotype->deserialize(sd_data.value()))
+        {
+            err() << "Invalid SceneObjectType";
             return false; // invalid sceneobjecttype!
+        }
         registry[pr.first] = sotype;
     }
     return true;
@@ -96,7 +115,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
     for(auto& sObj : m_scene.m_objects)
     {
         auto entry = sObj.second->serialize();
-        entry->addString("typeId", sObj.second->getType()->getId());
+        entry->addString("typeId", sObj.second->getType().getId());
         objects->addObject(entry);
     }
     log(LogLevel::Debug) << "SceneLoader finished saving " << objects->size() << " objects";
@@ -109,7 +128,7 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         if(sObj.second->didChangeSinceLoad())
         {
             auto entry = sObj.second->serialize();
-            entry->addString("typeId", sObj.second->getType()->getId());
+            entry->addString("typeId", sObj.second->getType().getId());
             staticObjects->addObject(entry);
         }
     }
@@ -134,29 +153,7 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
         return nullptr;
     }
 
-    auto registry = m_scene.getRegistry();
-    ASSERT(registry);
-
-    auto creator = registry->find(typeId.value());
-    if(creator == registry->end())
-    {
-        log(LogLevel::Warning) << "No SOC found for " << typeId.value();
-        return nullptr;
-    }
-
-    SharedPtr<SceneObject> sceneObject = creator->second->createObject(m_scene);
-    if(!sceneObject)
-    {
-        err() << "Object refused creation!";
-        return nullptr;
-    }
-    if(!sceneObject->deserialize(objMap.value()))
-    {
-        err() << "Failed to deserialize SceneObject!";
-        return nullptr;
-    }
-
-    return sceneObject;
+    return m_scene.createObject(typeId.value(), objMap.value());
 }
 
 bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)

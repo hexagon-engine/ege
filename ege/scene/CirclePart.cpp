@@ -36,12 +36,27 @@
 
 #include "CirclePart.h"
 
+#include <ege/debug/Logger.h>
+#include <ege/util/ObjectSerializers.h>
+
 namespace EGE
 {
 
 void CirclePart::render(Renderer& renderer) const
 {
-    renderer.renderCircle(m_position.x, m_position.y, m_radius, m_fillColor, m_outlineColor);
+    log() << radius << ": " << position.x << "," << position.y;
+    renderer.renderCircle(position.x, position.y, radius, fillColor, outlineColor);
+}
+
+bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
+{
+    position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
+    radius = data->getObject("radius").as<Float>().valueOr(0);
+    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
+    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));
+    setGeometryNeedUpdate();
+    log() << radius;
+    return true;
 }
 
 }

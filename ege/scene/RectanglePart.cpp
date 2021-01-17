@@ -41,7 +41,7 @@ namespace EGE
 
 void RectanglePart::render(Renderer& renderer) const
 {
-    renderer.renderRectangle(m_rect.position.x, m_rect.position.y, m_rect.size.x, m_rect.size.y, m_fillColor, m_outlineColor);
+    renderer.renderRectangle(rect.position.x, rect.position.y, rect.size.x, rect.size.y, fillColor, outlineColor);
 }
 
 }

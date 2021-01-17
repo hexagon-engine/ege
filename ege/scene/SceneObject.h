@@ -55,8 +55,8 @@ class Scene;
 class SceneObject : public Animatable, public Controllable, public Renderable, public sf::NonCopyable
 {
 public:
-    SceneObject(Scene& owner)
-    : m_owner(owner) {}
+    SceneObject(Scene& owner, const SceneObjectType& type)
+    : m_owner(owner), m_type(type) {}
 
     enum Type
     {
@@ -118,12 +118,14 @@ public:
     SharedPtrStringMap<Part>& getParts() { return m_parts; }
     Part* getPart(String name);
 
-    virtual SceneObjectType* getType() const = 0;
+    virtual const SceneObjectType& getType() const { return m_type; };
 
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
     void setChanged() { m_changedSinceLoad = true; }
+
+    void init();
 
     Scene& m_owner;
     bool m_dead = false;
@@ -138,6 +140,7 @@ protected:
     SceneObject* m_parent = nullptr;
     String m_parentId;
     Type m_parentType = Type::Dynamic;
+    const SceneObjectType& m_type;
 
     friend class ObjectRenderer;
     friend class Scene;

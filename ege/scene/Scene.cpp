@@ -90,7 +90,7 @@ void Scene::onUpdate(TickCount tickCounter)
     if(!isHeadless()) m_loop->getProfiler()->startSection("eventLoop");
     EventLoop::onUpdate();
 
-    auto doUpdateForObjectMap = [this, tickCounter](Scene::ObjectMap& objects, bool allowDead) {
+    auto doUpdateForObjectMap = [this, tickCounter](Scene::ObjectMapType& objects, bool allowDead) {
         for(auto it = objects.begin(); it != objects.end();)
         {
             if(!isHeadless()) m_loop->getProfiler()->startSection("update");
@@ -144,6 +144,9 @@ void Scene::onUpdate(TickCount tickCounter)
 
 UidType Scene::addObject(std::shared_ptr<SceneObject> object)
 {
+    if(!object)
+        return 0;
+
     if(!object->getObjectId())
     {
         // On server, give entities negative IDs to separate client and server objects.
@@ -158,6 +161,8 @@ UidType Scene::addObject(std::shared_ptr<SceneObject> object)
         if(m_greatestId < object->getObjectId())
             m_greatestId = object->getObjectId();
     }
+
+    object->init();
 
     if(m_objects.find(object->getObjectId()) != m_objects.end())
     {
@@ -183,6 +188,9 @@ UidType Scene::addObject(std::shared_ptr<SceneObject> object)
 
 UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite)
 {
+    if(!object)
+        return 0;
+
     ASSERT_WITH_MESSAGE(!object->getName().empty(), "Static SceneObjects must have assigned name in scene data file");
 
     if(!object->getObjectId())
@@ -199,6 +207,8 @@ UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwri
         if(m_greatestStaticId < object->getObjectId())
             m_greatestStaticId = object->getObjectId();
     }
+
+    object->init();
 
     if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
@@ -233,7 +243,7 @@ UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwri
 std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> predicate)
 {
     std::vector<SceneObject*> objects;
-    for(ObjectMap::value_type it: m_objects)
+    for(ObjectMapType::value_type it: m_objects)
     {
         if(predicate(it.second.get()))
         {
@@ -242,9 +252,10 @@ std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> pr
     }
     return objects;
 }
+
 std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
-    return getObjects([typeId](SceneObject* object)->bool { return object->getType()->getId() == typeId; });
+    return getObjects([typeId](SceneObject* object)->bool { return object->getType().getId() == typeId; });
 }
 
 std::shared_ptr<SceneObject> Scene::getObject(UidType id)
@@ -269,6 +280,37 @@ SceneObject* Scene::getObjectByName(String id)
     if(it != m_objectsByName.end())
         return it->second;
     return nullptr;
+}
+
+SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> data)
+{
+    auto registry = getRegistry();
+    ASSERT(registry);
+
+    auto creator = registry->find(typeId);
+    if(creator == registry->end())
+    {
+        log(LogLevel::Warning) << "No SOC found for " << typeId;
+        return nullptr;
+    }
+
+    SharedPtr<SceneObject> sceneObject = creator->second->createEmptyObject(*this);
+    if(!sceneObject)
+    {
+        err() << "Object refused creation!";
+        return nullptr;
+    }
+
+    if(!data)
+        return sceneObject;
+
+    if(!sceneObject->deserialize(data))
+    {
+        err() << "Failed to deserialize SceneObject!";
+        return nullptr;
+    }
+
+    return sceneObject;
 }
 
 }

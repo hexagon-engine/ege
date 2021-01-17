@@ -53,12 +53,9 @@ class Scene2D;
 
 class SceneObject2D : public SceneObject
 {
-
 public:
-    EGE_SCENEOBJECT2D(SceneObject2D, "EGE::SceneObject2D")
-
-    SceneObject2D(Scene2D& owner)
-    : SceneObject((Scene&)owner) {}
+    SceneObject2D(Scene2D& scene, const SceneObjectType& type)
+    : SceneObject((Scene&)scene, type) {}
 
     virtual void setPosition(Vec2d position)
     {
@@ -148,6 +145,7 @@ protected:
     Vec2d m_motion;
     Vec2d m_scale = {1, 1};
     RotationMode m_rotationMode = RotationMode::Inherit;
+    SceneObjectType* m_type = nullptr;
 
 private:
     Vec2d m_position;

@@ -52,7 +52,7 @@ public:
     EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
 
     DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner) {}
+    : SceneObject2D(owner, *type()) {}
 
     void setSize(Vec2d size)
     {

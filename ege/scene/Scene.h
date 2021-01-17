@@ -87,7 +87,7 @@ public:
     explicit Scene(GUIGameLoop* loop, SceneLoader::SceneObjectRegistry* registry = nullptr)
     : m_loop(loop), m_registry(registry) {}
 
-    typedef IdMap<SharedPtr<SceneObject>> ObjectMap;
+    typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
     typedef StringMap<SceneObject*> ObjectMapByName;
 
     bool loadFromFile(String saveFile, String sceneFile, const IOStreamConverter& converter = JSONConverter());
@@ -101,6 +101,8 @@ public:
     UidType addObject(std::shared_ptr<SceneObject> object);
     UidType addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite = false);
 
+    SharedPtr<SceneObject> createObject(String typeId, SharedPtr<ObjectMap> data);
+
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
 
@@ -109,11 +111,11 @@ public:
 
     SceneObject* getObjectByName(String name);
 
-    ObjectMap::const_iterator begin() const { return m_objects.begin(); }
-    ObjectMap::const_iterator end() const { return m_objects.end(); }
+    ObjectMapType::const_iterator begin() const { return m_objects.begin(); }
+    ObjectMapType::const_iterator end() const { return m_objects.end(); }
 
-    ObjectMap::iterator begin() { return m_objects.begin(); }
-    ObjectMap::iterator end() { return m_objects.end(); }
+    ObjectMapType::iterator begin() { return m_objects.begin(); }
+    ObjectMapType::iterator end() { return m_objects.end(); }
 
     void setSize(Vec2d size) { m_size = size; }
     Vec2d getSize() const { return m_size; }
@@ -130,8 +132,8 @@ protected:
 
     virtual void render(Renderer& renderer) const override;
 
-    ObjectMap m_objects;
-    ObjectMap m_staticObjects;
+    ObjectMapType m_objects;
+    ObjectMapType m_staticObjects;
     ObjectMapByName m_objectsByName;
 
 private:

@@ -34,24 +34,61 @@
 *
 */
 
-#pragma once
+#include "PartStub.h"
 
-#include <ege/scene/CameraObject2D.h>
-#include <ege/scene/CameraObject.h>
-#include <ege/scene/CirclePart.h>
-#include <ege/scene/DummyObject2D.h>
-#include <ege/scene/ObjectRenderer.h>
-#include <ege/scene/Part.h>
-#include <ege/scene/PartStub.h>
-#include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/RectanglePart.h>
-#include <ege/scene/Scene2D.h>
-#include <ege/scene/Scene.h>
-#include <ege/scene/SceneLoader.h>
-#include <ege/scene/SceneObject2D.h>
-#include <ege/scene/SceneObject.h>
-#include <ege/scene/SceneObjectType.h>
-#include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedPart.h>
-#include <ege/scene/TexturedRenderer2D.h>
-#include <ege/scene/TilemapRenderer2D.h>
+#include "CirclePart.h"
+#include "RectanglePart.h"
+#include "SceneObject2D.h"
+#include "TexturedPart.h"
+
+namespace EGE
+{
+
+PartCreatorMap::PartCreatorMap()
+{
+    // Add default parts
+    add("Rectangle", EGE_PART_CREATOR_2D(EGE::RectanglePart));
+    add("Circle", EGE_PART_CREATOR_2D(EGE::CirclePart));
+    add("Textured", EGE_PART_CREATOR_2D(EGE::TexturedPart));
+}
+
+PartCreatorMap PartStub::PartCreators;
+
+SharedPtr<Part> PartStub::makeInstance(SceneObject& sobject)
+{
+    log() << "Creating instance of part for SO " << sobject.getName();
+    auto partCreator = PartStub::PartCreators.get(m_type);
+    if(!partCreator)
+    {
+        err() << "No such part with type: " << m_type;
+        return nullptr;
+    }
+
+    auto part = (*partCreator)(sobject);
+    if(!part)
+    {
+        err() << "Failed to create part!";
+        return nullptr;
+    }
+
+    if(!part->deserialize(m_map))
+        return nullptr;
+    return part;
+}
+
+SharedPtr<ObjectMap> PartStub::serialize() const
+{
+    return m_map;
+}
+
+bool PartStub::deserialize(SharedPtr<ObjectMap> data)
+{
+    m_map = Object::cast<ObjectMap>(data->copy()).value();
+    m_type = data->getObject("type").as<String>().valueOr("");
+    if(m_type.empty())
+        return false;
+    return true;
+}
+
+}
+

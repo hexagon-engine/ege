@@ -42,6 +42,7 @@
 #include <ege/util/Types.h>
 
 #include "Part.h"
+#include "PartStub.h"
 
 namespace EGE
 {
@@ -56,19 +57,16 @@ public:
     SceneObjectType(String typeId)
     : GameplayObject(typeId) {}
 
-    void addPart(String name, SharedPtr<Part> part) { m_parts.insert(std::make_pair(name, part)); }
-    virtual SharedPtr<SceneObject> createObject(Scene&) const { return nullptr; }
+    void addPartStub(String name, PartStub partStub) { m_parts.insert(std::make_pair(name, partStub)); }
 
-    virtual bool deserialize(SharedPtr<ObjectMap> data)
-    {
-        // TODO: implement that!
-        log(LogLevel::Verbose) << "Loading SceneObjectType: " << getId();
-        printObject(data);
-        return true;
-    }
+    virtual void fillObjectWithData(SceneObject&) const = 0;
+    virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const = 0;
+
+    virtual bool deserialize(SharedPtr<ObjectMap> data) override;
+    virtual SharedPtr<ObjectMap> serialize([[maybe_unused]] SharedPtr<ObjectMap> data) const final { return nullptr; }
 
 protected:
-    SharedPtrStringMap<Part> m_parts;
+    StringMap<PartStub> m_parts;
 };
 
 class SceneObjectType2D : public SceneObjectType
@@ -77,18 +75,21 @@ public:
     SceneObjectType2D(String typeId)
     : SceneObjectType(typeId) {}
 
-    virtual SharedPtr<SceneObject> createObject(Scene& scene) const override;
-    virtual SharedPtr<SceneObject2D> create2DObject(Scene2D& scene) const;
+    virtual void fillObjectWithData(SceneObject&) const override;
+    virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const final;
+
+protected:
+    virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const;
 };
 
 #define EGE_SCENEOBJECT2D(_class, _typeId) \
-class Type : public EGE::SceneObjectType2D \
-{ \
 public: \
-    Type() : EGE::SceneObjectType2D(_typeId) {}\
-    virtual EGE::SharedPtr<EGE::SceneObject2D> create2DObject(EGE::Scene2D& scene) const { return make<_class>(scene); } \
-}; \
-static EGE::SharedPtr<EGE::SceneObjectType> type() { static auto type = make<Type>(); return type; } \
-virtual EGE::SceneObjectType* getType() const override { return type().get(); } \
+    class Type : public EGE::SceneObjectType2D \
+    { \
+    public: \
+        Type() : EGE::SceneObjectType2D(_typeId) {}\
+        virtual EGE::SharedPtr<EGE::SceneObject2D> createEmptyObject(EGE::Scene2D& scene) const { return make<_class>(scene); } \
+    }; \
+    static EGE::SharedPtr<EGE::SceneObjectType> type() { static auto type = make<Type>(); return type; } \
 
 }

@@ -36,22 +36,57 @@
 
 #pragma once
 
-#include <ege/scene/CameraObject2D.h>
-#include <ege/scene/CameraObject.h>
-#include <ege/scene/CirclePart.h>
-#include <ege/scene/DummyObject2D.h>
-#include <ege/scene/ObjectRenderer.h>
-#include <ege/scene/Part.h>
-#include <ege/scene/PartStub.h>
-#include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/RectanglePart.h>
-#include <ege/scene/Scene2D.h>
-#include <ege/scene/Scene.h>
-#include <ege/scene/SceneLoader.h>
-#include <ege/scene/SceneObject2D.h>
-#include <ege/scene/SceneObject.h>
-#include <ege/scene/SceneObjectType.h>
-#include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedPart.h>
-#include <ege/scene/TexturedRenderer2D.h>
-#include <ege/scene/TilemapRenderer2D.h>
+#include "Part.h"
+
+#include <ege/util/Serializable.h>
+
+#define EGE_PART_CREATOR_2D(_type) [](EGE::SceneObject& sobject)->EGE::SharedPtr<EGE::Part> \
+{ \
+    auto sobject2d = dynamic_cast<EGE::SceneObject2D*>(&sobject); \
+    if(!sobject2d) \
+        return nullptr; \
+    return make<_type>(*sobject2d); \
+}
+
+namespace EGE
+{
+
+class PartCreatorMap
+{
+public:
+    PartCreatorMap();
+
+    typedef std::function<SharedPtr<Part>(SceneObject&)> PartCreator;
+    typedef Map<String, PartCreator> ValueType;
+
+    void add(String type, const PartCreator& creator)
+        { map.insert(make_pair(type, creator)); }
+
+    const PartCreator* get(String type)
+        {
+            auto it = map.find(type);
+            if(it == map.end())
+                return nullptr;
+            return &it->second;
+        }
+private:
+    ValueType map;
+};
+
+class PartStub : public Serializable
+{
+public:
+    // Use this object to add your own parts!
+    static PartCreatorMap PartCreators;
+
+    SharedPtr<Part> makeInstance(SceneObject&);
+
+    virtual SharedPtr<ObjectMap> serialize() const override;
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
+
+private:
+    SharedPtr<ObjectMap> m_map;
+    String m_type;
+};
+
+}

@@ -48,18 +48,16 @@ class SceneObject2D;
 class CirclePart : public Part
 {
 public:
-    CirclePart(SceneObject2D& object, Vec2d position, double radius, ColorRGBA fillColor = Colors::white, ColorRGBA outlineColor = Colors::transparent)
-    : Part((SceneObject&)object), m_position(position), m_radius(radius), m_fillColor(fillColor), m_outlineColor(outlineColor) {}
+    CirclePart(SceneObject2D& object)
+    : Part((SceneObject&)object) {}
 
     virtual void render(Renderer& renderer) const override;
+    virtual bool deserialize(SharedPtr<ObjectMap>);
 
-    virtual SharedPtr<Part> copy() const override { return make<CirclePart>((SceneObject2D&)getObject(), m_position, m_radius, m_fillColor, m_outlineColor); }
-
-private:
-    Vec2d m_position;
-    double m_radius;
-    ColorRGBA m_fillColor;
-    ColorRGBA m_outlineColor;
+    Vec2d position;
+    double radius;
+    ColorRGBA fillColor;
+    ColorRGBA outlineColor;
 };
 
 }

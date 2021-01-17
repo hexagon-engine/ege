@@ -37,13 +37,14 @@
 #pragma once
 
 #include <ege/gfx/Renderable.h>
+#include <ege/util/Serializable.h>
 
 namespace EGE
 {
 
 class SceneObject;
 
-class Part : public Renderable
+class Part : public Renderable, public Serializable
 {
 public:
     Part(SceneObject& object)
@@ -51,8 +52,10 @@ public:
 
     SceneObject& getObject() const { return m_object; }
 
-    virtual SharedPtr<Part> copy() const = 0;
     // TODO: bounding box, center of mass, ... for physics
+
+    // Disable serialization!
+    virtual SharedPtr<ObjectMap> serialize() const final { return nullptr; }
 
 private:
     SceneObject& m_object;

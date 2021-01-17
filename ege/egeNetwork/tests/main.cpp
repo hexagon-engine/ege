@@ -50,7 +50,7 @@ public:
     EGE_SCENEOBJECT2D(MyObject, "test-egeNetwork:MyObject")
 
     MyObject(EGE::Scene2D& owner, bool playerControlled = false)
-    : EGE::SceneObject2D(owner)
+    : EGE::SceneObject2D(owner, *type())
     {
         // only server side!
         if(!playerControlled && owner.isHeadless())
@@ -151,7 +151,7 @@ public:
 
     virtual std::shared_ptr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getType()->getId() == "test-egeNetwork:MyObject")
+        if(object.getType().getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectServerController
             return make<MyObjectServerController>(object, *this);
@@ -188,7 +188,7 @@ public:
 
     virtual std::shared_ptr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getType()->getId() == "test-egeNetwork:MyObject")
+        if(object.getType().getId() == "test-egeNetwork:MyObject")
         {
             // MyObject is controlled by MyObjectClientController
             return make<MyObjectClientController>(object, *this);

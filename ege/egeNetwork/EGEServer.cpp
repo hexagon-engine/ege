@@ -88,7 +88,7 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
     scene->events<AddObjectEvent>().add([this](AddObjectEvent& event) {
         // Add controller to controller map.
         m_controllersForObjects[event.object.getObjectId()] = makeController(event.object);
-        sendToAll(EGEPacket::generateSSceneObjectCreation(event.object, event.object.getType()->getId()));
+        sendToAll(EGEPacket::generateSSceneObjectCreation(event.object, event.object.getType().getId()));
         return EventResult::Success;
     });
 
@@ -230,7 +230,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
                 return EventResult::Failure;
 
             err(LogLevel::Debug) << "SceneObject requested: " << id.value();
-            egeClient.send(EGEPacket::generateSSceneObjectCreation(*sceneObject, sceneObject->getType()->getId()));
+            egeClient.send(EGEPacket::generateSSceneObjectCreation(*sceneObject, sceneObject->getType().getId()));
             if(egeClient.getControlledSceneObject() == id.value())
                 egeClient.send(EGEPacket::generateSDefaultControllerId(sceneObject.get()));
         }
@@ -373,7 +373,7 @@ EventResult EGEServer::onLogin(EGEClientConnection& client, std::shared_ptr<Obje
     {
         for(auto object: *scene)
         {
-            bool success = client.send(EGEPacket::generateSSceneObjectCreation(*object.second, object.second->getType()->getId()));
+            bool success = client.send(EGEPacket::generateSSceneObjectCreation(*object.second, object.second->getType().getId()));
             if(!success)
                 return EventResult::Failure;
         }

@@ -156,4 +156,9 @@ Part* SceneObject::getPart(String name)
     return nullptr;
 }
 
+void SceneObject::init()
+{
+    getType().fillObjectWithData(*this);
+}
+
 }

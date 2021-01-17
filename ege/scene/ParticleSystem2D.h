@@ -77,7 +77,7 @@ public:
     friend class Particle;
 
     ParticleSystem2D(Scene2D& owner, sf::FloatRect spawnRect = {})
-    : SceneObject2D(owner), m_spawnRect(spawnRect) {}
+    : SceneObject2D(owner, *type()), m_spawnRect(spawnRect) {}
 
     virtual sf::FloatRect getBoundingBox() const
     {

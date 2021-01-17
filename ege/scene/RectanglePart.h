@@ -49,17 +49,16 @@ class SceneObject2D;
 class RectanglePart : public Part
 {
 public:
-    RectanglePart(SceneObject2D& object, RectD rect, ColorRGBA fillColor = Colors::white, ColorRGBA outlineColor = Colors::transparent)
-    : Part((SceneObject&)object), m_rect(rect), m_fillColor(fillColor), m_outlineColor(outlineColor) {}
+    RectanglePart(SceneObject2D& object)
+    : Part((SceneObject&)object) {}
 
     virtual void render(Renderer& renderer) const override;
 
-    virtual SharedPtr<Part> copy() const override { return make<RectanglePart>((SceneObject2D&)getObject(), m_rect, m_fillColor, m_outlineColor); }
+    virtual bool deserialize(SharedPtr<ObjectMap>) { return true; }
 
-private:
-    RectD m_rect;
-    ColorRGBA m_fillColor;
-    ColorRGBA m_outlineColor;
+    RectD rect;
+    ColorRGBA fillColor;
+    ColorRGBA outlineColor;
 };
 
 }
