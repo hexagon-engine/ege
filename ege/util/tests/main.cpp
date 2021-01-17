@@ -1,5 +1,6 @@
 #include <testsuite/Tests.h>
 #include <ege/util.h>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -160,8 +161,19 @@ TESTCASE(vectors)
     return 0;
 }
 
-TESTCASE(json)
+TESTCASE(_json)
 {
+    // from file
+    std::ifstream file("res/objects/registry.json");
+    if(!file.good())
+        return 2;
+    EGE::SharedPtr<EGE::Object> obj;
+    if(!(file >> EGE::objectIn(obj, EGE::JSONConverter())))
+        return 1;
+
+    // generate
+    std::cerr << EGE::objectOut(*obj, EGE::JSONConverter());
+
     for(EGE::Size s = 0; s < 10240; s++)
     {
         // parse
@@ -171,13 +183,16 @@ TESTCASE(json)
                  0,1,2,3,4,5,\n\r6,7,8,9,\"a\"   \n], \"N e x t Text\"            :\"\"\n\n\n\n, \"test66\":{},\
                 \"test77\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }, \"EscapeTest\": \"  \
                 \\n\\tTest\\\"Test\\\"\\\\ \\\n\t\tTEST\", \"booltest\": true}");
-        std::shared_ptr<EGE::Object> obj;
-        if(!(str >> EGE::objectIn(obj, EGE::JSONConverter())))
+        std::shared_ptr<EGE::Object> obj2;
+        if(!(str >> EGE::objectIn(obj2, EGE::JSONConverter())))
+        {
             std::cerr << "parse error" << std::endl;
+            return 1;
+        }
 
         // generate
         std::ostringstream str2;
-        str2 << EGE::objectOut(*obj.get(), EGE::JSONConverter());
+        str2 << EGE::objectOut(*obj2, EGE::JSONConverter());
     }
     return 0;
 }
