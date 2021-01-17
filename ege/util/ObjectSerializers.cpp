@@ -92,7 +92,7 @@ ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
     auto r = map->getObject("r").as<Float>().valueOr(0);
     auto g = map->getObject("g").as<Float>().valueOr(0);
     auto b = map->getObject("b").as<Float>().valueOr(0);
-    auto a = map->getObject("a").as<Float>().valueOr(0);
+    auto a = map->getObject("a").as<Float>().valueOr(1);
     return ColorRGBA(r, g, b, a);
 
 }
