@@ -40,11 +40,15 @@
 #include <stdlib.h>
 #include <utility>
 
-extern "C"
-[[noreturn]] void _ege_assertion_failed(const char* expr, const char* message, const char* file, unsigned line);
+namespace EGE
+{
+
+[[noreturn]] void assertionFailed(const char* expr, const char* message, const char* file, unsigned line);
+
+}
 
 #define ASSERT_WITH_MESSAGE(expr, message) \
-    if(!(expr)) _ege_assertion_failed(#expr, message, __FILE__, __LINE__)
+    if(!(expr)) EGE::assertionFailed(#expr, message, __FILE__, __LINE__)
 
 #define ASSERT(expr) ASSERT_WITH_MESSAGE(expr, "Check failed")
 
