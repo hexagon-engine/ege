@@ -70,6 +70,7 @@
       "typeId": "ObjectTest",
       "name": "partTest",
       "m": {
+        "parent": "simple1",
         "p": {
           "x": 0,
           "y": -300

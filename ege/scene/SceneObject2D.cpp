@@ -109,8 +109,6 @@ bool SceneObject2D::flyTo(Vec2d toPos, double time, std::function<double(double)
 
 void SceneObject2D::render(Renderer& renderer) const
 {
-    SceneObject::render(renderer);
-
     // debug shape
     if constexpr(SCENEOBJECT2D_DEBUG)
     {

@@ -3,8 +3,8 @@
         "baseClass": "SceneObject2D",
         "data": {
             "parts": [
-                {"name": "BorderR", "type": "Rectangle", "rect": {"pos": {"x": -10, "y": -10}, "size": {"x": 20, "y": 20}}, "fillColor": {"r": 1, "g": 1, "b": 0.5, "a": 0.75}},
-                {"name": "Texture", "type": "Textured", "pos": {"x": -16, "y": -16}, "textureName": "texturedPart.png"},
+                {"name": "ZBorderR", "type": "Rectangle", "rect": {"pos": {"x": -10, "y": -10}, "size": {"x": 20, "y": 20}}, "fillColor": {"r": 1, "g": 1, "b": 0.5, "a": 0.75}},
+                {"name": "Texture", "type": "Textured", "pos": {"x": -32, "y": -32}, "textureName": "texturedPart.png"},
                 {"name": "BorderC", "type": "Circle", "pos": {"x": 0, "y": 0}, "radius": 50, "fillColor": {}, "outlineColor": {"r": 0, "g": 0.5, "b": 0.5}}
             ]
         }
