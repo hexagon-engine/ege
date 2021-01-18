@@ -54,7 +54,7 @@ public:
 
     virtual void render(Renderer& renderer) const override;
 
-    virtual bool deserialize(SharedPtr<ObjectMap>) { return true; }
+    virtual bool deserialize(SharedPtr<ObjectMap>);
 
     RectD rect;
     ColorRGBA fillColor;

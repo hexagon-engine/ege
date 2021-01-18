@@ -36,12 +36,22 @@
 
 #include "RectanglePart.h"
 
+#include <ege/util/ObjectSerializers.h>
+
 namespace EGE
 {
 
 void RectanglePart::render(Renderer& renderer) const
 {
     renderer.renderRectangle(rect.position.x, rect.position.y, rect.size.x, rect.size.y, fillColor, outlineColor);
+}
+
+bool RectanglePart::deserialize(SharedPtr<ObjectMap> data)
+{
+    rect = Serializers::toRect(data->getObject("rect").to<ObjectMap>().valueOr({}));
+    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
+    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));
+    return true;
 }
 
 }
