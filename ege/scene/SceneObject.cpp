@@ -53,6 +53,9 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
 {
     Renderable::doRender(renderer, states);
 
+    if(m_renderer)
+        m_renderer->doRender(renderer);
+
     // Render all parts :)
     for(auto it: getParts())
         it.second->doRender(renderer, states);

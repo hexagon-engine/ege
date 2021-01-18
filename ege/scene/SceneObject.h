@@ -69,17 +69,6 @@ public:
     virtual void onUpdate(long long tickCounter);
     virtual void doRender(Renderer& renderer, const RenderStates& states);
 
-    virtual void render(Renderer& renderer) const override
-    {
-        if(m_renderer)
-            m_renderer->render(renderer);
-    }
-    virtual void updateGeometry(Renderer& renderer) override
-    {
-        if(m_renderer)
-            m_renderer->updateGeometry(renderer);
-    }
-
     bool isDead() const { return m_dead; }
 
     UidType getObjectId() const { return m_id; }
