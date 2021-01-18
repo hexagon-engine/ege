@@ -127,6 +127,7 @@ void Renderer::renderCircle(double x, double y, double radius, ColorRGBA fillCol
         cs.setOutlineColor(sf::Color(outlineColor.r * 255, outlineColor.g * 255, outlineColor.b * 255, outlineColor.a * 255));
         cs.setOutlineThickness(1.f);
     }
+    cs.setOrigin(radius, radius);
     getTarget().draw(cs, m_states.sfStates());
 }
 
