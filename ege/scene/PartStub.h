@@ -39,6 +39,7 @@
 #include "Part.h"
 
 #include <ege/util/Serializable.h>
+#include <functional>
 
 #define EGE_PART_CREATOR_2D(_type) [](EGE::SceneObject& sobject)->EGE::SharedPtr<EGE::Part> \
 { \
