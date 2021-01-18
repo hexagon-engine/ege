@@ -57,6 +57,9 @@ public:
     // Disable serialization!
     virtual SharedPtr<ObjectMap> serialize() const final { return nullptr; }
 
+    virtual bool isCustomViewNeeded() const override { return true; }
+    virtual sf::View getCustomView(sf::RenderTarget& target) const override;
+
 private:
     SceneObject& m_object;
 };

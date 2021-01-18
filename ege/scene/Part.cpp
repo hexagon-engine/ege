@@ -36,7 +36,21 @@
 
 #include "Part.h"
 
+#include "SceneObject2D.h"
+
 namespace EGE
 {
-    // currently nothing...
+
+sf::View Part::getCustomView(sf::RenderTarget& target) const
+{
+    // TODO: 2d / 3d !
+    SceneObject2D& so2d = (SceneObject2D&)m_object;
+    auto position = so2d.getPosition();
+
+    auto view = target.getView();
+    view.rotate(-so2d.getRotation());
+    view.move({(float)position.x, (float)position.y});
+    return view;
+}
+
 }
