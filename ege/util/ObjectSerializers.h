@@ -43,6 +43,7 @@
 #include "ObjectMap.h"
 #include "ObjectUnsignedInt.h"
 #include "PointerUtils.h"
+#include "Rect.h"
 #include "Types.h"
 #include "Vector.h"
 
@@ -117,6 +118,17 @@ Vec3d toVector3(SharedPtr<ObjectMap> map);
 // EGE::ColorRGBA
 SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color);
 ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map);
+
+// EGE::Rect
+template<class T>
+SharedPtr<ObjectMap> fromRect(Rect<T> rect)
+{
+    SharedPtr<ObjectMap> map = make<ObjectMap>();
+    map->addObject("pos", fromVector2(rect.position));
+    map->addObject("size", fromVector2(rect.size));
+    return map;
+}
+RectD toRect(SharedPtr<ObjectMap> map);
 
 }
 

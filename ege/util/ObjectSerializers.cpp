@@ -97,6 +97,15 @@ ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
 
 }
 
+RectD toRect(SharedPtr<ObjectMap> map)
+{
+    if(!map)
+        return {};
+    auto pos = toVector2(map->getObject("pos").to<ObjectMap>().valueOr({}));
+    auto size = toVector2(map->getObject("size").to<ObjectMap>().valueOr({}));
+    return RectD(pos, size);
+}
+
 } // Serializers
 
 }
