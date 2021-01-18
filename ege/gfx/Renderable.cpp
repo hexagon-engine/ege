@@ -21,11 +21,13 @@ void Renderable::doRender(Renderer& renderer, const RenderStates& states)
 {
     auto& target = renderer.getTarget();
     doUpdateGeometry(renderer);
+    sf::View oldView = renderer.getTarget().getView();
     setCustomView(target);
     if(states != RenderStates())
         renderWithStates(renderer, states);
     else
         render(renderer);
+    renderer.getTarget().setView(oldView);
 }
 
 void Renderable::doUpdateGeometry(Renderer& renderer)
