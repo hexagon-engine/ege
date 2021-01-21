@@ -230,7 +230,7 @@ void CompoundWidget::onUpdate(long long tickCounter)
 
 void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
-    log(LogLevel::Debug) << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
+    if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
 
     // Render self
     Widget::doRender(renderer, states);
@@ -241,7 +241,7 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     for(auto widget: m_childWidgets)
     {
         setCustomView(renderer.getTarget());
-        log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
+        if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
         widget->doRender(renderer, states);
     }
 
