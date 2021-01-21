@@ -110,9 +110,14 @@ public:
     void setThemeRenderer(UniquePtr<ThemeRenderer> themeRenderer) { m_themeRenderer.swap(themeRenderer); }
     ThemeRenderer* getThemeRenderer() { return m_themeRenderer.get(); }
 
-    virtual void renderButtonLike(double x, double y, double width, double height) { m_themeRenderer->renderButtonLike(*this, x, y, width, height); }
-    virtual void renderTextBoxLikeBorder(double x, double y, double width, double height) { m_themeRenderer->renderTextBoxLikeBorder(*this, x, y, width, height); }
-    virtual void renderTextBoxLikeBackground(double x, double y, double width, double height) { m_themeRenderer->renderTextBoxLikeBackground(*this, x, y, width, height); }
+    virtual void renderButtonLike(double x, double y, double width, double height)
+        { m_themeRenderer->renderButtonLike(*this, x, y, width, height); }
+
+    virtual void renderTextBoxLikeBorder(double x, double y, double width, double height)
+        { m_themeRenderer->renderTextBoxLikeBorder(*this, x, y, width, height); }
+
+    virtual void renderTextBoxLikeBackground(double x, double y, double width, double height)
+        { m_themeRenderer->renderTextBoxLikeBackground(*this, x, y, width, height); }
 
 private:
     void applyStates();
