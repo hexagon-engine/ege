@@ -53,8 +53,8 @@ public:
         Right
     };
 
-    explicit Label(Widget& parent, String id = "Label")
-    : Widget(parent, id) {}
+    explicit Label(Widget& parent, sf::String label = "", String id = "Label")
+    : Widget(parent, id), m_string(label) {}
 
     void setString(sf::String str);
     void setTextAlign(Align align);
@@ -68,7 +68,7 @@ protected:
 
     sf::String m_string;
     Align m_align = Align::Left;
-    int m_fontSize = 15;
+    int m_fontSize = 12;
     sf::Color m_color = sf::Color::Black;
     sf::Text m_text;
     std::shared_ptr<sf::Font> m_font;
