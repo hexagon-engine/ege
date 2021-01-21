@@ -287,22 +287,26 @@ void LayoutElement::calculateLayout()
         objectX.position = child->m_position.x;
         objectX.size = child->m_size.x;
         objectX.padding = child->m_padding.x;
+        objectX.align = child->align.x;
         dimensionsX.push_back(objectX);
 
         _InputDimensions objectY;
         objectY.position = child->m_position.y;
         objectY.size = child->m_size.y;
         objectY.padding = child->m_padding.y;
+        objectY.align = child->align.y;
         dimensionsY.push_back(objectY);
     }
 
     thisDimensionsX.position = m_layout.position.x;
     thisDimensionsX.size = { m_layout.size.x, m_layout.autoSizingX ? EGE_LAYOUT_AUTO : EGE_LAYOUT_PIXELS };
     thisDimensionsX.padding = m_layout.padding.x;
+    thisDimensionsX.align = align.x;
 
     thisDimensionsY.position = m_layout.position.y;
     thisDimensionsY.size = { m_layout.size.y, m_layout.autoSizingY ? EGE_LAYOUT_AUTO : EGE_LAYOUT_PIXELS };
     thisDimensionsY.padding = m_layout.padding.y;
+    thisDimensionsY.align = align.y;
 
     log() << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
     log() << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
