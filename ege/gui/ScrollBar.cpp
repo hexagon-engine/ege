@@ -71,10 +71,12 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
         // calculate new value
         double newVal;
 
+        auto knobBounds = getKnobBounds();
+
         switch(m_type)
         {
-            case Type::Horizontal: newVal = (rel.x - m_dragPos.x - 20.0) / (getSize().x - 55.0); break;
-            case Type::Vertical: newVal = (rel.y - m_dragPos.y - 20.0) / (getSize().y - 55.0); break;
+            case Type::Horizontal: newVal = (rel.x - m_dragPos.x - 20.0) / (getSize().x - 40 - knobBounds.width); break;
+            case Type::Vertical: newVal = (rel.y - m_dragPos.y - 20.0) / (getSize().y - 40 - knobBounds.height); break;
             default: CRASH(); break;
         }
 
@@ -107,8 +109,14 @@ sf::FloatRect ScrollBar::getKnobBounds() const
 
     switch(m_type)
     {
-        case Type::Horizontal: rect.left = (m_value / m_maxValue) * (getSize().x - 55.0) + 20.0; rect.width = 15.f; break;
-        case Type::Vertical: rect.top = (m_value / m_maxValue) * (getSize().y - 55.0) + 20.0; rect.height = 15.f; break;
+        case Type::Horizontal:
+            rect.width = std::max(15.0, (1 / m_maxValue) * (getSize().x - 40));
+            rect.left = (m_value / m_maxValue) * (getSize().x - 40 - rect.width) + 20.0;
+            break;
+        case Type::Vertical:
+            rect.height = std::max(15.0, (1 / m_maxValue) * (getSize().y - 40));
+            rect.top = (m_value / m_maxValue) * (getSize().y - 40 - rect.height) + 20.0;
+            break;
         default: CRASH(); break;
     }
 
