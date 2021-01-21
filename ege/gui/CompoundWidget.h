@@ -87,9 +87,9 @@ public:
     virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
 
     template<class T, class... Args>
-    SharedPtr<T> addNewWidget(Args... args)
+    SharedPtr<T> addNewWidget(Args&&... args)
     {
-        auto widget = make<T>(*this, std::forward(args)...);
+        auto widget = make<T>(*this, std::forward<Args>(args)...);
         addWidget(widget);
         return widget;
     }
