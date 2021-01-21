@@ -89,6 +89,8 @@ public:
     void addWidget(SharedPtr<Widget> widget);
     void removeWidget(Widget* widget);
 
+    virtual void renderOverlay(Renderer&) const {}
+
 protected:
     virtual void updateLayout() override;
 

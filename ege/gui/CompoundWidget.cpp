@@ -231,7 +231,10 @@ void CompoundWidget::onUpdate(long long tickCounter)
 void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
     log(LogLevel::Debug) << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
-    // TODO: render background??
+
+    // Render self
+    Widget::doRender(renderer, states);
+
     // TODO: draw only visible widgets
 
     // Render child widgets
@@ -242,8 +245,8 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
         widget->doRender(renderer, states);
     }
 
-    // Render widget self
-    Widget::doRender(renderer, states);
+    // Render self (overlay)
+    renderOverlay(renderer);
 }
 
 void CompoundWidget::addWidget(SharedPtr<Widget> widget)
