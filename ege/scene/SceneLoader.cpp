@@ -158,12 +158,6 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
 
 bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
 {
-    if(!m_scene.getRegistry())
-    {
-        log(LogLevel::Error) << "Scene hasn't got assigned registry!";
-        return false;
-    }
-
     // Load all static objects that changed from installation scene
     auto staticObjects = data->getObject("staticObjects").to<ObjectList>();
     if(!staticObjects.hasValue())
@@ -203,12 +197,6 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
 
 bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 {
-    if(!m_scene.getRegistry())
-    {
-        log(LogLevel::Error) << "Scene hasn't got assigned registry!";
-        return false;
-    }
-
     // Load all objects and add them as static objects.
     auto objects = data->getObject("objects").to<ObjectList>();
     if(!objects.hasValue())

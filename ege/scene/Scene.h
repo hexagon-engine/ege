@@ -84,8 +84,8 @@ public:
 class Scene : public EventLoop, public Renderable
 {
 public:
-    explicit Scene(GUIGameLoop* loop, SceneLoader::SceneObjectRegistry* registry = nullptr)
-    : EventLoop(loop, "Scene"), m_loop(loop), m_registry(registry) {}
+    explicit Scene(GUIGameLoop* loop)
+    : EventLoop(loop, "Scene"), m_loop(loop) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
     typedef StringMap<SceneObject*> ObjectMapByName;
@@ -120,12 +120,12 @@ public:
     void setSize(Vec2d size) { m_size = size; }
     Vec2d getSize() const { return m_size; }
 
-    GUIGameLoop* getLoop() { return m_loop; }
+    GUIGameLoop* getLoop() const { return m_loop; }
 
     // We don't have GUI on servers!
-    bool isHeadless() { return !getLoop(); }
+    bool isHeadless() const { return !getLoop(); }
 
-    SceneLoader::SceneObjectRegistry* getRegistry() { return m_registry; }
+    SceneLoader::SceneObjectRegistry& getRegistry() { return m_registry; }
 
 protected:
     friend class SceneLoader;
@@ -141,7 +141,7 @@ private:
     UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
-    SceneLoader::SceneObjectRegistry* m_registry;
+    SceneLoader::SceneObjectRegistry m_registry;
 };
 
 }

@@ -480,14 +480,12 @@ TESTCASE(sceneLoader)
     // Create loop (it's needed for Scene
     EGE::GUIGameLoop loop;
 
-    // Setup typeID registry
-    EGE::SceneLoader::SceneObjectRegistry registry {
+    // Load some scene
+    auto scene = make<EGE::Scene2D>(&loop);
+    scene->getRegistry() = {
         { "MyObject", MyObject::type() },
         { "MyBackground", MyBackground::type() }
     };
-
-    // Load some scene
-    auto scene = make<EGE::Scene2D>(&loop, &registry);
 
     EGE::SceneLoader loader(*scene);
     if(!loader.loadSceneAndSave("saves/test.json", "res/scenes/test.json"))
@@ -585,13 +583,13 @@ TESTCASE(parenting)
         { "SimpleRectangleObject", SimpleRectangleObject::type() }
     };
 
-    // Load other objects
-    if(!EGE::SceneLoader::loadRegistry(registry, "res/objects/registry.json"))
-        return 3;
-
     // Setup loop and load scene
     EGE::GUIGameLoop loop;
-    auto scene = make<EGE::Scene2D>(&loop, &registry);
+    auto scene = make<EGE::Scene2D>(&loop);
+
+    // Load other objects
+    if(!EGE::SceneLoader::loadRegistry(scene->getRegistry(), "res/objects/registry.json"))
+        return 3;
 
     if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json"))
         return 1;

@@ -285,10 +285,9 @@ SceneObject* Scene::getObjectByName(String id)
 SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> data)
 {
     auto registry = getRegistry();
-    ASSERT(registry);
 
-    auto creator = registry->find(typeId);
-    if(creator == registry->end())
+    auto creator = registry.find(typeId);
+    if(creator == registry.end())
     {
         log(LogLevel::Warning) << "No SOC found for " << typeId;
         return nullptr;
