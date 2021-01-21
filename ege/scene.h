@@ -50,6 +50,7 @@
 #include <ege/scene/SceneLoader.h>
 #include <ege/scene/SceneObject2D.h>
 #include <ege/scene/SceneObject.h>
+#include <ege/scene/SceneObjectRegistry.h>
 #include <ege/scene/SceneObjectType.h>
 #include <ege/scene/SceneWidget.h>
 #include <ege/scene/TexturedPart.h>
