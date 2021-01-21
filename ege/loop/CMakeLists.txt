@@ -13,4 +13,4 @@ set(SOURCES
 )
 
 ege_add_module(loop)
-ege_depend_module(loop util)
+ege_depend_module(loop debug util)

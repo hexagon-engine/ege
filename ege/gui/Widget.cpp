@@ -47,7 +47,8 @@ namespace EGE
 {
 
 Widget::Widget(GUIGameLoop& gameLoop, String id)
-: DefaultSystemEventHandler(gameLoop.getWindow())
+: Animatable(&gameLoop, id)
+, DefaultSystemEventHandler(gameLoop.getWindow())
 , LayoutElement(nullptr, id)
 , m_gameLoop(gameLoop)
 , m_parentWidget(nullptr) {}

@@ -50,6 +50,12 @@ namespace EGE
 class ThreadSafeEventLoop : public AsyncLoop
 {
 public:
+    ThreadSafeEventLoop(InspectorNode* parent, String id = "ThreadSafeEventLoop")
+    : AsyncLoop(parent, id) {}
+
+    ThreadSafeEventLoop(String id = "ThreadSafeEventLoop")
+    : AsyncLoop(id) {}
+
     template<class EvtT>
     class _ThreadSafeEventArray
     {

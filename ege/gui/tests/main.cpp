@@ -373,7 +373,7 @@ TESTCASE(resourceManager)
     gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)");
     gameLoop.setResourceManager(make<MyResourceManager>());
     gameLoop.setCurrentGUIScreen(make<MyGuiScreen>(gameLoop));
-    return gameLoop.run();
+    gameLoop.run();
 }
 
 TESTCASE(_widgets)

@@ -36,6 +36,7 @@
 
 #include "GameLoop.h"
 
+#include <ege/debug/Inspector.h>
 #include <ege/debug/Logger.h>
 #include <ege/loop/Clock.h>
 #include <ege/loop/EventResult.h>
@@ -99,6 +100,7 @@ int GameLoop::run()
         return 0x0002;
     }
 
+    EGE::Inspector::instance().display(EGE::mainLogger());
     return m_exitCode;
 }
 

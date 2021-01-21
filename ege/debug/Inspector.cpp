@@ -34,30 +34,17 @@
 *
 */
 
-#pragma once
-
-#include "AsyncHandler.h"
-
-#include <ege/loop/EventLoop.h>
-
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include "Inspector.h"
 
 namespace EGE
 {
 
-class AsyncLoop : public AsyncHandler, public EventLoop
+void Inspector::display(Logger& logger) const
 {
-public:
-    AsyncLoop(InspectorNode* parent, String id = "AsyncLoop")
-    : EventLoop(parent, id) {}
-
-    AsyncLoop(String id = "AsyncLoop")
-    : EventLoop(id) {}
-
-    virtual void onUpdate();
-};
+    auto lh = logger.log(LogLevel::Notice);
+    lh << "Inspector dump: \n\e[0m";
+    lh << m_rootNode.isnDisplay();
+}
 
 }
+

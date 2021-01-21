@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <ege/debug/InspectorNode.h>
 #include <ege/gfx/Renderable.h>
 #include <ege/util/Serializable.h>
 
@@ -44,11 +45,10 @@ namespace EGE
 
 class SceneObject;
 
-class Part : public Renderable, public Serializable
+class Part : public Renderable, public Serializable, public InspectorNode
 {
 public:
-    Part(SceneObject& object)
-    : m_object(object) {}
+    Part(SceneObject& object);
 
     SceneObject& getObject() const { return m_object; }
 

@@ -55,7 +55,10 @@ class GUIGameLoop : public GameLoop
 {
 public:
     //EGE_SINGLETON(GUIGameLoop);
-    GUIGameLoop();
+
+    GUIGameLoop(String id = "GUIGameLoop")
+    : GameLoop(id), m_renderer(m_systemWindow) {}
+
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
     virtual void onTick(long long tickCount) override;

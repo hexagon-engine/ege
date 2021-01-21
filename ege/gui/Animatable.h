@@ -47,6 +47,9 @@ namespace EGE
 class Animatable : public EventLoop
 {
 public:
+    Animatable(InspectorNode* parent = nullptr, String id = "EventLoop")
+    : EventLoop(parent, id) {}
+
     template<class T>
     void addAnimation(std::shared_ptr<Animation<T>> animation, std::function<void(Animation<T>&, T)> callback, std::string name = "*")
     {

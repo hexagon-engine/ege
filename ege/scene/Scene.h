@@ -81,11 +81,11 @@ public:
 };
 
 
-class Scene : public ThreadSafeEventLoop, public Renderable
+class Scene : public EventLoop, public Renderable
 {
 public:
     explicit Scene(GUIGameLoop* loop, SceneLoader::SceneObjectRegistry* registry = nullptr)
-    : m_loop(loop), m_registry(registry) {}
+    : EventLoop(loop, "Scene"), m_loop(loop), m_registry(registry) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
     typedef StringMap<SceneObject*> ObjectMapByName;

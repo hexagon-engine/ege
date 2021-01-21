@@ -41,6 +41,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <ege/controller/Controllable.h>
+#include <ege/debug/InspectorNode.h>
 #include <ege/debug/Logger.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gfx/Renderable.h>
@@ -52,11 +53,11 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public Controllable, public Renderable, public sf::NonCopyable
+class SceneObject : public Animatable, public Controllable, public Renderable
 {
 public:
     SceneObject(Scene& owner, const SceneObjectType& type)
-    : m_owner(owner), m_type(type) {}
+    : Animatable((InspectorNode*)&owner, "SceneObject: " + type.getId()), m_owner(owner), m_type(type) {}
 
     enum Type
     {

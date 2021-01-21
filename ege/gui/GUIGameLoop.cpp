@@ -45,11 +45,6 @@
 namespace EGE
 {
 
-GUIGameLoop::GUIGameLoop()
-: m_renderer(m_systemWindow)
-{
-}
-
 EventResult GUIGameLoop::onLoad()
 {
     // Call user-defined handler

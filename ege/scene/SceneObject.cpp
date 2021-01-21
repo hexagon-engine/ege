@@ -149,6 +149,7 @@ void SceneObject::setParent(SceneObject* object)
         return;
 
     m_parent->m_children.insert(this);
+    isnSetParent(object);
 }
 
 Part* SceneObject::getPart(String name)

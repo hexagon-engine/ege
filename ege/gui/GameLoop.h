@@ -52,6 +52,9 @@ namespace EGE
 class GameLoop : public ThreadSafeEventLoop
 {
 public:
+    GameLoop(String id = "GameLoop")
+    : ThreadSafeEventLoop(id) {}
+
     int run();
     virtual void exit(int exitCode = 0);
 

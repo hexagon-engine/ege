@@ -36,28 +36,28 @@
 
 #pragma once
 
-#include "AsyncHandler.h"
+#include <ege/main/Config.h>
 
-#include <ege/loop/EventLoop.h>
-
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include "InspectorNode.h"
+#include "Logger.h"
 
 namespace EGE
 {
 
-class AsyncLoop : public AsyncHandler, public EventLoop
+class Inspector
 {
+    Inspector() = default;
+
 public:
-    AsyncLoop(InspectorNode* parent, String id = "AsyncLoop")
-    : EventLoop(parent, id) {}
+    EGE_SINGLETON(Inspector)
 
-    AsyncLoop(String id = "AsyncLoop")
-    : EventLoop(id) {}
+    ~Inspector() { display(mainLogger()); }
 
-    virtual void onUpdate();
+    void display(Logger& logger) const;
+    InspectorNode& rootNode() { return m_rootNode; }
+
+private:
+    InspectorNode m_rootNode { nullptr, "Root" };
 };
 
 }

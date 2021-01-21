@@ -40,6 +40,8 @@
 
 #include "Timer.h"
 
+#include <ege/debug/InspectorNode.h>
+
 #include <map>
 #include <memory>
 #include <queue>
@@ -48,10 +50,16 @@
 namespace EGE
 {
 
-class EventLoop
+class EventLoop : public InspectorNode
 {
 public:
     EGE_ENUM_YES_NO(TimerImmediateStart);
+
+    EventLoop(InspectorNode* parent, String id = "EventLoop")
+    : InspectorNode(parent, id) {}
+
+    EventLoop(String id = "EventLoop")
+    : InspectorNode(id) {}
 
     template<class EvtT = Event>
     class EventArray
@@ -147,7 +155,9 @@ public:
 
     virtual bool setSubLoop(std::shared_ptr<EventLoop> loop)
     {
+        ASSERT(loop);
         m_subLoop = loop;
+        loop->isnSetParent(this);
         return true;
     }
 

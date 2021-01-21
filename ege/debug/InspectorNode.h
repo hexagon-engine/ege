@@ -36,28 +36,37 @@
 
 #pragma once
 
-#include "AsyncHandler.h"
-
-#include <ege/loop/EventLoop.h>
-
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include <ege/util/Types.h>
 
 namespace EGE
 {
 
-class AsyncLoop : public AsyncHandler, public EventLoop
+class Inspector;
+
+// Inspector node. It's NOT intended to keep object hierarchy.
+class InspectorNode
 {
 public:
-    AsyncLoop(InspectorNode* parent, String id = "AsyncLoop")
-    : EventLoop(parent, id) {}
+    InspectorNode(String name = "<BaseNode>");
+    InspectorNode(InspectorNode* parent, String name = "<UnknownNode>");
+    ~InspectorNode();
 
-    AsyncLoop(String id = "AsyncLoop")
-    : EventLoop(id) {}
+    InspectorNode(const InspectorNode& node) = delete;
+    InspectorNode(InspectorNode&& node) = delete;
 
-    virtual void onUpdate();
+    // Non-conventional names because this type is very
+    // common to inherit and prone to ambiguity of
+    // methods and fields.
+    InspectorNode* isnParent() const { return m_isnParent; }
+    String isnName() const { return m_isnName; }
+    virtual String isnDisplay(size_t depth = 0) const;
+    void isnSetParent(InspectorNode*);
+    virtual String isnInfo() const { return ""; }
+
+private:
+    InspectorNode* m_isnParent = nullptr;
+    String m_isnName;
+    Set<InspectorNode*> m_isnChildren;
 };
 
 }

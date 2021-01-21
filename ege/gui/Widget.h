@@ -72,7 +72,8 @@ public:
     };
 
     explicit Widget(Widget& parent, String id = "Widget")
-    : DefaultSystemEventHandler(parent.getWindow())
+    : Animatable(&parent, "Widget: " + id)
+    , DefaultSystemEventHandler(parent.getWindow())
     , LayoutElement(&parent, id)
     , m_gameLoop(parent.m_gameLoop)
     , m_parentWidget(&parent) {}
