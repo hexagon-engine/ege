@@ -195,7 +195,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 }
 
                 _OutputDimensions object;
-                object.position = element.position.value() + thisDimensions.padding.value();
+                object.position = element.position.value() - thisDimensions.padding.value();
                 object.size = element.size.value();
                 object.padding = element.padding.value();
                 output[s] = object;
