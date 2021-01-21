@@ -44,7 +44,6 @@ namespace EGE
 
 void CirclePart::render(Renderer& renderer) const
 {
-    log() << radius << ": " << position.x << "," << position.y;
     renderer.renderCircle(position.x, position.y, radius, fillColor, outlineColor);
 }
 
