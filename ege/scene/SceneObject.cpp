@@ -163,6 +163,7 @@ Part* SceneObject::getPart(String name)
 void SceneObject::init()
 {
     getType().fillObjectWithData(*this);
+    onInit();
 }
 
 }

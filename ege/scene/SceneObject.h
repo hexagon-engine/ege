@@ -116,6 +116,12 @@ public:
     template<class SO>
     static SharedPtr<SO> cast(SharedPtr<SceneObject> obj) { return std::dynamic_pointer_cast<SO>(obj); }
 
+    // Called by init() function (e.g when the object is added
+    // and it's sure that it's deserialized, if applicable).
+    // It should be used instead of constructor. Can be used to
+    // add e.g. animations.
+    virtual void onInit() {}
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }

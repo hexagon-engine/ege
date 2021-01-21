@@ -29,8 +29,12 @@ public:
     : EGE::SceneObject2D(owner, type)
     {
         m_initialPosition = pos;
-        setPosition(pos);
         setName(name);
+    }
+
+    virtual void onInit() override
+    {
+        setPosition(m_initialPosition);
 
         // make object animated (it can be done now by flyTo())
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
