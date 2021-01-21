@@ -84,7 +84,7 @@ SharedPtr<ObjectMap> PartStub::serialize() const
 bool PartStub::deserialize(SharedPtr<ObjectMap> data)
 {
     m_map = Object::cast<ObjectMap>(data->copy()).value();
-    m_type = data->getObject("type").as<String>().valueOr("");
+    m_type = data->getObject("type").asString().valueOr("");
     if(m_type.empty())
         return false;
     return true;

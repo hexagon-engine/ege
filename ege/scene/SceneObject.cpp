@@ -89,20 +89,22 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
     auto _m = object->getObject("m");
     auto _x = object->getObject("x");
 
-    m_name = _name.as<EGE::String>().valueOr(m_name);
+    m_name = _name.asString().valueOr(m_name);
 
     bool s = true;
 
-    if(_m.is<ObjectMap::ValueType>())
-        s &= deserializeMain(_m.to<ObjectMap>().value());
+    auto __m = _m.to<ObjectMap>();
+    if(__m.hasValue())
+        s &= deserializeMain(__m.value());
     else
     {
         err(LogLevel::Error) << "No main data key in SceneObject data!";
         return false;
     }
 
-    if(_x.is<ObjectMap::ValueType>())
-        s &= deserializeExtended(_x.to<ObjectMap>().value());
+    auto __x = _x.to<ObjectMap>();
+    if(__x.hasValue())
+        s &= deserializeExtended(__x.value());
     else
         err(LogLevel::Verbose) << "No extended data key in SceneObject data!";
         // They are not required
@@ -122,7 +124,7 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 
 bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
 {
-    m_parentId = data->getObject("parent").as<String>().valueOr("");
+    m_parentId = data->getObject("parent").asString().valueOr("");
     return true;
 }
 

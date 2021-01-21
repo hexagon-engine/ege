@@ -60,8 +60,8 @@ Vec2d toVector2(std::shared_ptr<ObjectMap> map)
 {
     if(!map)
         return {};
-    auto x = map->getObject("x").as<Float>().valueOr(0);
-    auto y = map->getObject("y").as<Float>().valueOr(0);
+    auto x = map->getObject("x").asFloat().valueOr(0);
+    auto y = map->getObject("y").asFloat().valueOr(0);
     return Vec2d(x, y);
 }
 
@@ -69,9 +69,9 @@ Vec3d toVector3(std::shared_ptr<ObjectMap> map)
 {
     if(!map)
         return {};
-    auto x = map->getObject("x").as<Float>().valueOr(0);
-    auto y = map->getObject("y").as<Float>().valueOr(0);
-    auto z = map->getObject("z").as<Float>().valueOr(0);
+    auto x = map->getObject("x").asFloat().valueOr(0);
+    auto y = map->getObject("y").asFloat().valueOr(0);
+    auto z = map->getObject("z").asFloat().valueOr(0);
     return Vec3d(x, y, z);
 }
 
@@ -89,10 +89,10 @@ ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
 {
     if(!map)
         return {};
-    auto r = map->getObject("r").as<Float>().valueOr(0);
-    auto g = map->getObject("g").as<Float>().valueOr(0);
-    auto b = map->getObject("b").as<Float>().valueOr(0);
-    auto a = map->getObject("a").as<Float>().valueOr(1);
+    auto r = map->getObject("r").asFloat().valueOr(0);
+    auto g = map->getObject("g").asFloat().valueOr(0);
+    auto b = map->getObject("b").asFloat().valueOr(0);
+    auto a = map->getObject("a").asFloat().valueOr(1);
     return ColorRGBA(r, g, b, a);
 
 }

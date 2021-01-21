@@ -57,6 +57,7 @@ public:
     virtual SharedPtr<Object> copy() const;
 
     const SharedPtr<Object>& addObject(const SharedPtr<Object>& subObject);
+
     const SharedPtr<Object>& insertObject(Size position, const SharedPtr<Object>& subObject);
     WeakPtr<Object> getObject(Size offset) const;
 

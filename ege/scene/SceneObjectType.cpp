@@ -59,14 +59,14 @@ bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
                 return false;
             }
 
-            auto part_type = dd_part_map.value()->getObject("type").as<String>();
+            auto part_type = dd_part_map.value()->getObject("type").asString();
             if(!part_type.hasValue())
             {
                 err() << "Part type not set";
                 return false;
             }
 
-            auto part_name = dd_part_map.value()->getObject("name").as<String>();
+            auto part_name = dd_part_map.value()->getObject("name").asString();
             if(!part_name.hasValue())
             {
                 err() << "Part name not set";

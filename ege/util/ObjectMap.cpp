@@ -182,32 +182,4 @@ SharedPtr<ObjectMap> ObjectMap::merge(SharedPtr<ObjectMap> other)
     return Object::cast<ObjectMap>(me).value();
 }
 
-template<>
-Optional<MaxInt> ObjectMap::_Object::as<MaxInt>() const
-{ return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
-
-template<>
-Optional<MaxUint> ObjectMap::_Object::as<MaxUint>() const
-{ return m_object && m_object->isUnsignedInt() ? m_object->asUnsignedInt() : Optional<MaxUint>(); }
-
-template<>
-Optional<Float> ObjectMap::_Object::as<Float>() const
-{ return m_object && m_object->isFloat() ? m_object->asFloat() : Optional<Float>(); }
-
-template<>
-Optional<String> ObjectMap::_Object::as<String>() const
-{ return m_object && m_object->isString() ? m_object->asString() : Optional<String>(); }
-
-template<>
-Optional<Boolean> ObjectMap::_Object::as<Boolean>() const
-{ return m_object && m_object->isBool() ? m_object->asBool() : Optional<Boolean>(); }
-
-template<>
-Optional<SharedPtrVector<Object>> ObjectMap::_Object::as<SharedPtrVector<Object>>() const
-{ return m_object && m_object->isList() ? m_object->asList() : Optional<SharedPtrVector<Object>>(); }
-
-template<>
-Optional<SharedPtrStringMap<Object>> ObjectMap::_Object::as<SharedPtrStringMap<Object>>() const
-{ return m_object && m_object->isMap() ? m_object->asMap() : Optional<SharedPtrStringMap<Object>>(); }
-
 }

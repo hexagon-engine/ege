@@ -12,12 +12,12 @@ TESTCASE(object)
     auto map2 = make<EGE::ObjectMap>();
     map2->addObject("test3", make<EGE::ObjectString>("test44"));
     map.addObject("testObjects", map2);
-    DEBUG_PRINT(map.getObject("test").as<EGE::String>().valueOr("").c_str());
+    DEBUG_PRINT(map.getObject("test").asString().valueOr("").c_str());
     DEBUG_PRINT(map.getObject("testObjects")
                 .to<EGE::ObjectMap>()
                 .valueOr({})
                 ->getObject("test3")
-                .as<EGE::String>()
+                .asString()
                 .valueOr("")
                 .c_str()
             );
@@ -44,7 +44,7 @@ public:
 
             auto _myString = objectMap.getObject("myString");
             if(!_myString.exists()) return false;
-            output = _myString.as<EGE::String>().valueOr("");
+            output = _myString.asString().valueOr("");
             return true;
         }
         else
@@ -68,7 +68,7 @@ TESTCASE(converter)
     myString >> EGE::objectIn(map2, converter);
     std::cerr << map2->toString() << std::endl;
     std::shared_ptr<EGE::ObjectMap> objectMap = std::static_pointer_cast<EGE::ObjectMap>(map2);
-    EXPECT_EQUAL(objectMap->getObject("myString").as<EGE::String>().value(), "test4443");
+    EXPECT_EQUAL(objectMap->getObject("myString").asString().value(), "test4443");
     return 0;
 }
 
@@ -81,10 +81,10 @@ TESTCASE(serialize_api)
     map->addInt("test5", 5);
 
     // Deserialize
-    EGE::MaxInt test1 = map->getObject("test1").as<EGE::MaxInt>().valueOr(0);
-    EGE::MaxInt test3 = map->getObject("test3").as<EGE::MaxInt>().valueOr(1);
-    EGE::MaxInt test5 = map->getObject("test5").as<EGE::MaxInt>().valueOr(2);
-    EGE::MaxInt test8 = map->getObject("test8").as<EGE::MaxInt>().valueOr(3);
+    EGE::MaxInt test1 = map->getObject("test1").asInt().valueOr(0);
+    EGE::MaxInt test3 = map->getObject("test3").asInt().valueOr(1);
+    EGE::MaxInt test5 = map->getObject("test5").asInt().valueOr(2);
+    EGE::MaxInt test8 = map->getObject("test8").asInt().valueOr(3);
 
     DUMP(1, test1); EXPECT(test1 == 1);
     DUMP(1, test3); EXPECT(test3 == 3);
@@ -98,25 +98,25 @@ TESTCASE(merge)
 {
     // simple merge
     auto map1 = make<EGE::ObjectMap>();
-    map1->addObject("object1", make<EGE::ObjectString>("value1"));
-    map1->addObject("object2", make<EGE::ObjectString>("value2"));
+    map1->addString("object1", "value1");
+    map1->addString("object2", "value2");
     std::cerr << map1->toString() << std::endl;
 
     auto map2 = make<EGE::ObjectMap>();
-    map2->addObject("object3", make<EGE::ObjectString>("value3"));
-    map2->addObject("object4", make<EGE::ObjectString>("value4"));
+    map2->addString("object3", "value3");
+    map2->addString("object4", "value4");
     std::cerr << map2->toString() << std::endl;
 
     std::cerr << map1->merge(map2)->toString() << std::endl;
 
     // deep merge
     auto subMap1 = make<EGE::ObjectMap>();
-    subMap1->addObject("SubObject1", make<EGE::ObjectString>("gggg"));
+    subMap1->addString("SubObject1", "gggg");
     map1->addObject("sub", subMap1);
     std::cerr << map1->toString() << std::endl;
 
     auto subMap2 = make<EGE::ObjectMap>();
-    subMap2->addObject("SubObject2", make<EGE::ObjectString>("gggg"));
+    subMap2->addString("SubObject2", "gggg");
     map2->addObject("sub", subMap2);
     std::cerr << map2->toString() << std::endl;
 
@@ -128,8 +128,8 @@ TESTCASE(lists)
 {
     std::shared_ptr<EGE::ObjectMap> _mapFirst = make<EGE::ObjectMap>();
     std::shared_ptr<EGE::ObjectList> _list = make<EGE::ObjectList>();
-    _list->addObject(make<EGE::ObjectFloat>(0.0));
-    _list->addObject(make<EGE::ObjectFloat>(154.0));
+    _list->addObject(EGE::Serializers::object(0.0));
+    _list->addObject(EGE::Serializers::object(154.0));
     auto map = make<EGE::ObjectMap>();
     map->addObject("test3", make<EGE::ObjectString>("test44"));
     _list->addObject(map);
@@ -212,15 +212,15 @@ TESTCASE(objectIntTypes)
     map->addUnsignedInt("ui", number, EGE::ObjectUnsignedInt::Type::Int);   // 0x76543210
     map->addUnsignedInt("ul", number, EGE::ObjectUnsignedInt::Type::Long);  // 0x7EDCBA9876543210
 
-    EXPECT_EQUAL(map->getObject("b").as<EGE::MaxInt>().value(), 0x10);
-    EXPECT_EQUAL(map->getObject("s").as<EGE::MaxInt>().value(), 0x3210);
-    EXPECT_EQUAL(map->getObject("i").as<EGE::MaxInt>().value(), 0x76543210);
-    EXPECT_EQUAL(map->getObject("l").as<EGE::MaxInt>().value(), 0x7EDCBA9876543210);
+    EXPECT_EQUAL(map->getObject("b").asInt().value(), 0x10);
+    EXPECT_EQUAL(map->getObject("s").asInt().value(), 0x3210);
+    EXPECT_EQUAL(map->getObject("i").asInt().value(), 0x76543210);
+    EXPECT_EQUAL(map->getObject("l").asInt().value(), 0x7EDCBA9876543210);
 
-    EXPECT_EQUAL(map->getObject("ub").as<EGE::MaxUint>().value(), 0x10);
-    EXPECT_EQUAL(map->getObject("us").as<EGE::MaxUint>().value(), 0x3210);
-    EXPECT_EQUAL(map->getObject("ui").as<EGE::MaxUint>().value(), 0x76543210);
-    EXPECT_EQUAL(map->getObject("ul").as<EGE::MaxUint>().value(), 0x7EDCBA9876543210);
+    EXPECT_EQUAL(map->getObject("ub").asUnsignedInt().value(), 0x10);
+    EXPECT_EQUAL(map->getObject("us").asUnsignedInt().value(), 0x3210);
+    EXPECT_EQUAL(map->getObject("ui").asUnsignedInt().value(), 0x76543210);
+    EXPECT_EQUAL(map->getObject("ul").asUnsignedInt().value(), 0x7EDCBA9876543210);
     return 0;
 }
 
@@ -299,33 +299,33 @@ TESTCASE(serializers)
 {
     auto vec1 = EGE::Vec2d(123.25, 56.125);
     auto test1 = EGE::Serializers::fromVector2(vec1);
-    double x = test1->getObject("x").as<EGE::Float>().value();
-    double y = test1->getObject("y").as<EGE::Float>().value();
+    double x = test1->getObject("x").asFloat().value();
+    double y = test1->getObject("y").asFloat().value();
     EXPECT_EQUAL(x, 123.25);
     EXPECT_EQUAL(y, 56.125);
     EXPECT_EQUAL(EGE::Serializers::toVector2(test1), (EGE::Vec2d)vec1);
 
     auto vec2 = EGE::Vec3i(123, 456, 789);
     auto test2 = EGE::Serializers::fromVector3(vec2);
-    EXPECT_EQUAL(test2->getObject("x").as<EGE::Float>().value(), 123);
-    EXPECT_EQUAL(test2->getObject("y").as<EGE::Float>().value(), 456);
-    EXPECT_EQUAL(test2->getObject("z").as<EGE::Float>().value(), 789);
+    EXPECT_EQUAL(test2->getObject("x").asFloat().value(), 123);
+    EXPECT_EQUAL(test2->getObject("y").asFloat().value(), 456);
+    EXPECT_EQUAL(test2->getObject("z").asFloat().value(), 789);
     EXPECT_EQUAL(EGE::Serializers::toVector3(test2), (EGE::Vec3d)vec2);
 
     auto color1 = EGE::ColorRGBA(0.5, 0.5, 0.75, 0.25);
     auto test3 = EGE::Serializers::fromColorRGBA(color1);
-    EXPECT_EQUAL(test3->getObject("r").as<EGE::Float>().value(), 0.5);
-    EXPECT_EQUAL(test3->getObject("g").as<EGE::Float>().value(), 0.5);
-    EXPECT_EQUAL(test3->getObject("b").as<EGE::Float>().value(), 0.75);
-    EXPECT_EQUAL(test3->getObject("a").as<EGE::Float>().value(), 0.25);
+    EXPECT_EQUAL(test3->getObject("r").asFloat().value(), 0.5);
+    EXPECT_EQUAL(test3->getObject("g").asFloat().value(), 0.5);
+    EXPECT_EQUAL(test3->getObject("b").asFloat().value(), 0.75);
+    EXPECT_EQUAL(test3->getObject("a").asFloat().value(), 0.25);
     EXPECT_EQUAL(EGE::Serializers::toColorRGBA(test3), (EGE::ColorRGBA)color1);
 
     auto rect1 = EGE::RectD(10, 11, 12, 13);
     auto test4 = EGE::Serializers::fromRect(rect1);
-    EXPECT_EQUAL(test4->getObject("pos").to<EGE::ObjectMap>().value()->getObject("x").as<EGE::Float>().value(), 10);
-    EXPECT_EQUAL(test4->getObject("pos").to<EGE::ObjectMap>().value()->getObject("y").as<EGE::Float>().value(), 11);
-    EXPECT_EQUAL(test4->getObject("size").to<EGE::ObjectMap>().value()->getObject("x").as<EGE::Float>().value(), 12);
-    EXPECT_EQUAL(test4->getObject("size").to<EGE::ObjectMap>().value()->getObject("y").as<EGE::Float>().value(), 13);
+    EXPECT_EQUAL(test4->getObject("pos").to<EGE::ObjectMap>().value()->getObject("x").asFloat().value(), 10);
+    EXPECT_EQUAL(test4->getObject("pos").to<EGE::ObjectMap>().value()->getObject("y").asFloat().value(), 11);
+    EXPECT_EQUAL(test4->getObject("size").to<EGE::ObjectMap>().value()->getObject("x").asFloat().value(), 12);
+    EXPECT_EQUAL(test4->getObject("size").to<EGE::ObjectMap>().value()->getObject("y").asFloat().value(), 13);
     EXPECT_EQUAL(EGE::Serializers::toRect(test4), (EGE::RectD)rect1);
     return 0;
 }

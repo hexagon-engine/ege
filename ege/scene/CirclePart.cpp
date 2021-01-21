@@ -50,7 +50,7 @@ void CirclePart::render(Renderer& renderer) const
 bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
 {
     position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
-    radius = data->getObject("radius").as<Float>().valueOr(0);
+    radius = data->getObject("radius").asFloat().valueOr(0);
     fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
     outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));
     setGeometryNeedUpdate();

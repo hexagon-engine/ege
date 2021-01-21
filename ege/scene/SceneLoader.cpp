@@ -77,7 +77,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             return false; // entry not a map
         }
 
-        auto sd_baseClass = sodata.value()->getObject("baseClass").as<String>().valueOr("SceneObject2D");
+        auto sd_baseClass = sodata.value()->getObject("baseClass").asString().valueOr("SceneObject2D");
 
         SharedPtr<SceneObjectType> sotype;
         if(sd_baseClass == "SceneObject2D")
@@ -146,7 +146,7 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
         return nullptr;
     }
 
-    auto typeId = objMap.value()->getObject("typeId").as<String>();
+    auto typeId = objMap.value()->getObject("typeId").asString();
     if(!typeId.hasValue())
     {
         err() << "SceneObject has no valid type ID!";

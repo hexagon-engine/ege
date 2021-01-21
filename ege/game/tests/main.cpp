@@ -28,10 +28,10 @@ public:
 
     virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
-        m_color.r = obj->getObject("r").as<EGE::MaxInt>().valueOr(0);
-        m_color.g = obj->getObject("g").as<EGE::MaxInt>().valueOr(0);
-        m_color.b = obj->getObject("b").as<EGE::MaxInt>().valueOr(0);
-        m_color.a = obj->getObject("a").as<EGE::MaxInt>().valueOr(0);
+        m_color.r = obj->getObject("r").asInt().valueOr(0);
+        m_color.g = obj->getObject("g").asInt().valueOr(0);
+        m_color.b = obj->getObject("b").asInt().valueOr(0);
+        m_color.a = obj->getObject("a").asInt().valueOr(0);
         return true;
     }
 };

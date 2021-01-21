@@ -41,8 +41,8 @@ public:
 
     virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
     {
-        m_int = obj->getObject("int").as<EGE::MaxInt>().valueOr(0);
-        m_string = obj->getObject("string").as<EGE::String>().valueOr("");
+        m_int = obj->getObject("int").asInt().valueOr(0);
+        m_string = obj->getObject("string").asString().valueOr("");
         return true;
     }
 };

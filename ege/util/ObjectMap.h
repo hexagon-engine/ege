@@ -78,11 +78,20 @@ public:
         _Object(SharedPtr<Object> object = nullptr)
         : m_object(object) {}
 
-        template<class T>
-        Optional<T> as() const { CRASH(); }
+        Optional<MaxInt> asInt() const
+        { return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
 
-        template<class T>
-        bool is() const { return as<T>().hasValue(); }
+        Optional<MaxUint> asUnsignedInt() const
+        { return m_object && m_object->isUnsignedInt() ? m_object->asUnsignedInt() : Optional<MaxUint>(); }
+
+        Optional<Float> asFloat() const
+        { return m_object && m_object->isFloat() ? m_object->asFloat() : Optional<Float>(); }
+
+        Optional<String> asString() const
+        { return m_object && m_object->isString() ? m_object->asString() : Optional<String>(); }
+
+        Optional<Boolean> asBoolean() const
+        { return m_object && m_object->isBool() ? m_object->asBool() : Optional<Boolean>(); }
 
         template<class T>
         Optional<SharedPtr<T>> to() const { return Object::cast<T>(m_object); }

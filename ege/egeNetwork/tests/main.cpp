@@ -52,8 +52,13 @@ public:
     MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, bool playerControlled = false)
     : EGE::SceneObject2D(owner, type)
     {
+        m_playerControlled = playerControlled;
+    }
+
+    virtual void onInit() override
+    {
         // only server side!
-        if(!playerControlled && owner.isHeadless())
+        if(!m_playerControlled && getOwner().isHeadless())
         {
             auto timer = make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds), [this](std::string, EGE::Timer*) {
                 if(getObjectId() == -1)
@@ -105,6 +110,7 @@ public:
         }
         setMainChanged();
     }
+    bool m_playerControlled;
 };
 
 class MyObjectServerController : public EGE::ServerNetworkController
@@ -117,8 +123,8 @@ public:
     {
         std::string type = data.getType();
         auto& object = (MyObject&)getObject();
-        bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
-        int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
+        bool moving = data.getArgs()->getObject("moving").asBoolean().valueOr(false);
+        int dir = data.getArgs()->getObject("dir").asInt().valueOr(0);
 
         if(type == "move")
             object.move(moving, dir);
@@ -135,8 +141,8 @@ public:
     {
         std::string type = data.getType();
         auto& object = (MyObject&)getObject();
-        bool moving = data.getArgs()->getObject("moving").as<EGE::Boolean>().valueOr(false);
-        int dir = data.getArgs()->getObject("dir").as<EGE::MaxInt>().valueOr(0);
+        bool moving = data.getArgs()->getObject("moving").asBoolean().valueOr(false);
+        int dir = data.getArgs()->getObject("dir").asInt().valueOr(0);
 
         if(type == "move")
             object.move(moving, dir);
@@ -147,7 +153,11 @@ class MyServer : public EGE::EGEServer
 {
 public:
     MyServer()
-    : EGE::EGEServer(rand() % 63536 + 2000) { setVersion(1); setVersionString("EGE Test"); }
+    : EGE::EGEServer(rand() % 63536 + 2000)
+    {
+        setVersion(1);
+        setVersionString("EGE Test");
+    }
 
     virtual std::shared_ptr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
@@ -234,6 +244,10 @@ TESTCASE(server)
         server.addTimer("timer", timer);
 
         server.setScene(scene);
+
+        // Register SceneObject types for Client.
+        scene->getRegistry().addType2D<MyObject>();
+
         return server.run();
     };
     sf::Thread thread1(serverThread);

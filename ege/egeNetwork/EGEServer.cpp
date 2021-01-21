@@ -156,7 +156,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
     case EGEPacket::Type::_ProtocolVersion:
         {
             egeClient.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
-            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
+            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
                 err(LogLevel::Error) << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
@@ -177,21 +177,20 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
-            auto data = args->getObject("data");
-            if(!data.is<ObjectMap::ValueType>())
+            auto data = args->getObject("data").to<ObjectMap>();
+            if(!data.hasValue())
                 return EventResult::Failure;
 
-            auto data_map = data.to<ObjectMap>().value();
-            auto data_name = data_map->getObject("type").as<String>();
+            auto data_name = data.value()->getObject("type").asString();
             if(!data_name.hasValue())
                 return EventResult::Failure;
 
-            auto data_args = data_map->getObject("args");
-            if(!data_args.is<ObjectMap::ValueType>())
+            auto data_args = data.value()->getObject("args").to<ObjectMap>();
+            if(!data_args.hasValue())
                 return EventResult::Failure;
 
             if(!getScene()) // cannot control object when no scene is created!
@@ -209,7 +208,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
             }
 
             if(controller)
-                controller->handleRequest(ControlObject(data_name.value(), data_args.to<ObjectMap>().value()));
+                controller->handleRequest(ControlObject(data_name.value(), data_args.value()));
             else
                 return EventResult::Failure; // kick f*****g cheaters
         }
@@ -217,7 +216,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
     case EGEPacket::Type::CSceneObjectRequest:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
@@ -237,8 +236,8 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
         break;
     case EGEPacket::Type::_Version:
         {
-            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
-            String str = egePacket->getArgs()->getObject("string").as<String>().valueOr("Generic EGE::EGEClient");
+            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
+            String str = egePacket->getArgs()->getObject("string").asString().valueOr("Generic EGE::EGEClient");
 
             if(value != getVersion())
             {

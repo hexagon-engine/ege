@@ -142,8 +142,8 @@ bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
     m_origin = Serializers::toVector2(object->getObject("o").to<ObjectMap>().valueOr({}));
     m_scale = Serializers::toVector2(object->getObject("s").to<ObjectMap>().valueOr({}));
     m_motion = Serializers::toVector2(object->getObject("m").to<ObjectMap>().valueOr({}));
-    m_rotation = object->getObject("rot").as<Float>().valueOr(0);
-    m_rotationMode = (RotationMode)object->getObject("rm").as<MaxUint>().valueOr(m_rotationMode);
+    m_rotation = object->getObject("rot").asFloat().valueOr(0);
+    m_rotationMode = (RotationMode)object->getObject("rm").asUnsignedInt().valueOr(m_rotationMode);
 
     return SceneObject::deserializeMain(object);
 }

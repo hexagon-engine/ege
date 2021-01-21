@@ -55,7 +55,7 @@ EGEClient::~EGEClient()
 bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
 {
     // FIXME: some assertion?
-    UidType uid = packet->getArgs()->getObject("uid").as<MaxInt>().valueOr(0);
+    UidType uid = packet->getArgs()->getObject("uid").asInt().valueOr(0);
     m_uidMap[uid] = packet->getType();
     return send(packet);
 }
@@ -82,7 +82,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::_ProtocolVersion:
         {
-            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
+            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
                 err() << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
@@ -101,7 +101,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
     case EGEPacket::Type::SDisconnectReason:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
-            onDisconnect(args->getObject("message").as<String>().valueOr("Disconnected"));
+            onDisconnect(args->getObject("message").asString().valueOr("Disconnected"));
             disconnect();
         }
         break;
@@ -109,41 +109,41 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto object = args->getObject("object");
-            if(!object.is<ObjectMap::ValueType>())
+            auto object = args->getObject("object").to<ObjectMap>();
+            if(!object.hasValue())
                 return EventResult::Failure;
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
-            auto typeId = args->getObject("typeId").as<String>();
+            auto typeId = args->getObject("typeId").asString();
             if(!typeId.hasValue())
                 return EventResult::Failure;
 
-            return createSceneObjectFromData(object.to<ObjectMap>().value(), id.value(), typeId.value());
+            return createSceneObjectFromData(object.value(), id.value(), typeId.value());
         }
         break;
     case EGEPacket::Type::SSceneObjectUpdate:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto object = args->getObject("object");
-            if(!object.is<ObjectMap::ValueType>())
+            auto object = args->getObject("object").to<ObjectMap>();
+            if(!object.hasValue())
                 return EventResult::Failure;
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
-            return updateSceneObjectFromData(object.to<ObjectMap>().value(), id.value());
+            return updateSceneObjectFromData(object.value(), id.value());
         }
         break;
     case EGEPacket::Type::SSceneObjectDeletion:
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
@@ -162,7 +162,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
@@ -193,21 +193,20 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         {
             std::shared_ptr<ObjectMap> args = egePacket->getArgs();
 
-            auto id = args->getObject("id").as<MaxInt>();
+            auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
 
-            auto data = args->getObject("data");
-            if(!data.is<ObjectMap::ValueType>())
+            auto data = args->getObject("data").to<ObjectMap>();
+            if(!data.hasValue())
                 return EventResult::Failure;
 
-            auto data_map = data.to<ObjectMap>().value();
-            auto data_name = data_map->getObject("type").as<String>();
+            auto data_name = data.value()->getObject("type").asString();
             if(!data_name.hasValue())
                 return EventResult::Failure;
 
-            auto data_args = data_map->getObject("args");
-            if(!data_args.is<ObjectMap>())
+            auto data_args = data.value()->getObject("args").to<ObjectMap>();
+            if(!data_args.hasValue())
                 return EventResult::Failure;
 
             if(!getScene()) // cannot control object when no scene is created!
@@ -217,13 +216,13 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
             auto controller = getController(id.value());
 
             if(controller)
-                controller->handleRequest(ControlObject(data_name.value(), data_args.to<ObjectMap>().value()));
+                controller->handleRequest(ControlObject(data_name.value(), data_args.value()));
         }
         break;
     case EGEPacket::Type::_Version:
         {
-            int value = egePacket->getArgs()->getObject("value").as<MaxInt>().valueOr(0);
-            String str = egePacket->getArgs()->getObject("string").as<String>().valueOr("Generic EGE::EGEServer");
+            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
+            String str = egePacket->getArgs()->getObject("string").asString().valueOr("Generic EGE::EGEServer");
 
             if(value != getVersion())
             {
@@ -244,8 +243,8 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SAdditionalControllerId:
         {
-            UidType id = egePacket->getArgs()->getObject("id").as<MaxInt>().valueOr(0);
-            bool remove = egePacket->getArgs()->getObject("remove").as<Boolean>().valueOr(true);
+            UidType id = egePacket->getArgs()->getObject("id").asInt().valueOr(0);
+            bool remove = egePacket->getArgs()->getObject("remove").asBoolean().valueOr(true);
             log() << "SAdditionalControllerId " << id << " " << remove;
 
             if(remove)
