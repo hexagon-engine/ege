@@ -48,11 +48,12 @@ void DefaultThemeRenderer::renderButtonLike(Renderer& renderer, double x, double
 
 void DefaultThemeRenderer::renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height)
 {
-    renderer.renderRectangle(x + 2, y + 2, width - 4, height - 4, Colors::white, ColorRGBA::fromBytes(60, 60, 60));
+    renderer.renderRectangle(x + 2, y + 2, width - 4, height - 4, Colors::white);
 }
 
 void DefaultThemeRenderer::renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height)
 {
+    renderer.renderRectangle(x + 2, y + 2, width - 4, height - 4, Colors::transparent, ColorRGBA::fromBytes(60, 60, 60));
     renderer.renderRectangle(x + 1, y + 1, width - 3, height - 3, Colors::transparent, ColorRGBA::fromBytes(173, 173, 173));
     renderer.renderRectangle(x + 1, y + 1, width - 2, height - 2, Colors::transparent, ColorRGBA::fromBytes(210, 210, 210));
 }
