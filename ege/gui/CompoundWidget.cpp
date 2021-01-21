@@ -246,6 +246,7 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     }
 
     // Render self (overlay)
+    setCustomView(renderer.getTarget());
     renderOverlay(renderer);
 }
 
