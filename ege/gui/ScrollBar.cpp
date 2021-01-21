@@ -68,17 +68,15 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
         EGE::Vec2d rel(event.x, event.y);
         rel -= getAbsolutePosition();
 
-        // save value relatively to sb type and starting drag pos
-        double rv = 0.0;
+        // calculate new value
+        double newVal;
+
         switch(m_type)
         {
-            case Type::Horizontal: rv = rel.x - m_dragPos.x; break;
-            case Type::Vertical: rv = rel.y - m_dragPos.y; break;
+            case Type::Horizontal: newVal = (rel.x - m_dragPos.x - 20.0) / (getSize().x - 55.0); break;
+            case Type::Vertical: newVal = (rel.y - m_dragPos.y - 20.0) / (getSize().y - 55.0); break;
             default: CRASH(); break;
         }
-
-        // calculate new value
-        double newVal = (rv - 20.0) / (m_length - 55.0);
 
         // clamp value and scale by max value
         double nvClamp = std::min(1.0, std::max(0.0, newVal)) * m_maxValue;
@@ -96,8 +94,8 @@ void ScrollBar::updateLayout()
     Widget::updateLayout();
     switch(m_type)
     {
-        case Type::Horizontal: setSize(Vec2d(m_length, 20.0)); break;
-        case Type::Vertical: setSize(Vec2d(20.0, m_length)); break;
+        case Type::Horizontal: setSize(LVec2d(m_length, 20.0)); break;
+        case Type::Vertical: setSize(LVec2d(20.0, m_length)); break;
         default: CRASH(); break;
     }
 
@@ -106,12 +104,11 @@ void ScrollBar::updateLayout()
 sf::FloatRect ScrollBar::getKnobBounds() const
 {
     sf::FloatRect rect(0.f, 0.f, 20.f, 20.f);
-    double knobPos = (m_value / m_maxValue) * (m_length - 55.0) + 20.0;
 
     switch(m_type)
     {
-        case Type::Horizontal: rect.left = knobPos; rect.width = 15.f; break;
-        case Type::Vertical: rect.top = knobPos; rect.height = 15.f; break;
+        case Type::Horizontal: rect.left = (m_value / m_maxValue) * (getSize().x - 55.0) + 20.0; rect.width = 15.f; break;
+        case Type::Vertical: rect.top = (m_value / m_maxValue) * (getSize().y - 55.0) + 20.0; rect.height = 15.f; break;
         default: CRASH(); break;
     }
 

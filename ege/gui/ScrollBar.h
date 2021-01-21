@@ -93,9 +93,8 @@ public:
         setGeometryNeedUpdate();
     }
 
-    void setLength(double length)
+    void setLength(LayoutSizeD length)
     {
-        ASSERT(length >= 0.0);
         m_length = length;
         setGeometryNeedUpdate();
     }
@@ -112,7 +111,7 @@ protected:
     std::function<void(double)> m_updateCallback;
     double m_value = 0.0;
     double m_maxValue = 1.0;
-    double m_length = 0.0;
+    LayoutSizeD m_length = 0.0;
     EGE::Vec2d m_dragPos;
     double m_dragValue = 0.0;
     Type m_type;
