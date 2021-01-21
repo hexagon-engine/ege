@@ -37,11 +37,14 @@
 #include "Label.h"
 #include "GUIGameLoop.h"
 
+#include <ege/debug/Logger.h>
+
 namespace EGE
 {
 
 void Label::setString(sf::String str)
 {
+    log(LogLevel::Debug) << "Label::setString(" << str.toAnsiString() << ")";
     m_string = str;
     setGeometryNeedUpdate();
 }
@@ -61,42 +64,44 @@ void Label::setFontSize(int size)
 void Label::updateGeometry(Renderer& renderer)
 {
     Widget::updateGeometry(renderer);
+
     Vec2d position;
 
-    sf::Text text(m_string, *m_font, m_fontSize);
-    sf::FloatRect bounds = text.getLocalBounds();
+    sf::FloatRect bounds = m_text.getLocalBounds();
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
     bounds.width += 1.f * m_fontSize / 15.f;
     switch(m_align)
     {
         case Align::Left:
-            text.setOrigin(0.f, 0.f);
+            m_text.setOrigin(0.f, 0.f);
             position = Vec2d();
             break;
         case Align::Center:
-            text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
+            m_text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
             position = getSize() / 2.0;
             break;
         case Align::Right:
-            text.setOrigin(bounds.width, bounds.height);
+            m_text.setOrigin(bounds.width, bounds.height);
             position = getSize();
             break;
     }
 
-    text.setPosition(position.x, position.y);
-    text.setFillColor(m_color);
+    m_text.setPosition(position.x, position.y);
+    m_text.setFillColor(m_color);
 }
 
 void Label::updateLayout()
 {
     Widget::updateLayout();
-    ASSERT(getLoop().getResourceManager());
+
     if(!m_font)
-    {
         m_font = getLoop().getResourceManager()->getDefaultFont();
-    }
-    sf::Text text(m_string, *m_font, m_fontSize);
-    sf::FloatRect bounds = text.getLocalBounds();
+
+    m_text.setString(m_string);
+    m_text.setFont(*m_font);
+    m_text.setCharacterSize(m_fontSize);
+
+    sf::FloatRect bounds = m_text.getLocalBounds();
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
     bounds.width += 1.f * m_fontSize / 15.f;
 
@@ -110,13 +115,11 @@ void Label::updateLayout()
         // Set to text bounds.
         setSize({getRawSize().x, bounds.height});
     }
-    m_text = text;
 }
 
 void Label::render(Renderer& renderer) const
 {
     renderer.getTarget().draw(m_text);
-
     Widget::render(renderer);
 }
 
