@@ -169,7 +169,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
 
     /* align=right */
     _InputDimensions next;
-    next.position = LayoutSizeD("0px");
+    next.position = LayoutSizeD(thisDimensions.size.value());
     next.size = LayoutSizeD(thisDimensions.size.value(), EGE_LAYOUT_PIXELS);
 
     for(size_t s = 0; s < dimensions.size(); s++)
