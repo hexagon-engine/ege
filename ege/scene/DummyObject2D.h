@@ -49,10 +49,10 @@ namespace EGE
 class DummyObject2D : public SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT2D(DummyObject2D, "EGE::DummyObject2D")
+    EGE_SCENEOBJECT(EGE::DummyObject2D);
 
-    DummyObject2D(Scene2D& owner)
-    : SceneObject2D(owner, *type()) {}
+    DummyObject2D(Scene& owner, const SceneObjectType& type)
+    : SceneObject2D(owner, type) {}
 
     void setSize(Vec2d size)
     {

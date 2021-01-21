@@ -9,9 +9,11 @@
             ]
         }
     },
-    "ObjectTest2": {
+    "MyBackground": {
         "data": {
-            "test": "XXX"
+            "parts": [
+                {"name": "BaseTex", "type": "Textured", "pos": {"x": -16, "y": -16}, "textureName": "texture.png"}
+            ]
         }
     }
 }

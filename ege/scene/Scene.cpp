@@ -164,15 +164,17 @@ UidType Scene::addObject(std::shared_ptr<SceneObject> object)
 
     object->init();
 
-    if(m_objects.find(object->getObjectId()) != m_objects.end())
+    auto objIdDupe = m_objects.find(object->getObjectId());
+    if(objIdDupe != m_objects.end())
     {
         // It's NOT normal!
-        log(LogLevel::Error) << "Duplicate SceneObject ID: " << object->getObjectId();
+        log(LogLevel::Critical) << "Duplicate SceneObject ID: " << object->getName() << " collides with " << objIdDupe->second->getName();
         return object->getObjectId();
     }
     if(m_objectsByName.find(object->getName()) != m_objectsByName.end())
     {
         // If it happens, fix your code!
+        log(LogLevel::Crash) << "Duplicate SceneObject name: " << object->getName();
         CRASH_WITH_MESSAGE("Duplicate SceneObject name");
     }
 
@@ -212,7 +214,7 @@ UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwri
 
     if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
-        log(LogLevel::Error) << "Duplicate SceneObject ID: " << object->getObjectId();
+        log(LogLevel::Critical) << "Duplicate SceneObject ID: " << object->getObjectId();
         return object->getObjectId();
     }
     auto it = m_objectsByName.find(object->getName());
@@ -282,18 +284,32 @@ SceneObject* Scene::getObjectByName(String id)
     return nullptr;
 }
 
+SharedPtr<SceneObject> Scene::addNewObject(String typeId, SharedPtr<ObjectMap> data)
+{
+    SharedPtr<SceneObject> sceneObject = createObject(typeId, data);
+    addObject(sceneObject);
+    return sceneObject;
+}
+
+SharedPtr<SceneObject> Scene::addNewStaticObject(String typeId, SharedPtr<ObjectMap> data)
+{
+    SharedPtr<SceneObject> sceneObject = createObject(typeId, data);
+    addStaticObject(sceneObject);
+    return sceneObject;
+}
+
 SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> data)
 {
     auto registry = getRegistry();
 
-    auto creator = registry.find(typeId);
-    if(creator == registry.end())
+    auto type = registry.getType(typeId);
+    if(!type)
     {
-        log(LogLevel::Warning) << "No SOC found for " << typeId;
+        log(LogLevel::Warning) << "Invalid SceneObjectType: " << typeId;
         return nullptr;
     }
 
-    SharedPtr<SceneObject> sceneObject = creator->second->createEmptyObject(*this);
+    SharedPtr<SceneObject> sceneObject = type->createEmptyObject(*this);
     if(!sceneObject)
     {
         err() << "Object refused creation!";

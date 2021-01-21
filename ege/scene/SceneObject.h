@@ -48,6 +48,9 @@
 #include <ege/gui/Animatable.h>
 #include <ege/util/Serializable.h>
 
+#define EGE_SCENEOBJECT(typeId) \
+    static EGE::String type() { return #typeId; }
+
 namespace EGE
 {
 
@@ -108,7 +111,10 @@ public:
     SharedPtrStringMap<Part>& getParts() { return m_parts; }
     Part* getPart(String name);
 
-    virtual const SceneObjectType& getType() const { return m_type; };
+    virtual const SceneObjectType& getType() const { return m_type; }
+
+    template<class SO>
+    static SharedPtr<SO> cast(SharedPtr<SceneObject> obj) { return std::dynamic_pointer_cast<SO>(obj); }
 
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }

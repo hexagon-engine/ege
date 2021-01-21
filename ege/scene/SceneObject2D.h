@@ -54,8 +54,8 @@ class Scene2D;
 class SceneObject2D : public SceneObject
 {
 public:
-    SceneObject2D(Scene2D& scene, const SceneObjectType& type)
-    : SceneObject((Scene&)scene, type) {}
+    SceneObject2D(Scene& scene, const SceneObjectType& type)
+    : SceneObject(scene, type) {}
 
     virtual void setPosition(Vec2d position)
     {

@@ -84,7 +84,7 @@ public:
 class Scene : public EventLoop, public Renderable
 {
 public:
-    explicit Scene(GUIGameLoop* loop)
+    Scene(GUIGameLoop* loop)
     : EventLoop(loop, "Scene"), m_loop(loop) {}
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
@@ -98,10 +98,43 @@ public:
     virtual void onUpdate(TickCount tickCounter);
 
     // %overwrite - overwrite object instead of skipping when name conflict arises
-    UidType addObject(std::shared_ptr<SceneObject> object);
-    UidType addStaticObject(std::shared_ptr<SceneObject> object, bool overwrite = false);
+    UidType addObject(SharedPtr<SceneObject> object);
+    UidType addStaticObject(SharedPtr<SceneObject> object, bool overwrite = false);
+
+    // Custom object
+    template<class SO>
+    SharedPtr<SO> addNewObject(SharedPtr<ObjectMap> data)
+    {
+        SharedPtr<SO> sceneObject = std::dynamic_pointer_cast<SO>(createObject(SO::type(), data));
+        addObject(sceneObject);
+        return sceneObject;
+    }
+
+    template<class SO>
+    SharedPtr<SceneObject> addNewStaticObject(SharedPtr<ObjectMap> data)
+    {
+        SharedPtr<SO> sceneObject = std::dynamic_pointer_cast<SO>(createObject(SO::type(), data));
+        addStaticObject(sceneObject);
+        return sceneObject;
+    }
+
+    // Objects loaded from file
+    SharedPtr<SceneObject> addNewObject(String typeId, SharedPtr<ObjectMap> data);
+    SharedPtr<SceneObject> addNewStaticObject(String typeId, SharedPtr<ObjectMap> data);
 
     SharedPtr<SceneObject> createObject(String typeId, SharedPtr<ObjectMap> data);
+
+    template<class SO, class... Args>
+    SharedPtr<SO> createObject(Args&&... args)
+    {
+        auto type = m_registry.getType(SO::type());
+        if(!type)
+        {
+            log(LogLevel::Error) << "No type named " << SO::type() << " in SceneObjectType registry!";
+            return nullptr;
+        }
+        return make<SO>(*this, *type, std::forward<Args>(args)...);
+    }
 
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
@@ -125,7 +158,7 @@ public:
     // We don't have GUI on servers!
     bool isHeadless() const { return !getLoop(); }
 
-    SceneLoader::SceneObjectRegistry& getRegistry() { return m_registry; }
+    SceneObjectRegistry& getRegistry() { return m_registry; }
 
 protected:
     friend class SceneLoader;
@@ -135,13 +168,13 @@ protected:
     ObjectMapType m_objects;
     ObjectMapType m_staticObjects;
     ObjectMapByName m_objectsByName;
+    SceneObjectRegistry m_registry;
 
 private:
     UidType m_greatestId = 0;
     UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
-    SceneLoader::SceneObjectRegistry m_registry;
 };
 
 }

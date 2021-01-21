@@ -36,48 +36,44 @@
 
 #pragma once
 
-#include "SceneObject.h"
-#include "SceneObjectRegistry.h"
 #include "SceneObjectType.h"
 
-#include <ege/gpo/GameplayObjectRegistry.h>
-#include <ege/util/Converter.h>
+#include <ege/util/JSONConverter.h>
 #include <ege/util/Types.h>
-#include <functional>
-
-#define EGE_SCENE2D_OBJECT_CREATOR(clazz) [](EGE::Scene& scene) { return make<clazz>((EGE::Scene2D&)scene); }
 
 namespace EGE
 {
 
-class SceneLoader
+class SceneObjectRegistry
 {
 public:
-    SceneLoader(Scene& scene)
-    : m_scene(scene) {}
+    typedef SharedPtrStringMap<SceneObjectType> ValueType;
 
-    static bool loadRegistry(SceneObjectRegistry&, String fileName, const IOStreamConverter& converter = JSONConverter());
+    SharedPtr<SceneObjectType> getType(String typeId);
 
-    SharedPtr<ObjectMap> serializeSceneObjects() const;
-    bool deserializeSceneObjects(SharedPtr<ObjectMap> data);
-    bool deserializeStaticSceneObjects(SharedPtr<ObjectMap> data);
+    template<class SO>
+    class SimpleSceneObjectType2D : public SceneObjectType2D
+    {
+    public:
+        SimpleSceneObjectType2D(String typeId)
+        : SceneObjectType2D(typeId) {}
 
-    // Used for game saves
-    bool saveScene(String fileName, const IOStreamConverter& converter = JSONConverter()) const;
-    bool loadScene(String fileName, const IOStreamConverter& converter = JSONConverter());
+        virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const override
+            { return make<SO>(scene, *this); }
+    };
 
-    // Used for predefined scenes
-    bool loadStaticObjects(String fileName, const IOStreamConverter& converter = JSONConverter());
+    template<class SO>
+    void addType2D()
+        { addType(make<SimpleSceneObjectType2D<SO>>(SO::type())); }
 
-    // Load save and predefined scene at once, in proper order
-    // (that allows overwriting predefined objects with save
-    // objects if ID's are duplicated).
-    bool loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter = JSONConverter());
+    void addType(SharedPtr<SceneObjectType> type);
+    bool loadFromFile(String fileName, const IOStreamConverter& converter = JSONConverter());
 
 private:
-    SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
+    // Try to load parts from fileType to customType.
+    void mergeTypes(SharedPtr<SceneObjectType> customType, SharedPtr<SceneObjectType> fileType);
 
-    Scene& m_scene;
+    ValueType m_typeMap;
 };
 
 }

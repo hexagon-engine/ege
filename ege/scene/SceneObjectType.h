@@ -65,6 +65,7 @@ public:
     virtual bool deserialize(SharedPtr<ObjectMap> data) override;
     virtual SharedPtr<ObjectMap> serialize([[maybe_unused]] SharedPtr<ObjectMap> data) const final { return nullptr; }
 
+    virtual const StringMap<PartStub> getPartStubs() const { return m_parts; }
 protected:
     StringMap<PartStub> m_parts;
 };
@@ -81,15 +82,5 @@ public:
 protected:
     virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const;
 };
-
-#define EGE_SCENEOBJECT2D(_class, _typeId) \
-public: \
-    class Type : public EGE::SceneObjectType2D \
-    { \
-    public: \
-        Type() : EGE::SceneObjectType2D(_typeId) {}\
-        virtual EGE::SharedPtr<EGE::SceneObject2D> createEmptyObject(EGE::Scene2D& scene) const { return make<_class>(scene); } \
-    }; \
-    static EGE::SharedPtr<EGE::SceneObjectType> type() { static auto type = make<Type>(); return type; } \
 
 }

@@ -36,10 +36,23 @@
 
 #include "Scene2D.h"
 
+#include "CameraObject2D.h"
+#include "DummyObject2D.h"
+#include "ParticleSystem2D.h"
+
 #include <ege/debug/Logger.h>
 
 namespace EGE
 {
+
+Scene2D::Scene2D(GUIGameLoop* loop)
+: Scene(loop)
+{
+    // Default types.
+    m_registry.addType2D<CameraObject2D>();
+    m_registry.addType2D<DummyObject2D>();
+    m_registry.addType2D<ParticleSystem2D>();
+}
 
 void Scene2D::setCamera(std::weak_ptr<CameraObject2D> camera)
 {

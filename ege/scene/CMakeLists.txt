@@ -27,6 +27,8 @@ set(SOURCES
 	"SceneLoader.h"
 	"SceneObject.cpp"
 	"SceneObject.h"
+	"SceneObjectRegistry.cpp"
+	"SceneObjectRegistry.h"
 	"SceneObjectType.cpp"
 	"SceneObjectType.h"
 	"SceneWidget.cpp"

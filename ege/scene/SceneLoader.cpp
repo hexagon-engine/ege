@@ -101,7 +101,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             err() << "Invalid SceneObjectType";
             return false; // invalid sceneobjecttype!
         }
-        registry[pr.first] = sotype;
+        registry.addType(sotype);
     }
     return true;
 }

@@ -34,50 +34,49 @@
 *
 */
 
-#pragma once
-
-#include "SceneObject.h"
 #include "SceneObjectRegistry.h"
-#include "SceneObjectType.h"
 
-#include <ege/gpo/GameplayObjectRegistry.h>
-#include <ege/util/Converter.h>
-#include <ege/util/Types.h>
-#include <functional>
-
-#define EGE_SCENE2D_OBJECT_CREATOR(clazz) [](EGE::Scene& scene) { return make<clazz>((EGE::Scene2D&)scene); }
+#include "SceneLoader.h"
 
 namespace EGE
 {
 
-class SceneLoader
+SharedPtr<SceneObjectType> SceneObjectRegistry::getType(String typeId)
 {
-public:
-    SceneLoader(Scene& scene)
-    : m_scene(scene) {}
+    auto it = m_typeMap.find(typeId);
+    if(it == m_typeMap.end())
+        return nullptr;
+    return it->second;
+}
 
-    static bool loadRegistry(SceneObjectRegistry&, String fileName, const IOStreamConverter& converter = JSONConverter());
+void SceneObjectRegistry::addType(SharedPtr<SceneObjectType> type)
+{
+    auto it = m_typeMap.find(type->getId());
+    if(it != m_typeMap.end())
+    {
+        log(LogLevel::Info) << "Duplicate SceneObjectType: " << type->getId() << ". Trying to merge parts.";
+        mergeTypes(type, it->second);
 
-    SharedPtr<ObjectMap> serializeSceneObjects() const;
-    bool deserializeSceneObjects(SharedPtr<ObjectMap> data);
-    bool deserializeStaticSceneObjects(SharedPtr<ObjectMap> data);
+        // Replace old loaded-from-file type with custom type
+        it->second = type;
+        return;
+    }
+    m_typeMap.insert(std::make_pair(type->getId(), type));
+}
 
-    // Used for game saves
-    bool saveScene(String fileName, const IOStreamConverter& converter = JSONConverter()) const;
-    bool loadScene(String fileName, const IOStreamConverter& converter = JSONConverter());
+bool SceneObjectRegistry::loadFromFile(String fileName, const IOStreamConverter& converter)
+{
+    return SceneLoader::loadRegistry(*this, fileName, converter);
+}
 
-    // Used for predefined scenes
-    bool loadStaticObjects(String fileName, const IOStreamConverter& converter = JSONConverter());
-
-    // Load save and predefined scene at once, in proper order
-    // (that allows overwriting predefined objects with save
-    // objects if ID's are duplicated).
-    bool loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter = JSONConverter());
-
-private:
-    SharedPtr<SceneObject> loadObject(Optional<SharedPtr<ObjectMap>> objMap);
-
-    Scene& m_scene;
-};
+void SceneObjectRegistry::mergeTypes(SharedPtr<SceneObjectType> customType, SharedPtr<SceneObjectType> fileType)
+{
+    ASSERT(customType && fileType);
+    for(auto& part: fileType->getPartStubs())
+    {
+        customType->addPartStub(part.first, part.second);
+    }
+}
 
 }
+

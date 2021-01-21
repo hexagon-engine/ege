@@ -22,11 +22,11 @@ class MyObject : public EGE::SceneObject2D
     std::shared_ptr<sf::Font> m_font;
 
 public:
-    EGE_SCENEOBJECT2D(MyObject, "MyObject")
+    EGE_SCENEOBJECT(MyObject);
 
     // Objects registered in Scene Object Creator must have its "empty" state!
-    MyObject(EGE::Scene2D& owner, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
-    : EGE::SceneObject2D(owner, *type())
+    MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
+    : EGE::SceneObject2D(owner, type)
     {
         m_initialPosition = pos;
         setPosition(pos);
@@ -84,10 +84,10 @@ private:
 class MyBackground : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT2D(MyBackground, "MyBackground")
+    EGE_SCENEOBJECT(MyBackground);
 
-    MyBackground(EGE::Scene2D& owner, std::string name = "")
-    : EGE::SceneObject2D(owner, *type())
+    MyBackground(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "")
+    : EGE::SceneObject2D(owner, type)
     {
         setName(name);
         auto anim = make<EGE::RGBAnimation>(*this, 5.0, EGE::Timer::Mode::Infinite);
@@ -142,115 +142,6 @@ public:
     }
 };
 
-TESTCASE(simple)
-{
-    // create loop and window
-    EGE::GUIGameLoop gameLoop;
-    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Test");
-
-    // limit window framerate to 10
-    gameLoop.getWindow().setFramerateLimit(60);
-
-    // create main GUI
-    auto gui = make<EGE::GUIScreen>(gameLoop);
-
-    // create scene
-    auto scene = make<EGE::Scene2D>(&gameLoop);
-
-    // add some objects to scene
-    scene->addObject(make<MyObject>(*scene, "My Object", EGE::Vec2d(200.f, 200.f)));
-
-    auto removedObject = make<MyObject>(*scene, "Test Object", EGE::Vec2d(100.f, 100.f));
-    scene->addObject(removedObject);
-
-    // set Test Object to be removed after 5 seconds
-    removedObject->addTimer("makeTestObjectDead", make<EGE::Timer>(*removedObject, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [scene, removedObject](std::string, EGE::Timer*) {
-        removedObject->setDead();
-    }));
-
-    // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
-
-    // assign an instance of MyResourceManager to game loop
-    gameLoop.setResourceManager(make<MyResourceManager>());
-
-    // assign GUI to loop
-    gameLoop.setCurrentGUIScreen(gui);
-
-    // run loop
-    return gameLoop.run();
-}
-
-TESTCASE(_2dCamera)
-{
-    // create loop and window
-    EGE::GUIGameLoop gameLoop;
-    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Test");
-
-    // limit window framerate to 10
-    gameLoop.getWindow().setFramerateLimit(60);
-
-    // create main GUI
-    auto gui = make<EGE::GUIScreen>(gameLoop);
-
-    // create scene
-    auto scene = make<EGE::Scene2D>(&gameLoop);
-
-    // add camera
-    auto cam = make<EGE::CameraObject2D>(*scene);
-    bool b1 = false;
-
-    // set scaling mode
-    cam->setScalingMode(EGE::ScalingMode::Centered);
-
-    // make camera animated
-    auto timer = make<EGE::Timer>(*cam, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [cam, &b1](std::string, EGE::Timer*) {
-        cam->flyTo(b1 ? EGE::Vec2d(0.f, 100.f) : EGE::Vec2d(0.f, -100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
-        b1 = !b1;
-    });
-
-    // the first fly
-    cam->flyTo(EGE::Vec2d(0.f, 100.f), 1.0, EGE::AnimationEasingFunctions::easeInOutCubic);
-    cam->addTimer("camera fly timer", timer);
-
-    // set scene camera and add it to scene (to be updated)
-    scene->setCamera(cam);
-    scene->addObject(cam);
-
-    // add some objects to scene
-    scene->addObject(make<MyBackground>(*scene, "bg"));
-    scene->addObject(make<MyObject>(*scene, "My Object", EGE::Vec2d(-100.f, -100.f)));
-    auto removedObject = make<MyObject>(*scene, "Test Object", EGE::Vec2d(100.f, 100.f));
-    scene->addObject(removedObject);
-
-    EGE::SceneObjectType2D type("textured");
-    auto texturedObject = make<EGE::SceneObject2D>(*scene, type);
-    auto renderer = make<EGE::TexturedRenderer2D>(*texturedObject);
-    renderer->setTextureName("texture.png");
-    renderer->center();
-    texturedObject->setRenderer(renderer);
-
-    texturedObject->setPosition(EGE::Vec2d(100.f, 100.f));
-    scene->addObject(texturedObject);
-
-    // set Test Object to be removed after 5 seconds
-    removedObject->addTimer("makeTestObjectDead", make<EGE::Timer>(*removedObject, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [scene, removedObject](std::string, EGE::Timer*) {
-        removedObject->setDead();
-    }));
-
-    // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
-
-    // assign an instance of MyResourceManager to game loop
-    gameLoop.setResourceManager(make<MyResourceManager>());
-
-    // assign GUI to loop
-    gameLoop.setCurrentGUIScreen(gui);
-
-    // run loop
-    return gameLoop.run();
-}
-
 TESTCASE(serializer)
 {
     // create loop
@@ -266,8 +157,12 @@ TESTCASE(serializer)
     // create scene
     auto scene = make<EGE::Scene2D>(&gameLoop);
 
+    // add object types
+    auto& registry = scene->getRegistry();
+    registry.addType2D<MyBackground>();
+
     // create some object
-    auto myObject = make<MyBackground>(*scene, "My Test");
+    auto myObject = scene->createObject<MyBackground>("My Test");
     myObject->setPosition(EGE::Vec2d(0.f, 0.f));
 
     // serialize object
@@ -275,7 +170,7 @@ TESTCASE(serializer)
     std::cerr << data->toString() << std::endl;
 
     // deserialize object and add result
-    auto myObject2 = make<MyBackground>(*scene, "My Object 5555");
+    auto myObject2 = scene->createObject<MyBackground>("My Object 5555");
     myObject2->setPosition(EGE::Vec2d(-100.f, -100.f));
     myObject2->deserialize(data);
     scene->addObject(myObject2);
@@ -331,7 +226,7 @@ TESTCASE(particleSystem)
     //float wind = 0.f;
 
     // create particle system
-    std::shared_ptr<EGE::ParticleSystem2D> particleSystem = make<EGE::ParticleSystem2D>(*scene, sf::FloatRect(10.f, 10.f, 580.f, 1.f));
+    std::shared_ptr<EGE::ParticleSystem2D> particleSystem = scene->createObject<EGE::ParticleSystem2D>(sf::FloatRect(10.f, 10.f, 580.f, 1.f));
     particleSystem->setSpawnChance(50.0);
     particleSystem->setParticleLifeTime(400);
     particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
@@ -384,7 +279,7 @@ TESTCASE(particleSystem)
     scene->addObject(particleSystem);
 
     // add camera
-    auto cam = make<EGE::CameraObject2D>(*scene);
+    auto cam = scene->createObject<EGE::CameraObject2D>();
     cam->setScalingMode(EGE::ScalingMode::None);
     scene->setCamera(cam);
     scene->addObject(cam);
@@ -408,10 +303,10 @@ struct MyTile
 class MyTileMapObject : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT2D(MyTileMapObject, "MyTileMapObject")
+    EGE_SCENEOBJECT(MyTileMapObject);
 
-    MyTileMapObject(EGE::Scene2D& owner)
-    : EGE::SceneObject2D(owner, *type())
+    MyTileMapObject(EGE::Scene2D& owner, const EGE::SceneObjectType& type)
+    : EGE::SceneObject2D(owner, type)
     {
         m_tilemap = make<EGE::ChunkedTileMap2D<MyTile, 4, 4>>();
         //m_tilemap->initialize({0, 1}); // water
@@ -460,14 +355,22 @@ TESTCASE(_tileMap)
     loop.setResourceManager(make<MyResourceManager2>());
 
     auto scene = make<EGE::Scene2D>(&loop);
-    scene->addObject(make<MyTileMapObject>(*scene));
 
-    auto camera = make<EGE::CameraObject2D>(*scene);
+    // Add all types of objects.
+    auto& registry = scene->getRegistry();
+    registry.addType2D<MyTileMapObject>();
+
+    // Create new object.
+    scene->addNewObject<MyTileMapObject>(nullptr);
+
+    // Create camera
+    auto camera = scene->createObject<EGE::CameraObject2D>();
     camera->setPosition({512, 512});
     camera->setScalingMode(EGE::ScalingMode::Centered);
     scene->addObject(camera);
     scene->setCamera(camera);
 
+    // Display it.
     auto gui = make<EGE::GUIScreen>(loop);
     gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
     loop.setCurrentGUIScreen(gui);
@@ -482,10 +385,10 @@ TESTCASE(sceneLoader)
 
     // Load some scene
     auto scene = make<EGE::Scene2D>(&loop);
-    scene->getRegistry() = {
-        { "MyObject", MyObject::type() },
-        { "MyBackground", MyBackground::type() }
-    };
+
+    EGE::SceneObjectRegistry& registry = scene->getRegistry();
+    registry.addType2D<MyObject>();
+    registry.addType2D<MyBackground>();
 
     EGE::SceneLoader loader(*scene);
     if(!loader.loadSceneAndSave("saves/test.json", "res/scenes/test.json"))
@@ -495,18 +398,17 @@ TESTCASE(sceneLoader)
     }
 
     // Add camera
-    auto camera = make<EGE::CameraObject2D>(*scene);
+    auto camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
     camera->setPosition({0, 0});
     camera->setScalingMode(EGE::ScalingMode::Centered);
-    scene->addObject(camera);
     scene->setCamera(camera);
 
     // Change something in loaded static objects
     {
-        auto so1 = scene->getStaticObject(2);
-        so1->setName("SO1");
-        auto so2 = scene->getStaticObject(3);
-        so2->setName("SO2");
+        auto so1 = scene->getObjectByName("2");
+        so1->setName("S__O1");
+        auto so2 = scene->getObjectByName("3");
+        so2->setName("S__O2");
     }
 
     // Assign Resource Manager
@@ -532,10 +434,10 @@ TESTCASE(sceneLoader)
 class SimpleRectangleObject : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT2D(SimpleRectangleObject, "SimpleRectangleObject")
+    EGE_SCENEOBJECT(SimpleRectangleObject);
 
-    SimpleRectangleObject(EGE::Scene2D& scene)
-    : EGE::SceneObject2D(scene, *type())
+    SimpleRectangleObject(EGE::Scene& scene, const EGE::SceneObjectType& type)
+    : EGE::SceneObject2D(scene, type)
     {
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(10.0, 0));
@@ -576,27 +478,25 @@ public:
 
 TESTCASE(parenting)
 {
-    // Setup registry
-    EGE::SceneLoader::SceneObjectRegistry registry {
-        { "MyObject", MyObject::type() },
-        { "MyBackground", MyBackground::type() },
-        { "SimpleRectangleObject", SimpleRectangleObject::type() }
-    };
-
     // Setup loop and load scene
     EGE::GUIGameLoop loop;
     auto scene = make<EGE::Scene2D>(&loop);
 
     // Load other objects
-    if(!EGE::SceneLoader::loadRegistry(scene->getRegistry(), "res/objects/registry.json"))
+    EGE::SceneObjectRegistry& registry = scene->getRegistry();
+    if(!registry.loadFromFile("res/objects/registry.json"))
         return 3;
+
+    registry.addType2D<MyObject>();
+    registry.addType2D<MyBackground>();
+    registry.addType2D<SimpleRectangleObject>();
 
     if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json"))
         return 1;
 
     // Add camera
     {
-        auto camera = make<EGE::CameraObject2D>(*scene);
+        auto camera = scene->createObject<EGE::CameraObject2D>();
         camera->setPosition({0, 0});
         camera->setScalingMode(EGE::ScalingMode::Centered);
         scene->addObject(camera);
