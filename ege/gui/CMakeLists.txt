@@ -27,6 +27,8 @@ set(SOURCES
 	"LayoutElement.h"
 	"LayoutSize.cpp"
 	"LayoutSize.h"
+	"ListBox.cpp"
+	"ListBox.h"
 	"RadioButton.cpp"
 	"RadioButton.h"
 	"ScrollBar.cpp"

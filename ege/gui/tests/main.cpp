@@ -1,14 +1,6 @@
 #include <testsuite/Tests.h>
-#include <ege/gui/Animation.h>
-#include <ege/gui/AnimationEasingFunctions.h>
-#include <ege/gui/GUIGameLoop.h>
-#include <ege/gui/Button.h>
-#include <ege/gui/CheckBox.h>
-#include <ege/gui/Frame.h>
-#include <ege/gui/Label.h>
-#include <ege/gui/RadioButton.h>
-#include <ege/gui/ScrollBar.h>
-#include <ege/gui/TextBox.h>
+#include <ege/debug/Logger.h>
+#include <ege/gui.h>
 #include <cmath>
 
 class MyGameLoop : public EGE::GUIGameLoop
@@ -192,31 +184,28 @@ public:
     virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
+
         getWindow().setFramerateLimit(60);
         DEBUG_PRINT("MyResourceManager onLoad");
 
         setPadding({10, 10});
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
 
-
-        labelFPS = make<EGE::Label>(*this);
+        labelFPS = addNewWidget<EGE::Label>();
         labelFPS->setString("FPS: 0.0");
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         labelFPS->setSize({"1N", "1a"});
-        addWidget(labelFPS);
 
-        auto widgets = make<EGE::CompoundWidget>(*this);
-        addWidget(widgets);
+        auto widgets = addNewWidget<EGE::CompoundWidget>();
 
         {
-            auto myFrame = make<EGE::Frame>(*widgets);
+            auto myFrame = widgets->addNewWidget<EGE::Frame>();
             myFrame->setLabel("Widget test");
             myFrame->layoutDirection = EGE::LayoutElement::Direction::Vertical;
             myFrame->setSize({"66%", "0N"});
-            widgets->addWidget(myFrame);
 
             {
-                auto button = make<EGE::Button>(*myFrame);
+                auto button = myFrame->addNewWidget<EGE::Button>();
                 button->setLabel("T.e.s.t&");
                 //button->setSize(EGE::Vec2d(200.f, 40.f));
                 button->setCallback([this, myFrame]() {
@@ -232,69 +221,58 @@ public:
                         }));
                     }
                 });
-                myFrame->addWidget(button);
 
                 button2 = make<EGE::Button>(*myFrame);
                 button2->setLabel("T.e.s.t&:2");
                 //button2->setSize(EGE::Vec2d(200.f, 40.f));
 
-                auto labelLeft = make<EGE::Label>(*myFrame);
+                auto labelLeft = myFrame->addNewWidget<EGE::Label>();
                 labelLeft->setString("Label Left");
-                myFrame->addWidget(labelLeft);
 
-                auto labelCenter = make<EGE::Label>(*myFrame);
+                auto labelCenter = myFrame->addNewWidget<EGE::Label>();
                 labelCenter->setString("Label Center");
                 labelCenter->setTextAlign(EGE::Label::Align::Center);
-                myFrame->addWidget(labelCenter);
 
-                auto labelRight = make<EGE::Label>(*myFrame);
+                auto labelRight = myFrame->addNewWidget<EGE::Label>();
                 labelRight->setString("Label Right");
                 labelRight->setTextAlign(EGE::Label::Align::Right);
-                myFrame->addWidget(labelRight);
 
-                labelAnimated = make<EGE::Label>(*myFrame);
+                labelAnimated = myFrame->addNewWidget<EGE::Label>();
                 labelAnimated->setString("Animation");
                 labelAnimated->setTextAlign(EGE::Label::Align::Center);
-                myFrame->addWidget(labelAnimated);
 
-                ball = make<EGE::Label>(*myFrame);
+                ball = myFrame->addNewWidget<EGE::Label>();
                 ball->setString("O");
                 ball->setTextAlign(EGE::Label::Align::Center);
-                myFrame->addWidget(ball);
 
-                auto myTextBox = make<EGE::TextBox>(*myFrame);
+                auto myTextBox = myFrame->addNewWidget<EGE::TextBox>();
                 //myTextBox->setSize(EGE::Vec2d(440.f, 25.f));
-                myFrame->addWidget(myTextBox);
 
-                auto checkBox = make<EGE::CheckBox>(*myFrame);
+                auto checkBox = myFrame->addNewWidget<EGE::CheckBox>();
                 checkBox->setLabel("CheckBox");
-                myFrame->addWidget(checkBox);
 
-                auto radioButton = make<EGE::RadioButton>(*myFrame);
+                auto radioButton = myFrame->addNewWidget<EGE::RadioButton>();
                 radioButton->setLabel("RadioButton");
-                myFrame->addWidget(radioButton);
 
-                auto scrollBar = make<EGE::ScrollBar>(*myFrame);
-                scrollBar->setPosition(EGE::Vec2d(0.f, 0.f));
+                auto scrollBar = myFrame->addNewWidget<EGE::ScrollBar>();
+                scrollBar->setPosition({"0px", "0px"});
                 scrollBar->setType(EGE::ScrollBar::Type::Vertical);
-                scrollBar->setLength(500.f);
+                scrollBar->setLength(EGE::LayoutSizeD("100%"));
+                scrollBar->setMaxValue(1.6);
                 scrollBar->setUpdateCallback([](double val) {
                                                 std::cerr << "scrollbar.value=" << val << std::endl;
                                              });
-                myFrame->addWidget(scrollBar);
             }
 
-            auto myFrame2 = make<EGE::Frame>(*widgets);
+            auto myFrame2 = widgets->addNewWidget<EGE::Frame>();
             myFrame2->setLabel("Animation test");
             myFrame2->layoutDirection = EGE::LayoutElement::Direction::Vertical;
             myFrame2->setSize({"1N", "1N"});
-            widgets->addWidget(myFrame2);
 
             {
-                graph = make<AnimationGraphWidget>(*myFrame2);
+                graph = myFrame2->addNewWidget<AnimationGraphWidget>();
                 //graph->setSize(EGE::Vec2d(100.f, 100.f));
                 graph->setMax(600.f);
-                myFrame2->addWidget(graph);
 
                 auto anim = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim->addKeyframe(0.0, 1.0);
@@ -305,10 +283,25 @@ public:
                     graph->addVal(val);
                 });
 
-                graph2 = make<AnimationGraphWidget>(*myFrame2);
+                graph2 = myFrame2->addNewWidget<AnimationGraphWidget>();
                 //graph2->setSize(EGE::Vec2d(100.f, 100.f));
                 graph2->setMax(600.f);
-                myFrame2->addWidget(graph2);
+
+                auto listbox = myFrame2->addNewWidget<EGE::ListBox>();
+                listbox->addNewEntry<EGE::Label>("LB test 1");
+                listbox->addNewEntry<EGE::Label>("LB test 2");
+                listbox->addNewEntry<EGE::Label>("LB test 3");
+                listbox->addNewEntry<EGE::Label>("LB test 4");
+                listbox->addNewEntry<EGE::Label>("LB test 5");
+                listbox->addNewEntry<EGE::Label>("LB test 6");
+                listbox->addNewEntry<EGE::Label>("LB test 7");
+                listbox->addNewEntry<EGE::Label>("LB test 8");
+                listbox->addNewEntry<EGE::Label>("LB test 9");
+                listbox->addNewEntry<EGE::Label>("LB test a");
+                listbox->addNewEntry<EGE::Label>("LB test b");
+                listbox->addNewEntry<EGE::Label>("LB test c");
+                listbox->addNewEntry<EGE::Label>("LB test d");
+                listbox->addNewEntry<EGE::Label>("LB test e");
 
                 auto anim2 = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim2->addKeyframe(0.0, 1.0);
@@ -373,7 +366,7 @@ TESTCASE(resourceManager)
     gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test (resourceManager)");
     gameLoop.setResourceManager(make<MyResourceManager>());
     gameLoop.setCurrentGUIScreen(make<MyGuiScreen>(gameLoop));
-    gameLoop.run();
+    return gameLoop.run();
 }
 
 TESTCASE(_widgets)
