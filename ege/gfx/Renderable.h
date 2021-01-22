@@ -58,7 +58,7 @@ public:
 protected:
     virtual void render(Renderer& renderer) const = 0;
 
-    void setGeometryNeedUpdate(bool val = true) { m_geometryNeedUpdate = val; }
+    virtual void setGeometryNeedUpdate(bool val = true) { m_geometryNeedUpdate = val; }
 
     virtual void updateGeometry(Renderer&) {}
 
