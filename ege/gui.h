@@ -51,6 +51,7 @@
 #include <ege/gui/Label.h>
 #include <ege/gui/LayoutElement.h>
 #include <ege/gui/LayoutSize.h>
+#include <ege/gui/ListBox.h>
 #include <ege/gui/RadioButton.h>
 #include <ege/gui/ScrollBar.h>
 #include <ege/gui/TextBox.h>
