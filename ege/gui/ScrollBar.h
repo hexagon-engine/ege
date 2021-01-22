@@ -99,6 +99,9 @@ public:
         setGeometryNeedUpdate();
     }
 
+    void scroll(double page);
+    void scrollWithMouse(Vec2d mousePos);
+
 protected:
     virtual void render(Renderer& renderer) const override;
 

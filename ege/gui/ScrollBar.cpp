@@ -65,29 +65,8 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     if(m_knobDragged)
     {
         // calculate relative mouse position
-        EGE::Vec2d rel(event.x, event.y);
-        rel -= getAbsolutePosition();
-
-        // calculate new value
-        double newVal;
-
-        auto knobBounds = getKnobBounds();
-
-        switch(m_type)
-        {
-            case Type::Horizontal: newVal = (rel.x - m_dragPos.x - 20.0) / (getSize().x - 40 - knobBounds.width); break;
-            case Type::Vertical: newVal = (rel.y - m_dragPos.y - 20.0) / (getSize().y - 40 - knobBounds.height); break;
-            default: CRASH(); break;
-        }
-
-        // clamp value and scale by max value
-        double nvClamp = std::min(1.0, std::max(0.0, newVal)) * m_maxValue;
-
-        // set new value and call callback (if event position is positive)
-        if(m_updateCallback && nvClamp != m_value)
-            m_updateCallback(nvClamp);
-
-        m_value = nvClamp;
+        Vec2d rel(event.x, event.y);
+        scrollWithMouse(rel);
     }
 }
 
@@ -137,6 +116,37 @@ void ScrollBar::render(Renderer& renderer) const
     renderer.renderButtonLike(rect.left, rect.top, rect.width, rect.height);
 
     Widget::render(renderer);
+}
+
+void ScrollBar::scrollWithMouse(Vec2d mousePos)
+{
+    mousePos -= getAbsolutePosition();
+
+    // calculate new value
+    double newVal;
+
+    auto knobBounds = getKnobBounds();
+
+    switch(m_type)
+    {
+        case Type::Horizontal: newVal = (mousePos.x - m_dragPos.x - 20.0) / (getSize().x - 40 - knobBounds.width); break;
+        case Type::Vertical: newVal = (mousePos.y - m_dragPos.y - 20.0) / (getSize().y - 40 - knobBounds.height); break;
+        default: CRASH(); break;
+    }
+
+    // clamp value and scale by max value
+    double nvClamp = std::min(1.0, std::max(0.0, newVal)) * m_maxValue;
+
+    // set new value and call callback (if event position is positive)
+    scroll(nvClamp);
+}
+
+void ScrollBar::scroll(double val)
+{
+    if(m_updateCallback && val != m_value)
+        m_updateCallback(val);
+
+    m_value = val;
 }
 
 }
