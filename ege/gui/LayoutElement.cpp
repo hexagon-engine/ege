@@ -121,10 +121,9 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     double remainingSpace = thisDimensions.size.value() - usedSpace - thisDimensions.padding.value() * 2;
     double partSize = remainingSpace / (dimensions.size() - usedElements);
 
-    /* Automatic resizing (if applicable) */
+    // Auto sizing!
     if(thisDimensions.size.unit() == EGE_LAYOUT_AUTO)
     {
-        log(LogLevel::Debug) << "Automatic resizing";
         thisDimensions.size.setUnit(EGE_LAYOUT_PIXELS);
         thisDimensions.size.setValue(usedSpace + thisDimensions.padding.value() * 2);
     }
@@ -247,18 +246,12 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateOtherDimension(
 // all coordinates are parent-relative
 void LayoutElement::calculateLayout()
 {
+    // TODO: Automatic resizing
     if(!m_needRecalc)
     {
         log(LogLevel::Debug) << "LayoutElement::calculateLayout(): " << m_id << ": no recalc needed!";
         return;
     }
-
-    /*std::cout << "Children: " << std::endl;
-    for(auto& el: children)
-    {
-        std::cout << "   " << el->id << ": " << el->position.x.value() << el->position.x.unit() << ", " << el->position.y.value() << el->position.y.unit() << " @ "
-                    << el->size.x.value() << el->size.x.unit() << ", " << el->size.y.value() << el->size.y.unit() << std::endl;
-    }*/
 
     // Prepare "root" coordinates, assuming they are
     // set to fixed (px or A) value by user.
@@ -332,6 +325,12 @@ void LayoutElement::calculateLayout()
         } break;
     }
 
+    // Auto-sizing
+    if(m_layout.autoSizingX)
+        m_layout.size.x = thisDimensionsX.size.value();
+    if(m_layout.autoSizingY)
+        m_layout.size.y = thisDimensionsY.size.value();
+
     ASSERT(layoutM.size() == layoutO.size());
 
     // FIXME: Avoid copying
@@ -361,6 +360,9 @@ void LayoutElement::calculateLayout()
 
         LayoutElement* child = calc.original;
 
+        calc.autoSizingX = child->m_size.x.unit() == EGE_LAYOUT_AUTO;
+        calc.autoSizingY = child->m_size.y.unit() == EGE_LAYOUT_AUTO;
+
         // Ensure that parent is properly set
         child->m_parent = this;
 
@@ -382,6 +384,7 @@ void LayoutElement::removeObject(LayoutElement* el)
 
 void LayoutElement::setRecalcNeeded()
 {
+    log(LogLevel::Debug) << "setRecalcNeeded() for " << getId();
     m_needRecalc = true;
     for(auto element: m_children)
         element->setRecalcNeeded();
