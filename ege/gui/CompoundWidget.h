@@ -99,6 +99,8 @@ public:
 
     virtual void renderOverlay(Renderer&) const {}
 
+    Widget* getWidget(size_t index) const { return index < m_childWidgets.size() ? m_childWidgets[index].get() : nullptr; }
+
 protected:
     virtual void updateLayout() override;
 
