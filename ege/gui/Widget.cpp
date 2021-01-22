@@ -98,6 +98,7 @@ void Widget::render(Renderer& renderer) const
             rs.setOutlineThickness(2.f);
             rs.setSize(sf::Vector2f(getSize().x, getSize().y) - sf::Vector2f(4.f, 4.f));
             rs.setPosition(sf::Vector2f(2.f, 2.f));
+            rs.setOutlineColor(sf::Color::Yellow);
         }
         else
             rs.setOutlineThickness(1.f);

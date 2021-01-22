@@ -333,4 +333,14 @@ void CompoundWidget::setFocus(Widget& widget)
     }
 }
 
+void CompoundWidget::setFocus(bool value)
+{
+    Widget::setFocus(value);
+    if(!value)
+    {
+        for(auto widget: m_childWidgets)
+            widget->setFocus(value);
+    }
+}
+
 }

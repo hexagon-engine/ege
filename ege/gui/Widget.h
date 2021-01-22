@@ -45,7 +45,7 @@
 #include <ege/gfx/Renderer.h>
 #include <ege/util/Vector.h>
 
-#define WIDGET_DEBUG 0
+#define WIDGET_DEBUG 1
 
 namespace EGE
 {
@@ -114,7 +114,7 @@ public:
     // all data needed to calculate layout (e.g set content
     // size).
     virtual void updateLayout();
-    void setFocus(bool value = true) { m_hasFocus = value; }
+    virtual void setFocus(bool value = true) { m_hasFocus = value; }
 
 protected:
     virtual void render(Renderer& renderer) const override;

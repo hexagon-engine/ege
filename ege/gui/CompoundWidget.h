@@ -110,6 +110,8 @@ public:
     Widget* getFocusedWidget() const { return m_focusedWidget >= 0 ? m_childWidgets[m_focusedWidget].get() : nullptr; }
 
 protected:
+    void setFocus(bool value = true);
+
     virtual void updateLayout() override;
 
 private:
