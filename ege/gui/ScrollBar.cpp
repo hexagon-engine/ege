@@ -65,8 +65,11 @@ void ScrollBar::onMouseMove(sf::Event::MouseMoveEvent& event)
     if(m_knobDragged)
     {
         // calculate relative mouse position
-        Vec2d rel(event.x, event.y);
-        scrollWithMouse(rel);
+        if(m_maxValue != 1)
+        {
+            Vec2d rel(event.x, event.y);
+            scrollWithMouse(rel);
+        }
     }
 }
 
@@ -90,11 +93,11 @@ sf::FloatRect ScrollBar::getKnobBounds() const
     {
         case Type::Horizontal:
             rect.width = std::max(15.0, (1 / m_maxValue) * (getSize().x - 40));
-            rect.left = (m_value / m_maxValue) * (getSize().x - 40 - rect.width) + 20.0;
+            rect.left = (m_value / m_maxValue) * (getSize().x - 40) + 20.0;
             break;
         case Type::Vertical:
             rect.height = std::max(15.0, (1 / m_maxValue) * (getSize().y - 40));
-            rect.top = (m_value / m_maxValue) * (getSize().y - 40 - rect.height) + 20.0;
+            rect.top = (m_value / m_maxValue) * (getSize().y - 40) + 20.0;
             break;
         default: CRASH(); break;
     }
@@ -135,7 +138,7 @@ void ScrollBar::scrollWithMouse(Vec2d mousePos)
     }
 
     // clamp value and scale by max value
-    double nvClamp = std::min(1.0, std::max(0.0, newVal)) * m_maxValue;
+    double nvClamp = std::min(1.0, std::max(0.0, newVal)) * (m_maxValue - 1);
 
     // set new value and call callback (if event position is positive)
     scroll(nvClamp);

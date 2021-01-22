@@ -56,10 +56,8 @@ public:
     explicit ScrollBar(Widget& parent, String id = "ScrollBar")
     : Widget(parent, id) {}
 
-    double getValue() const
-    {
-        return m_value;
-    }
+    double getValue() const { return m_value; }
+    double getMaxValue() const { return m_maxValue; }
 
     // Default max value is 1.0.
     void setValue(double value)
@@ -73,15 +71,14 @@ public:
     // 1.0 - one page.
     void setMaxValue(double value)
     {
-        ASSERT(value > 0.0);
         if(value < 1)
         {
             value = 1;
             // TODO: disable widget
         }
         m_maxValue = value;
-        if(m_value > m_maxValue)
-            scroll(m_maxValue);
+        if(m_value > m_maxValue - 1)
+            scroll(m_maxValue - 1);
         setGeometryNeedUpdate();
     }
 
@@ -92,6 +89,9 @@ public:
     void setUpdateCallback(std::function<void(double)> func)
     {
         m_updateCallback = func;
+
+        // Call the handler.
+        scroll(0);
     }
 
     void setType(Type type)
