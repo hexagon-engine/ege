@@ -185,13 +185,8 @@ void Widget::onUpdate(long long tickCounter)
 void Widget::updateGeometry(Renderer&)
 {
     log(LogLevel::Info) << "Geometry Update for " << getId();
-
-    // Layouting
-    if(!getParent())
-    {
-        log(LogLevel::Notice) << "Run Layout Update!! " << getId();
-        calculateLayout();
-    }
+    log(LogLevel::Notice) << "Run Layout Update!! " << getId();
+    runLayoutUpdate();
 }
 
 void Widget::runLayoutUpdate()
