@@ -96,8 +96,6 @@ public:
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
-    virtual void onLossFocus() override;
-    virtual void onGainFocus() override;
 
     virtual bool isMouseOver(Vec2d position);
     virtual sf::View getCustomView(sf::RenderTarget& target) const override;
@@ -116,6 +114,7 @@ public:
     // all data needed to calculate layout (e.g set content
     // size).
     virtual void updateLayout();
+    void setFocus(bool value = true) { m_hasFocus = value; }
 
 protected:
     virtual void render(Renderer& renderer) const override;

@@ -104,11 +104,7 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
         if(widget->isMouseOver(position) && event.button == sf::Mouse::Left)
         {
             log(LogLevel::Debug) << "- isMouseOver!";
-            if(m_focusedWidget)
-                m_focusedWidget->onLossFocus();
-
-            m_focusedWidget = widget.get();
-            m_focusedWidget->onGainFocus();
+            setFocus(*widget);
 
             sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
             widget->onMouseButtonPress(event2);
@@ -277,8 +273,8 @@ void CompoundWidget::removeWidget(Widget* widget)
         {
             if(it->get() == widget)
             {
-                if(widget == m_focusedWidget)
-                    m_focusedWidget = nullptr;
+                if(widget->hasFocus())
+                    clearFocus();
 
                 m_childWidgets.erase(it);
                 return;
@@ -295,6 +291,45 @@ void CompoundWidget::updateLayout()
     {
         if(widget->geometryNeedUpdate())
             widget->updateLayout();
+    }
+}
+
+void CompoundWidget::setFocus(size_t index)
+{
+    ASSERT(index < m_childWidgets.size());
+    clearFocus();
+
+    m_focusedWidget = index;
+    auto widget = getFocusedWidget();
+    ASSERT(widget);
+    widget->setFocus();
+    widget->onGainFocus();
+}
+
+void CompoundWidget::clearFocus()
+{
+    if(m_focusedWidget != -1)
+    {
+        auto widget = getFocusedWidget();
+        ASSERT(widget);
+        widget->setFocus(false);
+        widget->onLossFocus();
+        m_focusedWidget = -1;
+    }
+}
+
+void CompoundWidget::setFocus(Widget& widget)
+{
+    clearFocus();
+
+    for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
+    {
+        if(it->get() == &widget)
+        {
+            widget.setFocus(true);
+            m_focusedWidget = it - m_childWidgets.begin();
+            return;
+        }
     }
 }
 

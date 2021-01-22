@@ -152,16 +152,6 @@ void Widget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     }
 }
 
-void Widget::onLossFocus()
-{
-    m_hasFocus = false;
-}
-
-void Widget::onGainFocus()
-{
-    m_hasFocus = true;
-}
-
 bool Widget::isMouseOver(EGE::Vec2d position)
 {
     return getBoundingBox().contains(sf::Vector2f(position.x, position.y));

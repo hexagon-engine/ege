@@ -99,14 +99,22 @@ public:
 
     virtual void renderOverlay(Renderer&) const {}
 
-    Widget* getWidget(size_t index) const { return index < m_childWidgets.size() ? m_childWidgets[index].get() : nullptr; }
+    Widget* getWidget(Size index) const { return index < m_childWidgets.size() ? m_childWidgets[index].get() : nullptr; }
+    void setFocus(Size index);
+    void clearFocus();
+
+    // slow
+    void setFocus(Widget& widget);
+
+    int getFocusedWidgetIndex() const { return m_focusedWidget; }
+    Widget* getFocusedWidget() const { return m_focusedWidget >= 0 ? m_childWidgets[m_focusedWidget].get() : nullptr; }
 
 protected:
     virtual void updateLayout() override;
 
 private:
-    Widget* m_focusedWidget = nullptr;
     Vector<SharedPtr<Widget>> m_childWidgets;
+    int m_focusedWidget = -1;
 };
 
 }
