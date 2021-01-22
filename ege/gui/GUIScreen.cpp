@@ -308,7 +308,7 @@ void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
     if(geometryNeedUpdate())
     {
         runLayoutUpdate();
-        log() << "Resulting layout: size(" << getSize().x << "," << getSize().y << ")";
+        log(LogLevel::Debug) << "Resulting layout: size(" << getSize().x << "," << getSize().y << ")";
     }
 
     // Actually draw child widgets
