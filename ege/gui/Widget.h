@@ -45,7 +45,7 @@
 #include <ege/gfx/Renderer.h>
 #include <ege/util/Vector.h>
 
-#define WIDGET_DEBUG 1
+#define WIDGET_DEBUG 0
 
 namespace EGE
 {
