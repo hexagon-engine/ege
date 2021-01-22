@@ -52,7 +52,7 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Widget : public Animatable, public DefaultSystemEventHandler, public Renderable, public LayoutElement
+class Widget : public Animatable, public DefaultSystemEventHandler, public LayoutElement
 {
 public:
     class Command
@@ -119,9 +119,6 @@ public:
 
 protected:
     virtual void render(Renderer& renderer) const override;
-    virtual void updateGeometry(Renderer& renderer) override;
-
-    void runLayoutUpdate();
 
     bool m_mouseOver = false;
     bool m_leftClicked = false;

@@ -38,6 +38,7 @@
 
 #include "LayoutSize.h"
 
+#include <ege/gfx/Renderable.h>
 #include <ege/util/Vector.h>
 
 #include <SFML/System/NonCopyable.hpp>
@@ -51,7 +52,7 @@ enum class LayoutAlign
     Right
 };
 
-class LayoutElement : public sf::NonCopyable
+class LayoutElement : public Renderable, public sf::NonCopyable
 {
 public:
 
@@ -114,29 +115,33 @@ public:
     LVec2d getRawSize() const { return m_size; }
     LVec2d getRawPadding() const { return m_padding; }
 
-    virtual void setPosition(LVec2d position) { m_position = position; setRecalcNeeded(); }
-    virtual void setSize(LVec2d size) { m_size = size; setRecalcNeeded(); }
-    virtual void setPadding(LVec2d size) { m_padding = size; setRecalcNeeded(); }
+    virtual void setPosition(LVec2d position) { m_position = position; setGeometryNeedUpdate(); }
+    virtual void setSize(LVec2d size) { m_size = size; setGeometryNeedUpdate(); }
+    virtual void setPadding(LVec2d size) { m_padding = size; setGeometryNeedUpdate(); }
 
     LayoutElement* getParent() const { return m_parent; }
 
     String getId() const { return m_id; }
 
 protected:
+    virtual void setGeometryNeedUpdate(bool val = true) override;
+    virtual void updateGeometry(Renderer& renderer) override;
+
     // NOTE: The user must keep "real" (strong) pointers to elements!
     void addObject(LayoutElement* el)
     {
         el->m_parent = this;
         m_children.push_back(el);
-        setRecalcNeeded();
+        setGeometryNeedUpdate();
     }
 
     void removeObject(LayoutElement* el);
 
     Vector<LayoutElement*> m_children;
 
+    void runLayoutUpdate();
+
 private:
-    void setRecalcNeeded();
 
     struct _OutputDimensions
     {

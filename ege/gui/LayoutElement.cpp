@@ -301,8 +301,8 @@ void LayoutElement::calculateLayout()
     thisDimensionsY.padding = m_layout.padding.y;
     thisDimensionsY.align = align.y;
 
-    log() << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
-    log() << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
+    log(LogLevel::Debug) << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
+    log(LogLevel::Debug) << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
 
     // Calculate 'this' layout
     Vector<_OutputDimensions> layoutM, layoutO;
@@ -370,7 +370,6 @@ void LayoutElement::calculateLayout()
         child->m_layout = calc;
         child->calculateLayout();
     }
-    m_needRecalc = false;
 }
 
 void LayoutElement::removeObject(LayoutElement* el)
@@ -382,12 +381,28 @@ void LayoutElement::removeObject(LayoutElement* el)
     }));
 }
 
-void LayoutElement::setRecalcNeeded()
+void LayoutElement::setGeometryNeedUpdate(bool val)
 {
-    log(LogLevel::Debug) << "setRecalcNeeded() for " << getId();
-    m_needRecalc = true;
+    Renderable::setGeometryNeedUpdate(val);
+    log(LogLevel::Debug) << "LayoutElement::setGeometryNeedUpdate() for " << getId();
     for(auto element: m_children)
-        element->setRecalcNeeded();
+        element->setGeometryNeedUpdate();
+}
+
+void LayoutElement::updateGeometry(Renderer&)
+{
+    log(LogLevel::Debug) << "Geometry Update for " << getId();
+    log(LogLevel::Debug) << "Run Layout Update!! " << getId();
+    calculateLayout();
+}
+
+void LayoutElement::runLayoutUpdate()
+{
+    log(LogLevel::Debug) << "runLayoutUpdate() " << getId();
+    if(m_parent)
+        m_parent->runLayoutUpdate();
+    else
+        calculateLayout();
 }
 
 }
