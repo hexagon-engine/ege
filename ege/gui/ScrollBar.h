@@ -75,6 +75,8 @@ public:
     {
         ASSERT(value > 0.0);
         m_maxValue = value;
+        if(m_value > m_maxValue)
+            scroll(m_maxValue);
         setGeometryNeedUpdate();
     }
 
