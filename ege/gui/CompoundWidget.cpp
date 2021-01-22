@@ -294,7 +294,7 @@ void CompoundWidget::updateLayout()
     }
 }
 
-void CompoundWidget::setFocus(size_t index)
+void CompoundWidget::setFocusIndex(size_t index)
 {
     ASSERT(index < m_childWidgets.size());
     clearFocus();

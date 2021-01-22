@@ -100,7 +100,7 @@ public:
     virtual void renderOverlay(Renderer&) const {}
 
     Widget* getWidget(Size index) const { return index < m_childWidgets.size() ? m_childWidgets[index].get() : nullptr; }
-    void setFocus(Size index);
+    void setFocusIndex(Size index);
     void clearFocus();
 
     // slow
@@ -108,6 +108,8 @@ public:
 
     int getFocusedWidgetIndex() const { return m_focusedWidget; }
     Widget* getFocusedWidget() const { return m_focusedWidget >= 0 ? m_childWidgets[m_focusedWidget].get() : nullptr; }
+
+    Size getWidgetCount() const { return m_childWidgets.size(); }
 
 protected:
     void setFocus(bool value = true);
