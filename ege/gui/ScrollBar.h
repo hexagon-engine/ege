@@ -74,6 +74,11 @@ public:
     void setMaxValue(double value)
     {
         ASSERT(value > 0.0);
+        if(value < 1)
+        {
+            value = 1;
+            // TODO: disable widget
+        }
         m_maxValue = value;
         if(m_value > m_maxValue)
             scroll(m_maxValue);
