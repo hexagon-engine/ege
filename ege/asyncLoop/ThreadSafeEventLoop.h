@@ -37,7 +37,7 @@
 #pragma once
 
 #include <ege/asyncLoop/AsyncLoop.h>
-#include <ege/loop/EventHandler.h>
+#include <ege/core/EventHandler.h>
 #include <map>
 #include <memory>
 #include <SFML/System.hpp>

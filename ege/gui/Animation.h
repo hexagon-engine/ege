@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include <ege/loop/EventLoop.h>
-#include <ege/loop/Timer.h>
+#include <ege/core/EventLoop.h>
+#include <ege/core/Timer.h>
 #include <ege/util/Color.h>
 #include <ege/util/Vector.h>
 #include <vector>

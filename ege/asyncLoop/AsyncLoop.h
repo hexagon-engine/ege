@@ -38,7 +38,7 @@
 
 #include "AsyncHandler.h"
 
-#include <ege/loop/EventLoop.h>
+#include <ege/core/EventLoop.h>
 
 #include <map>
 #include <memory>

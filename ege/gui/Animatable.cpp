@@ -36,7 +36,7 @@
 
 #include "Animatable.h"
 
-#include <ege/loop/Timer.h>
+#include <ege/core/Timer.h>
 
 namespace EGE
 {

@@ -39,7 +39,7 @@
 #include "ClientConnection.h"
 #include "Packet.h"
 
-#include <ege/loop/EventResult.h>
+#include <ege/core/EventResult.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <functional>

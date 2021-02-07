@@ -1,6 +1,6 @@
 #include <testsuite/Tests.h>
-#include <ege/loop/EventLoop.h>
-#include <ege/loop/TimerEvent.h>
+#include <ege/core/EventLoop.h>
+#include <ege/core/TimerEvent.h>
 #include <iostream>
 
 using EGE::Time;

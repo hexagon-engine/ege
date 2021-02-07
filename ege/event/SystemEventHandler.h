@@ -38,7 +38,7 @@
 
 #include "SystemEvent.h"
 
-#include <ege/loop/EventHandler.h>
+#include <ege/core/EventHandler.h>
 
 namespace EGE
 {

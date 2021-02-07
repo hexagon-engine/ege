@@ -3,7 +3,7 @@
 #include <ege/asyncLoop/AsyncLoop.h>
 #include <ege/asyncLoop/AsyncTask.h>
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
-#include <ege/loop/Timer.h>
+#include <ege/core/Timer.h>
 #include <ege/util/PointerUtils.h>
 #include <SFML/System.hpp>
 

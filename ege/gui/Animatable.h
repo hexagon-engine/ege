@@ -37,7 +37,7 @@
 #pragma once
 
 #include <ege/gui/Animation.h>
-#include <ege/loop/EventLoop.h>
+#include <ege/core/EventLoop.h>
 #include <functional>
 #include <memory>
 

@@ -38,7 +38,7 @@
 
 #include "NetworkEndpoint.h"
 
-#include <ege/loop/EventResult.h>
+#include <ege/core/EventResult.h>
 
 namespace EGE
 {

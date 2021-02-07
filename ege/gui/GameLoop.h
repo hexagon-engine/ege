@@ -38,9 +38,9 @@
 
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/debug/Profiler.h>
-#include <ege/loop/EventHandler.h>
-#include <ege/loop/EventResult.h>
-#include <ege/loop/Timer.h>
+#include <ege/core/EventHandler.h>
+#include <ege/core/EventResult.h>
+#include <ege/core/Timer.h>
 #include <ege/util/Time.h>
 
 #include <map>

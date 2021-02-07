@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/loop/Event.h>
+#include <ege/core/Event.h>
 #include <SFML/Window.hpp>
 
 namespace EGE

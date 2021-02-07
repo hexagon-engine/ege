@@ -35,7 +35,7 @@
 */
 
 #include <testsuite/Tests.h>
-#include <ege/loop/EventLoop.h>
+#include <ege/core/EventLoop.h>
 #include <ege/event/SystemEvent.h>
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/event/SystemWindow.h>
