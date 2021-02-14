@@ -38,6 +38,7 @@
 
 #include "Color.h"
 #include "Object.h"
+#include "ObjectBoolean.h"
 #include "ObjectFloat.h"
 #include "ObjectInt.h"
 #include "ObjectMap.h"
@@ -73,6 +74,8 @@ SharedPtr<Object> object(Uint32 t);
 SharedPtr<Object> object(Uint16 t);
 
 SharedPtr<Object> object(String t);
+
+SharedPtr<Object> object(Boolean t);
 
 template<class VT>
 SharedPtr<Object> object(Vector<VT> t)

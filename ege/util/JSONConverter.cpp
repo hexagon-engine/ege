@@ -162,7 +162,21 @@ void consumeUntil(JSONConverter::InputStreamType& input, std::string& object, st
 bool parseBoolean(JSONConverter::InputStreamType& input, bool& object)
 {
     std::string val;
-    consumeUntil(input, val, {',', '}', ']'});
+
+    char c = input.peek();
+    while(isalpha(c))
+    {
+        if(input.eof())
+        {
+            std::cerr << "json: unexpected EOF while parsing boolean" << logIndex(input.tellg()) << std::endl;
+            return false;
+        }
+
+        val += c;
+        input.ignore(1);
+
+        c = input.peek();
+    }
 
     if(val == "true")
         object = true;
@@ -170,6 +184,9 @@ bool parseBoolean(JSONConverter::InputStreamType& input, bool& object)
         object = false;
     else
         return false;
+
+    ignoreWhitespace(input);
+
     return true;
 }
 

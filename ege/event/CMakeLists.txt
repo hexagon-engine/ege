@@ -10,7 +10,7 @@ set(SOURCES
 
 ege_add_module(event)
 ege_depend_module(event debug)
-ege_depend_module(event loop)
+ege_depend_module(event core)
 ege_depend_module(event sfml)
 target_link_libraries(ege-event PRIVATE GLEW)
 

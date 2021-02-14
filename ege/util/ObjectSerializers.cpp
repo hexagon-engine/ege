@@ -56,6 +56,8 @@ std::shared_ptr<Object> object(unsigned short t)       { return make<ObjectUnsig
 
 std::shared_ptr<Object> object(std::string t)          { return make<ObjectString>(t); }
 
+SharedPtr<Object> object(Boolean t) { return make<ObjectBoolean>(t); }
+
 Vec2d toVector2(std::shared_ptr<ObjectMap> map)
 {
     if(!map)

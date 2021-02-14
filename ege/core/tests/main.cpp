@@ -1,6 +1,8 @@
 #include <testsuite/Tests.h>
+#include <ege/core/DataManager.h>
 #include <ege/core/EventLoop.h>
 #include <ege/core/TimerEvent.h>
+#include <ege/util/ObjectSerializers.h>
 #include <iostream>
 
 using EGE::Time;
@@ -154,6 +156,18 @@ TESTCASE(time)
     });
 
     return loop.run();
+}
+
+TESTCASE(dataManager)
+{
+    {
+        EGE::DataManager manager("res/config.json");
+        EXPECT(!manager.error());
+        EXPECT_EQUAL(manager.getValue("test").asBoolean().value(), true);
+        manager.setValue("test2", EGE::Serializers::object(true));
+        EXPECT(manager.save());
+    }
+    return 0;
 }
 
 RUN_TESTS(loop)

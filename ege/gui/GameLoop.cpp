@@ -38,8 +38,8 @@
 
 #include <ege/debug/Inspector.h>
 #include <ege/debug/Logger.h>
-#include <ege/loop/Clock.h>
-#include <ege/loop/EventResult.h>
+#include <ege/core/Clock.h>
+#include <ege/core/EventResult.h>
 #include <SFML/System.hpp>
 
 namespace EGE

@@ -1,6 +1,8 @@
 set(SOURCES
 	"Clock.cpp"
 	"Clock.h"
+	"DataManager.cpp"
+	"DataManager.h"
 	"Event.h"
 	"EventCast.h"
 	"EventHandler.h"
@@ -12,5 +14,5 @@ set(SOURCES
 	"TimerEvent.h"
 )
 
-ege_add_module(loop)
-ege_depend_module(loop debug util)
+ege_add_module(core)
+ege_depend_module(core debug util)

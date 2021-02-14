@@ -65,6 +65,9 @@ public:
     const SharedPtr<Object>& addObject(String name, const SharedPtr<Object>& subObject);
     const SharedPtr<Object>& addObject(String name, const Serializable& subObject);
 
+    // Set object value or add it.
+    void setObject();
+
     const SharedPtr<Object>& addFloat(String name, ObjectFloat::ValueType value = 0.0);
     const SharedPtr<Object>& addInt(String name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
     const SharedPtr<Object>& addUnsignedInt(String name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);

@@ -28,19 +28,16 @@ public:
     MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
     : EGE::SceneObject2D(owner, type)
     {
-        m_initialPosition = pos;
         setName(name);
     }
 
     virtual void onInit() override
     {
-        setPosition(m_initialPosition);
-
         // make object animated (it can be done now by flyTo())
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
-        anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(20.0, 20.0));
-        anim->addKeyframe(0.5, m_initialPosition + EGE::Vec2d(20.0, 20.0));
-        anim->addKeyframe(1.0, m_initialPosition - EGE::Vec2d(20.0, 20.0));
+        anim->addKeyframe(0.0, getPosition() - EGE::Vec2d(20.0, 20.0));
+        anim->addKeyframe(0.5, getPosition() + EGE::Vec2d(20.0, 20.0));
+        anim->addKeyframe(1.0, getPosition() - EGE::Vec2d(20.0, 20.0));
         anim->setEasingFunction(EGE::AnimationEasingFunctions::easeInOutQuad);
         addAnimation<EGE::Vec2d>(anim, [this](EGE::Vec2Animation&, EGE::Vec2d val) {
             setPosition(val);
@@ -68,7 +65,6 @@ public:
 
     bool deserializeMain(EGE::SharedPtr<EGE::ObjectMap> data) override
     {
-        m_initialPosition = EGE::Serializers::toVector2(data->getObject("ip").to<EGE::ObjectMap>().value());
         return EGE::SceneObject2D::deserializeMain(data);
     }
 

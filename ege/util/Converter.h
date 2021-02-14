@@ -37,6 +37,7 @@
 #pragma once
 
 #include <memory>
+#include <iostream>
 
 namespace EGE
 {
@@ -105,18 +106,21 @@ bool convertTo(const I& input, O& output, const Converter<I, O>& inputConverter,
     return true;
 }
 
-} //namespace EGE
-
-template<class I, class _I, class O>
-I& operator>>(_I& stream, const EGE::Internal::_ConverterInput<I, O>& in)
+template<class _IStream, class I, class O>
+_IStream& operator>>(_IStream& stream, EGE::Internal::_ConverterInput<I, O> in)
 {
     in.converter.in(stream, in.object);
     return stream;
 }
 
-template<class I, class _O, class O>
-O& operator<<(_O& stream, const EGE::Internal::_ConverterOutput<I, O>& out)
+template<class _OStream, class I, class O>
+_OStream& operator<<(_OStream& stream, EGE::Internal::_ConverterOutput<I, O> out)
 {
     out.converter.out(stream, out.object);
     return stream;
 }
+
+} //namespace EGE
+
+using EGE::operator>>;
+using EGE::operator<<;
