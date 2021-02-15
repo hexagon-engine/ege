@@ -278,6 +278,8 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
             setGeometryNeedUpdate();
         }
         break;
+    case sf::Keyboard::Enter:
+        fire<SubmitEvent>(*this, m_text);
     default:
         break;
     }

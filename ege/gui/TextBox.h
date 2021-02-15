@@ -36,12 +36,26 @@
 
 #pragma once
 
+#include <ege/core/Event.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
 #include <SFML/Graphics.hpp>
 
 namespace EGE
 {
+
+// Called when pressing 'enter' and widget is focused.
+class SubmitEvent : public Event
+{
+public:
+    EGE_EVENT("EGE::SubmitEvent");
+
+    SubmitEvent(Widget& _widget, String _value)
+    : widget(_widget), value(_value) {}
+
+    Widget& widget;
+    String value;
+};
 
 class TextBox : public Widget
 {
