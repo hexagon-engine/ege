@@ -47,9 +47,22 @@ namespace EGE
 class ListBox : public CompoundWidget
 {
 public:
+    class SelectEvent : public Event
+    {
+    public:
+        EGE_EVENT("EGE::SelectEvent")
+
+        SelectEvent(ListBox& _listbox, int _index)
+        : listbox(_listbox), index(_index) {}
+
+        ListBox& listbox;
+        int index;
+    };
+
     ListBox(Widget& parent, String id = "ListBox");
 
     virtual void onKeyPress(sf::Event::KeyEvent& event) override;
+    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event) override;
 
     virtual void render(Renderer& renderer) const override;

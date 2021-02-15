@@ -82,8 +82,6 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
 
 void ListBox::scrollBy(int direction, bool changeFocus)
 {
-    log() << m_mouseOver;
-
     if(!m_mouseOver && !changeFocus)
         return;
 
@@ -121,6 +119,23 @@ void ListBox::scrollBy(int direction, bool changeFocus)
         else
         {
             m_scrollbar->scrollToPosition(m_scrollbar->getScrollPosition() - 16);
+        }
+    }
+}
+
+void ListBox::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
+{
+    // Call upper to set focus
+    CompoundWidget::onMouseButtonRelease(event);
+
+    // Fire event if any entry is focused.
+    if(m_mouseOver)
+    {
+        int i = m_entries->getFocusedWidgetIndex();
+        if(i != -1 && getFocusedWidget()->getId() == "ListBoxList")
+        {
+            log() << "Firing SelectEvent for " << i << " (T[" << i << "] == " << getFocusedWidget()->getId() << ")";
+            fire<SelectEvent>(*this, i);
         }
     }
 }
