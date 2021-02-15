@@ -33,6 +33,8 @@ set(SOURCES
 	"RadioButton.h"
 	"ScrollBar.cpp"
 	"ScrollBar.h"
+	"SpinBox.cpp"
+	"SpinBox.h"
 	"TextBox.cpp"
 	"TextBox.h"
 	"Widget.cpp"

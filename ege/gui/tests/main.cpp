@@ -262,6 +262,8 @@ public:
                 scrollBar->setUpdateCallback([](double val) {
                                                 std::cerr << "scrollbar.value=" << val << std::endl;
                                              });
+
+                auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }
 
             auto myFrame2 = widgets->addNewWidget<EGE::Frame>();
