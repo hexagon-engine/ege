@@ -89,8 +89,11 @@ void TextBox::render(Renderer& renderer) const
         renderer.getTarget().draw(rsCaret);
     }
 
-    // border
-    renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+    if(m_border)
+    {
+        // border
+        renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+    }
 
     Widget::render(renderer);
 }

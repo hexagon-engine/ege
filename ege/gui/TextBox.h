@@ -51,12 +51,15 @@ public:
     void setText(sf::String text)
     {
         m_text = text;
+        setGeometryNeedUpdate();
     }
 
     sf::String getText()
     {
         return m_text;
     }
+
+    void setBorder(bool border = true) { m_border = border; }
 
     virtual void onMouseEnter();
     virtual void onMouseLeave();
@@ -79,6 +82,7 @@ private:
     size_t m_selectionStart = 0;
     size_t m_selectionEnd = 0;
     bool m_caretShown = true;
+    bool m_border = true;
     std::shared_ptr<NumberAnimation> m_caretAnimation;
 };
 
