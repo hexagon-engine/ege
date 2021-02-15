@@ -71,14 +71,22 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
     if(!hasFocus() || m_entries->getFocusedWidgetIndex() == -1)
         return;
 
-    // TODO: Scroll when going out of bounds!
     // TODO: Mouse scrolling!
 
-    if(event.code == sf::Keyboard::Down)
+    if(event.code == sf::Keyboard::Up)
+        scrollBy(-1, true);
+    else if(event.code == sf::Keyboard::Down)
+        scrollBy(1, true);
+}
+
+void ListBox::scrollBy(int direction, bool changeFocus)
+{
+    if(direction == 1)
     {
-        if(m_entries->getFocusedWidgetIndex() < (int)m_entries->getWidgetCount() - 1)
+        if(changeFocus && m_entries->getFocusedWidgetIndex() < (int)m_entries->getWidgetCount() - 1)
         {
             m_entries->setFocusIndex(m_entries->getFocusedWidgetIndex() + 1);
+
             auto focused = m_entries->getFocusedWidget();
             double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
             double esize = m_entries->getSize().y;
@@ -86,12 +94,17 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
             if(fpos + epos > getSize().y - 20)
                 m_scrollbar->scrollToPosition((fpos - getSize().y + 20) * ((esize - 6) / esize));
         }
+        else
+        {
+            m_scrollbar->scrollToPosition(m_scrollbar->getScrollPosition() + 16);
+        }
     }
-    else if(event.code == sf::Keyboard::Up)
+    else if(direction == -1)
     {
-        if(m_entries->getFocusedWidgetIndex() > 0)
+        if(changeFocus && m_entries->getFocusedWidgetIndex() > 0)
         {
             m_entries->setFocusIndex(m_entries->getFocusedWidgetIndex() - 1);
+
             auto focused = m_entries->getFocusedWidget();
             double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
             double esize = m_entries->getSize().y;
@@ -99,7 +112,19 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
             if(fpos + epos < 0)
                 m_scrollbar->scrollToPosition(fpos * ((esize - 6) / esize));
         }
+        else
+        {
+            m_scrollbar->scrollToPosition(m_scrollbar->getScrollPosition() - 16);
+        }
     }
+}
+
+void ListBox::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
+{
+    if(event.delta > 0)
+        scrollBy(-1, false);
+    else
+        scrollBy(1, false);
 }
 
 void ListBox::render(Renderer& renderer) const

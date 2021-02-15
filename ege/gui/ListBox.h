@@ -50,6 +50,7 @@ public:
     ListBox(Widget& parent, String id = "ListBox");
 
     virtual void onKeyPress(sf::Event::KeyEvent& event) override;
+    virtual void onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event) override;
 
     virtual void render(Renderer& renderer) const override;
     virtual void renderOverlay(Renderer& renderer) const override;
@@ -66,6 +67,8 @@ public:
     }
 
     virtual void updateGeometry(Renderer& renderer) override;
+
+    void scrollBy(int direction, bool changeFocus);
 
 private:
     void scrollToFocused();
