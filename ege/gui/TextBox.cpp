@@ -291,7 +291,7 @@ void TextBox::generateText()
 {
     auto font = getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
-    sf::Text text(m_text, *font, getSize().y / 2.f);
+    sf::Text text(m_text, *font, 12);
     text.setFillColor(sf::Color::Black);
     float overflow = std::max(0.0, (text.findCharacterPos(m_caretPos).x) - (getSize().x - 20.f));
     text.setPosition(10.f - overflow, getSize().y / 4.f);
