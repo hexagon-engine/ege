@@ -83,7 +83,8 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
 void ListBox::scrollBy(int direction, bool changeFocus)
 {
     log() << m_mouseOver;
-    if(!m_mouseOver)
+
+    if(!m_mouseOver && !changeFocus)
         return;
 
     if(direction == 1)
