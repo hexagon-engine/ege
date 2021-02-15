@@ -40,6 +40,7 @@
 #include "Animation.h"
 #include "LayoutElement.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/gfx/Renderable.h>
 #include <ege/gfx/Renderer.h>
@@ -116,7 +117,7 @@ public:
     virtual void updateLayout();
     virtual void setFocus(bool value = true) { m_hasFocus = value; }
 
-    void hide(bool hide = true) { m_hide = hide; }
+    void hide(bool hide = true) { m_hide = hide; setGeometryNeedUpdate(); m_mouseOver = false; m_leftClicked = false; }
     bool isHidden() const { return m_hide; }
 
 protected:
