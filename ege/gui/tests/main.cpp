@@ -290,20 +290,29 @@ public:
                 graph2->setMax(600.f);
 
                 auto listbox = myFrame2->addNewWidget<EGE::ListBox>();
-                listbox->addNewEntry<EGE::Label>("LB test 1");
-                listbox->addNewEntry<EGE::Label>("LB test 2");
-                listbox->addNewEntry<EGE::Label>("LB test 3");
-                listbox->addNewEntry<EGE::Label>("LB test 4");
-                listbox->addNewEntry<EGE::Label>("LB test 5");
-                listbox->addNewEntry<EGE::Label>("LB test 6");
-                listbox->addNewEntry<EGE::Label>("LB test 7");
-                listbox->addNewEntry<EGE::Label>("LB test 8");
-                listbox->addNewEntry<EGE::Label>("LB test 9");
-                listbox->addNewEntry<EGE::Label>("LB test a");
-                listbox->addNewEntry<EGE::Label>("LB test b");
-                listbox->addNewEntry<EGE::Label>("LB test c");
-                listbox->addNewEntry<EGE::Label>("LB test d");
-                listbox->addNewEntry<EGE::Label>("LB test e");
+                listbox->addEntry("LB test 1");
+                listbox->addEntry("LB test 2");
+                listbox->addEntry("LB test 3");
+                listbox->addEntry("LB test 4");
+                listbox->addEntry("LB test 5");
+                listbox->addEntry("LB test 6");
+                listbox->addEntry("LB test 7");
+                listbox->addEntry("LB test 8");
+                listbox->addEntry("LB test 9");
+                listbox->addEntry("LB test a");
+                listbox->addEntry("LB test b");
+                listbox->addEntry("LB test c");
+                listbox->addEntry("LB test d");
+                listbox->addEntry("LB test e");
+                listbox->addEntry("LB test f");
+
+                auto combobox = myFrame2->addNewWidget<EGE::ComboBox>();
+                combobox->entries().addEntry("cb test 1");
+                combobox->entries().addEntry("cb test 2");
+                combobox->entries().addEntry("cb test 3");
+                combobox->entries().addEntry("cb test 4");
+                combobox->entries().addEntry("cb test 5");
+                combobox->entries().addEntry("cb test 6");
 
                 auto anim2 = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim2->addKeyframe(0.0, 1.0);
