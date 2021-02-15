@@ -59,6 +59,8 @@ void CompoundWidget::onTextEnter(sf::Event::TextEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         widget->onTextEnter(event);
     }
 }
@@ -68,6 +70,8 @@ void CompoundWidget::onKeyPress(sf::Event::KeyEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         widget->onKeyPress(event);
     }
 }
@@ -77,6 +81,8 @@ void CompoundWidget::onKeyRelease(sf::Event::KeyEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         widget->onKeyRelease(event);
     }
 }
@@ -86,6 +92,8 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         widget->onMouseWheelScroll(event);
     }
 }
@@ -97,6 +105,8 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
 
         // Change focused widget.
         log(LogLevel::Debug) << "  Widget " << widget->getId() << " pos(" << widget->getAbsolutePosition().x << "," << widget->getAbsolutePosition().y << ")"
@@ -118,6 +128,8 @@ void CompoundWidget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
         widget->onMouseButtonRelease(event2);
     }
@@ -132,6 +144,8 @@ void CompoundWidget::onMouseMove(sf::Event::MouseMoveEvent& event)
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
+        if(widget->isHidden())
+            continue;
         sf::Event::MouseMoveEvent event2 { (int)position.x, (int)position.y };
         widget->onMouseMove(event2);
     }
@@ -150,6 +164,8 @@ void CompoundWidget::onJoystickButtonPress(sf::Event::JoystickButtonEvent& event
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onJoystickButtonPress(event);
     }
 }
@@ -158,6 +174,8 @@ void CompoundWidget::onJoystickButtonRelease(sf::Event::JoystickButtonEvent& eve
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onJoystickButtonRelease(event);
     }
 }
@@ -166,6 +184,8 @@ void CompoundWidget::onJoystickMove(sf::Event::JoystickMoveEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onJoystickMove(event);
     }
 }
@@ -174,6 +194,8 @@ void CompoundWidget::onJoystickConnect(sf::Event::JoystickConnectEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onJoystickConnect(event);
     }
 }
@@ -182,6 +204,8 @@ void CompoundWidget::onJoystickDisconnect(sf::Event::JoystickConnectEvent& event
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onJoystickDisconnect(event);
     }
 }
@@ -190,6 +214,8 @@ void CompoundWidget::onTouchBegin(sf::Event::TouchEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onTouchBegin(event);
     }
 }
@@ -198,6 +224,8 @@ void CompoundWidget::onTouchMove(sf::Event::TouchEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onTouchMove(event);
     }
 }
@@ -206,6 +234,8 @@ void CompoundWidget::onTouchEnd(sf::Event::TouchEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onTouchEnd(event);
     }
 }
@@ -214,6 +244,8 @@ void CompoundWidget::onSensorChange(sf::Event::SensorEvent& event)
 {
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
         widget->onSensorChange(event);
     }
 }
@@ -240,7 +272,10 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     for(auto widget: m_childWidgets)
     {
         if(widget->isHidden())
+        {
+            log() << "Skipping hidden widget " << widget->getId();
             continue;
+        }
 
         setCustomView(renderer.getTarget());
         if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
