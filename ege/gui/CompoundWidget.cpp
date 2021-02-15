@@ -125,6 +125,9 @@ void CompoundWidget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 
 void CompoundWidget::onMouseMove(sf::Event::MouseMoveEvent& event)
 {
+    if(event.x != -10 && event.y != -10)
+        Widget::onMouseMove(event);
+
     Vec2d position = Vec2d(event.x, event.y);
     for(auto widget: m_childWidgets)
     {
