@@ -273,7 +273,6 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     {
         if(widget->isHidden())
         {
-            log() << "Skipping hidden widget " << widget->getId();
             continue;
         }
 
