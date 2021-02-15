@@ -67,6 +67,14 @@ void Label::updateGeometry(Renderer& renderer)
 
     Vec2d position;
 
+    if(!m_font)
+        m_font = getLoop().getResourceManager()->getDefaultFont();
+
+    m_text.setString(m_string);
+    m_text.setFont(*m_font);
+    m_text.setCharacterSize(m_fontSize);
+
+
     sf::FloatRect bounds = m_text.getLocalBounds();
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
     bounds.width += 1.f * m_fontSize / 15.f;
@@ -93,13 +101,6 @@ void Label::updateGeometry(Renderer& renderer)
 void Label::updateLayout()
 {
     Widget::updateLayout();
-
-    if(!m_font)
-        m_font = getLoop().getResourceManager()->getDefaultFont();
-
-    m_text.setString(m_string);
-    m_text.setFont(*m_font);
-    m_text.setCharacterSize(m_fontSize);
 
     sf::FloatRect bounds = m_text.getLocalBounds();
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??

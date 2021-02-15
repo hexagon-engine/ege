@@ -61,6 +61,8 @@ public:
     void setFontSize(int size);
     void setColor(sf::Color color) { m_color = color; setGeometryNeedUpdate(); }
 
+    sf::String getString() const { return m_string; }
+
 protected:
     virtual void render(Renderer& renderer) const override;
     virtual void updateGeometry(Renderer& renderer) override;
