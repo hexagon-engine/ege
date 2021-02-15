@@ -68,6 +68,7 @@ ListBox::ListBox(Widget& parent, String id)
 
 void ListBox::onKeyPress(sf::Event::KeyEvent& event)
 {
+    CompoundWidget::onKeyPress(event);
     if(!hasFocus() || m_entries->getFocusedWidgetIndex() == -1)
         return;
 
@@ -81,6 +82,10 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
 
 void ListBox::scrollBy(int direction, bool changeFocus)
 {
+    log() << m_mouseOver;
+    if(!m_mouseOver)
+        return;
+
     if(direction == 1)
     {
         if(changeFocus && m_entries->getFocusedWidgetIndex() < (int)m_entries->getWidgetCount() - 1)
@@ -121,6 +126,7 @@ void ListBox::scrollBy(int direction, bool changeFocus)
 
 void ListBox::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 {
+    CompoundWidget::onMouseWheelScroll(event);
     if(event.delta > 0)
         scrollBy(-1, false);
     else
