@@ -108,6 +108,9 @@ public:
 
     void scroll(double page);
     void scrollWithMouse(Vec2d mousePos);
+    void scrollToPosition(double pos);
+
+    double getScrollableSpace() const;
 
 protected:
     virtual void render(Renderer& renderer) const override;

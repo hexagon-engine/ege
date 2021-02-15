@@ -64,7 +64,6 @@ ListBox::ListBox(Widget& parent, String id)
     m_entries = addNewWidget<CompoundWidget>("ListBoxList");
     m_entries->layoutDirection = LayoutElement::Direction::Vertical;
     m_entries->setSize({"0N", "0a"});
-    m_entries->setPadding({"4px", "4px"});
 }
 
 void ListBox::onKeyPress(sf::Event::KeyEvent& event)
@@ -81,6 +80,11 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
         {
             m_entries->setFocusIndex(m_entries->getFocusedWidgetIndex() + 1);
             auto focused = m_entries->getFocusedWidget();
+            double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
+            double esize = m_entries->getSize().y;
+            log() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
+            if(fpos + epos > getSize().y - 20)
+                m_scrollbar->scrollToPosition((fpos - getSize().y + 20) * ((esize - 6) / esize));
         }
     }
     else if(event.code == sf::Keyboard::Up)
@@ -89,6 +93,11 @@ void ListBox::onKeyPress(sf::Event::KeyEvent& event)
         {
             m_entries->setFocusIndex(m_entries->getFocusedWidgetIndex() - 1);
             auto focused = m_entries->getFocusedWidget();
+            double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
+            double esize = m_entries->getSize().y;
+            log() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
+            if(fpos + epos < 0)
+                m_scrollbar->scrollToPosition(fpos * ((esize - 6) / esize));
         }
     }
 }

@@ -36,6 +36,7 @@
 
 #include "ScrollBar.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/gfx/Renderer.h>
 #include <ege/gui/GUIGameLoop.h>
 
@@ -150,6 +151,23 @@ void ScrollBar::scroll(double val)
         m_updateCallback(val);
 
     m_value = val;
+}
+
+void ScrollBar::scrollToPosition(double pos)
+{
+    double space = getScrollableSpace();
+    log() << "ScrollBar: " << pos << "/" << space << " -> " << pos / space << " (max=" << getMaxValue() << ")";
+    scroll(pos / space * getMaxValue());
+}
+
+double ScrollBar::getScrollableSpace() const
+{
+    switch(m_type)
+    {
+        case Type::Horizontal: return getSize().x * getMaxValue();
+        case Type::Vertical: return getSize().y * getMaxValue();
+    }
+    return 0.0;
 }
 
 }
