@@ -147,10 +147,12 @@ void ScrollBar::scrollWithMouse(Vec2d mousePos)
 
 void ScrollBar::scroll(double val)
 {
+    val = std::min(m_maxValue - 1, std::max(0.0, val));
     if(m_updateCallback && val != m_value)
         m_updateCallback(val);
 
     m_value = val;
+    log() << "scroll(" << val << ")";
 }
 
 void ScrollBar::scrollToPosition(double pos)
@@ -166,6 +168,16 @@ double ScrollBar::getScrollableSpace() const
     {
         case Type::Horizontal: return getSize().x * getMaxValue();
         case Type::Vertical: return getSize().y * getMaxValue();
+    }
+    return 0.0;
+}
+
+double ScrollBar::getScrollPosition() const
+{
+    switch(m_type)
+    {
+        case Type::Horizontal: return getSize().x * m_value;
+        case Type::Vertical: return getSize().y * m_value;
     }
     return 0.0;
 }

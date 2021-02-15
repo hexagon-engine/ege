@@ -111,6 +111,7 @@ public:
     void scrollToPosition(double pos);
 
     double getScrollableSpace() const;
+    double getScrollPosition() const;
 
 protected:
     virtual void render(Renderer& renderer) const override;

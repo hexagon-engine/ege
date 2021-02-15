@@ -54,5 +54,6 @@
 #include <ege/gui/ListBox.h>
 #include <ege/gui/RadioButton.h>
 #include <ege/gui/ScrollBar.h>
+#include <ege/gui/SpinBox.h>
 #include <ege/gui/TextBox.h>
 #include <ege/gui/Widget.h>
