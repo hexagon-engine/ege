@@ -116,6 +116,9 @@ public:
     virtual void updateLayout();
     virtual void setFocus(bool value = true) { m_hasFocus = value; }
 
+    void hide(bool hide = true) { m_hide = hide; }
+    bool isHidden() const { return m_hide; }
+
 protected:
     virtual void render(Renderer& renderer) const override;
 
@@ -123,6 +126,7 @@ protected:
     bool m_leftClicked = false;
     GUIGameLoop& m_gameLoop;
     Widget* m_parentWidget;
+    bool m_hide = false;
 
 private:
     bool m_hasFocus = false;

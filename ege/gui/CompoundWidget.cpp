@@ -239,6 +239,9 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
     // Render child widgets
     for(auto widget: m_childWidgets)
     {
+        if(widget->isHidden())
+            continue;
+
         setCustomView(renderer.getTarget());
         if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
         widget->doRender(renderer, states);
