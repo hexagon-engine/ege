@@ -279,7 +279,8 @@ void TextBox::onKeyPress(sf::Event::KeyEvent& event)
         }
         break;
     case sf::Keyboard::Enter:
-        fire<SubmitEvent>(*this, m_text);
+        if(hasFocus())
+            fire<SubmitEvent>(*this, m_text);
     default:
         break;
     }
