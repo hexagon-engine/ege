@@ -68,16 +68,8 @@ public:
     virtual void render(Renderer& renderer) const override;
     virtual void renderOverlay(Renderer& renderer) const override;
 
-    template<class T, class... Args>
-    SharedPtr<T> addNewEntry(Args... args)
-    {
-        auto container = m_entries->addNewWidget<CompoundWidget>("LBContainer");
-        auto widget = container->addNewWidget<T>(std::forward<Args>(args)...);
-        container->setSize({"0N", "16px"});
-        container->setPadding({"2px", "2px"});
-        setGeometryNeedUpdate();
-        return widget;
-    }
+    void addEntry(String value);
+    String current() const;
 
     virtual void updateGeometry(Renderer& renderer) override;
 

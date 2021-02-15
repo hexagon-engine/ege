@@ -36,6 +36,8 @@
 
 #include "ListBox.h"
 
+#include "Label.h"
+
 #include <ege/debug/Logger.h>
 
 namespace EGE
@@ -140,6 +142,13 @@ void ListBox::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     }
 }
 
+void ListBox::addEntry(String value)
+{
+    auto widget = m_entries->addNewWidget<Label>(value, "LBValue");
+    widget->setSize({"0N", "20px"});
+    setGeometryNeedUpdate();
+}
+
 void ListBox::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 {
     CompoundWidget::onMouseWheelScroll(event);
@@ -153,6 +162,12 @@ void ListBox::render(Renderer& renderer) const
 {
     // Background
     renderer.renderTextBoxLikeBackground(0, 0, getSize().x - m_scrollbar->getSize().x + 1, getSize().y);
+}
+
+String ListBox::current() const
+{
+    auto label = dynamic_cast<Label*>(m_entries->getFocusedWidget());
+    return label ? label->getString().toAnsiString() : "null";
 }
 
 void ListBox::renderOverlay(Renderer& renderer) const
