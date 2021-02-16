@@ -40,8 +40,8 @@
 #include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/gui/Animation.h>
 #include <ege/gui/Button.h>
-#include <ege/gui/CheckBox.cpp>
 #include <ege/gui/CheckBox.h>
+#include <ege/gui/ComboBox.h>
 #include <ege/gui/CompoundWidget.h>
 #include <ege/gui/Frame.h>
 #include <ege/gui/GameLoop.h>
