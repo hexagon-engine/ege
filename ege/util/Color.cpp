@@ -36,6 +36,8 @@
 
 #include "Color.h"
 
+#include <ege/main/Config.h>
+
 namespace EGE
 {
 
@@ -47,6 +49,25 @@ namespace Colors
 
 __ENUMERATE_COLORS
 
+}
+
+ColorRGBA ColorRGBA::fromHTML(String html, Uint8 alpha)
+{
+    // TODO: Support short format
+    String r = html.substr(1, 2);
+    String g = html.substr(3, 2);
+    String b = html.substr(5, 2);
+    try
+    {
+        Uint8 ri = std::stoi(r, nullptr, 16);
+        Uint8 gi = std::stoi(g, nullptr, 16);
+        Uint8 bi = std::stoi(b, nullptr, 16);
+        return ColorRGBA::fromBytes(ri, gi, bi, alpha);
+    }
+    catch(...)
+    {
+        CRASH_WITH_MESSAGE("Invalid HTML color");
+    }
 }
 
 }

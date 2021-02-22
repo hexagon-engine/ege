@@ -53,7 +53,7 @@ public:
     static ColorRGBA fromBytes(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255)
         { return ColorRGBA(r / 256.0, g / 256.0, b / 256.0, a / 256.0); }
 
-    // TODO: Color from hex (HTML/CSS) format
+    static ColorRGBA fromHTML(String html, Uint8 alpha = 255);
 
     bool operator==(const ColorRGBA& other)
         { return other.r == r && other.g == g && other.b == b && other.a == a; }

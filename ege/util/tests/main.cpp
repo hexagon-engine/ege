@@ -425,14 +425,22 @@ TESTCASE(_perf_normal_function_ptr)
 
 TESTCASE(colors)
 {
+    // Default constructor
     EGE::ColorRGBA color1;
     EXPECT(color1.r == 0 && color1.g == 0 && color1.b == 0 && color1.a == 1);
+
+    // Default color
     EGE::ColorRGBA color2 = EGE::Colors::cyan;
     EXPECT(color2.r == 0 && color2.g == 1 && color2.b == 1 && color2.a == 1);
+
     EGE::ColorRGBA color3(0.5, 0.5, 0.5, 0.75);
     EXPECT(color3.r == 0.5 && color3.g == 0.5 && color3.b == 0.5 && color3.a == 0.75);
+
     EGE::ColorRGBA color4 = EGE::ColorRGBA::fromBytes(0, 255, 255, 255);
     EXPECT(color4.r == 0 && color4.g > 0.9 && color4.b > 0.9 && color4.a > 0.9);
+
+    EGE::ColorRGBA color5 = EGE::ColorRGBA::fromHTML("#80ff46", 200);
+    EXPECT(color5.r == 0.5 && color5.g > 0.9 && color5.b > 0.27 && color5.a > 0.78);
     return 0;
 }
 
