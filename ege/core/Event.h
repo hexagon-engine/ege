@@ -43,10 +43,10 @@ public: \
     static EGE::Event::EventType type() { return _type; } \
     virtual EGE::Event::EventType getType() { return type(); } \
 
-#define EGE_SIMPLE_EVENT(_type) \
+#define EGE_SIMPLE_EVENT(_type, _name) \
 class _type : public EGE::Event \
 { \
-    EGE_EVENT(#_type) \
+    EGE_EVENT(_name) \
 }
 
 namespace EGE
