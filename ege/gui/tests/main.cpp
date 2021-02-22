@@ -251,8 +251,12 @@ public:
                 auto checkBox = myFrame->addNewWidget<EGE::CheckBox>();
                 checkBox->setLabel("CheckBox");
 
-                auto radioButton = myFrame->addNewWidget<EGE::RadioButton>();
-                radioButton->setLabel("RadioButton");
+                auto radioButton1 = myFrame->addNewWidget<EGE::RadioButton>();
+                radioButton1->setLabel("RadioButton 1");
+                auto radioButton2 = myFrame->addNewWidget<EGE::RadioButton>();
+                radioButton2->setLabel("RadioButton 2");
+                auto radioButton3 = myFrame->addNewWidget<EGE::RadioButton>();
+                radioButton3->setLabel("RadioButton 3");
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
 
