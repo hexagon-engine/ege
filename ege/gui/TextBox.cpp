@@ -125,7 +125,7 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     doUpdateGeometry(getLoop().getRenderer());
     for(size_t s = 0; s <= m_text.getSize(); s++)
     {
-        if(m_textDrawable.findCharacterPos(s).x < event.x - getPosition().x + m_textDrawable.getCharacterSize() / 3.91f)
+        if(m_textDrawable.findCharacterPos(s).x < event.x - getAbsolutePosition().x)
         {
             m_caretPos = s;
             m_selectionStart = s;
@@ -145,7 +145,7 @@ void TextBox::onMouseMove(sf::Event::MouseMoveEvent& event)
         doUpdateGeometry(getLoop().getRenderer());
         for(size_t s = 0; s <= m_text.getSize(); s++)
         {
-            if(m_textDrawable.findCharacterPos(s).x < event.x - getPosition().x + m_textDrawable.getCharacterSize() / 3.91f)
+            if(m_textDrawable.findCharacterPos(s).x < event.x - getAbsolutePosition().x)
             {
                 m_caretPos = s;
                 m_selectionEnd = s;
