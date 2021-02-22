@@ -120,6 +120,9 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
     if(event.button == sf::Mouse::Left)
         m_caretAnimation->restart();
 
+    if(!hasFocus())
+        return;
+
     // Find character to set caret next to.
     // TODO: Optimize it!
     doUpdateGeometry(getLoop().getRenderer());
@@ -236,6 +239,9 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
 
 void TextBox::onKeyPress(sf::Event::KeyEvent& event)
 {
+    if(!hasFocus())
+        return;
+
     switch(event.code)
     {
     case sf::Keyboard::Left:
