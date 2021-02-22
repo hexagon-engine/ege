@@ -52,11 +52,12 @@ public:
     public:
         EGE_EVENT("EGE::SelectEvent")
 
-        SelectEvent(ListBox& _listbox, int _index)
-        : listbox(_listbox), index(_index) {}
+        SelectEvent(ListBox& _listbox, int _index, sf::String _value)
+        : listbox(_listbox), index(_index), value(_value) {}
 
         ListBox& listbox;
         int index;
+        sf::String value;
     };
 
     ListBox(Widget& parent, String id = "ListBox");
@@ -69,7 +70,7 @@ public:
     virtual void renderOverlay(Renderer& renderer) const override;
 
     void addEntry(String value);
-    String current() const;
+    sf::String selection() const;
 
     virtual void updateGeometry(Renderer& renderer) override;
 

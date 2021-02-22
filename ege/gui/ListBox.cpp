@@ -137,7 +137,7 @@ void ListBox::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
         if(i != -1 && getFocusedWidget()->getId() == "ListBoxList")
         {
             log() << "Firing SelectEvent for " << i << " (T[" << i << "] == " << getFocusedWidget()->getId() << ")";
-            fire<SelectEvent>(*this, i);
+            fire<SelectEvent>(*this, i, selection());
         }
     }
 }
@@ -164,10 +164,10 @@ void ListBox::render(Renderer& renderer) const
     renderer.renderTextBoxLikeBackground(0, 0, getSize().x - m_scrollbar->getSize().x + 1, getSize().y);
 }
 
-String ListBox::current() const
+sf::String ListBox::selection() const
 {
     auto label = dynamic_cast<Label*>(m_entries->getFocusedWidget());
-    return label ? label->getString().toAnsiString() : "null";
+    return label ? label->getString() : "";
 }
 
 void ListBox::renderOverlay(Renderer& renderer) const
