@@ -254,6 +254,8 @@ public:
                 auto radioButton = myFrame->addNewWidget<EGE::RadioButton>();
                 radioButton->setLabel("RadioButton");
 
+                auto slider = myFrame->addNewWidget<EGE::Slider>();
+
                 auto scrollBar = myFrame->addNewWidget<EGE::ScrollBar>();
                 scrollBar->setPosition({"0px", "0px"});
                 scrollBar->setType(EGE::ScrollBar::Type::Vertical);

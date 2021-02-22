@@ -36,25 +36,39 @@
 
 #pragma once
 
-#include <ege/gui/Animatable.h>
-#include <ege/gui/AnimationEasingFunctions.h>
-#include <ege/gui/Animation.h>
-#include <ege/gui/Button.h>
-#include <ege/gui/CheckBox.h>
-#include <ege/gui/ComboBox.h>
-#include <ege/gui/CompoundWidget.h>
-#include <ege/gui/Frame.h>
-#include <ege/gui/GameLoop.h>
-#include <ege/gui/GUIGameLoop.h>
-#include <ege/gui/GUIResourceManager.h>
-#include <ege/gui/GUIScreen.h>
-#include <ege/gui/Label.h>
-#include <ege/gui/LayoutElement.h>
-#include <ege/gui/LayoutSize.h>
-#include <ege/gui/ListBox.h>
-#include <ege/gui/RadioButton.h>
-#include <ege/gui/ScrollBar.h>
-#include <ege/gui/Slider.h>
-#include <ege/gui/SpinBox.h>
-#include <ege/gui/TextBox.h>
-#include <ege/gui/Widget.h>
+#include "Widget.h"
+
+#include <ege/util/Rect.h>
+
+namespace EGE
+{
+
+class Slider : public Widget
+{
+public:
+    Slider(Widget& parent, String id = "Slider")
+    : Widget(parent, id) {}
+
+    void setValue(double value) { m_value = value; }
+    void setMaxValue(double value) { m_maxValue = value; }
+    void setStep(double step) { m_step = step; }
+
+    double getValue() const { return m_value; }
+
+    void scrollWithMouse(double x);
+
+    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
+    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
+    virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
+
+    RectF getKnobBounds() const;
+    virtual void render(Renderer& renderer) const override;
+
+private:
+    double m_value = 0;
+    double m_maxValue = 1;
+    double m_step = 0.1;
+    bool m_knobDragged = false;
+};
+
+}
