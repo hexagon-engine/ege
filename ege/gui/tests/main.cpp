@@ -207,8 +207,7 @@ public:
             {
                 auto button = myFrame->addNewWidget<EGE::Button>();
                 button->setLabel("T.e.s.t&");
-                //button->setSize(EGE::Vec2d(200.f, 40.f));
-                button->setCallback([this, myFrame]() {
+                button->events<EGE::Button::ClickEvent>().add([this, myFrame](EGE::Button::ClickEvent&) {
                     if(!timerRunning)
                     {
                         DEBUG_PRINT("clicked");
@@ -220,11 +219,11 @@ public:
                             timerRunning = false;
                         }));
                     }
+                    return EGE::EventResult::Success;
                 });
 
                 button2 = make<EGE::Button>(*myFrame);
                 button2->setLabel("T.e.s.t&:2");
-                //button2->setSize(EGE::Vec2d(200.f, 40.f));
 
                 auto labelLeft = myFrame->addNewWidget<EGE::Label>();
                 labelLeft->setString("Label Left");
@@ -266,8 +265,8 @@ public:
                 scrollBar->setLength(EGE::LayoutSizeD("100%"));
                 scrollBar->setMaxValue(1.6);
                 scrollBar->setUpdateCallback([](double val) {
-                                                std::cerr << "scrollbar.value=" << val << std::endl;
-                                             });
+                    std::cerr << "scrollbar.value=" << val << std::endl;
+                });
 
                 auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }

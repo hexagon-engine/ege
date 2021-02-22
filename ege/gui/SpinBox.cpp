@@ -74,21 +74,23 @@ SpinBox::SpinBox(Widget& parent, String id)
         auto buttonUp = buttons->addNewWidget<Button>("SBoxUp");
         buttonUp->align.x = LayoutAlign::Right;
         buttonUp->setLabel("");
-        buttonUp->setCallback([this]() {
+        buttonUp->events<Button::ClickEvent>().add([this](Button::ClickEvent&) {
             log() << "Up";
             m_textBox->fire<SubmitEvent>(*m_textBox, m_textBox->getText());
             m_value += 1;
             m_textBox->setText(std::to_string(m_value));
+            return EventResult::Success;
         });
 
         auto buttonDown = buttons->addNewWidget<Button>("SBoxDown");
         buttonDown->align.x = LayoutAlign::Right;
         buttonDown->setLabel("");
-        buttonDown->setCallback([this]() {
+        buttonDown->events<Button::ClickEvent>().add([this](Button::ClickEvent&) {
             log() << "Down";
             m_textBox->fire<SubmitEvent>(*m_textBox, m_textBox->getText());
             m_value -= 1;
             m_textBox->setText(std::to_string(m_value));
+            return EventResult::Success;
         });
     }
 }

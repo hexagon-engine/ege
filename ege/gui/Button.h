@@ -46,50 +46,25 @@ namespace EGE
 class Button : public Widget
 {
 public:
-    class Command : public Widget::Command
-    {
-    public:
-        Command(Button* button)
-        : Widget::Command("EGE::Button::Command"), m_button(button)
-        {}
-
-        Button* getButton() const
-        {
-            return m_button;
-        }
-    private:
-        Button* m_button;
-    };
+    EGE_SIMPLE_EVENT(ClickEvent, "EGE::Button::ClickEvent");
 
     explicit Button(Widget& parent, String id = "Button")
     : Widget(parent, id) {}
 
-    virtual void setLabel(sf::String label)
-    {
-        m_label = label;
-    }
-
-    sf::String getLabel() const
-    {
-        return m_label;
-    }
+    virtual void setLabel(sf::String label) { m_label = label; }
+    sf::String getLabel() const { return m_label; }
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
 
-    void setCallback(std::function<void()> callback)
-    {
-        m_callback = callback;
-    }
-
 protected:
     virtual void render(Renderer& renderer) const override;
 
-    virtual void onClick(EGE::Vec2d position);
-    std::function<void()> m_callback;
+    // Args: position.
+    // Position may be needed for some animations.
+    virtual void onClick(EGE::Vec2d) {}
 
 private:
-    // position may be needed for some animations
     void handleClick(EGE::Vec2d position);
 
     EGE::Vec2d m_lastClickPos;

@@ -54,8 +54,9 @@ ComboBox::ComboBox(Widget& parent, String id)
         auto expand = layout->addNewWidget<Button>("CBExpandBtn");
         expand->align.x = LayoutAlign::Right;
         expand->setSize({"20px", "1N"});
-        expand->setCallback([this]() {
+        expand->events<Button::ClickEvent>().add([this](Button::ClickEvent&) {
             m_listBox->hide(!m_listBox->isHidden());
+            return EventResult::Success;
         });
     }
     m_listBox = addNewWidget<ListBox>("CBList");

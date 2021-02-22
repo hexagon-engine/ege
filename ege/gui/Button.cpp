@@ -133,14 +133,8 @@ void Button::handleClick(EGE::Vec2d position)
     if(m_leftClicked)
     {
         onClick(position);
-        if(m_callback)
-            m_callback();
+        fire<ClickEvent>();
     }
-}
-
-void Button::onClick(EGE::Vec2d)
-{
-    getParentWidget()->onCommand(Command(this));
 }
 
 }
