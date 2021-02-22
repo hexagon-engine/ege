@@ -50,14 +50,9 @@ public:
     explicit CheckBox(Widget& parent, String id = "CheckBox")
     : Button(parent, id) {}
 
-    void setChecked(bool checked = true)
-    {
-        m_checked = checked;
-    }
-    bool isChecked() const
-    {
-        return m_checked;
-    }
+    void setChecked(bool checked = true) { m_checked = checked; }
+    bool isChecked() const { return m_checked; }
+
     void setLabel(sf::String label)
     {
         Button::setLabel(label);
