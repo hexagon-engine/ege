@@ -50,6 +50,8 @@ public:
 
     ListBox& entries() { return *m_listBox; }
 
+    sf::String selection() const { return m_cbSel->getString(); }
+
     virtual void render(Renderer& renderer) const override;
 
 private:

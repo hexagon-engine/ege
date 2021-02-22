@@ -315,6 +315,10 @@ public:
                 combobox->entries().addEntry("cb test 4");
                 combobox->entries().addEntry("cb test 5");
                 combobox->entries().addEntry("cb test 6");
+                combobox->events<EGE::ListBox::SelectEvent>().add([combobox](EGE::ListBox::SelectEvent& ev) {
+                    log() << "selected: " << ev.value.toAnsiString();
+                    return EGE::EventResult::Success;
+                });
 
                 auto anim2 = make<EGE::NumberAnimation>(*this, EGE::Time(10.0, EGE::Time::Unit::Seconds));
                 anim2->addKeyframe(0.0, 1.0);
