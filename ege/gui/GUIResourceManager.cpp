@@ -49,9 +49,6 @@ bool GUIResourceManager::reload()
         << m_cursorsToLoad.size() << " cursors and "
         << m_shadersToLoad.size() << " shaders.";
 
-    if(!m_resourcePathToLoad.empty())
-        setResourcePath(m_resourcePathToLoad);
-
     while(!m_texturesToLoad.empty())
     {
         if(!loadTextureFromFile(m_texturesToLoad.front()))

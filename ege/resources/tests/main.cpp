@@ -8,8 +8,6 @@ class MyResourceManager : public EGE::ResourceManager
 public:
     virtual bool reload()
     {
-        EXPECT(setResourcePath("res"));
-        EXPECT(!setResourcePath("notexisting"));
         EXPECT(loadFontFromFile("font.ttf"));
         EXPECT(loadTextureFromFile("texture.png"));
         EXPECT(getFont("font.ttf"));

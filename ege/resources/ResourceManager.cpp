@@ -39,7 +39,7 @@
 #include "SFMLTexture.h"
 
 #include <ege/debug/Logger.h>
-#include <sys/stat.h>
+#include <ege/util/CommonPaths.h>
 
 namespace EGE
 {
@@ -51,14 +51,13 @@ void ResourceManager::clear()
     m_loadedTextures.clear();
     m_loadedCursors.clear();
     m_unknownTexture = nullptr;
-    m_resourcePath = "res";
     m_defaultFont = "";
 }
 
 std::shared_ptr<Texture> ResourceManager::loadTextureFromFile(std::string fileName)
 {
     std::shared_ptr<SFMLTexture> texture = make<SFMLTexture>();
-    if(!texture->loadFromFile(m_resourcePath + "/" + fileName))
+    if(!texture->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
         err(LogLevel::Error) << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
         m_error = true;
@@ -71,7 +70,7 @@ std::shared_ptr<Texture> ResourceManager::loadTextureFromFile(std::string fileNa
 std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
 {
     std::shared_ptr<sf::Font> font = make<sf::Font>();
-    if(!font->loadFromFile(m_resourcePath + "/" + fileName))
+    if(!font->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
         err(LogLevel::Error) << "0006 EGE/resources: could not load resource: FONT " << fileName;
         m_error = true;
@@ -84,7 +83,7 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
 std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, sf::Shader::Type type)
 {
     std::shared_ptr<sf::Shader> shader(new sf::Shader);
-    if(!shader->loadFromFile(m_resourcePath + "/" + fileName, type))
+    if(!shader->loadFromFile(CommonPaths::resourceDir() + "/" + fileName, type))
     {
         err(LogLevel::Error) << "EGE/resources: could not load resource: [" << (int)type << "] SHADER " << fileName;
         m_error = true;
@@ -97,7 +96,8 @@ std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string file
 std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string fragmentShader)
 {
     std::shared_ptr<sf::Shader> shader(new sf::Shader);
-    if(!shader->loadFromFile(m_resourcePath + "/" + vertexShader, m_resourcePath + "/" + fragmentShader))
+    auto res = CommonPaths::resourceDir();
+    if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + fragmentShader))
     {
         err(LogLevel::Error) << "EGE/resources: could not load resource: [VF] SHADER " << vertexShader << ", " << fragmentShader;
         m_error = true;
@@ -110,7 +110,8 @@ std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name
 std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string geometryShader, std::string fragmentShader)
 {
     std::shared_ptr<sf::Shader> shader(new sf::Shader);
-    if(!shader->loadFromFile(m_resourcePath + "/" + vertexShader, m_resourcePath + "/" + geometryShader, m_resourcePath + "/" + fragmentShader))
+    auto res = CommonPaths::resourceDir();
+    if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + geometryShader, res + "/" + fragmentShader))
     {
         err(LogLevel::Error) << "EGE/resources: could not load resource: [VGF] SHADER " << vertexShader << ", " << geometryShader << ", " << fragmentShader;
         m_error = true;
@@ -305,19 +306,6 @@ void ResourceManager::setUnknownTexture(std::shared_ptr<Texture> texture)
 {
     m_unknownTexture = texture;
 }
-
-bool ResourceManager::setResourcePath(std::string path)
-{
-    struct stat _s;
-    if(stat(path.c_str(), &_s) < 0)
-    {
-        err() << "0007 EGE/resources: could not open resource directory: " << path;
-        return false;
-    }
-    m_resourcePath = path;
-    return true;
-}
-
 bool ResourceManager::isError()
 {
     return m_error;
