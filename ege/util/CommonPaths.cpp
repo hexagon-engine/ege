@@ -34,34 +34,36 @@
 *
 */
 
-#pragma once
+#include "CommonPaths.h"
 
-#include <ege/util/Color.h>
-#include <ege/util/CommonPaths.h>
-#include <ege/util/Converter.h>
-#include <ege/util/Equation.h>
-#include <ege/util/EquationSystem.h>
-#include <ege/util/Geometry.h>
-#include <ege/util/JSONConverter.h>
-#include <ege/util/Math.h>
-#include <ege/util/Object.h>
-#include <ege/util/ObjectArray.h>
-#include <ege/util/ObjectBoolean.h>
-#include <ege/util/ObjectFloat.h>
-#include <ege/util/ObjectInt.h>
-#include <ege/util/ObjectList.h>
-#include <ege/util/ObjectMap.h>
-#include <ege/util/ObjectSerializers.h>
-#include <ege/util/ObjectString.h>
-#include <ege/util/ObjectUnsignedInt.h>
-#include <ege/util/PointerUtils.h>
-#include <ege/util/Random.h>
-#include <ege/util/Rect.h>
-#include <ege/util/Serializable.h>
-#include <ege/util/StringUtils.h>
-#include <ege/util/Time.h>
-#include <ege/util/Types.h>
-#include <ege/util/Vector.h>
+#include "system.h"
 
-#include <ege/util/system.h>
+namespace EGE
+{
+
+namespace CommonPaths
+{
+
+// system
+String currentDir()
+{
+    return System::getWorkingDirectory();
+}
+
+// engine
+String g_resourceDir = "res";
+String g_configDir = "config";
+String g_saveDir = "saves";
+
+String resourceDir() { return g_resourceDir; }
+String configDir() { return g_configDir; }
+String saveDir() { return g_saveDir; }
+
+void setResourceDir(String path) { g_resourceDir = path; }
+void setConfigDir(String path) { g_configDir = path; }
+void setSaveDir(String path) { g_saveDir = path; }
+
+}
+
+}
 

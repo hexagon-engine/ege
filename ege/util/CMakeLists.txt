@@ -1,6 +1,8 @@
 set(SOURCES
 	"Color.cpp"
 	"Color.h"
+	"CommonPaths.cpp"
+	"CommonPaths.h"
 	"Converter.cpp"
 	"Converter.h"
 	"Equation.cpp"
