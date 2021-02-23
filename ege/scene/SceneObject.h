@@ -127,6 +127,8 @@ public:
     int getRenderLayer() const { return m_renderLayer; }
     void setRenderLayer(int layer) { m_renderLayer = layer; }
 
+    virtual String isnInfo() const override { return m_name; }
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
