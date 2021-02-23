@@ -44,8 +44,9 @@ namespace EGE
 
 class SystemEvent : public Event
 {
-    EGE_EVENT("EGE::SystemEvent");
 public:
+    EGE_EVENT("EGE::SystemEvent");
+
     explicit SystemEvent(sf::Event event)
         : m_event(event)
     {}
