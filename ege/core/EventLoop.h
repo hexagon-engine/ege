@@ -44,7 +44,9 @@
 
 #include <map>
 #include <memory>
+#include <mutex>
 #include <queue>
+#include <thread>
 #include <vector>
 
 namespace EGE
@@ -125,8 +127,41 @@ public:
         bool m_inEventHandler = false;
     };
 
+    template<class EvtT>
+    class LockingEventArray
+    {
+    public:
+        LockingEventArray(EventArray<EvtT>& array, std::mutex& mutex)
+        : m_array(array), m_lock(mutex) {}
+
+        template<class Evt = EvtT>
+        LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
+            { m_array.add(handler); return *this; }
+
+        LockingEventArray<EvtT>& remove(EventHandler& handler)
+            { m_array.remove(handler); return *this; }
+
+        template<class EvtHandler, class... Args>
+        LockingEventArray<EvtT>& addHandler(Args&&... args)
+            { m_array.template addHandler<EvtHandler>(args...); return *this; }
+
+        LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler)
+            { m_array.addHandler(handler); return *this; }
+
+        template<class Evt = EvtT, class... Args>
+        EventResult fire(Args&&... args)
+            { return m_array.template fire<Evt>(args...); }
+
+        EventResult fire(EvtT& event)
+            { return m_array.fire(event); }
+
+    private:
+        EventArray<EvtT>& m_array;
+        std::lock_guard<std::mutex> m_lock;
+    };
+
     template<class Evt>
-    EventArray<Evt>& events() { return (EventArray<Evt>&)events(Evt::type()); }
+    LockingEventArray<Evt> events() { return LockingEventArray<Evt>((EventArray<Evt>&)events(Evt::type()), m_mutex); }
 
     template<class Evt>
     EventResult fire(Evt& evt) { return events<Evt>().fire(evt); }
@@ -177,6 +212,7 @@ private:
     Map<Event::EventType, EventArray<Event>> m_eventHandlers;
     std::shared_ptr<EventLoop> m_subLoop;
     std::queue<std::function<void()>> m_deferredInvokes;
+    std::mutex m_mutex;
 };
 
 }

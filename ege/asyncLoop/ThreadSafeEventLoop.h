@@ -46,7 +46,6 @@
 namespace EGE
 {
 
-// TODO: Actually it's not thread-safe when we have only EventLoop pointer!!!
 class ThreadSafeEventLoop : public AsyncLoop
 {
 public:
@@ -55,45 +54,6 @@ public:
 
     ThreadSafeEventLoop(String id = "ThreadSafeEventLoop")
     : AsyncLoop(id) {}
-
-    template<class EvtT>
-    class _ThreadSafeEventArray
-    {
-    public:
-        _ThreadSafeEventArray(EventArray<EvtT>& earr, sf::Mutex& mutex)
-        : m_array(earr), m_mutex(mutex) {}
-
-        void clear() { sf::Lock lock(m_mutex); m_array.clear(); }
-
-        _ThreadSafeEventArray<EvtT>& remove(EventHandler& handler) { sf::Lock lock(m_mutex); m_array.remove(handler); return *this; }
-
-        template<class Evt = EvtT>
-        _ThreadSafeEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler) { sf::Lock lock(m_mutex); m_array.add(handler); return *this; }
-
-        template<typename EvtHandler, typename... Args>
-        _ThreadSafeEventArray<EvtT>& addHandler(Args&&... args)
-        {
-            sf::Lock lock(m_mutex);
-            m_array.template addHandler<EvtHandler>(std::forward<Args>(args)...);
-            return *this;
-        }
-
-        template<class Evt = EvtT, class... Args>
-        EventResult fire(Args&&... args) { sf::Lock lock(m_mutex); return m_array.fire(args...); }
-
-        EventResult fire(EvtT& event) { sf::Lock lock(m_mutex); return m_array.fire(event); }
-        _ThreadSafeEventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler) { sf::Lock lock(m_mutex); m_array.addHandler(handler); return *this; }
-
-    private:
-        EventArray<EvtT>& m_array;
-        sf::Mutex& m_mutex;
-    };
-
-    template<class Evt>
-    _ThreadSafeEventArray<Evt> events()
-    {
-        return _ThreadSafeEventArray<Evt>(EventLoop::events<Evt>(), m_eventHandlerMutex);
-    }
 
     virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart start = EventLoop::TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
@@ -111,7 +71,6 @@ public:
     virtual void safeRemoveAsyncTasks();
 
 protected:
-    sf::Mutex m_eventHandlerMutex;
     sf::Mutex m_timerMutex;
     sf::Mutex m_asyncTaskMutex;
 
