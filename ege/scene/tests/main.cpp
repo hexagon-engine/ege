@@ -391,7 +391,7 @@ TESTCASE(sceneLoader)
     registry.addType2D<MyBackground>();
 
     EGE::SceneLoader loader(*scene);
-    if(!loader.loadSceneAndSave("saves/test.json", "res/scenes/test.json"))
+    if(!loader.loadSceneAndSave("test.json", "scenes/test.json"))
     {
         log() << "Failed to load scene!";
         return 1;
@@ -425,7 +425,7 @@ TESTCASE(sceneLoader)
 
     // Try save scene
     EGE::System::createDirectory("saves");
-    if(!loader.saveScene("saves/test.json"))
+    if(!loader.saveScene("test.json"))
         return 3;
 
     return 0;
@@ -484,14 +484,14 @@ TESTCASE(parenting)
 
     // Load other objects
     EGE::SceneObjectRegistry& registry = scene->getRegistry();
-    if(!registry.loadFromFile("res/objects/registry.json"))
+    if(!registry.loadFromFile("objects/registry.json"))
         return 3;
 
     registry.addType2D<MyObject>();
     registry.addType2D<MyBackground>();
     registry.addType2D<SimpleRectangleObject>();
 
-    if(!scene->loadFromFile("saves/parenting.json", "res/scenes/parenting.json"))
+    if(!scene->loadFromFile("parenting.json", "scenes/parenting.json"))
         return 1;
 
     // Add camera
@@ -514,7 +514,7 @@ TESTCASE(parenting)
     loop.run();
 
     // Save scene
-    if(!scene->saveToFile("saves/parenting.json"))
+    if(!scene->saveToFile("parenting.json"))
         return 2;
     return 0;
 }

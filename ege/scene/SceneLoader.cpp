@@ -48,7 +48,7 @@ namespace EGE
 bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, const IOStreamConverter& converter)
 {
     SharedPtr<Object> data;
-    std::fstream file(fileName);
+    std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
         err() << "Failed to open registry file";
@@ -221,7 +221,7 @@ bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter) const
 {
     log() << "Saving scene to " << fileName;
-    std::ofstream file(fileName);
+    std::ofstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
         err() << "Scene saving failed - failed to open file!";
@@ -241,7 +241,7 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
 bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 {
     log() << "Loading scene from " << fileName;
-    std::ifstream file(fileName);
+    std::ifstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
         err() << "Scene loading failed - failed to open file!";
@@ -273,7 +273,7 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
 {
     log() << "Loading static objects from " << fileName;
-    std::ifstream file(fileName);
+    std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
         err() << "Static object loading failed - failed to open file!";
