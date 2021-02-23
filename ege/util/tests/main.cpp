@@ -461,4 +461,10 @@ TESTCASE(rect)
     return 0;
 }
 
+TESTCASE(stream_print)
+{
+    std::cout << EGE::RectD() << ", " << EGE::ColorRGBA() << ", " << EGE::Vec2d() << ", " << EGE::PolVec2d() << std::endl;
+    return 0;
+}
+
 RUN_TESTS(util)

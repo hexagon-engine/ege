@@ -113,6 +113,24 @@ typedef PolarVector2<Uint32> PolVec2u;
 
 }
 
+template<class T>
+std::ostream& operator<<(std::ostream& _str, const EGE::Vector2<T>& data)
+{
+    return _str << "(" << data.x << "," << data.y << ")";
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& _str, const EGE::Vector3<T>& data)
+{
+    return _str << "(" << data.x << "," << data.y << data.z << ")";
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& _str, const EGE::PolarVector2<T>& data)
+{
+    return _str << "[" << data.length << "*" << data.angle << "deg]";
+}
+
 #define VECTOR_H
 
 #include "VectorOperations.h"

@@ -40,3 +40,8 @@ namespace EGE
 {
     // currently nothing
 }
+
+std::ostream& operator<<(std::ostream& _str, const EGE::Object& data)
+{
+    return _str << data.toString();
+}

@@ -108,3 +108,9 @@ typedef Rect<Uint32> RectU;
 typedef Rect<Size> RectS;
 
 }
+
+template<class T>
+std::ostream& operator<<(std::ostream& _str, const EGE::Rect<T>& data)
+{
+    return _str << "Rect[" << data.position << "@" << data.size << "]";
+}

@@ -100,3 +100,5 @@ __ENUMERATE_COLORS
 } // Colors
 
 }
+
+std::ostream& operator<<(std::ostream& _str, const EGE::ColorRGBA& data);

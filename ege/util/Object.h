@@ -84,3 +84,5 @@ public:
 };
 
 }
+
+std::ostream& operator<<(std::ostream& _str, const EGE::Object& data);

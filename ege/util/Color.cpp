@@ -72,3 +72,8 @@ ColorRGBA ColorRGBA::fromHTML(String html, Uint8 alpha)
 
 }
 
+std::ostream& operator<<(std::ostream& _str, const EGE::ColorRGBA& data)
+{
+    return _str << "ColorRGBA(" << data.r << ',' << data.g << ',' << data.b << ',' << data.a << ')';
+}
+

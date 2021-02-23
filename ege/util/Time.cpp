@@ -51,3 +51,14 @@ Time& Time::operator+=(MaxFloat _2)
 }
 
 }
+
+std::ostream& operator<<(std::ostream& _str, const EGE::Time& data)
+{
+    std::string unit = "??";
+    switch(data.getUnit())
+    {
+        case EGE::Time::Unit::Seconds: unit = "s"; break;
+        case EGE::Time::Unit::Ticks: unit = "t"; break;
+    }
+    return _str << "Time[" << data.getValue() << " " << unit << "]";
+}

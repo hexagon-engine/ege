@@ -66,3 +66,5 @@ private:
 };
 
 }
+
+std::ostream& operator<<(std::ostream& _str, const EGE::Time& data);
