@@ -119,7 +119,7 @@ void SceneObject2D::render(Renderer& renderer) const
 
 std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
 {
-    std::shared_ptr<ObjectMap> data = make<ObjectMap>();
+    std::shared_ptr<ObjectMap> data = SceneObject::serializeMain();
 
     data->addObject("p", Serializers::fromVector2(m_position));
     data->addObject("o", Serializers::fromVector2(m_origin));
@@ -127,13 +127,7 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
     data->addObject("m", Serializers::fromVector2(m_motion));
     data->addFloat("rot", m_rotation);
     data->addUnsignedInt("rm", (MaxUint)m_rotationMode);
-
-    auto superData = SceneObject::serializeMain();
-
-    if(superData)
-        return superData->merge(data);
-    else
-        return data;
+    return data;
 }
 
 bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
