@@ -129,6 +129,8 @@ public:
 
     virtual String isnInfo() const override { return m_name; }
 
+    virtual bool allowSave() const { return true; }
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }

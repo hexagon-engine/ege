@@ -58,6 +58,8 @@ public:
     Vec2d getEyePosition() { return m_following ? ((SceneObject2D*)m_following.get())->getPosition() : getPosition(); }
     void setEyePosition(Vec2d position) { setPosition(position); }
 
+    virtual bool allowSave() const { return false; }
+
     virtual void render(Renderer& renderer) const override;
 };
 

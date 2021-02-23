@@ -114,6 +114,9 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
     auto objects = make<ObjectList>();
     for(auto& sObj : m_scene.m_objects)
     {
+        if(!sObj.second->allowSave())
+            continue;
+
         auto entry = sObj.second->serialize();
         entry->addString("typeId", sObj.second->getType().getId());
         objects->addObject(entry);
@@ -125,6 +128,9 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
     auto staticObjects = make<ObjectList>();
     for(auto& sObj : m_scene.m_staticObjects)
     {
+        if(!sObj.second->allowSave())
+            continue;
+
         if(sObj.second->didChangeSinceLoad())
         {
             auto entry = sObj.second->serialize();
