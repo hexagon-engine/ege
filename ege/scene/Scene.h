@@ -89,6 +89,7 @@ public:
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
     typedef StringMap<SceneObject*> ObjectMapByName;
+    typedef std::multimap<int, SceneObject*> ObjectMapByLayer;
 
     bool loadFromFile(String saveFile, String sceneFile, const IOStreamConverter& converter = JSONConverter());
 
@@ -164,10 +165,12 @@ protected:
     friend class SceneLoader;
 
     virtual void render(Renderer& renderer) const override;
+    virtual void rebuildLayers();
 
     ObjectMapType m_objects;
     ObjectMapType m_staticObjects;
     ObjectMapByName m_objectsByName;
+    ObjectMapByLayer m_objectsByLayer;
     SceneObjectRegistry m_registry;
 
 private:

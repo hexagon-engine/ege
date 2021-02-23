@@ -118,6 +118,7 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
     auto data = make<ObjectMap>();
     if(m_parent)
         data->addString("parent", m_parent->getName());
+    data->addInt("layer", m_renderLayer);
 
     return data;
 }
@@ -125,6 +126,7 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
 bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
 {
     m_parentId = data->getObject("parent").asString().valueOr("");
+    m_renderLayer = data->getObject("layer").asInt().valueOr(0);
     return true;
 }
 

@@ -71,7 +71,7 @@ public:
     virtual ~SceneObject();
 
     virtual void onUpdate(long long tickCounter);
-    virtual void doRender(Renderer& renderer, const RenderStates& states);
+    virtual void doRender(Renderer& renderer, const RenderStates& states = {});
 
     bool isDead() const { return m_dead; }
 
@@ -122,6 +122,11 @@ public:
     // add e.g. animations.
     virtual void onInit() {}
 
+    // The higher number is rendered on top of the lower number.
+    // e.g. layer 1 objects are covered by layer 2 objects.
+    int getRenderLayer() const { return m_renderLayer; }
+    void setRenderLayer(int layer) { m_renderLayer = layer; }
+
 protected:
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
@@ -137,6 +142,7 @@ protected:
     bool m_extendedChanged = true;
     bool m_changedSinceLoad = false;
     SharedPtr<ObjectRenderer> m_renderer;
+    int m_renderLayer = 0;
 
     Set<SceneObject*> m_children;
     SceneObject* m_parent = nullptr;

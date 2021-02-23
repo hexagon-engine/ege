@@ -74,15 +74,8 @@ void Scene::render(Renderer& renderer) const
     // since it's NOT necessary (Scene itself is an EventLoop)
     ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
 
-    for(auto pr: m_staticObjects)
-    {
-        pr.second->doRender(renderer, renderer.getStates());
-    }
-
-    for(auto pr: m_objects)
-    {
-        pr.second->doRender(renderer, renderer.getStates());
-    }
+    for(auto pr: m_objectsByLayer)
+        pr.second->doRender(renderer);
 }
 
 void Scene::onUpdate(TickCount tickCounter)
@@ -184,7 +177,8 @@ UidType Scene::addObject(std::shared_ptr<SceneObject> object)
     m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
 
     fire<AddObjectEvent>(*object);
-
+    // TODO: Do not rebuild layers if adding multiple objects in one tick
+    rebuildLayers();
     return object->getObjectId();
 }
 
@@ -239,6 +233,8 @@ UidType Scene::addStaticObject(std::shared_ptr<SceneObject> object, bool overwri
 
     m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
     m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
+    // TODO: Do not rebuild layers if adding multiple objects in one tick
+    rebuildLayers();
     return object->getObjectId();
 }
 
@@ -326,6 +322,17 @@ SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> d
     }
 
     return sceneObject;
+}
+
+void Scene::rebuildLayers()
+{
+    m_objectsByLayer.clear();
+
+    for(auto pr: m_staticObjects)
+        m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
+
+    for(auto pr: m_objects)
+        m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
 }
 
 }
