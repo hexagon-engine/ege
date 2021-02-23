@@ -132,11 +132,11 @@ protected:
     Scene& m_owner;
     bool m_dead = false;
     UidType m_id = 0;
-    std::string m_name;
+    String m_name;
     bool m_mainChanged = true;
     bool m_extendedChanged = true;
     bool m_changedSinceLoad = false;
-    std::shared_ptr<ObjectRenderer> m_renderer;
+    SharedPtr<ObjectRenderer> m_renderer;
 
     Set<SceneObject*> m_children;
     SceneObject* m_parent = nullptr;
