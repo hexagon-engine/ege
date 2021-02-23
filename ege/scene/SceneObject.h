@@ -106,8 +106,7 @@ public:
 
     void setParent(SceneObject* object);
 
-    void addPart(String name, SharedPtr<Part> part) { m_parts.insert(std::make_pair(name, part)); }
-
+    void addPart(String name, SharedPtr<Part> part);
     SharedPtrStringMap<Part>& getParts() { return m_parts; }
     Part* getPart(String name);
 
@@ -159,6 +158,7 @@ protected:
 
 private:
     SharedPtrStringMap<Part> m_parts;
+    std::multimap<int, Part*> m_partsByLayer;
 };
 
 }

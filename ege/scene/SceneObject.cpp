@@ -57,7 +57,7 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
         m_renderer->doRender(renderer);
 
     // Render all parts :)
-    for(auto it: getParts())
+    for(auto it: m_partsByLayer)
         it.second->doRender(renderer, states);
 }
 
@@ -154,6 +154,12 @@ void SceneObject::setParent(SceneObject* object)
 
     m_parent->m_children.insert(this);
     isnSetParent(object);
+}
+
+void SceneObject::addPart(String name, SharedPtr<Part> part)
+{
+    m_parts.insert(std::make_pair(name, part));
+    m_partsByLayer.insert(std::make_pair(part->getRenderLayer(), part.get()));
 }
 
 Part* SceneObject::getPart(String name)

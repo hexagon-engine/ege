@@ -44,6 +44,12 @@ namespace EGE
 Part::Part(SceneObject& object)
 : InspectorNode((InspectorNode*)&object, "Part of " + object.getName()), m_object(object) {}
 
+bool Part::deserialize(SharedPtr<ObjectMap> data)
+{
+    m_renderLayer = data->getObject("layer").asInt().valueOr(0);
+    return true;
+}
+
 sf::View Part::getCustomView(sf::RenderTarget& target) const
 {
     // TODO: 2d / 3d !
