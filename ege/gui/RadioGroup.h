@@ -48,6 +48,8 @@ class RadioGroup : public CompoundWidget
 public:
     RadioGroup(Widget& parent, String id = "RadioGroup");
 
+    void setCheckedButton(RadioButton& button);
+
 private:
     friend class RadioButton;
 

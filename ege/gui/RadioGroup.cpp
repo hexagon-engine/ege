@@ -47,6 +47,11 @@ RadioGroup::RadioGroup(Widget& parent, String id)
     layoutDirection = LayoutElement::Direction::Vertical;
 }
 
+void RadioGroup::setCheckedButton(RadioButton& button)
+{
+    didClick(button);
+}
+
 void RadioGroup::didClick(RadioButton& button)
 {
     for(auto& widget: *this)

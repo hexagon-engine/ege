@@ -258,18 +258,10 @@ public:
                     radioButton2->setLabel("RadioButton 2");
                     auto radioButton3 = radiogroup->addNewWidget<EGE::RadioButton>();
                     radioButton3->setLabel("RadioButton 3");
+                    radiogroup->setCheckedButton(*radioButton2);
                 }
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
-
-                auto scrollBar = myFrame->addNewWidget<EGE::ScrollBar>();
-                scrollBar->setPosition({"0px", "0px"});
-                scrollBar->setType(EGE::ScrollBar::Type::Vertical);
-                scrollBar->setLength(EGE::LayoutSizeD("100%"));
-                scrollBar->setMaxValue(1.6);
-                scrollBar->setUpdateCallback([](double val) {
-                    std::cerr << "scrollbar.value=" << val << std::endl;
-                });
 
                 auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }
