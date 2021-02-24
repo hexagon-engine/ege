@@ -116,8 +116,11 @@ protected:
 
     virtual void updateLayout() override;
 
+    SharedPtrVector<Widget>::const_iterator begin() const { return m_childWidgets.begin(); }
+    SharedPtrVector<Widget>::const_iterator end() const { return m_childWidgets.end(); }
+
 private:
-    Vector<SharedPtr<Widget>> m_childWidgets;
+    SharedPtrVector<Widget> m_childWidgets;
     int m_focusedWidget = -1;
 };
 
