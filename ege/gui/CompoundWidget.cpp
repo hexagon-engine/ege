@@ -288,40 +288,34 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 
 void CompoundWidget::addWidget(SharedPtr<Widget> widget)
 {
-    // deferredInvoke to allow adding and removing widgets inside event handlers
-    deferredInvoke([this, widget]() {
-        DUMP(GUI_DEBUG, "addWidget");
-        DUMP(GUI_DEBUG, widget.get());
-        ASSERT(widget);
-        widget->onLoad();
+    DUMP(GUI_DEBUG, "addWidget");
+    DUMP(GUI_DEBUG, widget.get());
+    ASSERT(widget);
+    widget->onLoad();
 
-        // allow widgets know about window's size when creating
-        sf::Vector2u wndSize = getLoop().getWindow().getSize();
-        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
-        widget->onResize(event);
+    // allow widgets know about window's size when creating
+    sf::Vector2u wndSize = getLoop().getWindow().getSize();
+    sf::Event::SizeEvent event{wndSize.x, wndSize.y};
+    widget->onResize(event);
 
-        m_childWidgets.push_back(widget);
-        setGeometryNeedUpdate();
-    });
+    m_childWidgets.push_back(widget);
+    setGeometryNeedUpdate();
 }
 
 void CompoundWidget::removeWidget(Widget* widget)
 {
-    // deferredInvoke to allow adding and removing widgets inside event handlers
-    deferredInvoke([this, widget]() {
-        for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
+    for(auto it = m_childWidgets.begin(); it != m_childWidgets.end(); it++)
+    {
+        if(it->get() == widget)
         {
-            if(it->get() == widget)
-            {
-                if(widget->hasFocus())
-                    clearFocus();
+            if(widget->hasFocus())
+                clearFocus();
 
-                m_childWidgets.erase(it);
-                return;
-            }
+            m_childWidgets.erase(it);
+            return;
         }
-        setGeometryNeedUpdate();
-    });
+    }
+    setGeometryNeedUpdate();
 }
 
 void CompoundWidget::updateLayout()
