@@ -36,26 +36,22 @@
 
 #pragma once
 
-#include <ege/gui/Animatable.h>
-#include <ege/gui/AnimationEasingFunctions.h>
-#include <ege/gui/Animation.h>
-#include <ege/gui/Button.h>
-#include <ege/gui/CheckBox.h>
-#include <ege/gui/ComboBox.h>
-#include <ege/gui/CompoundWidget.h>
-#include <ege/gui/Frame.h>
-#include <ege/gui/GameLoop.h>
-#include <ege/gui/GUIGameLoop.h>
-#include <ege/gui/GUIResourceManager.h>
-#include <ege/gui/GUIScreen.h>
-#include <ege/gui/Label.h>
-#include <ege/gui/LayoutElement.h>
-#include <ege/gui/LayoutSize.h>
-#include <ege/gui/ListBox.h>
-#include <ege/gui/RadioButton.h>
-#include <ege/gui/RadioGroup.h>
-#include <ege/gui/ScrollBar.h>
-#include <ege/gui/Slider.h>
-#include <ege/gui/SpinBox.h>
-#include <ege/gui/TextBox.h>
-#include <ege/gui/Widget.h>
+#include "CompoundWidget.h"
+
+namespace EGE
+{
+
+class RadioButton;
+
+class RadioGroup : public CompoundWidget
+{
+public:
+    RadioGroup(Widget& parent, String id = "RadioGroup");
+
+private:
+    friend class RadioButton;
+
+    void didClick(RadioButton& button);
+};
+
+}

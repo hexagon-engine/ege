@@ -37,6 +37,7 @@
 #pragma once
 
 #include "CheckBox.h"
+#include "RadioGroup.h"
 
 #include <ege/gfx/RenderStates.h>
 #include <SFML/Graphics.hpp>
@@ -48,7 +49,7 @@ class RadioButton : public CheckBox
 {
 public:
     explicit RadioButton(Widget& parent, String id = "RadioButton")
-    : CheckBox(parent, id) {}
+    : CheckBox(parent, id), m_radioGroup((RadioGroup&)parent) {}
 
 protected:
     virtual void render(Renderer& renderer) const override;
@@ -56,6 +57,8 @@ protected:
 
 private:
     virtual void onClick(EGE::Vec2d);
+
+    RadioGroup& m_radioGroup;
 };
 
 }

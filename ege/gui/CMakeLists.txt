@@ -33,6 +33,8 @@ set(SOURCES
 	"ListBox.h"
 	"RadioButton.cpp"
 	"RadioButton.h"
+	"RadioGroup.cpp"
+	"RadioGroup.h"
 	"ScrollBar.cpp"
 	"ScrollBar.h"
 	"Slider.cpp"

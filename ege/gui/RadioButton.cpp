@@ -100,13 +100,7 @@ void RadioButton::render(Renderer& renderer) const
 void RadioButton::onClick(EGE::Vec2d pos)
 {
     CheckBox::onClick(pos);
-    /*
-    RadioGroup* group = dynamic_cast<RadioGroup*>(m_parent);
-    if(group)
-    {
-        group->deselectAllBut(this);
-    }
-    */
+    m_radioGroup.didClick(*this);
 }
 
 void RadioButton::updateLayout()
