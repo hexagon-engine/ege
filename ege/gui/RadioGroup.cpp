@@ -52,8 +52,14 @@ void RadioGroup::setCheckedButton(RadioButton& button)
     didClick(button);
 }
 
+RadioButton* RadioGroup::getCheckedButton() const
+{
+    return m_current;
+}
+
 void RadioGroup::didClick(RadioButton& button)
 {
+    m_current = &button;
     for(auto& widget: *this)
     {
         auto radiobutton = dynamic_cast<RadioButton*>(widget.get());

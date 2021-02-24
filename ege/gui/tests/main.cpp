@@ -259,10 +259,10 @@ public:
                     auto radioButton3 = radiogroup->addNewWidget<EGE::RadioButton>();
                     radioButton3->setLabel("RadioButton 3");
                     radiogroup->setCheckedButton(*radioButton2);
+                    log() << radiogroup->getCheckedButton()->getLabel().toAnsiString();
                 }
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
-
                 auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }
 

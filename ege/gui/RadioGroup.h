@@ -49,11 +49,14 @@ public:
     RadioGroup(Widget& parent, String id = "RadioGroup");
 
     void setCheckedButton(RadioButton& button);
+    RadioButton* getCheckedButton() const;
 
 private:
     friend class RadioButton;
 
     void didClick(RadioButton& button);
+
+    RadioButton* m_current = nullptr;
 };
 
 }
