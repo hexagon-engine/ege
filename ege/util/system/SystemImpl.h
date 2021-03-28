@@ -67,6 +67,7 @@ public:
 
     // Global
     virtual std::string getErrorMessage() { CRASH(); }
+    virtual std::string getEnv(std::string) { CRASH(); }
 
     virtual std::string className() { return "EGE::Internal::SystemImpl"; }
 };

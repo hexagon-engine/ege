@@ -214,6 +214,11 @@ std::string SystemImplUnix::getErrorMessage()
     return strerror(m_lastErrno);
 }
 
+std::string SystemImplUnix::getEnv(std::string name)
+{
+    return getenv(name.c_str());
+}
+
 } // Unix
 
 }

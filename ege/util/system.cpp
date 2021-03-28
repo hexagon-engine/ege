@@ -14,6 +14,11 @@ std::string getErrorMessage()
     return impl().getErrorMessage();
 }
 
+std::string getEnv(std::string name)
+{
+    return impl().getEnv(name);
+}
+
 } // System
 
 }

@@ -63,6 +63,7 @@ public:
 
     // Global
     std::string getErrorMessage();
+    std::string getEnv(std::string);
 
     virtual std::string className() { return "EGE::Unix::SystemImplUnix"; }
 
