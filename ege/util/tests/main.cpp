@@ -331,6 +331,7 @@ TESTCASE(serializers)
 
 TESTCASE(system)
 {
+    std::cerr << "OS IMPL: " << EGE::System::name() << std::endl;
     EXPECT(EGE::System::unixTime() > 1500000000);
     EXPECT(EGE::System::exactTime().s > 1500000000);
     size_t i1 = EGE::System::getWorkingDirectory().size();
@@ -346,6 +347,22 @@ TESTCASE(system)
     EGE::System::createPath("test2/1/23/456/");
     EGE::System::removePath("test");
     EGE::System::removePath("test2");
+    std::cerr << "PATH: " << EGE::System::getEnv("PATH") << std::endl;
+    return 0;
+}
+
+TESTCASE(commonPaths)
+{
+    std::cerr << "System paths:" << std::endl;
+    std::cerr << "* currentDir = " << EGE::CommonPaths::currentDir() << std::endl;
+    std::cerr << "* rootDir = " << EGE::CommonPaths::rootDir() << std::endl;
+    std::cerr << "* homeDir = " << EGE::CommonPaths::homeDir() << std::endl;
+    std::cerr << "* dataDir = " << EGE::CommonPaths::dataDir() << std::endl;
+    std::cerr << "* installDir = " << EGE::CommonPaths::installDir() << std::endl;
+    std::cerr << "Engine-specific paths:" << std::endl;
+    std::cerr << "* resourceDir = " << EGE::CommonPaths::resourceDir() << std::endl;
+    std::cerr << "* configDir = " << EGE::CommonPaths::configDir() << std::endl;
+    std::cerr << "* saveDir = " << EGE::CommonPaths::saveDir() << std::endl;
     return 0;
 }
 

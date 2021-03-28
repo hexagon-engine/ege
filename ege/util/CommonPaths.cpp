@@ -36,6 +36,7 @@
 
 #include "CommonPaths.h"
 
+#include "OS.h"
 #include "system.h"
 
 namespace EGE
@@ -48,6 +49,49 @@ namespace CommonPaths
 String currentDir()
 {
     return System::getWorkingDirectory();
+}
+String rootDir() // '/' on Unix/Linux, 'VOLUME:\' on Windows
+{
+    #if defined(EGE_API_UNIX)
+        return "/";
+    #elif defined(EGE_API_WIN32)
+        return currentDir().substr(0, 3); // 3 first letters of current directory -> "C:\"
+    #else
+        #error Invalid OS for rootDir()
+    #endif
+}
+
+String homeDir() // $HOME on Unix/Linux, %userprofile% on Windows
+{
+    #if defined(EGE_API_UNIX)
+        return System::getEnv("HOME");
+    #elif defined(EGE_API_WIN32)
+        return System::getEnv("userprofile");
+    #else
+        #error Invalid OS for homeDir()
+    #endif
+}
+
+String dataDir() // ~/.local/share on Unix/Linux, %AppData% on Windows
+{
+    #if defined(EGE_API_UNIX)
+        return homeDir() + "/.local/share";
+    #elif defined(EGE_API_WIN32)
+        return System::getEnv("AppData");
+    #else
+        #error Invalid OS for dataDir()
+    #endif
+}
+
+String installDir() // /usr/share on Unix/Linux, %ProgramFiles% on Windows
+{
+    #if defined(EGE_API_UNIX)
+        return "/usr/share";
+    #elif defined(EGE_API_WIN32)
+        return System::getEnv("ProgramFiles");
+    #else
+        #error Invalid OS for installDir()
+    #endif
 }
 
 // engine

@@ -45,7 +45,11 @@ namespace CommonPaths
 {
 
 // System paths
-String currentDir();
+String currentDir(); // Current working directory.
+String rootDir(); // '/' on Unix/Linux, 'VOLUME:\' on Windows.
+String homeDir(); // $HOME on Unix/Linux, %userprofile% on Windows.
+String dataDir(); // ~/.local/share on Unix/Linux, %AppData% on Windows.
+String installDir(); // /usr/share on Unix/Linux, %ProgramFiles% on Windows. Requires admin access.
 
 // Engine-specific paths
 
