@@ -60,6 +60,7 @@ RadioButton* RadioGroup::getCheckedButton() const
 void RadioGroup::didClick(RadioButton& button)
 {
     m_current = &button;
+    // TODO: We already save current rb, no need to search for it.
     for(auto& widget: *this)
     {
         auto radiobutton = dynamic_cast<RadioButton*>(widget.get());

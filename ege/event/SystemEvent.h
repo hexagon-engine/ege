@@ -48,8 +48,7 @@ public:
     EGE_EVENT("EGE::SystemEvent");
 
     explicit SystemEvent(sf::Event event)
-        : m_event(event)
-    {}
+    : m_event(event) {}
 
     const sf::Event& getEvent() { return m_event; }
 

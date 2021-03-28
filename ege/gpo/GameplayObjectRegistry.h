@@ -94,7 +94,7 @@ public:
 
     // Returns an object that has specified base %id. Returns NULL if
     // the object doesn't exist or another error occured.
-     ObjT* findById(const IdT& id) const;
+    ObjT* findById(const IdT& id) const;
 
     // Returns an object that has specified numeric %id. Returns NULL if
     // the object doesn't exist or another error occured.

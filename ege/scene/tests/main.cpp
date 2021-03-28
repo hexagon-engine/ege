@@ -380,7 +380,7 @@ TESTCASE(_tileMap)
 
 TESTCASE(sceneLoader)
 {
-    // Create loop (it's needed for Scene
+    // Create loop (it's needed for Scene)
     EGE::GUIGameLoop loop;
 
     // Load some scene
