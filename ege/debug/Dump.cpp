@@ -85,7 +85,7 @@ void hexDump(const void* data, size_t size, HexDumpSettings settings)
 namespace PrintObject
 {
 
-enum class IntendMode
+enum class IndentMode
 {
     None,
     Normal,
@@ -93,36 +93,36 @@ enum class IntendMode
     LastObject
 };
 
-static void _intend(std::vector<IntendMode> modes)
+static void _indent(std::vector<IndentMode> modes)
 {
-    for(IntendMode mode: modes)
+    for(IndentMode mode: modes)
     {
         switch(mode)
         {
-            case IntendMode::None:
+            case IndentMode::None:
                 std::cerr << "   "; // "   "
                 break;
-            case IntendMode::Normal:
+            case IndentMode::Normal:
                 std::cerr << "\u2502  "; // "|  "
                 break;
-            case IntendMode::Object:
+            case IndentMode::Object:
                 std::cerr << "\u251c\u2500 "; // "|--"
                 break;
-            case IntendMode::LastObject:
+            case IndentMode::LastObject:
                 std::cerr << "\u2514\u2500 "; // "L--"
                 break;
         }
     }
 }
 
-static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast);
+static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast);
 
 static void _printName(std::string name)
 {
     std::cerr << "\e[1;32m" << name << "\e[m = ";
 }
 
-static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
+static void _printValue(std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast)
 {
     if(depth.size() > 10)
     {
@@ -157,21 +157,21 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
             size_t counter = 0;
             for(auto pr: _vector)
             {
-                std::vector<IntendMode> depth2 = depth;
+                std::vector<IndentMode> depth2 = depth;
 
                 if(counter == _vector.size() - 1 || counter >= 10)
                 {
                     if(!depth2.empty())
                     {
                         if(isLast)
-                            depth2.back() = IntendMode::None;
+                            depth2.back() = IndentMode::None;
                         else
-                            depth2.back() = IntendMode::Normal;
+                            depth2.back() = IndentMode::Normal;
                     }
-                    depth2.push_back(IntendMode::LastObject);
+                    depth2.push_back(IndentMode::LastObject);
                     if(counter >= 10)
                     {
-                        _intend(depth2);
+                        _indent(depth2);
                         std::cerr << "\e[31m...\e[m (" << _vector.size() - 10 << " remaining)" << std::endl;
                         break;
                     }
@@ -181,14 +181,14 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
                     if(!depth2.empty())
                     {
                         if(isLast)
-                            depth2.back() = IntendMode::None;
+                            depth2.back() = IndentMode::None;
                         else
-                            depth2.back() = IntendMode::Normal;
+                            depth2.back() = IndentMode::Normal;
                     }
-                    depth2.push_back(IntendMode::Object);
+                    depth2.push_back(IndentMode::Object);
                 }
 
-                _intend(depth2);
+                _indent(depth2);
                 _printValue(pr, depth2, counter == _vector.size() - 1);
                 counter++;
             }
@@ -207,21 +207,21 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
             size_t counter = 0;
             for(auto pr: _map)
             {
-                std::vector<IntendMode> depth2 = depth;
+                std::vector<IndentMode> depth2 = depth;
 
                 if(counter == _map.size() - 1 || counter > 10)
                 {
                     if(!depth2.empty())
                     {
                         if(isLast)
-                            depth2.back() = IntendMode::None;
+                            depth2.back() = IndentMode::None;
                         else
-                            depth2.back() = IntendMode::Normal;
+                            depth2.back() = IndentMode::Normal;
                     }
-                    depth2.push_back(IntendMode::LastObject);
+                    depth2.push_back(IndentMode::LastObject);
                     if(counter > 10)
                     {
-                        _intend(depth2);
+                        _indent(depth2);
                         std::cerr << "\e[31m...\e[m (" << _map.size() - 10 << " remaining)" << std::endl;
                         break;
                     }
@@ -231,11 +231,11 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
                     if(!depth2.empty())
                     {
                         if(isLast)
-                            depth2.back() = IntendMode::None;
+                            depth2.back() = IndentMode::None;
                         else
-                            depth2.back() = IntendMode::Normal;
+                            depth2.back() = IndentMode::Normal;
                     }
-                    depth2.push_back(IntendMode::Object);
+                    depth2.push_back(IndentMode::Object);
                 }
 
                 _printPair(pr.first, pr.second, depth2, counter == _map.size() - 1);
@@ -257,9 +257,9 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IntendMode> 
     }
 }
 
-static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IntendMode> depth, bool isLast)
+static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast)
 {
-    _intend(depth);
+    _indent(depth);
     _printName(name);
     _printValue(object, depth, isLast);
 }
