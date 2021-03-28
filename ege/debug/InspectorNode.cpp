@@ -38,13 +38,8 @@
 
 #include "Inspector.h"
 
-
-#include <cstring>  // for backtrace
-#include <execinfo.h>  // for backtrace
-#include <dlfcn.h>     // for dladdr
 #include <string>
 #include <sstream>
-#include <cxxabi.h>    // for __cxa_demangle
 #include <typeinfo>
 
 #define KEEP_REMOVED_NODES 1
