@@ -141,7 +141,16 @@ public:
     std::ostream* getOutput() { return m_output; }
     std::string getName() { return m_streamName; }
     void filterLevel(LogLevel level, bool filter = true);
-    Internal::_LoggerHelper log(LogLevel level);
+    Internal::_LoggerHelper log(LogLevel level) const;
+
+    Internal::_LoggerHelper debug() const { return log(LogLevel::Debug); }
+    Internal::_LoggerHelper verbose() const { return log(LogLevel::Verbose); }
+    Internal::_LoggerHelper info() const { return log(LogLevel::Info); }
+    Internal::_LoggerHelper notice() const { return log(LogLevel::Notice); }
+    Internal::_LoggerHelper warning() const { return log(LogLevel::Warning); }
+    Internal::_LoggerHelper error() const { return log(LogLevel::Error); }
+    Internal::_LoggerHelper critical() const { return log(LogLevel::Critical); }
+    Internal::_LoggerHelper crash() const { return log(LogLevel::Crash); }
 
 private:
     std::ostream* m_output;
@@ -149,15 +158,20 @@ private:
     std::set<LogLevel> m_filteredLevels = { LogLevel::Debug, LogLevel::Verbose };
 };
 
-Internal::_LoggerHelper err(LogLevel level = LogLevel::Error);
-Internal::_LoggerHelper log(LogLevel level = LogLevel::Info);
+[[deprecated]] Internal::_LoggerHelper err(LogLevel level = LogLevel::Error);
+[[deprecated]] Internal::_LoggerHelper log(LogLevel level = LogLevel::Info);
 
 Logger& errLogger();
 Logger& mainLogger();
 
 }
 
+#define ege_err EGE::errLogger()
+#define ege_log EGE::mainLogger()
+
 using EGE::LogLevel;
 using EGE::Logger;
+
+// TODO: remove it!
 using EGE::err;
 using EGE::log;

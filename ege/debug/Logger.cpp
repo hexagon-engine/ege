@@ -269,7 +269,7 @@ Logger g_mainLogger(&std::cout, "STDOUT");
 Logger g_errLogger(&std::cerr, "STDERR");
 
 // Logger
-Internal::_LoggerHelper Logger::log(LogLevel level)
+Internal::_LoggerHelper Logger::log(LogLevel level) const
 {
     if(!m_output || m_filteredLevels.count(level))
         return {};

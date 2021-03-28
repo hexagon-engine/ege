@@ -28,13 +28,21 @@ TESTCASE(_printObject)
 
 TESTCASE(logger)
 {
-    err(LogLevel::Debug) << "Test " << 1234;
-    err(LogLevel::Verbose) << "Test " << 1234;
-    err(LogLevel::Info) << "Test " << 1234;
-    err(LogLevel::Warning) << "Test " << 1234;
-    err(LogLevel::Error) << "Test " << 1234;
-    err(LogLevel::Critical) << "Test " << 1234;
-    err(LogLevel::Crash) << "Test " << 1234;
+    ege_err.debug() << "Test " << 1234;
+    ege_err.verbose() << "Test " << 1234;
+    ege_err.info() << "Test " << 1234;
+    ege_err.warning() << "Test " << 1234;
+    ege_err.error() << "Test " << 1234;
+    ege_err.critical() << "Test " << 1234;
+    ege_err.crash() << "Test " << 1234;
+
+    ege_log.debug() << "Test " << 1234;
+    ege_log.verbose() << "Test " << 1234;
+    ege_log.info() << "Test " << 1234;
+    ege_log.warning() << "Test " << 1234;
+    ege_log.error() << "Test " << 1234;
+    ege_log.critical() << "Test " << 1234;
+    ege_log.crash() << "Test " << 1234;
 
     return 0;
 }
