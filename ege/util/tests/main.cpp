@@ -12,16 +12,15 @@ TESTCASE(object)
     auto map2 = make<EGE::ObjectMap>();
     map2->addObject("test3", make<EGE::ObjectString>("test44"));
     map.addObject("testObjects", map2);
-    DEBUG_PRINT(map.getObject("test").asString().valueOr("").c_str());
-    DEBUG_PRINT(map.getObject("testObjects")
+    std::cout << map.getObject("test").asString().valueOr("").c_str() << std::endl;
+    std::cout << map.getObject("testObjects")
                 .to<EGE::ObjectMap>()
                 .valueOr({})
                 ->getObject("test3")
                 .asString()
                 .valueOr("")
-                .c_str()
-            );
-    DEBUG_PRINT(map.toString().c_str());
+                .c_str() << std::endl;
+    std::cout << map.toString().c_str() << std::endl;
     return 0;
 }
 

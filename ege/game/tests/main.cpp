@@ -61,7 +61,7 @@ public:
 
     virtual bool load()
     {
-        DEBUG_PRINT("MyGameplayObjectManager load");
+        ege_log.info() << "MyGameplayObjectManager load";
         registerObject("black", 0, 0, 0);
         registerObject("red", 255, 0, 0);
         registerObject("green", 0, 255, 0);
@@ -118,7 +118,7 @@ public:
     void onLoad()
     {
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
-        DEBUG_PRINT("MyGuiScreen onLoad");
+        ege_log.info() << "MyGuiScreen onLoad";
         size_t s = 1;
         for(auto& color: MyGameplayObjectManager::instance->colors)
         {
@@ -136,7 +136,7 @@ class MyResourceManager : public EGE::ResourceManager
 public:
     virtual bool reload() override
     {
-        DEBUG_PRINT("MyResourceManager reload");
+        ege_log.info() << "MyResourceManager reload";
         setDefaultFont("font.ttf");
         return true;
     }

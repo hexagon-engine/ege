@@ -35,21 +35,33 @@ add_custom_target(tests
 	USES_TERMINAL
 )
 
+macro(ege_add_all_tests_for targetname)
+    file(GLOB TEST_FILES "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
+
+    foreach(testfile ${TEST_FILES})
+        get_filename_component(testfile_only_name ${testfile} NAME_WE)
+        ege_message("INFO" "Adding test for module: ege-test-${targetname}-${testfile_only_name}")
+        add_executable("ege-test-${targetname}-${testfile_only_name}" ${testfile})
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
+        target_link_libraries("ege-test-${targetname}-${testfile_only_name}" PUBLIC "ege-${targetname}")
+        install(TARGETS "ege-test-${targetname}-${testfile_only_name}" RUNTIME DESTINATION tests)
+    endforeach()
+    
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/res")
+        ege_message("INFO" "MODULE TEST: Adding resource directory for ege-${targetname}")
+        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests/res" DESTINATION ".")
+    endif()
+endmacro()
+
 macro(ege_add_module targetname)
-	ege_message("INFO" "Adding MODULE: ege-${targetname}")
-	add_library("ege-${targetname}" STATIC ${SOURCES})
-	install(TARGETS "ege-${targetname}" ARCHIVE DESTINATION modules)
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
-		ege_message("INFO" "Adding MODULE TEST: ege-${targetname}")
-		add_executable("ege-test-${targetname}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp")
-		set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
-		target_link_libraries("ege-test-${targetname}" PUBLIC "ege-${targetname}")
-		install(TARGETS "ege-test-${targetname}" RUNTIME DESTINATION tests)
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/res")
-			ege_message("INFO" "MODULE TEST: Adding resource directory for ege-${targetname}")
-			install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests/res" DESTINATION ".")
-		endif()
+    ege_message("INFO" "Adding MODULE: ege-${targetname}")
+    add_library("ege-${targetname}" STATIC ${SOURCES})
+    install(TARGETS "ege-${targetname}" ARCHIVE DESTINATION modules)
+    
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
+        ege_add_all_tests_for(${targetname})
 	endif()
+
 endmacro()
 
 macro(ege_depend_module target dependtarget)

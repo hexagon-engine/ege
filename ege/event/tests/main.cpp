@@ -36,6 +36,7 @@
 
 #include <testsuite/Tests.h>
 #include <ege/core/EventLoop.h>
+#include <ege/debug/Logger.h>
 #include <ege/event/SystemEvent.h>
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/event/SystemWindow.h>
@@ -106,11 +107,11 @@ public:
 
     virtual void onMouseEnter()
     {
-        DEBUG_PRINT("onMouseEnter");
+        ege_log.info() << "onMouseEnter";
     }
     virtual void onMouseLeave()
     {
-        DEBUG_PRINT("onMouseLeave");
+        ege_log.info() << "onMouseLeave";
     }
 };
 

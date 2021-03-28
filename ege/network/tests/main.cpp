@@ -162,7 +162,7 @@ TESTCASE(abstract)
         if(!server.start())
         {
             std::cerr << "Failed to start server!" << std::endl;
-            tests.fail();
+            FAIL_TEST();
             return;
         }
 
@@ -183,7 +183,7 @@ TESTCASE(abstract)
         if(!client1.connect(sf::IpAddress::LocalHost, PORT))
         {
             std::cerr << "Failed to connect to server!" << std::endl;
-            tests.fail();
+            FAIL_TEST();
             return;
         }
 
@@ -205,7 +205,7 @@ TESTCASE(abstract)
         if(!client2.connect(sf::IpAddress::LocalHost, PORT))
         {
             std::cerr << "Failed to connect to server!" << std::endl;
-            tests.fail();
+            FAIL_TEST();
             return;
         }
 

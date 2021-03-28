@@ -84,8 +84,8 @@ TESTCASE(profilerSimple)
 
     profiler.end();
 
-    DEBUG_PRINT(("\n" + profiler.toString()).c_str());
-    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
+    ege_log.info() << profiler.toString();
+    ege_log.info() << profiler.serialize()->toString();
 
     return 0;
 }
@@ -141,8 +141,8 @@ TESTCASE(profilerRestartTest)
 
     profiler.end();
 
-    DEBUG_PRINT(("\n" + profiler.toString()).c_str());
-    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
+    ege_log.info() << profiler.toString();
+    ege_log.info() << profiler.serialize()->toString();
 
     return 0;
 }
@@ -169,8 +169,8 @@ TESTCASE(profilerSectionStarter)
 
     profiler.end();
 
-    DEBUG_PRINT(("\n" + profiler.toString()).c_str());
-    DEBUG_PRINT(("\n" + profiler.serialize()->toString()).c_str());
+    ege_log.info() << profiler.toString();
+    ege_log.info() << profiler.serialize()->toString();
 
     return 0;
 }

@@ -2,6 +2,7 @@
 #include <ege/core/DataManager.h>
 #include <ege/core/EventLoop.h>
 #include <ege/core/TimerEvent.h>
+#include <ege/debug/Logger.h>
 #include <ege/util/ObjectSerializers.h>
 #include <iostream>
 
@@ -28,7 +29,7 @@ struct TickEvent : public EGE::Event
 void MyGameLoop::onUpdate(long long tickCount)
 {
     EGE::EventLoop::onUpdate();
-    DEBUG_PRINT("onTick");
+    ege_log.info() << "onTick";
 
     TickEvent event(tickCount);
     events<TickEvent>().fire(event);
@@ -42,14 +43,14 @@ void MyGameLoop::onUpdate(long long tickCount)
 
 EGE::EventResult eventTest(TickEvent& event)
 {
-    DEBUG_PRINT("eventTest");
+    ege_log.info() << "eventTest";
     if(event.m_tickCount == 2)
         event.cancel();
     return EGE::EventResult::Success;
 }
 EGE::EventResult eventTest2(TickEvent&)
 {
-    DEBUG_PRINT("eventTest2");
+    ege_log.info() << "eventTest2";
     return EGE::EventResult::Failure;
 }
 

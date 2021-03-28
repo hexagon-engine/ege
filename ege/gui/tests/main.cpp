@@ -8,7 +8,7 @@ class MyGameLoop : public EGE::GUIGameLoop
 public:
     virtual EGE::EventResult load()
     {
-        DEBUG_PRINT("onLoad");
+        ege_log.info() << "onLoad";
         getWindow().setFramerateLimit(60);
         return EGE::EventResult::Success;
     }
@@ -93,7 +93,7 @@ public:
     virtual void onLoad() override
     {
         EGE::GUIScreen::onLoad();
-        DEBUG_PRINT("MyResourceManager onLoad");
+        ege_log.info() << "MyResourceManager onLoad";
         widget1 = make<EGE::DummyWidget>(*this);
         widget1->setPosition(EGE::Vec2d(50.f, 50.f));
         widget1->setSize(EGE::Vec2d(50.f, 50.f));
@@ -105,7 +105,7 @@ public:
     virtual void render(EGE::Renderer& renderer) const override
     {
         EGE::GUIScreen::render(renderer);
-        DEBUG_PRINT("MyResourceManager render");
+        ege_log.info() << "MyResourceManager render";
         sf::Text text("TEST", *font, 30);
         renderer.getTarget().draw(text);
         sf::Sprite sprite(texture->getTexture());
@@ -119,7 +119,7 @@ class MyResourceManager : public EGE::ResourceManager
 public:
     virtual bool reload() override
     {
-        DEBUG_PRINT("MyResourceManager reload");
+        ege_log.info() << "MyResourceManager reload";
         loadFontFromFile("font.ttf");
         loadTextureFromFile("texture.png");
         return true;
@@ -186,7 +186,7 @@ public:
         EGE::GUIScreen::onLoad();
 
         getWindow().setFramerateLimit(60);
-        DEBUG_PRINT("MyResourceManager onLoad");
+        ege_log.info() << "MyResourceManager onLoad";
 
         setPadding({10, 10});
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
@@ -210,7 +210,7 @@ public:
                 button->events<EGE::Button::ClickEvent>().add([this, myFrame](EGE::Button::ClickEvent&) {
                     if(!timerRunning)
                     {
-                        DEBUG_PRINT("clicked");
+                        ege_log.info() << "clicked";
 
                         myFrame->addWidget(button2);
                         timerRunning = true;
@@ -369,7 +369,7 @@ class MyResourceManager2 : public EGE::ResourceManager
 public:
     virtual bool reload() override
     {
-        DEBUG_PRINT("MyResourceManager reload");
+        ege_log.info() << "MyResourceManager reload";
         setDefaultFont("font.ttf");
         return true;
     }
