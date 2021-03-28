@@ -19,6 +19,11 @@ std::string getEnv(std::string name)
     return impl().getEnv(name);
 }
 
+std::string name()
+{
+    return impl().className();
+}
+
 } // System
 
 }

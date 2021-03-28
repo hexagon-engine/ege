@@ -48,6 +48,7 @@ namespace System
 // Global
 std::string getErrorMessage();
 std::string getEnv(std::string name);
+std::string name();
 
 } // System
 
