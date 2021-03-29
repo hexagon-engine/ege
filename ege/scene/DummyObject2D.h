@@ -49,7 +49,7 @@ namespace EGE
 class DummyObject2D : public SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(EGE::DummyObject2D);
+    EGE_SCENEOBJECT("EGE::DummyObject2D");
 
     DummyObject2D(Scene& owner, const SceneObjectType& type)
     : SceneObject2D(owner, type) {}

@@ -49,7 +49,7 @@
 #include <ege/util/Serializable.h>
 
 #define EGE_SCENEOBJECT(typeId) \
-    static EGE::String type() { return #typeId; }
+    static EGE::String type() { return typeId; }
 
 namespace EGE
 {

@@ -50,7 +50,7 @@ namespace EGE
 class CameraObject2D : public CameraObject<Vec2d>, public SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(EGE::CameraObject2D);
+    EGE_SCENEOBJECT("EGE::CameraObject2D");
 
     CameraObject2D(Scene& owner, const SceneObjectType& type)
     : CameraObject(owner), SceneObject2D(owner, type) {}

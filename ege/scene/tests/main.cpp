@@ -22,7 +22,7 @@ class MyObject : public EGE::SceneObject2D
     std::shared_ptr<sf::Font> m_font;
 
 public:
-    EGE_SCENEOBJECT(MyObject);
+    EGE_SCENEOBJECT("MyObject");
 
     // Objects registered in Scene Object Creator must have its "empty" state!
     MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
@@ -84,7 +84,7 @@ private:
 class MyBackground : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(MyBackground);
+    EGE_SCENEOBJECT("MyBackground");
 
     MyBackground(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "")
     : EGE::SceneObject2D(owner, type)
@@ -303,7 +303,7 @@ struct MyTile
 class MyTileMapObject : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(MyTileMapObject);
+    EGE_SCENEOBJECT("MyTileMapObject");
 
     MyTileMapObject(EGE::Scene2D& owner, const EGE::SceneObjectType& type)
     : EGE::SceneObject2D(owner, type)
@@ -434,7 +434,7 @@ TESTCASE(sceneLoader)
 class SimpleRectangleObject : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(SimpleRectangleObject);
+    EGE_SCENEOBJECT("SimpleRectangleObject");
 
     SimpleRectangleObject(EGE::Scene& scene, const EGE::SceneObjectType& type)
     : EGE::SceneObject2D(scene, type)

@@ -53,7 +53,7 @@ namespace EGE
 class ParticleSystem2D : public SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(EGE::ParticleSystem2D);
+    EGE_SCENEOBJECT("EGE::ParticleSystem2D");
 
     class UserData {};
 
