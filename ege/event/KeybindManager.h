@@ -105,8 +105,8 @@ public:
     // NOTE: this allows to bind scroll up to space :^)
     typedef std::function<void()> TriggerKeybindHandler;
 
-    // void handle(Boolean released), event called on press(released=false), and release(released=true)
-    // For JoystickAxis/MouseWheel, released=0 for value < 0.5, released=1 otherwise.
+    // void handle(Boolean pressed), event called on press(pressed=true), and release(pressed=false)
+    // For JoystickAxis/MouseWheel, pressed=0 for value < 0.5, pressed=1 otherwise.
     typedef std::function<void(Boolean)> SwitchKeybindHandler;
 
     // void handle(Float strength), event called on change, strength is useful for joystick keybinds.
