@@ -61,7 +61,7 @@ struct Input
     {
         sf::Keyboard::Key key; // For type=Keyboard
 
-        struct
+        struct JoystickData
         {
             int id = 0;
             union
@@ -77,19 +77,19 @@ struct Input
 
 
     Input(sf::Keyboard::Key key)
-        : type(Keyboard), value({.key = key}) {}
+        : type(Keyboard), value(Value{.key = key}) {}
 
     Input(int id, sf::Joystick::Axis axis)
-        : type(JoystickAxis), value({.joystick = {.id = id, .axis = axis}}) {}
+        : type(JoystickAxis), value(Value{.joystick = Value::JoystickData{.id = id, .axis = axis}}) {}
 
     Input(int id, int button)
-        : type(JoystickButton), value({.joystick = {.id = id, .button = button}}) {}
+        : type(JoystickButton), value(Value{.joystick = Value::JoystickData{.id = id, .button = button}}) {}
 
     Input(sf::Mouse::Button button)
-        : type(MouseButton), value({.mouseButton = button}) {}
+        : type(MouseButton), value(Value{.mouseButton = button}) {}
 
     Input(sf::Mouse::Wheel wheel)
-        : type(MouseWheel), value({.mouseWheel = wheel}) {}
+        : type(MouseWheel), value(Value{.mouseWheel = wheel}) {}
 
     bool operator==(const Input& other) const;
     bool operator!=(const Input& other) const { return !(*this == other); }
