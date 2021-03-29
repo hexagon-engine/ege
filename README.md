@@ -2,60 +2,31 @@
 [![Build Status](https://travis-ci.com/hexagon-engine/ege.svg?branch=master)](https://travis-ci.com/hexagon-engine/ege)  
 
 ## Description
-**Extendable Game Engine (EGE)** is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of *Hexagon Engine* (pack with framework, 3D library and IDE).
+**Extendable Game Engine (EGE)** is a framework for creating games. The engine aims to be focused on secure and efficient networking system. It will be a part of *Hexagon Engine* (pack with framework, 3D library and IDE).  
 
-The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFML).
+The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFML).  
 
-## Modules / Features
+Full feature list is in docs/features.md
+
+## Modules
 * **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
-   * Thread-safe EventLoop
-   * Async tasks
 * **controller** - System used for synchronizing scenes over the network
-* **debug** - Utility used for debugging
-   * EGE custom logger
-   * Configurable hex dump
-   * `util`'s Object printing
+* **debug** - Debug utility
 * **egeNetwork** - Protocol for network games
-   * `util`'s Object-compatible packets
-   * `scene` synchronizing
-   * Login system (not encrypted for now)
-   * API for controlling any object
 * **event** - System (window) event handlers
-   * SFML system window wrapper with EventLoop compatible API
-   * Default system event handling (e.g close app on Close)
 * **game** - Game class with Gameplay Object Manager and Game Loop included
 * **geometry** - Geometry utility (computing intersections etc.)
 * **gfx** - Graphics renderer
-   * Basic shape rendering (rectangles, texts, points etc.)
 * **gpo** - "Gameplay Object" Manager
-   * *Gameplay Objects* - Objects that can be used in game (e.g entity types) with specified **base** (usually string) and **numeric** ID.
-   * Mainly *GameplayObjectRegistry* - a structure that manages and automatically assigns numeric IDs to registered objects (internally `std::vector` of `std::pairs<IdTEntry, ObjT*>`, where IdTEntry is structure containing `baseId` and `numericId`).
 * **gui** - User interface utility
-   * GUI animations with many easing functions
-   * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox) and modal dialogs
 * **loop** - Basic event loop utility
-   * EventLoop - event system
-   * Timers & clocks
 * **main** - Engine-global functionality & configuration (ASSERT etc.)
 * **network** - Low-level network library (opening sockets etc.)
-   * TCP sockets and listeners (SFML Packet compatible)
-* **profiler** - Utility for profiling
 * **resources** - ResourceManager for loading textures, fonts, shaders etc.
 * **scene** - Library for managing scenes and adding objects to it.
-   * Scene and SceneObjects (in 2D) with `gui` integration and camera system
-   * Basic texture renderer
-   * Particle system
-   * Tilemap renderer
-   * Scene saving and loading from file (TODO: map editor)
 * **sfml** - Dummy module for linking SFML
 * **tilemap** - Tilemaps
-   * Tilemaps: abstract, fixed sized, dynamic sized (chunked)
 * **util** - Common utility
-   * Object system - used for serialization
-   * JSON parser and templatizer
-   * System-specific stuff (filesystem, time)
-   * Basic math (equations, vector operations, radians / degrees convertion)
-   * Random (LCG)
 
 ## Tutorial / Documentation
 For basic tutorial refer to **wiki**.  
@@ -70,7 +41,6 @@ Some documentation is in `docs` folder.
 * Physics
 * Animations with properties of user-defined type (e.g `EGE::Vec2d`)
 * Pathfinding
-* Splash screens
 * Format detection for `Converter`s
 * SceneObject access control for server
 * Sound, localization
