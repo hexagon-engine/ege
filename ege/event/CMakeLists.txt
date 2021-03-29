@@ -1,6 +1,8 @@
 set(SOURCES
 	"DefaultSystemEventHandler.cpp"
 	"DefaultSystemEventHandler.h"
+	"KeybindManager.cpp"
+	"KeybindManager.h"
 	"SystemEvent.h"
 	"SystemEventHandler.cpp"
 	"SystemEventHandler.h"
