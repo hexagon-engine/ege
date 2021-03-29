@@ -55,14 +55,14 @@ public:
     ThreadSafeEventLoop(String id = "ThreadSafeEventLoop")
     : AsyncLoop(id) {}
 
-    virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart start = EventLoop::TimerImmediateStart::Yes);
+    virtual void addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart start = EventLoop::TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
     virtual void removeTimer(const std::string& timer);
     virtual void onUpdate();
     virtual void deferredInvoke(std::function<void()> func);
 
     // ASYNC TASKS
-    virtual void addAsyncTask(std::shared_ptr<AsyncTask> task, std::string name = "");
+    virtual void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
 
     // unsafe due to thread termination
     virtual void removeAsyncTasks(std::string name = "");

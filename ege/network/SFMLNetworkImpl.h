@@ -48,10 +48,10 @@ namespace EGE
 class SFMLNetworkImpl
 {
 public:
-    virtual bool sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> packet);
-    virtual std::shared_ptr<Packet> receiveFrom(NetworkEndpoint* endpoint);
+    virtual bool sendTo(NetworkEndpoint* endpoint, SharedPtr<Packet> packet);
+    virtual SharedPtr<Packet> receiveFrom(NetworkEndpoint* endpoint);
 
-    virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet) = 0;
+    virtual SharedPtr<SFMLPacket> makePacket(sf::Packet& packet) = 0;
 };
 
 }

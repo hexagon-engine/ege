@@ -92,7 +92,7 @@ public:
     }
 
     // sender
-    EGEPacket(Type type, std::shared_ptr<ObjectMap> args)
+    EGEPacket(Type type, SharedPtr<ObjectMap> args)
     : m_type(type)
     , m_args(args)
     {}
@@ -105,38 +105,38 @@ public:
         return m_type;
     }
 
-    std::shared_ptr<ObjectMap> getArgs()
+    SharedPtr<ObjectMap> getArgs()
     {
         return m_args;
     }
 
     static long long generateUID();
-    static void appendUID(std::shared_ptr<ObjectMap> packetArgs);
+    static void appendUID(SharedPtr<ObjectMap> packetArgs);
 
-    static std::shared_ptr<EGEPacket> generate_Data(std::shared_ptr<ObjectMap> data);
-    static std::shared_ptr<EGEPacket> generate_Ping();
-    static std::shared_ptr<EGEPacket> generate_Pong();
-    static std::shared_ptr<EGEPacket> generate_ProtocolVersion(int value);
-    static std::shared_ptr<EGEPacket> generateSResult(UidType uid, std::shared_ptr<ObjectMap> userData = nullptr);
-    static std::shared_ptr<EGEPacket> generateCLogin(std::shared_ptr<ObjectMap> userData = nullptr); //SResult
-    static std::shared_ptr<EGEPacket> generateSLoginRequest(std::shared_ptr<ObjectMap> userData = nullptr);
-    static std::shared_ptr<EGEPacket> generateSDisconnectReason(std::string message);
-    static std::shared_ptr<EGEPacket> generateSSceneObjectCreation(SceneObject& object, std::string typeId);
-    static std::shared_ptr<EGEPacket> generateSSceneObjectUpdate_Main(SceneObject& object);
-    static std::shared_ptr<EGEPacket> generateSSceneObjectUpdate_Extended(SceneObject& object);
-    static std::shared_ptr<EGEPacket> generateSSceneObjectDeletion(UidType id);
-    static std::shared_ptr<EGEPacket> generateSSceneCreation(std::shared_ptr<ObjectMap> userData = nullptr);
-    static std::shared_ptr<EGEPacket> generateSSceneDeletion(std::shared_ptr<ObjectMap> userData = nullptr);
-    static std::shared_ptr<EGEPacket> generateCSceneObjectControl(SceneObject& object, const ControlObject& data); //SResult
-    static std::shared_ptr<EGEPacket> generateSDefaultControllerId(SceneObject* object);
-    static std::shared_ptr<EGEPacket> generateCSceneObjectRequest(UidType id);
-    static std::shared_ptr<EGEPacket> generateSSceneObjectControl(SceneObject& object, const ControlObject& data);
-    static std::shared_ptr<EGEPacket> generate_Version(int value, std::string str);
-    static std::shared_ptr<EGEPacket> generateSAdditionalControllerId(SceneObject& object, bool remove);
+    static SharedPtr<EGEPacket> generate_Data(SharedPtr<ObjectMap> data);
+    static SharedPtr<EGEPacket> generate_Ping();
+    static SharedPtr<EGEPacket> generate_Pong();
+    static SharedPtr<EGEPacket> generate_ProtocolVersion(int value);
+    static SharedPtr<EGEPacket> generateSResult(UidType uid, SharedPtr<ObjectMap> userData = nullptr);
+    static SharedPtr<EGEPacket> generateCLogin(SharedPtr<ObjectMap> userData = nullptr); //SResult
+    static SharedPtr<EGEPacket> generateSLoginRequest(SharedPtr<ObjectMap> userData = nullptr);
+    static SharedPtr<EGEPacket> generateSDisconnectReason(std::string message);
+    static SharedPtr<EGEPacket> generateSSceneObjectCreation(SceneObject& object, std::string typeId);
+    static SharedPtr<EGEPacket> generateSSceneObjectUpdate_Main(SceneObject& object);
+    static SharedPtr<EGEPacket> generateSSceneObjectUpdate_Extended(SceneObject& object);
+    static SharedPtr<EGEPacket> generateSSceneObjectDeletion(UidType id);
+    static SharedPtr<EGEPacket> generateSSceneCreation(SharedPtr<ObjectMap> userData = nullptr);
+    static SharedPtr<EGEPacket> generateSSceneDeletion(SharedPtr<ObjectMap> userData = nullptr);
+    static SharedPtr<EGEPacket> generateCSceneObjectControl(SceneObject& object, const ControlObject& data); //SResult
+    static SharedPtr<EGEPacket> generateSDefaultControllerId(SceneObject* object);
+    static SharedPtr<EGEPacket> generateCSceneObjectRequest(UidType id);
+    static SharedPtr<EGEPacket> generateSSceneObjectControl(SceneObject& object, const ControlObject& data);
+    static SharedPtr<EGEPacket> generate_Version(int value, std::string str);
+    static SharedPtr<EGEPacket> generateSAdditionalControllerId(SceneObject& object, bool remove);
 
 private:
     Type m_type;
-    std::shared_ptr<ObjectMap> m_args;
+    SharedPtr<ObjectMap> m_args;
 };
 
 }

@@ -49,11 +49,11 @@ public:
 
     virtual ~Point() {}
 
-    virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const;
-    virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const;
-    virtual bool contains(std::shared_ptr<Point> other) const;
+    virtual SharedPtr<ShapeSet> intersection(SharedPtr<Shape> other) const;
+    virtual SharedPtr<ShapeSet> sum(SharedPtr<Shape> other) const;
+    virtual bool contains(SharedPtr<Point> other) const;
     virtual bool isEmpty() const;
-    virtual std::shared_ptr<Shape> copy() const;
+    virtual SharedPtr<Shape> copy() const;
 
     double x = 0.0;
     double y = 0.0;

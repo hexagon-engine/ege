@@ -53,24 +53,24 @@ TESTCASE(guiChange)
     auto widget = new EGE::DummyWidget(*gui);
     widget->setPosition(EGE::Vec2d(50.f, 50.f));
     widget->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(std::shared_ptr<EGE::Widget>(widget));
+    gui->addWidget(EGE::SharedPtr<EGE::Widget>(widget));
 
     auto widget2 = new EGE::DummyWidget(*gui);
     widget2->setPosition(EGE::Vec2d(150.f, 50.f));
     widget2->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(std::shared_ptr<EGE::Widget>(widget2));
+    gui->addWidget(EGE::SharedPtr<EGE::Widget>(widget2));
 
     auto gui2 = make<EGE::GUIScreen>(gameLoop);
 
     auto widget3 = new EGE::DummyWidget(*gui);
     widget3->setPosition(EGE::Vec2d(50.f, 150.f));
     widget3->setSize(EGE::Vec2d(50.f, 50.f));
-    gui2->addWidget(std::shared_ptr<EGE::Widget>(widget3));
+    gui2->addWidget(EGE::SharedPtr<EGE::Widget>(widget3));
 
     auto widget4 = new EGE::DummyWidget(*gui);
     widget4->setPosition(EGE::Vec2d(150.f, 150.f));
     widget4->setSize(EGE::Vec2d(50.f, 50.f));
-    gui2->addWidget(std::shared_ptr<EGE::Widget>(widget4));
+    gui2->addWidget(EGE::SharedPtr<EGE::Widget>(widget4));
 
     gameLoop.setCurrentGUIScreen(gui);
     gameLoop.addTimer("changeGUI", make<EGE::Timer>(gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [gui2, &gameLoop](std::string, EGE::Timer*) {
@@ -83,7 +83,7 @@ TESTCASE(guiChange)
 class MyGuiScreen : public EGE::GUIScreen
 {
 public:
-    std::shared_ptr<EGE::DummyWidget> widget1;
+    EGE::SharedPtr<EGE::DummyWidget> widget1;
     sf::Font* font;
     EGE::Texture* texture;
 
@@ -169,13 +169,13 @@ public:
 class MyGuiScreen2 : public EGE::GUIScreen
 {
 public:
-    std::shared_ptr<EGE::Label> labelAnimated;
-    std::shared_ptr<EGE::Label> labelFPS;
-    std::shared_ptr<EGE::Button> button2;
+    EGE::SharedPtr<EGE::Label> labelAnimated;
+    EGE::SharedPtr<EGE::Label> labelFPS;
+    EGE::SharedPtr<EGE::Button> button2;
 
-    std::shared_ptr<AnimationGraphWidget> graph;
-    std::shared_ptr<AnimationGraphWidget> graph2;
-    std::shared_ptr<EGE::Label> ball;
+    EGE::SharedPtr<AnimationGraphWidget> graph;
+    EGE::SharedPtr<AnimationGraphWidget> graph2;
+    EGE::SharedPtr<EGE::Label> ball;
     bool timerRunning = false;
 
     explicit MyGuiScreen2(MyGameLoop& loop)

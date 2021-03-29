@@ -38,6 +38,8 @@
 
 #include "Converter.h"
 
+#include <ege/util/Types.h>
+
 #include <iostream>
 
 namespace EGE
@@ -46,7 +48,7 @@ namespace EGE
 class JSONConverter : public IOStreamConverter
 {
 public:
-    virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const;
+    virtual bool in(InputStreamType& input, SharedPtr<Object>& object) const;
     virtual bool out(OutputStreamType& output, const Object& object) const;
 };
 

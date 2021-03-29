@@ -127,7 +127,7 @@ void GUIGameLoop::onTick(long long tickCount)
     m_profiler->endSection();
 }
 
-void GUIGameLoop::setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init)
+void GUIGameLoop::setCurrentGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init)
 {
     DBG(GUI_DEBUG, "setCurrentGUIScreen");
 
@@ -188,12 +188,12 @@ void GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings&
     }
 }
 
-std::shared_ptr<ResourceManager> GUIGameLoop::getResourceManager()
+SharedPtr<ResourceManager> GUIGameLoop::getResourceManager()
 {
     return m_resourceManager;
 }
 
-void GUIGameLoop::setResourceManager(std::shared_ptr<ResourceManager> manager)
+void GUIGameLoop::setResourceManager(SharedPtr<ResourceManager> manager)
 {
     m_resourceManager = manager;
 }

@@ -136,8 +136,8 @@ public:
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;
 
-    virtual std::shared_ptr<ObjectMap> serializeMain() const override;
-    virtual bool deserializeMain(std::shared_ptr<ObjectMap>) override;
+    virtual SharedPtr<ObjectMap> serializeMain() const override;
+    virtual bool deserializeMain(SharedPtr<ObjectMap>) override;
 
 protected:
     double m_rotation = 0.0;

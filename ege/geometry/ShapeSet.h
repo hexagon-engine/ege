@@ -48,7 +48,7 @@ class ShapeSet : public Shape
 public:
     ShapeSet() = default;
 
-    explicit ShapeSet(std::shared_ptr<Shape> shape)
+    explicit ShapeSet(SharedPtr<Shape> shape)
     {
         append(shape);
     }
@@ -56,20 +56,20 @@ public:
     ShapeSet(const ShapeSet& shapeSet);
     virtual ~ShapeSet() {}
 
-    virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const;
-    virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const;
-    virtual bool contains(std::shared_ptr<Point> point) const;
+    virtual SharedPtr<ShapeSet> intersection(SharedPtr<Shape> other) const;
+    virtual SharedPtr<ShapeSet> sum(SharedPtr<Shape> other) const;
+    virtual bool contains(SharedPtr<Point> point) const;
     virtual bool isEmpty() const;
-    virtual std::shared_ptr<Shape> copy() const;
+    virtual SharedPtr<Shape> copy() const;
 
-    virtual void append(std::shared_ptr<Shape> shape);
+    virtual void append(SharedPtr<Shape> shape);
     virtual size_t size()
     {
         return m_subShapes.size();
     }
 
 private:
-    std::vector<std::shared_ptr<Shape>> m_subShapes;
+    std::vector<SharedPtr<Shape>> m_subShapes;
 };
 
 }

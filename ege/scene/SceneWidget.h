@@ -47,13 +47,13 @@ namespace EGE
 class SceneWidget : public Widget
 {
 public:
-    explicit SceneWidget(Widget& parent, std::shared_ptr<Scene> initialScene = nullptr)
+    explicit SceneWidget(Widget& parent, SharedPtr<Scene> initialScene = nullptr)
     : Widget(parent, "SceneWidget"), m_initialScene(initialScene) {}
 
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter);
 
-    void setScene(std::shared_ptr<Scene> scene)
+    void setScene(SharedPtr<Scene> scene)
     {
         ASSERT(scene);
         m_scene = scene;
@@ -61,14 +61,14 @@ public:
         m_scene->setSize(getSize());
     }
 
-    std::shared_ptr<Scene> getScene() { return m_scene; }
+    SharedPtr<Scene> getScene() { return m_scene; }
 
 protected:
     virtual void updateGeometry(Renderer&) override;
 
 private:
-    std::shared_ptr<Scene> m_scene;
-    std::shared_ptr<Scene> m_initialScene;
+    SharedPtr<Scene> m_scene;
+    SharedPtr<Scene> m_initialScene;
 };
 
 }

@@ -57,20 +57,20 @@ private:
 class MyClientConnection : public EGE::ClientConnection, public EGE::SFMLNetworkImpl
 {
 public:
-    MyClientConnection(EGE::Server& server, std::shared_ptr<sf::TcpSocket> socket)
+    MyClientConnection(EGE::Server& server, EGE::SharedPtr<sf::TcpSocket> socket)
     : EGE::ClientConnection(server, socket) {}
 
-    std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
+    EGE::SharedPtr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
         return make<MyPacket>(packet);
     }
 
-    virtual bool send(std::shared_ptr<EGE::Packet> packet)
+    virtual bool send(EGE::SharedPtr<EGE::Packet> packet)
     {
         return sendTo(this, packet);
     }
 
-    virtual std::shared_ptr<EGE::Packet> receive()
+    virtual EGE::SharedPtr<EGE::Packet> receive()
     {
         return receiveFrom(this);
     }
@@ -82,7 +82,7 @@ public:
     MyServer()
     : EGE::Server(PORT) {}
 
-    std::shared_ptr<EGE::ClientConnection> makeClient(EGE::Server& server, std::shared_ptr<sf::TcpSocket> socket)
+    EGE::SharedPtr<EGE::ClientConnection> makeClient(EGE::Server& server, EGE::SharedPtr<sf::TcpSocket> socket)
     {
         return make<MyClientConnection>(server, socket);
     }
@@ -107,7 +107,7 @@ public:
         return EGE::EventResult::Success;
     }
 
-    virtual EGE::EventResult onReceive(EGE::ClientConnection* client, std::shared_ptr<EGE::Packet> packet)
+    virtual EGE::EventResult onReceive(EGE::ClientConnection* client, EGE::SharedPtr<EGE::Packet> packet)
     {
         MyPacket* mypacket = (MyPacket*) packet.get();
         std::cerr << client->getID() << " sent message: " << mypacket->getString() << std::endl;
@@ -120,12 +120,12 @@ public:
 class MyClient : public EGE::Client, public EGE::SFMLNetworkImpl
 {
 public:
-    std::shared_ptr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
+    EGE::SharedPtr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
     {
         return make<MyPacket>(packet);
     }
 
-    virtual EGE::EventResult onReceive(std::shared_ptr<EGE::Packet> packet)
+    virtual EGE::EventResult onReceive(EGE::SharedPtr<EGE::Packet> packet)
     {
         MyPacket* mypacket = (MyPacket*) packet.get();
         std::string msg = mypacket->getString();
@@ -137,12 +137,12 @@ public:
         return EGE::EventResult::Success;
     }
 
-    virtual bool send(std::shared_ptr<EGE::Packet> packet)
+    virtual bool send(EGE::SharedPtr<EGE::Packet> packet)
     {
         return sendTo(this, packet);
     }
 
-    virtual std::shared_ptr<EGE::Packet> receive()
+    virtual EGE::SharedPtr<EGE::Packet> receive()
     {
         return receiveFrom(this);
     }

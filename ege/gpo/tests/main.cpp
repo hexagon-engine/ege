@@ -7,6 +7,7 @@
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
+#include <ege/util/Types.h>
 
 class MyObject : public EGE::GameplayObject
 {
@@ -31,15 +32,15 @@ public:
         return "unknown";
     }
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
+    virtual EGE::SharedPtr<EGE::ObjectMap> serialize() const
     {
-        std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+        EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
         map->addInt("int", m_int);
         map->addString("string", m_string);
         return map;
     }
 
-    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    virtual bool deserialize(EGE::SharedPtr<EGE::ObjectMap> obj)
     {
         m_int = obj->getObject("int").asInt().valueOr(0);
         m_string = obj->getObject("string").asString().valueOr("");
@@ -79,12 +80,12 @@ public:
         return true;
     }
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
+    virtual EGE::SharedPtr<EGE::ObjectMap> serialize() const
     {
         return nullptr;
     }
 
-    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap>)
+    virtual bool deserialize(EGE::SharedPtr<EGE::ObjectMap>)
     {
         // TODO because of EGE::GameplayObjectRegistry
         return true;

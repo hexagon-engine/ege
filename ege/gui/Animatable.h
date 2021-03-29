@@ -51,7 +51,7 @@ public:
     : EventLoop(parent, id) {}
 
     template<class T>
-    void addAnimation(std::shared_ptr<Animation<T>> animation, std::function<void(Animation<T>&, T)> callback, std::string name = "*")
+    void addAnimation(SharedPtr<Animation<T>> animation, std::function<void(Animation<T>&, T)> callback, std::string name = "*")
     {
         if(!animation->getUpdateCallback())
         {

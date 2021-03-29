@@ -13,7 +13,7 @@ public:
         EXPECT(getFont("font.ttf"));
         setDefaultFont("");
         EXPECT(!getFont("notexisting.ttf"));
-        std::shared_ptr<EGE::Texture> tex;
+        EGE::SharedPtr<EGE::Texture> tex;
         EXPECT(tex = getTexture("texture.png"));
         EXPECT(!getTexture("notexisting.png"));
         setUnknownTexture(tex);

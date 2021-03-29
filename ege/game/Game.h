@@ -50,22 +50,22 @@ public:
     EGE_SINGLETON(Game);
     Game();
 
-    std::shared_ptr<GUIGameLoop> getLoop()
+    SharedPtr<GUIGameLoop> getLoop()
     {
         return m_gameLoop;
     }
-    void setLoop(std::shared_ptr<GUIGameLoop> loop)
+    void setLoop(SharedPtr<GUIGameLoop> loop)
     {
         ASSERT(!m_gameLoop);
         m_gameLoop = loop;
     }
 
-    std::shared_ptr<GameplayObjectManager> getGameplayObjectManager()
+    SharedPtr<GameplayObjectManager> getGameplayObjectManager()
     {
         ASSERT(m_gameplayObjectManager);
         return m_gameplayObjectManager;
     }
-    void setGameplayObjectManager(std::shared_ptr<GameplayObjectManager> gpom)
+    void setGameplayObjectManager(SharedPtr<GameplayObjectManager> gpom)
     {
         ASSERT(gpom);
         m_gameplayObjectManager = gpom;
@@ -79,9 +79,9 @@ public:
     int run();
 
 protected:
-    std::shared_ptr<Profiler> m_profiler;
-    std::shared_ptr<GameplayObjectManager> m_gameplayObjectManager;
-    std::shared_ptr<GUIGameLoop> m_gameLoop;
+    SharedPtr<Profiler> m_profiler;
+    SharedPtr<GameplayObjectManager> m_gameplayObjectManager;
+    SharedPtr<GUIGameLoop> m_gameLoop;
 };
 
 }

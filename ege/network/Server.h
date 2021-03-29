@@ -52,7 +52,7 @@ namespace EGE
 class Server
 {
 public:
-    typedef std::map<int, std::shared_ptr<ClientConnection>> ClientMap;
+    typedef std::map<int, SharedPtr<ClientConnection>> ClientMap;
 
     Server(int port = 0)
     : m_serverPort(port) {}
@@ -61,9 +61,9 @@ public:
     void close();
 
     // synchronous
-    bool sendTo(std::shared_ptr<Packet> packet, int id);
-    bool sendToAll(std::shared_ptr<Packet> packet);
-    bool sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection&)> predicate);
+    bool sendTo(SharedPtr<Packet> packet, int id);
+    bool sendToAll(SharedPtr<Packet> packet);
+    bool sendTo(SharedPtr<Packet> packet, std::function<bool(ClientConnection&)> predicate);
 
     std::weak_ptr<ClientConnection> getClient(int id);
     std::vector<std::weak_ptr<ClientConnection>> getClients(std::function<bool(ClientConnection&)> predicate);
@@ -76,9 +76,9 @@ public:
 
     virtual EventResult onClientConnect(ClientConnection&) { return EventResult::Failure; }
     virtual EventResult onClientDisconnect(ClientConnection&) { return EventResult::Failure; }
-    virtual EventResult onReceive(ClientConnection&, std::shared_ptr<Packet>) { return EventResult::Failure; }
+    virtual EventResult onReceive(ClientConnection&, SharedPtr<Packet>) { return EventResult::Failure; }
 
-    virtual std::shared_ptr<ClientConnection> makeClient(Server& server, std::shared_ptr<sf::TcpSocket> socket) = 0;
+    virtual SharedPtr<ClientConnection> makeClient(Server& server, SharedPtr<sf::TcpSocket> socket) = 0;
 
     ClientMap::iterator begin()
     {
@@ -94,7 +94,7 @@ protected:
     int m_serverPort = 0;
 
 private:
-    int addClient(std::shared_ptr<ClientConnection>);
+    int addClient(SharedPtr<ClientConnection>);
 
     ClientMap m_clients;
     sf::TcpListener m_listener;

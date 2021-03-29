@@ -73,16 +73,16 @@ void SceneObject::onUpdate(long long)
     Animatable::onUpdate();
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serialize() const
+SharedPtr<ObjectMap> SceneObject::serialize() const
 {
-    std::shared_ptr<ObjectMap> data = make<ObjectMap>();
+    SharedPtr<ObjectMap> data = make<ObjectMap>();
     data->addString("name", m_name);
     data->addObject("m", serializeMain());
     data->addObject("x", serializeExtended());
     return data;
 }
 
-bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
+bool SceneObject::deserialize(SharedPtr<ObjectMap> object)
 {
     ASSERT(object);
     auto _name = object->getObject("name");
@@ -113,7 +113,7 @@ bool SceneObject::deserialize(std::shared_ptr<ObjectMap> object)
     return s;
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
+SharedPtr<ObjectMap> SceneObject::serializeMain() const
 {
     auto data = make<ObjectMap>();
     if(m_parent)
@@ -123,19 +123,19 @@ std::shared_ptr<ObjectMap> SceneObject::serializeMain() const
     return data;
 }
 
-bool SceneObject::deserializeMain(std::shared_ptr<ObjectMap> data)
+bool SceneObject::deserializeMain(SharedPtr<ObjectMap> data)
 {
     m_parentId = data->getObject("parent").asString().valueOr("");
     m_renderLayer = data->getObject("layer").asInt().valueOr(0);
     return true;
 }
 
-std::shared_ptr<ObjectMap> SceneObject::serializeExtended() const
+SharedPtr<ObjectMap> SceneObject::serializeExtended() const
 {
     return nullptr;
 }
 
-bool SceneObject::deserializeExtended(std::shared_ptr<ObjectMap>)
+bool SceneObject::deserializeExtended(SharedPtr<ObjectMap>)
 {
     // nothing
     return true;

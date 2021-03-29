@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectUnsignedInt::copy() const
+SharedPtr<Object> ObjectUnsignedInt::copy() const
 {
     return make<ObjectUnsignedInt>(*this);
 }

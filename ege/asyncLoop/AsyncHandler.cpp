@@ -41,7 +41,7 @@
 namespace EGE
 {
 
-void AsyncHandler::addAsyncTask(std::shared_ptr<AsyncTask> task, std::string name)
+void AsyncHandler::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {
     task->setName(name);
     task->start();

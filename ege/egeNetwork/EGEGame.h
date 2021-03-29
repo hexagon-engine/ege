@@ -48,9 +48,9 @@ namespace EGE
 class EGEGame
 {
 public:
-    virtual void setScene(std::shared_ptr<Scene> scene);
+    virtual void setScene(SharedPtr<Scene> scene);
 
-    std::shared_ptr<Scene> getScene() { return m_scene; }
+    SharedPtr<Scene> getScene() { return m_scene; }
     virtual bool initialize();
 
     // Connection is accepted if <peer version == version>
@@ -62,7 +62,7 @@ public:
     std::string getVersionString() { return m_versionString; }
 
 private:
-    std::shared_ptr<Scene> m_scene;
+    SharedPtr<Scene> m_scene;
     int m_version = 0; // 0 - "unknown"
     std::string m_versionString = "EGE Generic";
 };

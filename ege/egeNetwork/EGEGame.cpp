@@ -44,7 +44,7 @@ namespace EGE
 {
 
 
-void EGEGame::setScene(std::shared_ptr<Scene> scene)
+void EGEGame::setScene(SharedPtr<Scene> scene)
 {
     m_scene = scene;
 }

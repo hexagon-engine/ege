@@ -56,7 +56,7 @@ EventLoop::EventArray<Event>& EventLoop::events(Event::EventType type)
     return m_eventHandlers[type];
 }
 
-void EventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
+void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
 {
     ASSERT(timer);
     timer->setName(name);

@@ -74,9 +74,9 @@ public:
     // NOTE: it's double-buffered and OpenGL-backed by default!
     virtual void render();
 
-    void setCurrentGUIScreen(std::shared_ptr<GUIScreen> screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
+    void setCurrentGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
 
-    std::shared_ptr<GUIScreen> getCurrentGUIScreen() { return m_currentGui; }
+    SharedPtr<GUIScreen> getCurrentGUIScreen() { return m_currentGui; }
 
     SFMLSystemWindow& getWindow();
     Renderer& getRenderer() { return m_renderer; }
@@ -84,8 +84,8 @@ public:
     void openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
     void openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
 
-    std::shared_ptr<ResourceManager> getResourceManager();
-    void setResourceManager(std::shared_ptr<ResourceManager> manager);
+    SharedPtr<ResourceManager> getResourceManager();
+    void setResourceManager(SharedPtr<ResourceManager> manager);
     void setProfiler(std::weak_ptr<Profiler> profiler);
 
     void setBackgroundColor(sf::Color color)
@@ -107,10 +107,10 @@ protected:
 private:
     virtual EventResult onLoad() override;
 
-    std::shared_ptr<GUIScreen> m_currentGui;
+    SharedPtr<GUIScreen> m_currentGui;
     // to allow animations and lazy-load
-    std::shared_ptr<GUIScreen> m_pendingGui;
-    std::shared_ptr<ResourceManager> m_resourceManager;
+    SharedPtr<GUIScreen> m_pendingGui;
+    SharedPtr<ResourceManager> m_resourceManager;
     SFMLSystemWindow m_systemWindow;
     Renderer m_renderer;
 

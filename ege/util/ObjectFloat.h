@@ -71,7 +71,7 @@ public:
         m_number = number;
     }
 
-    virtual std::shared_ptr<Object> copy() const;
+    virtual SharedPtr<Object> copy() const;
 
 private:
     MaxFloat m_number;

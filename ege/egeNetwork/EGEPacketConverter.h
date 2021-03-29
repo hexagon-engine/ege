@@ -46,7 +46,7 @@ namespace EGE
 class EGEPacketConverter : public Converter<sf::Packet>
 {
 public:
-    virtual bool in(sf::Packet& input, std::shared_ptr<Object>& object) const;
+    virtual bool in(sf::Packet& input, SharedPtr<Object>& object) const;
     virtual bool out(sf::Packet& output, const Object& object) const;
 };
 

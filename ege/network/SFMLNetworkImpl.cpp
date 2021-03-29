@@ -42,7 +42,7 @@
 namespace EGE
 {
 
-bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> packet)
+bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, SharedPtr<Packet> packet)
 {
     // Abort sending empty packet (or TO empty endpoint) with success state.
     if(!packet || !endpoint)
@@ -62,7 +62,7 @@ bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, std::shared_ptr<Packet> 
     return true;
 }
 
-std::shared_ptr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
+SharedPtr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
 {
     // Abort receiving FROM empty endpoint with empty state.
     if(!endpoint)

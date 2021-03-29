@@ -67,20 +67,20 @@ public:
     // It also calls onLoad for loop. Beware of it when you are setting
     // EGE::EGEClient or EGE::EGEServer, which will be started now
     // (and it creates threads, opens ports etc.)
-    virtual bool setSubLoop(std::shared_ptr<GameLoop> loop);
+    virtual bool setSubLoop(SharedPtr<GameLoop> loop);
 
     virtual void setMinimalTickTime(Time time)
     {
         m_minTickTime = time;
     }
 
-    std::shared_ptr<Profiler> getProfiler()
+    SharedPtr<Profiler> getProfiler()
     {
         return m_profiler;
     }
 
 protected:
-    std::shared_ptr<Profiler> m_profiler;
+    SharedPtr<Profiler> m_profiler;
 
 private:
     virtual GameLoop* getSubGameLoop();

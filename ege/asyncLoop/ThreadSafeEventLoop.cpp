@@ -39,7 +39,7 @@
 namespace EGE
 {
 
-void ThreadSafeEventLoop::addTimer(const std::string& name, std::shared_ptr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
+void ThreadSafeEventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
 {
     sf::Lock lock(m_timerMutex);
     EventLoop::addTimer(name, timer, immediateStart);
@@ -68,7 +68,7 @@ void ThreadSafeEventLoop::deferredInvoke(std::function<void()> func)
     EventLoop::deferredInvoke(func);
 }
 
-void ThreadSafeEventLoop::addAsyncTask(std::shared_ptr<AsyncTask> task, std::string name)
+void ThreadSafeEventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {
     sf::Lock lock(m_asyncTaskMutex);
     AsyncHandler::addAsyncTask(task, name);

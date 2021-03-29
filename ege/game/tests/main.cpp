@@ -16,9 +16,9 @@ public:
 
     sf::Color m_color;
 
-    virtual std::shared_ptr<EGE::ObjectMap> serialize() const
+    virtual EGE::SharedPtr<EGE::ObjectMap> serialize() const
     {
-        std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+        EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
         map->addInt("r", m_color.r);
         map->addInt("g", m_color.g);
         map->addInt("b", m_color.b);
@@ -26,7 +26,7 @@ public:
         return map;
     }
 
-    virtual bool deserialize(std::shared_ptr<EGE::ObjectMap> obj)
+    virtual bool deserialize(EGE::SharedPtr<EGE::ObjectMap> obj)
     {
         m_color.r = obj->getObject("r").asInt().valueOr(0);
         m_color.g = obj->getObject("g").asInt().valueOr(0);
@@ -110,7 +110,7 @@ public:
 class MyGuiScreen : public EGE::GUIScreen
 {
 public:
-    std::vector<std::shared_ptr<ColorWidget>> m_widgets;
+    EGE::SharedPtrVector<ColorWidget> m_widgets;
 
     MyGuiScreen(EGE::GUIGameLoop& loop)
     : EGE::GUIScreen(loop) {}

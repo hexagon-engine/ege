@@ -50,7 +50,7 @@ public:
 
     bool connect(sf::IpAddress ip, unsigned short port);
     void update();
-    virtual EventResult onReceive(std::shared_ptr<Packet>) { return EventResult::Failure; }
+    virtual EventResult onReceive(SharedPtr<Packet>) { return EventResult::Failure; }
 };
 
 }

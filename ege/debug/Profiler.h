@@ -62,8 +62,8 @@ public:
     void end();
     std::string toString();
 
-    virtual std::shared_ptr<ObjectMap> serialize() const;
-    virtual bool deserialize(std::shared_ptr<ObjectMap>);
+    virtual SharedPtr<ObjectMap> serialize() const;
+    virtual bool deserialize(SharedPtr<ObjectMap>);
 
 private:
     void startSectionLL(std::string name);
@@ -72,7 +72,7 @@ private:
 
     struct Section : public Serializable
     {
-        std::map<std::string, std::shared_ptr<Section>> m_subSections;
+        std::map<std::string, SharedPtr<Section>> m_subSections;
         long long m_time; //in ns
         std::string m_name;
         bool m_started = false;
@@ -82,8 +82,8 @@ private:
         Section* findSubSection(std::string name);
         void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
 
-        virtual std::shared_ptr<ObjectMap> serialize() const;
-        virtual bool deserialize(std::shared_ptr<ObjectMap>);
+        virtual SharedPtr<ObjectMap> serialize() const;
+        virtual bool deserialize(SharedPtr<ObjectMap>);
     };
     Section m_root;
     std::stack<Section*> m_startedSections;

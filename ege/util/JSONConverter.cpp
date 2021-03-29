@@ -71,7 +71,7 @@ size_t ignoreWhitespace(JSONConverter::InputStreamType& input)
     return counter;
 }
 
-bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object);
+bool parseValue(JSONConverter::InputStreamType& input, SharedPtr<Object>& object);
 
 bool consumeStringWithEscapes(JSONConverter::InputStreamType& input, std::string& object)
 {
@@ -216,7 +216,7 @@ bool parsePair(JSONConverter::InputStreamType& input, ObjectMap& object)
     ignoreWhitespace(input);
 
     // value
-    std::shared_ptr<Object> value;
+    SharedPtr<Object> value;
     bool result = parseValue(input, value);
     if(!result)
     {
@@ -313,7 +313,7 @@ bool parseList(JSONConverter::InputStreamType& input, ObjectList& object)
         }
 
         // value
-        std::shared_ptr<Object> subObject;
+        SharedPtr<Object> subObject;
         if(!parseValue(input, subObject))
         {
             std::cerr << "json: expected value for list" << logIndex(input.tellg()) << std::endl;
@@ -389,12 +389,12 @@ bool parseMap(JSONConverter::InputStreamType& input, ObjectMap& object)
     }
 }
 
-bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object)
+bool parseValue(JSONConverter::InputStreamType& input, SharedPtr<Object>& object)
 {
     char c = input.peek();
     if(c == '"')
     {
-        std::shared_ptr<ObjectString> object2 = make<ObjectString>("");
+        SharedPtr<ObjectString> object2 = make<ObjectString>("");
         std::string value;
         if(!parseString(input, value))
         {
@@ -407,7 +407,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     }
     else if(c == 't' || c == 'f') // first letters of 'true' and 'false'
     {
-        std::shared_ptr<ObjectBoolean> object2 = make<ObjectBoolean>();
+        SharedPtr<ObjectBoolean> object2 = make<ObjectBoolean>();
         bool value;
         if(!parseBoolean(input, value))
         {
@@ -420,7 +420,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     }
     else if(isdigit(c) || c == '-' || c == '+')
     {
-        std::shared_ptr<ObjectFloat> object2 = make<ObjectFloat>(0.0);
+        SharedPtr<ObjectFloat> object2 = make<ObjectFloat>(0.0);
         double value;
         if(!parseFloat(input, value))
         {
@@ -433,7 +433,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     }
     else if(c == '[')
     {
-        std::shared_ptr<ObjectList> object2 = make<ObjectList>();
+        SharedPtr<ObjectList> object2 = make<ObjectList>();
         if(!parseList(input, *object2))
         {
             std::cerr << "json: expected list" << logIndex(input.tellg()) << std::endl;
@@ -444,7 +444,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     }
     else if(c == '{')
     {
-        std::shared_ptr<ObjectMap> object2 = make<ObjectMap>();
+        SharedPtr<ObjectMap> object2 = make<ObjectMap>();
         if(!parseMap(input, *object2))
         {
             std::cerr << "json: expected map" << logIndex(input.tellg()) << std::endl;
@@ -485,7 +485,7 @@ bool parseValue(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& 
     return false;
 }
 
-bool JSONConverter::in(JSONConverter::InputStreamType& input, std::shared_ptr<Object>& object) const
+bool JSONConverter::in(JSONConverter::InputStreamType& input, SharedPtr<Object>& object) const
 {
     ignoreWhitespace(input);
     bool b = parseValue(input, object);

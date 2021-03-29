@@ -76,7 +76,7 @@ EventResult EGEServer::onClientDisconnect(ClientConnection& client)
     return EventResult::Success;
 }
 
-void EGEServer::setScene(std::shared_ptr<Scene> scene)
+void EGEServer::setScene(SharedPtr<Scene> scene)
 {
     if(!scene)
     {
@@ -116,7 +116,7 @@ void EGEServer::setScene(std::shared_ptr<Scene> scene)
     EGEGame::setScene(scene);
 }
 
-EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packet> packet)
+EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> packet)
 {
     sf::Lock lock(m_clientsAccessMutex);
     EGEPacket* egePacket = (EGEPacket*)packet.get();
@@ -175,7 +175,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
         break;
     case EGEPacket::Type::CSceneObjectControl:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
@@ -215,7 +215,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, std::shared_ptr<Packe
         break;
     case EGEPacket::Type::CSceneObjectRequest:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
                 return EventResult::Failure;
@@ -285,7 +285,7 @@ EventResult EGEServer::onLoad()
         exit(state.returnCode);
     };
 
-    std::shared_ptr<AsyncTask> task = make<AsyncTask>(serverNetworkWorker, serverNetworkCallback);
+    SharedPtr<AsyncTask> task = make<AsyncTask>(serverNetworkWorker, serverNetworkCallback);
     addAsyncTask(task, "EGEServer network task");
 
     return EventResult::Success;
@@ -364,7 +364,7 @@ void EGEServer::onTick(TickCount)
     }
 }
 
-EventResult EGEServer::onLogin(EGEClientConnection& client, std::shared_ptr<ObjectMap>)
+EventResult EGEServer::onLogin(EGEClientConnection& client, SharedPtr<ObjectMap>)
 {
     // Send SceneObject data to Client.
     auto scene = getScene();
@@ -388,7 +388,7 @@ void EGEServer::kickClientWithReason(EGEClientConnection& client, std::string re
     kickClient(client);
 }
 
-std::shared_ptr<ClientConnection> EGEServer::makeClient(Server& server, std::shared_ptr<sf::TcpSocket> socket)
+SharedPtr<ClientConnection> EGEServer::makeClient(Server& server, SharedPtr<sf::TcpSocket> socket)
 {
     return make<EGEClientConnection>((EGEServer&)server, socket);
 }
@@ -399,7 +399,7 @@ void EGEServer::setDefaultController(EGEClientConnection& client, SceneObject* s
     client.send(EGEPacket::generateSDefaultControllerId(sceneObject));
 }
 
-std::shared_ptr<ServerNetworkController> EGEServer::getController(UidType objectId)
+SharedPtr<ServerNetworkController> EGEServer::getController(UidType objectId)
 {
     return m_controllersForObjects[objectId];
 }

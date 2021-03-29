@@ -41,7 +41,7 @@
 namespace EGE
 {
 /*
-void Animatable::addAnimation(std::shared_ptr<Animation> animation, std::function<void(Animation*, double)> callback, std::string name)
+void Animatable::addAnimation(SharedPtr<Animation> animation, std::function<void(Animation*, double)> callback, std::string name)
 */
 void Animatable::removeAnimations(std::string name)
 {

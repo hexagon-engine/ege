@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectFloat::copy() const
+SharedPtr<Object> ObjectFloat::copy() const
 {
     return make<ObjectFloat>(*this);
 }

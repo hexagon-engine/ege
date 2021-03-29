@@ -51,7 +51,7 @@ template<class TMap>
 class TilemapRenderer2D : public ObjectRenderer
 {
 public:
-    TilemapRenderer2D(SceneObject2D& sceneObject, std::shared_ptr<TMap> tilemap)
+    TilemapRenderer2D(SceneObject2D& sceneObject, SharedPtr<TMap> tilemap)
     : ObjectRenderer(sceneObject), m_tileMap(tilemap) { setLayerCount(1); }
 
     void setAtlasTextureName(std::string name, Size layer = 0)
@@ -282,7 +282,7 @@ public:
     }
 
 private:
-    std::shared_ptr<TMap> m_tileMap;
+    SharedPtr<TMap> m_tileMap;
     SharedPtrVector<Texture> m_atlasses;
     Vector<std::string> m_atlasNames;
     AtlasMapper m_tileMapper;

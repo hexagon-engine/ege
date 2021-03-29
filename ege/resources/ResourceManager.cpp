@@ -54,9 +54,9 @@ void ResourceManager::clear()
     m_defaultFont = "";
 }
 
-std::shared_ptr<Texture> ResourceManager::loadTextureFromFile(std::string fileName)
+SharedPtr<Texture> ResourceManager::loadTextureFromFile(std::string fileName)
 {
-    std::shared_ptr<SFMLTexture> texture = make<SFMLTexture>();
+    SharedPtr<SFMLTexture> texture = make<SFMLTexture>();
     if(!texture->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
         err(LogLevel::Error) << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
@@ -67,9 +67,9 @@ std::shared_ptr<Texture> ResourceManager::loadTextureFromFile(std::string fileNa
     return texture;
 }
 
-std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
+SharedPtr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
 {
-    std::shared_ptr<sf::Font> font = make<sf::Font>();
+    SharedPtr<sf::Font> font = make<sf::Font>();
     if(!font->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
         err(LogLevel::Error) << "0006 EGE/resources: could not load resource: FONT " << fileName;
@@ -80,9 +80,9 @@ std::shared_ptr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName
     return font;
 }
 
-std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, sf::Shader::Type type)
+SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, sf::Shader::Type type)
 {
-    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader(new sf::Shader);
     if(!shader->loadFromFile(CommonPaths::resourceDir() + "/" + fileName, type))
     {
         err(LogLevel::Error) << "EGE/resources: could not load resource: [" << (int)type << "] SHADER " << fileName;
@@ -93,9 +93,9 @@ std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string file
     return shader;
 }
 
-std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string fragmentShader)
+SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string fragmentShader)
 {
-    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader(new sf::Shader);
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + fragmentShader))
     {
@@ -107,9 +107,9 @@ std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name
     return shader;
 }
 
-std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string geometryShader, std::string fragmentShader)
+SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string geometryShader, std::string fragmentShader)
 {
-    std::shared_ptr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader(new sf::Shader);
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + geometryShader, res + "/" + fragmentShader))
     {
@@ -121,13 +121,13 @@ std::shared_ptr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name
     return shader;
 }
 
-std::shared_ptr<sf::Cursor> ResourceManager::loadCursorFromFile(std::string)
+SharedPtr<sf::Cursor> ResourceManager::loadCursorFromFile(std::string)
 {
     // TODO
     return nullptr;
 }
 
-void ResourceManager::addTexture(std::string name, std::shared_ptr<Texture> texture)
+void ResourceManager::addTexture(std::string name, SharedPtr<Texture> texture)
 {
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
@@ -140,7 +140,7 @@ void ResourceManager::addTexture(std::string name, std::shared_ptr<Texture> text
     }
 }
 
-void ResourceManager::addFont(std::string name, std::shared_ptr<sf::Font> font)
+void ResourceManager::addFont(std::string name, SharedPtr<sf::Font> font)
 {
     auto it = m_loadedFonts.find(name);
     if(it == m_loadedFonts.end())
@@ -153,7 +153,7 @@ void ResourceManager::addFont(std::string name, std::shared_ptr<sf::Font> font)
     }
 }
 
-void ResourceManager::addCursor(std::string name, std::shared_ptr<sf::Cursor> cursor)
+void ResourceManager::addCursor(std::string name, SharedPtr<sf::Cursor> cursor)
 {
     auto it = m_loadedCursors.find(name);
     if(it == m_loadedCursors.end())
@@ -166,7 +166,7 @@ void ResourceManager::addCursor(std::string name, std::shared_ptr<sf::Cursor> cu
     }
 }
 
-void ResourceManager::addShader(std::string name, std::shared_ptr<sf::Shader> shader)
+void ResourceManager::addShader(std::string name, SharedPtr<sf::Shader> shader)
 {
     auto it = m_loadedShaders.find(name);
     if(it == m_loadedShaders.end())
@@ -179,7 +179,7 @@ void ResourceManager::addShader(std::string name, std::shared_ptr<sf::Shader> sh
     }
 }
 
-std::shared_ptr<Texture> ResourceManager::getTexture(std::string name)
+SharedPtr<Texture> ResourceManager::getTexture(std::string name)
 {
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
@@ -197,7 +197,7 @@ std::shared_ptr<Texture> ResourceManager::getTexture(std::string name)
     return it->second;
 }
 
-std::shared_ptr<sf::Font> ResourceManager::getFont(std::string name)
+SharedPtr<sf::Font> ResourceManager::getFont(std::string name)
 {
     auto it = m_loadedFonts.find(name);
     if(it == m_loadedFonts.end())
@@ -222,7 +222,7 @@ std::shared_ptr<sf::Font> ResourceManager::getFont(std::string name)
     return it->second;
 }
 
-std::shared_ptr<sf::Cursor> ResourceManager::getCursor(std::string name)
+SharedPtr<sf::Cursor> ResourceManager::getCursor(std::string name)
 {
     auto it = m_loadedCursors.find(name);
     if(it == m_loadedCursors.end())
@@ -239,7 +239,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::getCursor(std::string name)
     return it->second;
 }
 
-std::shared_ptr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
+SharedPtr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
 {
     auto cursor = getCursor("/EGE::System::/ /_" + std::to_string((int)type));
     if(!cursor)
@@ -253,7 +253,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
     return cursor;
 }
 
-std::shared_ptr<sf::Shader> ResourceManager::getShader(std::string name)
+SharedPtr<sf::Shader> ResourceManager::getShader(std::string name)
 {
     auto it = m_loadedShaders.find(name);
     if(it == m_loadedShaders.end())
@@ -264,9 +264,9 @@ std::shared_ptr<sf::Shader> ResourceManager::getShader(std::string name)
     return it->second;
 }
 
-std::shared_ptr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
+SharedPtr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
 {
-    std::shared_ptr<sf::Cursor> cursor(new sf::Cursor);
+    SharedPtr<sf::Cursor> cursor(new sf::Cursor);
     if(!cursor->loadFromSystem(type))
     {
         err(LogLevel::Error) << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type;
@@ -278,7 +278,7 @@ std::shared_ptr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type t
     return cursor;
 }
 
-std::shared_ptr<sf::Font> ResourceManager::getDefaultFont()
+SharedPtr<sf::Font> ResourceManager::getDefaultFont()
 {
     return getFont(m_defaultFont);
 }
@@ -302,7 +302,7 @@ bool ResourceManager::setDefaultFont(std::string name)
     }
 }
 
-void ResourceManager::setUnknownTexture(std::shared_ptr<Texture> texture)
+void ResourceManager::setUnknownTexture(SharedPtr<Texture> texture)
 {
     m_unknownTexture = texture;
 }

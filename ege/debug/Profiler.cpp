@@ -98,11 +98,11 @@ void Profiler::startSectionLL(std::string name)
 
         if(m_startedSections.empty())
         {
-            m_root.m_subSections[name] = std::shared_ptr<Section>(section);
+            m_root.m_subSections[name] = SharedPtr<Section>(section);
         }
         else
         {
-            m_startedSections.top()->m_subSections[name] = std::shared_ptr<Section>(section);
+            m_startedSections.top()->m_subSections[name] = SharedPtr<Section>(section);
         }
     }
     section->m_startTime = getTime();
@@ -224,9 +224,9 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
         section->addSectionInfo(info, m_time, rootTime);
 }
 
-std::shared_ptr<ObjectMap> Profiler::Section::serialize() const
+SharedPtr<ObjectMap> Profiler::Section::serialize() const
 {
-    std::shared_ptr<ObjectMap> map = make<ObjectMap>();
+    SharedPtr<ObjectMap> map = make<ObjectMap>();
 
     // this section
     map->addObject("time", make<ObjectInt>(m_time));
@@ -237,7 +237,7 @@ std::shared_ptr<ObjectMap> Profiler::Section::serialize() const
         sections.push_back(it.second.get());
 
     std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
-    std::shared_ptr<ObjectMap>& sectionMap = (std::shared_ptr<ObjectMap>&)map->addObject("sections", make<ObjectMap>());
+    SharedPtr<ObjectMap>& sectionMap = (SharedPtr<ObjectMap>&)map->addObject("sections", make<ObjectMap>());
 
     for(auto section: sections)
     {
@@ -246,21 +246,21 @@ std::shared_ptr<ObjectMap> Profiler::Section::serialize() const
     return map;
 }
 
-bool Profiler::Section::deserialize(std::shared_ptr<ObjectMap>)
+bool Profiler::Section::deserialize(SharedPtr<ObjectMap>)
 {
     //TODO
     DBG(1, "TODO: profiler deserialize not implemented");
     CRASH();
 }
 
-std::shared_ptr<ObjectMap> Profiler::serialize() const
+SharedPtr<ObjectMap> Profiler::serialize() const
 {
-    std::shared_ptr<ObjectMap> map = make<ObjectMap>();
+    SharedPtr<ObjectMap> map = make<ObjectMap>();
     map->addObject("root", m_root.serialize());
     return map;
 }
 
-bool Profiler::deserialize(std::shared_ptr<ObjectMap>)
+bool Profiler::deserialize(SharedPtr<ObjectMap>)
 {
     //TODO
     DBG(1, "TODO: profiler deserialize not implemented");

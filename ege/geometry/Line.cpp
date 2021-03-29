@@ -45,7 +45,7 @@
 namespace EGE
 {
 
-std::shared_ptr<ShapeSet> Line::intersection(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> Line::intersection(SharedPtr<Shape> other) const
 {
     if(!other)
         return nullptr;
@@ -80,7 +80,7 @@ std::shared_ptr<ShapeSet> Line::intersection(std::shared_ptr<Shape> other) const
     return nullptr;
 }
 
-std::shared_ptr<ShapeSet> Line::sum(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> Line::sum(SharedPtr<Shape> other) const
 {
     if(!other)
         return make<ShapeSet>(copy());
@@ -118,7 +118,7 @@ std::shared_ptr<ShapeSet> Line::sum(std::shared_ptr<Shape> other) const
     return make<ShapeSet>(shapeSet);
 }
 
-bool Line::contains(std::shared_ptr<Point> other) const
+bool Line::contains(SharedPtr<Point> other) const
 {
     return Geometry::distanceToLine(A, B, C, other->x, other->y) == 0;
 }
@@ -128,7 +128,7 @@ bool Line::isEmpty() const
     return false;
 }
 
-std::shared_ptr<Shape> Line::copy() const
+SharedPtr<Shape> Line::copy() const
 {
     return make<Line>(*this);
 }

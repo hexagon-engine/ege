@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectList::copy() const
+SharedPtr<Object> ObjectList::copy() const
 {
     return make<ObjectList>(*this);
 }
@@ -66,13 +66,13 @@ std::string ObjectList::toString() const
     return str;
 }
 
-const std::shared_ptr<Object>& ObjectList::addObject(const std::shared_ptr<Object>& subObject)
+const SharedPtr<Object>& ObjectList::addObject(const SharedPtr<Object>& subObject)
 {
     m_objects.push_back(subObject);
     return subObject;
 }
 
-const std::shared_ptr<Object>& ObjectList::insertObject(size_t position, const std::shared_ptr<Object>& subObject)
+const SharedPtr<Object>& ObjectList::insertObject(size_t position, const SharedPtr<Object>& subObject)
 {
     m_objects.insert(m_objects.begin() + position, subObject);
     return subObject;
@@ -99,9 +99,9 @@ size_t ObjectList::size() const
     return m_objects.size();
 }
 
-std::shared_ptr<ObjectList> ObjectList::merge(std::shared_ptr<ObjectList> other)
+SharedPtr<ObjectList> ObjectList::merge(SharedPtr<ObjectList> other)
 {
-    std::shared_ptr<ObjectList> newList = make<ObjectList>();
+    SharedPtr<ObjectList> newList = make<ObjectList>();
     newList->m_objects.insert(newList->m_objects.begin(), begin(), end());
 
     // Append other list to `this' list.

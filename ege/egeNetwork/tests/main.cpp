@@ -21,11 +21,11 @@
 
 TESTCASE(converter)
 {
-    std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+    EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
     map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
     map->addObject("String", make<EGE::ObjectString>("test"));
     map->addObject("IntAsString", make<EGE::ObjectString>("543"));
-    std::shared_ptr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
+    EGE::SharedPtr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
     subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
     map->addObject("SubMapTest", subMap);
 
@@ -47,7 +47,7 @@ TESTCASE(converter)
 class MyObject : public EGE::SceneObject2D
 {
 public:
-    EGE_SCENEOBJECT(MyObject)
+    EGE_SCENEOBJECT("MyObject")
 
     MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, bool playerControlled = false)
     : EGE::SceneObject2D(owner, type)
@@ -159,7 +159,7 @@ public:
         setVersionString("EGE Test");
     }
 
-    virtual std::shared_ptr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
+    virtual EGE::SharedPtr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
         if(object.getType().getId() == "MyObject")
         {
@@ -171,7 +171,7 @@ public:
         return nullptr;
     }
 
-    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, std::shared_ptr<EGE::ObjectMap> data)
+    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, EGE::SharedPtr<EGE::ObjectMap> data)
     {
         // Synchronize client with server.
         EGE::EGEServer::onLogin(client, data);
@@ -196,7 +196,7 @@ public:
     MyClient(unsigned short port)
     : EGE::EGEClient(sf::IpAddress::LocalHost, port) { setVersion(1); setVersionString("EGE Test"); }
 
-    virtual std::shared_ptr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
+    virtual EGE::SharedPtr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
     {
         if(object.getType().getId() == "MyObject")
         {
@@ -210,7 +210,7 @@ public:
 
     void move(bool moving, int dir)
     {
-        std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
+        EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
         _map->addInt("moving", moving);
         _map->addInt("dir", dir);
         requestControl(nullptr, EGE::ControlObject("move", _map));
@@ -218,7 +218,7 @@ public:
 
     void move2(bool moving, int dir)
     {
-        std::shared_ptr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
+        EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
         _map->addInt("moving", moving);
         _map->addInt("dir", dir);
         requestControl(getScene()->getObject(-1).get(), EGE::ControlObject("move", _map));
@@ -259,7 +259,7 @@ TESTCASE(server)
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
 {
 public:
-    MySystemEventHandler(EGE::SFMLSystemWindow& window, std::shared_ptr<MyClient> client)
+    MySystemEventHandler(EGE::SFMLSystemWindow& window, EGE::SharedPtr<MyClient> client)
     : EGE::DefaultSystemEventHandler(window), m_client(client) {}
 
     void onKeyPress(sf::Event::KeyEvent& event)
@@ -313,13 +313,13 @@ public:
     }
 
 private:
-    std::shared_ptr<MyClient> m_client;
+    EGE::SharedPtr<MyClient> m_client;
 };
 
 class MyGameLoop : public EGE::GUIGameLoop
 {
-    std::shared_ptr<MyClient> m_client;
-    std::shared_ptr<EGE::CameraObject2D> m_camera;
+    EGE::SharedPtr<MyClient> m_client;
+    EGE::SharedPtr<EGE::CameraObject2D> m_camera;
     int m_port;
 
 public:
@@ -373,10 +373,7 @@ public:
         // Camera: follow currently controlled object.
         auto controller = m_client->getDefaultController();
         if(controller)
-        {
-            auto& obj = (EGE::SceneObject2D&)controller->getObject();
-            m_camera->setPosition(obj.getPosition());
-        }
+            m_camera->setParent(dynamic_cast<EGE::SceneObject2D*>(&controller->getObject()));
     }
 };
 

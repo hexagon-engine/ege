@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectBoolean::copy() const
+SharedPtr<Object> ObjectBoolean::copy() const
 {
     return make<ObjectBoolean>(*this);
 }

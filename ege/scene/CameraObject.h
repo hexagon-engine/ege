@@ -72,7 +72,7 @@ public:
     float getZoom() const { return m_zoom; }
     void setZoom(float zoom) { ASSERT(zoom != 0); m_zoom = zoom; }
 
-    void setFollowObject(std::shared_ptr<EGE::SceneObject> object) { m_following = object; }
+    void setFollowObject(SharedPtr<EGE::SceneObject> object) { m_following = object; }
 
 protected:
     float m_fov = 0.f;
@@ -80,7 +80,7 @@ protected:
     CoordType m_size;
     EGE::Scene& m_parent;
     ScalingMode m_scalingMode = ScalingMode::None;
-    std::shared_ptr<EGE::SceneObject> m_following;
+    SharedPtr<EGE::SceneObject> m_following;
 };
 
 }

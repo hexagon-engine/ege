@@ -27,9 +27,9 @@ TESTCASE(object)
 class MyConverter : public EGE::Converter<std::string>
 {
 public:
-    virtual bool in(std::string& input, std::shared_ptr<EGE::Object>& object) const
+    virtual bool in(std::string& input, EGE::SharedPtr<EGE::Object>& object) const
     {
-        std::shared_ptr<EGE::ObjectMap> objectMap = make<EGE::ObjectMap>();
+        EGE::SharedPtr<EGE::ObjectMap> objectMap = make<EGE::ObjectMap>();
         objectMap->addObject("myString", make<EGE::ObjectString>(input));
         object = objectMap;
         return true;
@@ -58,7 +58,7 @@ TESTCASE(converter)
     MyConverter converter;
     std::string myString;
     EGE::ObjectMap map;
-    std::shared_ptr<EGE::Object> map2;
+    EGE::SharedPtr<EGE::Object> map2;
     map.addObject("myString", make<EGE::ObjectInt>(1234));
     std::cerr << map.toString() << std::endl;
     myString << EGE::objectOut(map, converter);
@@ -66,7 +66,7 @@ TESTCASE(converter)
     myString = "test4443";
     myString >> EGE::objectIn(map2, converter);
     std::cerr << map2->toString() << std::endl;
-    std::shared_ptr<EGE::ObjectMap> objectMap = std::static_pointer_cast<EGE::ObjectMap>(map2);
+    EGE::SharedPtr<EGE::ObjectMap> objectMap = std::static_pointer_cast<EGE::ObjectMap>(map2);
     EXPECT_EQUAL(objectMap->getObject("myString").asString().value(), "test4443");
     return 0;
 }
@@ -125,8 +125,8 @@ TESTCASE(merge)
 
 TESTCASE(lists)
 {
-    std::shared_ptr<EGE::ObjectMap> _mapFirst = make<EGE::ObjectMap>();
-    std::shared_ptr<EGE::ObjectList> _list = make<EGE::ObjectList>();
+    EGE::SharedPtr<EGE::ObjectMap> _mapFirst = make<EGE::ObjectMap>();
+    EGE::SharedPtr<EGE::ObjectList> _list = make<EGE::ObjectList>();
     _list->addObject(EGE::Serializers::object(0.0));
     _list->addObject(EGE::Serializers::object(154.0));
     auto map = make<EGE::ObjectMap>();
@@ -182,7 +182,7 @@ TESTCASE(_json)
                  0,1,2,3,4,5,\n\r6,7,8,9,\"a\"   \n], \"N e x t Text\"            :\"\"\n\n\n\n, \"test66\":{},\
                 \"test77\":   {  \"aaa\":\"bbb\", \"ccc\": [ 0, 4, 6, {\"AA\":\"BB\"}  ]  }, \"EscapeTest\": \"  \
                 \\n\\tTest\\\"Test\\\"\\\\ \\\n\t\tTEST\", \"booltest\": true}");
-        std::shared_ptr<EGE::Object> obj2;
+        EGE::SharedPtr<EGE::Object> obj2;
         if(!(str >> EGE::objectIn(obj2, EGE::JSONConverter())))
         {
             std::cerr << "parse error" << std::endl;
@@ -198,7 +198,7 @@ TESTCASE(_json)
 
 TESTCASE(objectIntTypes)
 {
-    std::shared_ptr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+    EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
     long long number    =    0x7EDCBA9876543210;
 
     map->addInt("b", number, EGE::ObjectInt::Type::Byte);  // 0x10

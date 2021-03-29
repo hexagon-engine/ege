@@ -172,7 +172,7 @@ public:
     virtual void onTimerFinish(Timer*) {}
     virtual void onTimerTick(Timer*) {}
 
-    virtual void addTimer(const std::string& name, std::shared_ptr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
+    virtual void addTimer(const std::string& name, SharedPtr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
     virtual void removeTimer(const std::string& timer);
     virtual void onUpdate();
@@ -188,7 +188,7 @@ public:
     bool isRunning() { return m_running; }
     long long getTickCount() { return m_ticks; }
 
-    virtual bool setSubLoop(std::shared_ptr<EventLoop> loop)
+    virtual bool setSubLoop(SharedPtr<EventLoop> loop)
     {
         ASSERT(loop);
         m_subLoop = loop;
@@ -196,7 +196,7 @@ public:
         return true;
     }
 
-    std::shared_ptr<EventLoop> getSubLoop() { return m_subLoop; }
+    SharedPtr<EventLoop> getSubLoop() { return m_subLoop; }
 
 protected:
     virtual void updateTimers();
@@ -208,9 +208,9 @@ private:
     EventArray<Event>& events(Event::EventType type);
 
     int m_ticks = 0;
-    std::multimap<std::string, std::shared_ptr<Timer>> m_timers;
+    std::multimap<std::string, SharedPtr<Timer>> m_timers;
     Map<Event::EventType, EventArray<Event>> m_eventHandlers;
-    std::shared_ptr<EventLoop> m_subLoop;
+    SharedPtr<EventLoop> m_subLoop;
     std::queue<std::function<void()>> m_deferredInvokes;
     std::mutex m_mutex;
 };

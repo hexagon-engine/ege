@@ -67,7 +67,7 @@ void Server::close()
 }
 
 // synchronous
-bool Server::sendTo(std::shared_ptr<Packet> packet, int id)
+bool Server::sendTo(SharedPtr<Packet> packet, int id)
 {
     std::weak_ptr<ClientConnection> client = getClient(id);
     if(client.expired())
@@ -76,12 +76,12 @@ bool Server::sendTo(std::shared_ptr<Packet> packet, int id)
     return client.lock()->send(packet);
 }
 
-bool Server::sendToAll(std::shared_ptr<Packet> packet)
+bool Server::sendToAll(SharedPtr<Packet> packet)
 {
     return sendTo(packet, [](ClientConnection&) { return true; });
 }
 
-bool Server::sendTo(std::shared_ptr<Packet> packet, std::function<bool(ClientConnection&)> predicate)
+bool Server::sendTo(SharedPtr<Packet> packet, std::function<bool(ClientConnection&)> predicate)
 {
     bool success = true;
     sf::Lock lock(m_clientsAccessMutex);
@@ -113,7 +113,7 @@ std::vector<std::weak_ptr<ClientConnection>> Server::getClients(std::function<bo
     return clients;
 }
 
-int Server::addClient(std::shared_ptr<ClientConnection> client)
+int Server::addClient(SharedPtr<ClientConnection> client)
 {
     EventResult result = onClientConnect(*client);
     if(result == EventResult::Failure)
@@ -160,12 +160,12 @@ void Server::select()
     {
         if(m_selector.isReady(m_listener))
         {
-            std::shared_ptr<sf::TcpSocket> socket = make<sf::TcpSocket>();
+            SharedPtr<sf::TcpSocket> socket = make<sf::TcpSocket>();
             sf::Socket::Status status2 = m_listener.accept(*socket);
 
             if(status2 == sf::Socket::Done)
             {
-                std::shared_ptr<ClientConnection> client = makeClient(*this, socket);
+                SharedPtr<ClientConnection> client = makeClient(*this, socket);
                 if(client)
                 {
                     int id = addClient(client);
@@ -187,7 +187,7 @@ void Server::select()
                     std::weak_ptr<sf::TcpSocket> sck = pr.second->getSocket();
                     if(m_selector.isReady(*sck.lock().get()))
                     {
-                        std::shared_ptr<Packet> packet = pr.second->receive();
+                        SharedPtr<Packet> packet = pr.second->receive();
                         if(packet)
                         {
                             EventResult result = onReceive(*pr.second, packet);

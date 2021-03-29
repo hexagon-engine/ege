@@ -49,7 +49,7 @@ namespace EGE
 class ControlObject
 {
 public:
-    ControlObject(std::string type, std::shared_ptr<ObjectMap> args = make<ObjectMap>())
+    ControlObject(std::string type, SharedPtr<ObjectMap> args = make<ObjectMap>())
     : m_type(type)
     , m_args(args) {}
 
@@ -57,14 +57,14 @@ public:
     {
         return m_type;
     }
-    std::shared_ptr<ObjectMap> getArgs() const
+    SharedPtr<ObjectMap> getArgs() const
     {
         return m_args ? std::static_pointer_cast<ObjectMap>(m_args->copy()) : nullptr;
     }
 
 private:
     std::string m_type;
-    std::shared_ptr<ObjectMap> m_args;
+    SharedPtr<ObjectMap> m_args;
 };
 
 }

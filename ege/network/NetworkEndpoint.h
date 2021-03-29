@@ -39,6 +39,8 @@
 #include <memory>
 #include <SFML/Network.hpp>
 
+#include <ege/util/Types.h>
+
 #include "Packet.h"
 
 namespace EGE
@@ -51,8 +53,8 @@ public:
     virtual ~NetworkEndpoint() {}
 
     // almost always synchronous
-    virtual bool send(std::shared_ptr<Packet> packet) = 0;
-    virtual std::shared_ptr<Packet> receive() = 0;
+    virtual bool send(SharedPtr<Packet> packet) = 0;
+    virtual SharedPtr<Packet> receive() = 0;
 
     bool isConnected()
     {
@@ -73,7 +75,7 @@ public:
     virtual void disconnect();
 
 protected:
-    std::shared_ptr<sf::TcpSocket> m_socket;
+    SharedPtr<sf::TcpSocket> m_socket;
     bool m_connected = true;
     sf::Mutex m_accessMutex;
 };

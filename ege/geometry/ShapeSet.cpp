@@ -46,13 +46,13 @@ ShapeSet::ShapeSet(const ShapeSet& shapeSet)
 {
     for(auto shape: shapeSet.m_subShapes)
     {
-        append(std::shared_ptr<Shape>(shape->copy()));
+        append(SharedPtr<Shape>(shape->copy()));
     }
 }
 
-std::shared_ptr<ShapeSet> ShapeSet::intersection(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> ShapeSet::intersection(SharedPtr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
+    SharedPtr<ShapeSet> shapeSet = make<ShapeSet>();
     for(auto shape: m_subShapes)
     {
         shapeSet->append(shape->intersection(other));
@@ -60,14 +60,14 @@ std::shared_ptr<ShapeSet> ShapeSet::intersection(std::shared_ptr<Shape> other) c
     return shapeSet;
 }
 
-std::shared_ptr<ShapeSet> ShapeSet::sum(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> ShapeSet::sum(SharedPtr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>(*this);
+    SharedPtr<ShapeSet> shapeSet = make<ShapeSet>(*this);
     shapeSet->append(other);
     return shapeSet;
 }
 
-bool ShapeSet::contains(std::shared_ptr<Point> point) const
+bool ShapeSet::contains(SharedPtr<Point> point) const
 {
     for(auto shape: m_subShapes)
     {
@@ -82,12 +82,12 @@ bool ShapeSet::isEmpty() const
     return m_subShapes.empty();
 }
 
-std::shared_ptr<Shape> ShapeSet::copy() const
+SharedPtr<Shape> ShapeSet::copy() const
 {
     return make<ShapeSet>(*this);
 }
 
-void ShapeSet::append(std::shared_ptr<Shape> shape)
+void ShapeSet::append(SharedPtr<Shape> shape)
 {
     if(!shape->isEmpty())
         m_subShapes.push_back(shape->copy());

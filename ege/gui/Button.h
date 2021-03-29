@@ -62,12 +62,12 @@ protected:
 
     // Args: position.
     // Position may be needed for some animations.
-    virtual void onClick(EGE::Vec2d) {}
+    virtual void onClick(Vec2d) {}
 
 private:
-    void handleClick(EGE::Vec2d position);
+    void handleClick(Vec2d position);
 
-    EGE::Vec2d m_lastClickPos;
+    Vec2d m_lastClickPos;
     sf::String m_label;
 };
 

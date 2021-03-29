@@ -41,7 +41,7 @@
 namespace EGE
 {
 
-std::shared_ptr<SFMLPacket> EGEClientConnection::makePacket(sf::Packet& packet)
+SharedPtr<SFMLPacket> EGEClientConnection::makePacket(sf::Packet& packet)
 {
     return make<EGEPacket>(packet);
 }

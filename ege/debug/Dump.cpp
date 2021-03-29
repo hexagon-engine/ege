@@ -115,14 +115,14 @@ static void _indent(std::vector<IndentMode> modes)
     }
 }
 
-static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast);
+static void _printPair(std::string name, SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast);
 
 static void _printName(std::string name)
 {
     std::cerr << "\e[1;32m" << name << "\e[m = ";
 }
 
-static void _printValue(std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast)
+static void _printValue(SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast)
 {
     if(depth.size() > 10)
     {
@@ -257,7 +257,7 @@ static void _printValue(std::shared_ptr<Object> object, std::vector<IndentMode> 
     }
 }
 
-static void _printPair(std::string name, std::shared_ptr<Object> object, std::vector<IndentMode> depth, bool isLast)
+static void _printPair(std::string name, SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast)
 {
     _indent(depth);
     _printName(name);
@@ -266,7 +266,7 @@ static void _printPair(std::string name, std::shared_ptr<Object> object, std::ve
 
 }
 
-void printObject(std::shared_ptr<Object> object)
+void printObject(SharedPtr<Object> object)
 {
     PrintObject::_printPair("root", object, {}, true);
 }

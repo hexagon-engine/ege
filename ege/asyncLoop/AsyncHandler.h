@@ -51,7 +51,7 @@ namespace EGE
 class AsyncHandler
 {
 public:
-    virtual void addAsyncTask(std::shared_ptr<AsyncTask> task, std::string name = "");
+    virtual void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
 
     // unsafe due to thread termination
     virtual void removeAsyncTasks(std::string name = "");
@@ -65,7 +65,7 @@ protected:
     virtual void updateAsyncTasks();
 
 private:
-    std::multimap<std::string, std::shared_ptr<AsyncTask>> m_asyncTasks;
+    std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;
 
 };
 

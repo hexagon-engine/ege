@@ -117,9 +117,9 @@ void SceneObject2D::render(Renderer& renderer) const
     }
 }
 
-std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
+SharedPtr<ObjectMap> SceneObject2D::serializeMain() const
 {
-    std::shared_ptr<ObjectMap> data = SceneObject::serializeMain();
+    SharedPtr<ObjectMap> data = SceneObject::serializeMain();
 
     data->addObject("p", Serializers::fromVector2(m_position));
     data->addObject("o", Serializers::fromVector2(m_origin));
@@ -130,7 +130,7 @@ std::shared_ptr<ObjectMap> SceneObject2D::serializeMain() const
     return data;
 }
 
-bool SceneObject2D::deserializeMain(std::shared_ptr<ObjectMap> object)
+bool SceneObject2D::deserializeMain(SharedPtr<ObjectMap> object)
 {
     m_position = Serializers::toVector2(object->getObject("p").to<ObjectMap>().valueOr({}));
     m_origin = Serializers::toVector2(object->getObject("o").to<ObjectMap>().valueOr({}));

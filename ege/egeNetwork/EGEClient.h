@@ -76,14 +76,14 @@ public:
 
     virtual ~EGEClient();
 
-    virtual std::shared_ptr<ObjectMap> getLoginData(std::shared_ptr<ObjectMap>) { return nullptr; }
-    virtual void onData(std::shared_ptr<ObjectMap>) {}
+    virtual SharedPtr<ObjectMap> getLoginData(SharedPtr<ObjectMap>) { return nullptr; }
+    virtual void onData(SharedPtr<ObjectMap>) {}
 
-    virtual EventResult onReceive(std::shared_ptr<Packet> packet);
-    EventResult createSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id, std::string typeId);
-    EventResult updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id);
+    virtual EventResult onReceive(SharedPtr<Packet> packet);
+    EventResult createSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id, String typeId);
+    EventResult updateSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id);
 
-    virtual void setScene(std::shared_ptr<Scene> scene);
+    virtual void setScene(SharedPtr<Scene> scene);
 
     virtual EventResult onLoad();
     virtual void onTick(TickCount);
@@ -91,29 +91,29 @@ public:
     virtual void onExit(int) {}
     virtual EventResult onFinish(int exitCode);
 
-    virtual void onDisconnect(std::string) {}
+    virtual void onDisconnect(String) {}
 
-    virtual bool send(std::shared_ptr<Packet> packet)
+    virtual bool send(SharedPtr<Packet> packet)
     {
         return sendTo(this, packet);
     }
 
-    bool sendWithUID(std::shared_ptr<EGEPacket> packet);
+    bool sendWithUID(SharedPtr<EGEPacket> packet);
 
-    virtual std::shared_ptr<Packet> receive()
+    virtual SharedPtr<Packet> receive()
     {
         return receiveFrom(this);
     }
 
-    virtual std::shared_ptr<SFMLPacket> makePacket(sf::Packet& packet);
+    virtual SharedPtr<SFMLPacket> makePacket(sf::Packet& packet);
     virtual void disconnect();
 
-    std::shared_ptr<ClientNetworkController> getDefaultController() { return m_defaultController; }
-    std::shared_ptr<ClientNetworkController> getController(UidType objectId);
-    std::shared_ptr<SceneObject> getDefaultControlledObject();
-    std::shared_ptr<SceneObject> getControlledObject(UidType objectId);
+    SharedPtr<ClientNetworkController> getDefaultController() { return m_defaultController; }
+    SharedPtr<ClientNetworkController> getController(UidType objectId);
+    SharedPtr<SceneObject> getDefaultControlledObject();
+    SharedPtr<SceneObject> getControlledObject(UidType objectId);
 
-    virtual std::shared_ptr<ClientNetworkController> makeController(SceneObject&) = 0;
+    virtual SharedPtr<ClientNetworkController> makeController(SceneObject&) = 0;
     void control(SceneObject* object, const ControlObject& data);
     void requestControl(SceneObject* object, const ControlObject& data);
 
@@ -124,10 +124,10 @@ public:
     bool hasAdditionalController(UidType id) { return m_additionalControllers.count(id); }
 
 private:
-    std::map<UidType, EGEPacket::Type> m_uidMap;
-    std::shared_ptr<AsyncTask> m_clientTask;
-    std::shared_ptr<ClientNetworkController> m_defaultController;
-    std::map<UidType, std::shared_ptr<ClientNetworkController>> m_controllersForObjects;
+    Map<UidType, EGEPacket::Type> m_uidMap;
+    SharedPtr<AsyncTask> m_clientTask;
+    SharedPtr<ClientNetworkController> m_defaultController;
+    Map<UidType, SharedPtr<ClientNetworkController>> m_controllersForObjects;
     std::set<UidType> m_requestedObjects;
     Set<UidType> m_additionalControllers;
     sf::IpAddress m_ip;

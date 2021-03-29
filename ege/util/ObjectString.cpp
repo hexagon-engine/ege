@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-std::shared_ptr<Object> ObjectString::copy() const
+SharedPtr<Object> ObjectString::copy() const
 {
     return make<ObjectString>(*this);
 }

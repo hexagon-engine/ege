@@ -81,14 +81,14 @@ public:
     std::string getName() const { return m_name; }
     void setName(std::string name) { m_name = name; setChanged(); }
 
-    virtual std::shared_ptr<ObjectMap> serialize() const;
-    virtual bool deserialize(std::shared_ptr<ObjectMap>);
+    virtual SharedPtr<ObjectMap> serialize() const;
+    virtual bool deserialize(SharedPtr<ObjectMap>);
 
-    virtual std::shared_ptr<ObjectMap> serializeMain() const;
-    virtual bool deserializeMain(std::shared_ptr<ObjectMap>);
+    virtual SharedPtr<ObjectMap> serializeMain() const;
+    virtual bool deserializeMain(SharedPtr<ObjectMap>);
 
-    virtual std::shared_ptr<ObjectMap> serializeExtended() const;
-    virtual bool deserializeExtended(std::shared_ptr<ObjectMap>);
+    virtual SharedPtr<ObjectMap> serializeExtended() const;
+    virtual bool deserializeExtended(SharedPtr<ObjectMap>);
 
     // Clears main and extended changed flags. Called by server.
     // FIXME: it should be only callable by Server.
@@ -102,7 +102,7 @@ public:
 
     void setDead() { m_dead = true; }
     Scene& getOwner() const { return m_owner; }
-    void setRenderer(std::shared_ptr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
+    void setRenderer(SharedPtr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
 
     void setParent(SceneObject* object);
 

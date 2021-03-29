@@ -52,6 +52,6 @@ struct HexDumpSettings
 
 void hexDump(const void* data, size_t size, HexDumpSettings settings = HexDumpSettings());
 
-void printObject(std::shared_ptr<Object> object);
+void printObject(SharedPtr<Object> object);
 
 }

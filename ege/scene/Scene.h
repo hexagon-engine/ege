@@ -140,8 +140,8 @@ public:
     std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
     std::vector<SceneObject*> getObjects(std::string typeId);
 
-    std::shared_ptr<SceneObject> getObject(UidType id);
-    std::shared_ptr<SceneObject> getStaticObject(UidType id);
+    SharedPtr<SceneObject> getObject(UidType id);
+    SharedPtr<SceneObject> getStaticObject(UidType id);
 
     SceneObject* getObjectByName(String name);
 

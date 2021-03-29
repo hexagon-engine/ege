@@ -97,7 +97,7 @@ private:
     size_t m_selectionEnd = 0;
     bool m_caretShown = true;
     bool m_border = true;
-    std::shared_ptr<NumberAnimation> m_caretAnimation;
+    SharedPtr<NumberAnimation> m_caretAnimation;
 };
 
 }

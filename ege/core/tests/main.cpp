@@ -4,6 +4,7 @@
 #include <ege/core/TimerEvent.h>
 #include <ege/debug/Logger.h>
 #include <ege/util/ObjectSerializers.h>
+#include <ege/util/Types.h>
 #include <iostream>
 
 using EGE::Time;

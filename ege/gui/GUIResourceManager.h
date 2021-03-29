@@ -55,7 +55,7 @@ public:
 
     virtual bool reload();
 
-    void registerUnknownTexture(std::shared_ptr<SFMLTexture> texture = nullptr) { m_unknownTextureToLoad = texture; }
+    void registerUnknownTexture(SharedPtr<SFMLTexture> texture = nullptr) { m_unknownTextureToLoad = texture; }
     void registerDefaultFont(std::string name) { m_defaultFontToLoad = name; }
 
 private:
@@ -63,7 +63,7 @@ private:
     std::queue<String> m_fontsToLoad;
     std::queue<String> m_cursorsToLoad;
     std::queue<std::pair<String, Vector<String>>> m_shadersToLoad;
-    std::shared_ptr<SFMLTexture> m_unknownTextureToLoad;
+    SharedPtr<SFMLTexture> m_unknownTextureToLoad;
     std::string m_defaultFontToLoad;
 };
 

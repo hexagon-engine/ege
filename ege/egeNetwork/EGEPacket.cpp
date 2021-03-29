@@ -81,7 +81,7 @@ bool EGEPacket::fromSFMLPacket(sf::Packet& packet)
     success &= !packet.endOfPacket();
     packet >> (unsigned int&)m_type;
     success &= !packet.endOfPacket();
-    std::shared_ptr<Object> args = make<ObjectMap>();
+    SharedPtr<Object> args = make<ObjectMap>();
     if(!(packet >> objectIn(args, EGEPacketConverter())))
         return false;
     m_args = std::dynamic_pointer_cast<ObjectMap>(args);
@@ -108,7 +108,7 @@ long long EGEPacket::generateUID()
     return lastUID;
 }
 
-void EGEPacket::appendUID(std::shared_ptr<ObjectMap> packetArgs)
+void EGEPacket::appendUID(SharedPtr<ObjectMap> packetArgs)
 {
     packetArgs->addObject("uid", make<ObjectInt>(generateUID()));
 }

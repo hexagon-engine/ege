@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include <ege/util/Types.h>
+
 #include <memory>
 
 namespace EGE
@@ -49,11 +51,11 @@ class Shape
 public:
     virtual ~Shape() {}
 
-    virtual std::shared_ptr<ShapeSet> intersection(std::shared_ptr<Shape> other) const = 0;
-    virtual std::shared_ptr<ShapeSet> sum(std::shared_ptr<Shape> other) const = 0;
-    virtual bool contains(std::shared_ptr<Point> other) const = 0;
+    virtual SharedPtr<ShapeSet> intersection(SharedPtr<Shape> other) const = 0;
+    virtual SharedPtr<ShapeSet> sum(SharedPtr<Shape> other) const = 0;
+    virtual bool contains(SharedPtr<Point> other) const = 0;
     virtual bool isEmpty() const = 0;
-    virtual std::shared_ptr<Shape> copy() const = 0;
+    virtual SharedPtr<Shape> copy() const = 0;
 };
 
 }

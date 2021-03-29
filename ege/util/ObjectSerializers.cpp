@@ -42,23 +42,23 @@ namespace EGE
 namespace Serializers
 {
 
-std::shared_ptr<Object> object(float t)                { return make<ObjectFloat>(t); }
-std::shared_ptr<Object> object(double t)               { return make<ObjectFloat>(t); }
-std::shared_ptr<Object> object(long double t)          { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(float t)                { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(double t)               { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(long double t)          { return make<ObjectFloat>(t); }
 
-std::shared_ptr<Object> object(long long t)            { return make<ObjectInt>(t); }
-std::shared_ptr<Object> object(int t)                  { return make<ObjectInt>(t, ObjectInt::Type::Int); }
-std::shared_ptr<Object> object(short t)                { return make<ObjectInt>(t, ObjectInt::Type::Short); }
+SharedPtr<Object> object(long long t)            { return make<ObjectInt>(t); }
+SharedPtr<Object> object(int t)                  { return make<ObjectInt>(t, ObjectInt::Type::Int); }
+SharedPtr<Object> object(short t)                { return make<ObjectInt>(t, ObjectInt::Type::Short); }
 
-std::shared_ptr<Object> object(unsigned long long t)   { return make<ObjectUnsignedInt>(t); }
-std::shared_ptr<Object> object(unsigned int t)         { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Int); }
-std::shared_ptr<Object> object(unsigned short t)       { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Short); }
+SharedPtr<Object> object(unsigned long long t)   { return make<ObjectUnsignedInt>(t); }
+SharedPtr<Object> object(unsigned int t)         { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Int); }
+SharedPtr<Object> object(unsigned short t)       { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Short); }
 
-std::shared_ptr<Object> object(std::string t)          { return make<ObjectString>(t); }
+SharedPtr<Object> object(std::string t)          { return make<ObjectString>(t); }
 
 SharedPtr<Object> object(Boolean t) { return make<ObjectBoolean>(t); }
 
-Vec2d toVector2(std::shared_ptr<ObjectMap> map)
+Vec2d toVector2(SharedPtr<ObjectMap> map)
 {
     if(!map)
         return {};
@@ -67,7 +67,7 @@ Vec2d toVector2(std::shared_ptr<ObjectMap> map)
     return Vec2d(x, y);
 }
 
-Vec3d toVector3(std::shared_ptr<ObjectMap> map)
+Vec3d toVector3(SharedPtr<ObjectMap> map)
 {
     if(!map)
         return {};

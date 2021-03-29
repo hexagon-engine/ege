@@ -73,7 +73,7 @@ protected:
     int m_fontSize = 12;
     sf::Color m_color = sf::Color::Black;
     sf::Text m_text;
-    std::shared_ptr<sf::Font> m_font;
+    SharedPtr<sf::Font> m_font;
 };
 
 }

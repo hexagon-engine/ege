@@ -44,9 +44,9 @@
 namespace EGE
 {
 
-std::shared_ptr<ShapeSet> Point::intersection(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> Point::intersection(SharedPtr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
+    SharedPtr<ShapeSet> shapeSet = make<ShapeSet>();
 
     if(other->contains(make<Point>(*this)))
         shapeSet->append(make<Point>(*this));
@@ -54,9 +54,9 @@ std::shared_ptr<ShapeSet> Point::intersection(std::shared_ptr<Shape> other) cons
     return shapeSet;
 }
 
-std::shared_ptr<ShapeSet> Point::sum(std::shared_ptr<Shape> other) const
+SharedPtr<ShapeSet> Point::sum(SharedPtr<Shape> other) const
 {
-    std::shared_ptr<ShapeSet> shapeSet = make<ShapeSet>();
+    SharedPtr<ShapeSet> shapeSet = make<ShapeSet>();
     shapeSet->append(other);
 
     if(!other->contains(make<Point>(*this)))
@@ -65,7 +65,7 @@ std::shared_ptr<ShapeSet> Point::sum(std::shared_ptr<Shape> other) const
     return shapeSet;
 }
 
-bool Point::contains(std::shared_ptr<Point> other) const
+bool Point::contains(SharedPtr<Point> other) const
 {
     ASSERT(other);
     return other->x == x && other->y == y;
@@ -76,7 +76,7 @@ bool Point::isEmpty() const
     return false;
 }
 
-std::shared_ptr<Shape> Point::copy() const
+SharedPtr<Shape> Point::copy() const
 {
     return make<Point>(*this);
 }

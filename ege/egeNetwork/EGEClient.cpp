@@ -52,7 +52,7 @@ EGEClient::~EGEClient()
     disconnect();
 }
 
-bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
+bool EGEClient::sendWithUID(SharedPtr<EGEPacket> packet)
 {
     // FIXME: some assertion?
     UidType uid = packet->getArgs()->getObject("uid").asInt().valueOr(0);
@@ -60,7 +60,7 @@ bool EGEClient::sendWithUID(std::shared_ptr<EGEPacket> packet)
     return send(packet);
 }
 
-EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
+EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
 {
     EGEPacket* egePacket = (EGEPacket*)packet.get();
 
@@ -94,20 +94,20 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SLoginRequest:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
             sendWithUID(EGEPacket::generateCLogin(getLoginData(args)));
         }
         break;
     case EGEPacket::Type::SDisconnectReason:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
             onDisconnect(args->getObject("message").asString().valueOr("Disconnected"));
             disconnect();
         }
         break;
     case EGEPacket::Type::SSceneObjectCreation:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto object = args->getObject("object").to<ObjectMap>();
             if(!object.hasValue())
@@ -126,7 +126,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SSceneObjectUpdate:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto object = args->getObject("object").to<ObjectMap>();
             if(!object.hasValue())
@@ -141,7 +141,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SSceneObjectDeletion:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
@@ -160,7 +160,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SDefaultControllerId:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
@@ -191,7 +191,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
         break;
     case EGEPacket::Type::SSceneObjectControl:
         {
-            std::shared_ptr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = egePacket->getArgs();
 
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
@@ -261,7 +261,7 @@ EventResult EGEClient::onReceive(std::shared_ptr<Packet> packet)
     return EventResult::Success;
 }
 
-EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id, std::string typeId)
+EventResult EGEClient::createSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id, std::string typeId)
 {
     if(!getScene()) //scene not created
         return EventResult::Success;
@@ -276,7 +276,7 @@ EventResult EGEClient::createSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     return EventResult::Success;
 }
 
-EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> object, UidType id)
+EventResult EGEClient::updateSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id)
 {
     if(!getScene()) //scene not created
         return EventResult::Success;
@@ -296,7 +296,7 @@ EventResult EGEClient::updateSceneObjectFromData(std::shared_ptr<ObjectMap> obje
     return EventResult::Success;
 }
 
-void EGEClient::setScene(std::shared_ptr<Scene> scene)
+void EGEClient::setScene(SharedPtr<Scene> scene)
 {
     if(!scene)
     {
@@ -370,7 +370,7 @@ void EGEClient::onTick(TickCount tickCount)
         exit(tickCount);
 }
 
-std::shared_ptr<SFMLPacket> EGEClient::makePacket(sf::Packet& packet)
+SharedPtr<SFMLPacket> EGEClient::makePacket(sf::Packet& packet)
 {
     return make<EGEPacket>(packet);
 }
@@ -385,21 +385,21 @@ void EGEClient::disconnect()
         m_clientTask->wait();
 
         // We don't need the task anymore.
-        m_clientTask = std::shared_ptr<AsyncTask>();
+        m_clientTask = SharedPtr<AsyncTask>();
     }*/
 }
 
-std::shared_ptr<ClientNetworkController> EGEClient::getController(UidType objectId)
+SharedPtr<ClientNetworkController> EGEClient::getController(UidType objectId)
 {
     return m_controllersForObjects[objectId];
 }
 
-std::shared_ptr<SceneObject> EGEClient::getDefaultControlledObject()
+SharedPtr<SceneObject> EGEClient::getDefaultControlledObject()
 {
     return std::dynamic_pointer_cast<SceneObject>(getDefaultController());
 }
 
-std::shared_ptr<SceneObject> EGEClient::getControlledObject(UidType objectId)
+SharedPtr<SceneObject> EGEClient::getControlledObject(UidType objectId)
 {
     return std::dynamic_pointer_cast<SceneObject>(getController(objectId));
 }

@@ -6,6 +6,7 @@
 #include <ege/util/ObjectMap.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/JSONConverter.h>
+#include <ege/util/Types.h>
 #include <fstream>
 #include <iostream>
 
@@ -13,7 +14,7 @@ void printObject(std::string fileName)
 {
     std::ifstream stream;
     stream.open(fileName);
-    std::shared_ptr<EGE::Object> object = make<EGE::ObjectMap>();
+    EGE::SharedPtr<EGE::Object> object = make<EGE::ObjectMap>();
     stream >> EGE::objectIn(object, EGE::JSONConverter());
     EXPECT(!stream.fail());
     EGE::printObject(object);

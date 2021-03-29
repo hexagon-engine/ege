@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include <ege/util/Types.h>
+
 #include <memory>
 #include <iostream>
 
@@ -53,7 +55,7 @@ public:
     typedef I InputStreamType;
     typedef O OutputStreamType;
 
-    virtual bool in(InputStreamType& input, std::shared_ptr<Object>& object) const = 0;
+    virtual bool in(InputStreamType& input, SharedPtr<Object>& object) const = 0;
     virtual bool out(OutputStreamType& output, const Object& object) const = 0;
 };
 
@@ -66,10 +68,10 @@ namespace Internal
 template<class I, class O>
 struct _ConverterInput
 {
-    std::shared_ptr<Object>& object;
+    SharedPtr<Object>& object;
     const Converter<I, O>& converter;
 
-    _ConverterInput(std::shared_ptr<Object>& _o, const Converter<I, O>& _c)
+    _ConverterInput(SharedPtr<Object>& _o, const Converter<I, O>& _c)
     : object(_o), converter(_c) {}
 };
 
@@ -86,7 +88,7 @@ struct _ConverterOutput
 }
 
 template<class I, class O>
-Internal::_ConverterInput<I, O> objectIn(std::shared_ptr<Object>& _o, const Converter<I, O>& _c)
+Internal::_ConverterInput<I, O> objectIn(SharedPtr<Object>& _o, const Converter<I, O>& _c)
 {
     return Internal::_ConverterInput<I, O>(_o, _c);
 }
@@ -100,7 +102,7 @@ Internal::_ConverterOutput<I, O> objectOut(Object& _o, const Converter<I, O>& _c
 template<class I, class O>
 bool convertTo(const I& input, O& output, const Converter<I, O>& inputConverter, const Converter<I, O>& outputConverter)
 {
-    std::shared_ptr<Object> tmp;
+    SharedPtr<Object> tmp;
     if(!inputConverter.in(input, tmp)) return false;
     if(!outputConverter.out(output, *tmp.get())) return false;
     return true;

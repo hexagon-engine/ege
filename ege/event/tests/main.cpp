@@ -43,7 +43,7 @@
 
 class MyGameLoop : public EGE::EventLoop
 {
-    std::shared_ptr<EGE::SFMLSystemWindow> m_window;
+    EGE::SharedPtr<EGE::SFMLSystemWindow> m_window;
 public:
     virtual EGE::EventResult onLoad();
     virtual void onTick(long long)

@@ -178,14 +178,14 @@ static bool parseString(sf::Packet& input, ObjectString& object)
 static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object);
 static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object);
 
-static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
+static SharedPtr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
 {
     // value
     switch(type)
     {
     case 'm':
         {
-            std::shared_ptr<ObjectMap> obj = make<ObjectMap>();
+            SharedPtr<ObjectMap> obj = make<ObjectMap>();
             Internal::_ParseResult result = parseMap(input, *obj);
             if(!result.message.empty())
                 return nullptr;
@@ -194,7 +194,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'l':
         {
-            std::shared_ptr<ObjectList> obj = make<ObjectList>();
+            SharedPtr<ObjectList> obj = make<ObjectList>();
             Internal::_ParseResult result = parseList(input, *obj);
             if(!result.message.empty())
                 return nullptr;
@@ -203,7 +203,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'u':
         {
-            std::shared_ptr<ObjectUnsignedInt> obj = make<ObjectUnsignedInt>(0);
+            SharedPtr<ObjectUnsignedInt> obj = make<ObjectUnsignedInt>(0);
             if(!parseUnsignedInt(input, *obj))
                 return nullptr;
             return obj;
@@ -211,7 +211,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'i':
         {
-            std::shared_ptr<ObjectInt> obj = make<ObjectInt>(0);
+            SharedPtr<ObjectInt> obj = make<ObjectInt>(0);
             if(!parseInt(input, *obj))
                 return nullptr;
             return obj;
@@ -219,7 +219,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'f':
         {
-            std::shared_ptr<ObjectFloat> obj = make<ObjectFloat>(0.0);
+            SharedPtr<ObjectFloat> obj = make<ObjectFloat>(0.0);
             if(!parseFloat(input, *obj))
                 return nullptr;
             return obj;
@@ -227,7 +227,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 's':
         {
-            std::shared_ptr<ObjectString> obj = make<ObjectString>("");
+            SharedPtr<ObjectString> obj = make<ObjectString>("");
             if(!parseString(input, *obj))
                 return nullptr;
             return obj;
@@ -235,7 +235,7 @@ static std::shared_ptr<Object> parseSpecific(sf::Uint8 type, sf::Packet& input)
         break;
     case 'B':
         {
-            std::shared_ptr<ObjectBoolean> obj = make<ObjectBoolean>();
+            SharedPtr<ObjectBoolean> obj = make<ObjectBoolean>();
             if(!parseBoolean(input, *obj))
                 return nullptr;
             return obj;
@@ -279,7 +279,7 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
         }
 
         // value
-        std::shared_ptr<Object> specific = parseSpecific(type, input);
+        SharedPtr<Object> specific = parseSpecific(type, input);
         if(!specific)
             return {"expected value after value type in map", input.getReadPosition()};
         object.addObject(key, specific);
@@ -310,7 +310,7 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
                 }
 
                 // value
-                std::shared_ptr<Object> specific = parseSpecific(type, input);
+                SharedPtr<Object> specific = parseSpecific(type, input);
                 if(!specific)
                     return {"expected value after value type in list", input.getReadPosition()};
                 object.addObject(specific);
@@ -328,7 +328,7 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
     return {"impossible error", input.getReadPosition()};
 }
 
-bool EGEPacketConverter::in(sf::Packet& input, std::shared_ptr<Object>& object) const
+bool EGEPacketConverter::in(sf::Packet& input, SharedPtr<Object>& object) const
 {
     // value type must be 'm'
     sf::Uint8 type;

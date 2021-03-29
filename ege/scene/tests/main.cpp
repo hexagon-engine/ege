@@ -19,7 +19,7 @@
 // my object definition
 class MyObject : public EGE::SceneObject2D
 {
-    std::shared_ptr<sf::Font> m_font;
+    EGE::SharedPtr<sf::Font> m_font;
 
 public:
     EGE_SCENEOBJECT("MyObject");
@@ -220,13 +220,13 @@ TESTCASE(particleSystem)
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
     // create scene
-    std::shared_ptr<MyScene> scene = make<MyScene>(&loop);
+    EGE::SharedPtr<MyScene> scene = make<MyScene>(&loop);
 
     // add wind speed variable
     //float wind = 0.f;
 
     // create particle system
-    std::shared_ptr<EGE::ParticleSystem2D> particleSystem = scene->createObject<EGE::ParticleSystem2D>(sf::FloatRect(10.f, 10.f, 580.f, 1.f));
+    EGE::SharedPtr<EGE::ParticleSystem2D> particleSystem = scene->createObject<EGE::ParticleSystem2D>(sf::FloatRect(10.f, 10.f, 580.f, 1.f));
     particleSystem->setSpawnChance(50.0);
     particleSystem->setParticleLifeTime(400);
     particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
@@ -285,7 +285,7 @@ TESTCASE(particleSystem)
     scene->addObject(cam);
 
     // create GUI
-    std::shared_ptr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
+    EGE::SharedPtr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
     gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
     // assign GUI to loop
@@ -333,7 +333,7 @@ public:
         }
     }
 private:
-    std::shared_ptr<EGE::ChunkedTileMap2D<MyTile, 4, 4>> m_tilemap;
+    EGE::SharedPtr<EGE::ChunkedTileMap2D<MyTile, 4, 4>> m_tilemap;
 };
 
 class MyResourceManager2 : public EGE::ResourceManager

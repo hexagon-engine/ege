@@ -104,7 +104,7 @@ int GameLoop::run()
     return m_exitCode;
 }
 
-bool GameLoop::setSubLoop(std::shared_ptr<GameLoop> loop)
+bool GameLoop::setSubLoop(SharedPtr<GameLoop> loop)
 {
     ASSERT(loop);
     if(loop->onLoad() == EventResult::Failure)
