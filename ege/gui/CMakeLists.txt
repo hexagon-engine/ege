@@ -41,6 +41,8 @@ set(SOURCES
 	"Slider.h"
 	"SpinBox.cpp"
 	"SpinBox.h"
+	"SplashScreen.cpp"
+	"SplashScreen.h"
 	"TextBox.cpp"
 	"TextBox.h"
 	"Widget.cpp"

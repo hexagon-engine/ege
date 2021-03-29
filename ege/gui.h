@@ -57,5 +57,6 @@
 #include <ege/gui/ScrollBar.h>
 #include <ege/gui/Slider.h>
 #include <ege/gui/SpinBox.h>
+#include <ege/gui/SplashScreen.h>
 #include <ege/gui/TextBox.h>
 #include <ege/gui/Widget.h>
