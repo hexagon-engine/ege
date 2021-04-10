@@ -77,16 +77,21 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             return false; // entry not a map
         }
 
-        auto sd_baseClass = sodata.value()->getObject("baseClass").asString().valueOr("SceneObject2D");
-
-        SharedPtr<SceneObjectType> sotype;
-        if(sd_baseClass == "SceneObject2D")
-            sotype = make<SceneObjectType2D>(pr.first);
-        else
+        SharedPtr<SceneObjectType> sotype = registry.getType(pr.first);
+        if(!sotype)
         {
-            ege_log.error() << "Invalid base class for SceneObjectType";
-            return false;
+            ege_log.info() << "SceneLoader: Creating generic type for " << pr.first;
+            auto sd_baseClass = sodata.value()->getObject("baseClass").asString().valueOr("SceneObject2D");
+            if(sd_baseClass == "SceneObject2D")
+                sotype = make<SceneObjectType2D>(pr.first);
+            else
+            {
+                ege_log.error() << "Invalid base class for SceneObjectType";
+                return false;
+            }
         }
+        else
+            ege_log.info() << "SceneLoader: Using already registered type for " << pr.first;
 
         auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
         if(!sd_data.hasValue())
@@ -246,11 +251,11 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
 
 bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 {
-    ege_log.info() << "Loading scene from " << fileName;
+    ege_log.info() << "Loading scene from " << CommonPaths::saveDir() + "/" + fileName;
     std::ifstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
-        ege_log.error() << "Scene loading failed - failed to open file!";
+        ege_log.warning() << "Scene loading failed - failed to open file!";
         return false;
     }
 
@@ -278,7 +283,7 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
 {
-    log() << "Loading static objects from " << fileName;
+    log() << "Loading static objects from " << CommonPaths::resourceDir() + "/" + fileName;
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
