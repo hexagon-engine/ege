@@ -107,6 +107,7 @@ public:
     SharedPtr<SO> addNewObject(SharedPtr<ObjectMap> data = nullptr)
     {
         SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
+        ASSERT(sceneObject);
         addObject(sceneObject);
         return sceneObject;
     }
@@ -115,6 +116,7 @@ public:
     SharedPtr<SO> addNewStaticObject(SharedPtr<ObjectMap> data = nullptr)
     {
         SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
+        ASSERT(sceneObject);
         addStaticObject(sceneObject);
         return sceneObject;
     }
