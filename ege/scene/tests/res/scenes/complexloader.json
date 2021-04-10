@@ -1,0 +1,5 @@
+{
+    "objects": [
+        {"typeId": "CLPlayer", "name": "player", "m": {}}
+    ]
+}
