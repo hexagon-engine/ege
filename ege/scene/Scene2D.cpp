@@ -125,7 +125,7 @@ sf::View Scene2D::getView(sf::RenderTarget& target, const sf::View& parentView) 
         if(!warned)
         {
             warned = true;
-            err(LogLevel::Warning) << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform.";
+            ege_log.warning() << "000F EGE/scene: Scene2D: no camera set, defaulting to {[0,0] 0x 0dg} transform.";
         }
 
         sf::View view = target.getView();

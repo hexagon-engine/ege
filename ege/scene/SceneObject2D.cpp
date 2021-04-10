@@ -95,13 +95,13 @@ bool SceneObject2D::flyTo(Vec2d toPos, double time, std::function<double(double)
     animation->setCallback([this, toPos](std::string, EGE::Timer*) {
         if(!moveTo(toPos))
         {
-            log(LogLevel::Debug) << "SceneObject2D collided during flyTo finalizing";
+            ege_log.debug() << "SceneObject2D collided during flyTo finalizing";
         }
     });
     addAnimation<Vec2d>(animation, [this](Vec2Animation&, Vec2d val) {
         if(!moveTo(val))
         {
-            log(LogLevel::Debug) << "SceneObject2D collided during flyTo";
+            ege_log.debug() << "SceneObject2D collided during flyTo";
         }
     });
     return true;

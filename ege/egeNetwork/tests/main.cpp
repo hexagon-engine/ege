@@ -49,11 +49,8 @@ class MyObject : public EGE::SceneObject2D
 public:
     EGE_SCENEOBJECT("MyObject")
 
-    MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, bool playerControlled = false)
-    : EGE::SceneObject2D(owner, type)
-    {
-        m_playerControlled = playerControlled;
-    }
+    MyObject(EGE::Scene& owner)
+    : EGE::SceneObject2D(owner) {}
 
     virtual void onInit() override
     {
@@ -161,7 +158,7 @@ public:
 
     virtual EGE::SharedPtr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getType().getId() == "MyObject")
+        if(object.getType()->getId() == "MyObject")
         {
             // MyObject is controlled by MyObjectServerController
             return make<MyObjectServerController>(object, *this);
@@ -178,9 +175,8 @@ public:
 
         // Spawn SceneObject that will be controlled by this client.
         ASSERT(getScene());
-        auto sceneObject = getScene()->createObject<MyObject>(true);
+        auto sceneObject = getScene()->addNewObject<MyObject>();
         std::cerr << "Adding Object to Scene" << std::endl;
-        getScene()->addObject(sceneObject);
 
         // Set SceneObject to be controlled by this Client.
         setDefaultController(client, sceneObject.get());
@@ -198,7 +194,7 @@ public:
 
     virtual EGE::SharedPtr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
     {
-        if(object.getType().getId() == "MyObject")
+        if(object.getType()->getId() == "MyObject")
         {
             // MyObject is controlled by MyObjectClientController
             return make<MyObjectClientController>(object, *this);
@@ -237,9 +233,8 @@ TESTCASE(server)
         auto scene = make<EGE::Scene2D>(nullptr);
 
         auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
-            auto object = scene->createObject<MyObject>();
+            auto object = scene->addNewObject<MyObject>();
             object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
-            scene->addObject(object);
         });
         server.addTimer("timer", timer);
 

@@ -44,7 +44,7 @@ namespace EGE
 
 bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
 {
-    log(LogLevel::Info) << "Loading SceneObjectType: " << getId();
+    ege_log.info() << "Loading SceneObjectType: " << getId();
 
     // Part list
     auto d_parts = data->getObject("parts").to<ObjectList>();
@@ -55,21 +55,21 @@ bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
             auto dd_part_map = Object::cast<ObjectMap>(dd_part);
             if(!dd_part_map.hasValue())
             {
-                err() << "Part is not a map";
+                ege_log.error() << "Part is not a map";
                 return false;
             }
 
             auto part_type = dd_part_map.value()->getObject("type").asString();
             if(!part_type.hasValue())
             {
-                err() << "Part type not set";
+                ege_log.error() << "Part type not set";
                 return false;
             }
 
             auto part_name = dd_part_map.value()->getObject("name").asString();
             if(!part_name.hasValue())
             {
-                err() << "Part name not set";
+                ege_log.error() << "Part name not set";
                 return false;
             }
 
@@ -78,15 +78,15 @@ bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
 
             if(!partstub.deserialize(dd_part_map.value()))
             {
-                err() << "Invalid PartStub";
+                ege_log.error() << "Invalid PartStub";
                 return false;
             }
 
-            log() << "Adding Part: " << part_name.value();
+            ege_log.info() << "Adding Part: " << part_name.value();
             m_parts[part_name.value()] = partstub;
         }
     }
-    log() << "Total part count: " << m_parts.size();
+    ege_log.info() << "Total part count: " << m_parts.size();
     return true;
 }
 
@@ -100,17 +100,17 @@ SharedPtr<SceneObject> SceneObjectType2D::createEmptyObject(Scene& scene) const
 void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
 {
     // Parts
-    log() << "Adding parts to " << object.getName();
+    ege_log.info() << "Adding parts to " << object.getName();
     for(auto it: m_parts)
     {
-        log() << "  * " << it.first;
+        ege_log.info() << "  * " << it.first;
         object.addPart(it.first, it.second.makeInstance(object));
     }
 }
 
 SharedPtr<SceneObject2D> SceneObjectType2D::createEmptyObject(Scene2D& scene) const
 {
-    return make<SceneObject2D>(scene, *this);
+    return make<SceneObject2D>(scene);
 }
 
 }

@@ -51,20 +51,20 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
-        err() << "Failed to open registry file";
+        ege_log.error() << "Failed to open registry file";
         return false; // couldn't open file
     }
 
     if(!(file >> objectIn(data, converter)))
     {
-        err() << "Invalid registry JSON";
+        ege_log.error() << "Invalid registry JSON";
         return false; // invalid JSON
     }
 
     auto data_map = Object::cast<ObjectMap>(data);
     if(!data_map.hasValue())
     {
-        err() << "Data must be a map";
+        ege_log.error() << "Data must be a map";
         return false; // it's not a map!
     }
 
@@ -73,7 +73,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
         auto sodata = Object::cast<ObjectMap>(pr.second);
         if(!sodata.hasValue())
         {
-            err() << "Data entry must be a map";
+            ege_log.error() << "Data entry must be a map";
             return false; // entry not a map
         }
 
@@ -84,21 +84,21 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             sotype = make<SceneObjectType2D>(pr.first);
         else
         {
-            err() << "Invalid base class for SceneObjectType";
+            ege_log.error() << "Invalid base class for SceneObjectType";
             return false;
         }
 
         auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
         if(!sd_data.hasValue())
         {
-            err() << "Registry entry must be a map";
+            ege_log.error() << "Registry entry must be a map";
             return false; // data is not a map
         }
 
         log() << "Loading data for SceneObjectType: " << pr.first;
         if(!sotype->deserialize(sd_data.value()))
         {
-            err() << "Invalid SceneObjectType";
+            ege_log.error() << "Invalid SceneObjectType";
             return false; // invalid sceneobjecttype!
         }
         registry.addType(sotype);
@@ -118,10 +118,10 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
             continue;
 
         auto entry = sObj.second->serialize();
-        entry->addString("typeId", sObj.second->getType().getId());
+        entry->addString("typeId", sObj.second->getType()->getId());
         objects->addObject(entry);
     }
-    log(LogLevel::Debug) << "SceneLoader finished saving " << objects->size() << " objects";
+    ege_log.debug() << "SceneLoader finished saving " << objects->size() << " objects";
     data->addObject("objects", objects);
 
     // Add static objects (if changed)
@@ -134,11 +134,11 @@ SharedPtr<ObjectMap> SceneLoader::serializeSceneObjects() const
         if(sObj.second->didChangeSinceLoad())
         {
             auto entry = sObj.second->serialize();
-            entry->addString("typeId", sObj.second->getType().getId());
+            entry->addString("typeId", sObj.second->getType()->getId());
             staticObjects->addObject(entry);
         }
     }
-    log(LogLevel::Debug) << "SceneLoader finished saving " << staticObjects->size() << " static objects";
+    ege_log.debug() << "SceneLoader finished saving " << staticObjects->size() << " static objects";
     data->addObject("staticObjects", staticObjects);
 
     return data;
@@ -148,14 +148,14 @@ SharedPtr<SceneObject> SceneLoader::loadObject(Optional<SharedPtr<ObjectMap>> ob
 {
     if(!objMap.hasValue())
     {
-        err() << "SceneObject description is not a Map!";
+        ege_log.error() << "SceneObject description is not a Map!";
         return nullptr;
     }
 
     auto typeId = objMap.value()->getObject("typeId").asString();
     if(!typeId.hasValue())
     {
-        err() << "SceneObject has no valid type ID!";
+        ege_log.error() << "SceneObject has no valid type ID!";
         return nullptr;
     }
 
@@ -196,7 +196,7 @@ bool SceneLoader::deserializeSceneObjects(SharedPtr<ObjectMap> data)
         m_scene.addObject(sceneObject);
     }
 
-    log(LogLevel::Debug) << "SceneLoader finished loading with " << m_scene.m_objects.size() << " objects";
+    ege_log.debug() << "SceneLoader finished loading with " << m_scene.m_objects.size() << " objects";
 
     return true;
 }
@@ -219,7 +219,7 @@ bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
         m_scene.addStaticObject(sceneObject);
     }
 
-    log(LogLevel::Debug) << "SceneLoader finished loading with " << m_scene.m_staticObjects.size() << " static objects";
+    ege_log.debug() << "SceneLoader finished loading with " << m_scene.m_staticObjects.size() << " static objects";
 
     return true;
 }
@@ -230,14 +230,14 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
     std::ofstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
-        err() << "Scene saving failed - failed to open file!";
+        ege_log.error() << "Scene saving failed - failed to open file!";
         return false;
     }
 
     auto object = serializeSceneObjects();
     if(!object)
     {
-        err() << "Scene loading failed - failed to generate data!";
+        ege_log.error() << "Scene loading failed - failed to generate data!";
         return false;
     }
 
@@ -246,31 +246,31 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
 
 bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 {
-    log() << "Loading scene from " << fileName;
+    ege_log.info() << "Loading scene from " << fileName;
     std::ifstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
-        err() << "Scene loading failed - failed to open file!";
+        ege_log.error() << "Scene loading failed - failed to open file!";
         return false;
     }
 
     SharedPtr<Object> object;
     if(!converter.in(file, object))
     {
-        err() << "Scene loading failed - failed to parse file data!";
+        ege_log.error() << "Scene loading failed - failed to parse file data!";
         return false;
     }
 
     auto objectMap = object->cast<ObjectMap>(object);
     if(!objectMap.hasValue())
     {
-        err() << "Scene loading failed - invalid data format!";
+        ege_log.error() << "Scene loading failed - invalid data format!";
         return false;
     }
 
     if(!deserializeSceneObjects(objectMap.value()))
     {
-        err() << "Scene loading failed - failed to load data!";
+        ege_log.error() << "Scene loading failed - failed to load data!";
         return false;
     }
     return true;
@@ -282,27 +282,27 @@ bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& co
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
-        err() << "Static object loading failed - failed to open file!";
+        ege_log.error() << "Static object loading failed - failed to open file!";
         return false;
     }
 
     SharedPtr<Object> object;
     if(!converter.in(file, object))
     {
-        err() << "Static object loading failed - failed to parse file data!";
+        ege_log.error() << "Static object loading failed - failed to parse file data!";
         return false;
     }
 
     auto objectMap = object->cast<ObjectMap>(object);
     if(!objectMap.hasValue())
     {
-        err() << "Static object loading failed - invalid data format!";
+        ege_log.error() << "Static object loading failed - invalid data format!";
         return false;
     }
 
     if(!deserializeStaticSceneObjects(objectMap.value()))
     {
-        err() << "Static object loading failed - failed to load data!";
+        ege_log.error() << "Static object loading failed - failed to load data!";
         return false;
     }
     return true;
@@ -312,13 +312,13 @@ bool SceneLoader::loadSceneAndSave(String saveName, String sceneName, const IOSt
 {
     if(!loadStaticObjects(sceneName, converter))
     {
-        log(LogLevel::Critical) << "Failed to load predefined scene!";
+        ege_log.critical() << "Failed to load predefined scene!";
         return false;
     }
 
     if(!loadScene(saveName, converter))
         // It's nothing wrong, we will just create a new save!
-        log(LogLevel::Warning) << "Empty or invalid save: " << saveName;
+        ege_log.warning() << "Empty or invalid save: " << saveName;
 
     return true;
 }

@@ -46,7 +46,7 @@ namespace EGE
 
 SceneObject::~SceneObject()
 {
-    log(LogLevel::Debug) << "SceneObject::~SceneObject() " << this;
+    ege_log.debug() << "SceneObject::~SceneObject() " << this;
 }
 
 void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
@@ -98,7 +98,7 @@ bool SceneObject::deserialize(SharedPtr<ObjectMap> object)
         s &= deserializeMain(__m.value());
     else
     {
-        err(LogLevel::Error) << "No main data key in SceneObject data!";
+        ege_log.error() << "No main data key in SceneObject data!";
         return false;
     }
 
@@ -106,7 +106,7 @@ bool SceneObject::deserialize(SharedPtr<ObjectMap> object)
     if(__x.hasValue())
         s &= deserializeExtended(__x.value());
     else
-        err(LogLevel::Verbose) << "No extended data key in SceneObject data!";
+        ege_log.verbose() << "No extended data key in SceneObject data!";
         // They are not required
 
     m_changedSinceLoad = false;
@@ -143,7 +143,7 @@ bool SceneObject::deserializeExtended(SharedPtr<ObjectMap>)
 
 void SceneObject::setParent(SceneObject* object)
 {
-    log(LogLevel::Debug) << "SceneObject::setParent(" << object << ")";
+    ege_log.debug() << "SceneObject::setParent(" << object << ")";
     if(m_parent)
         m_parent->m_children.erase(this);
 
@@ -172,7 +172,7 @@ Part* SceneObject::getPart(String name)
 
 void SceneObject::init()
 {
-    getType().fillObjectWithData(*this);
+    getType()->fillObjectWithData(*this);
     onInit();
 }
 

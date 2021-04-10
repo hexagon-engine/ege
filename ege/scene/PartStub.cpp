@@ -56,18 +56,18 @@ PartCreatorMap PartStub::PartCreators;
 
 SharedPtr<Part> PartStub::makeInstance(SceneObject& sobject)
 {
-    log() << "Creating instance of part for SO " << sobject.getName();
+    ege_log.info() << "Creating instance of part for SO " << sobject.getName();
     auto partCreator = PartStub::PartCreators.get(m_type);
     if(!partCreator)
     {
-        err() << "No such part with type: " << m_type;
+        ege_err.error() << "No such part with type: " << m_type;
         return nullptr;
     }
 
     auto part = (*partCreator)(sobject);
     if(!part)
     {
-        err() << "Failed to create part!";
+        ege_err.error() << "Failed to create part!";
         return nullptr;
     }
 

@@ -59,7 +59,7 @@ public:
         : SceneObjectType2D(typeId) {}
 
         virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const override
-            { return make<SO>(scene, *this); }
+            { return make<SO>(scene); }
     };
 
     template<class SO>

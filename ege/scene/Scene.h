@@ -104,41 +104,36 @@ public:
 
     // Custom object
     template<class SO>
-    SharedPtr<SO> addNewObject(SharedPtr<ObjectMap> data)
+    SharedPtr<SO> addNewObject(SharedPtr<ObjectMap> data = nullptr)
     {
-        SharedPtr<SO> sceneObject = std::dynamic_pointer_cast<SO>(createObject(SO::type(), data));
+        SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
         addObject(sceneObject);
         return sceneObject;
     }
 
     template<class SO>
-    SharedPtr<SceneObject> addNewStaticObject(SharedPtr<ObjectMap> data)
+    SharedPtr<SO> addNewStaticObject(SharedPtr<ObjectMap> data = nullptr)
     {
-        SharedPtr<SO> sceneObject = std::dynamic_pointer_cast<SO>(createObject(SO::type(), data));
+        SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
         addStaticObject(sceneObject);
         return sceneObject;
     }
 
     // Objects loaded from file
-    SharedPtr<SceneObject> addNewObject(String typeId, SharedPtr<ObjectMap> data);
-    SharedPtr<SceneObject> addNewStaticObject(String typeId, SharedPtr<ObjectMap> data);
+    SharedPtr<SceneObject> addNewObject(String typeId, SharedPtr<ObjectMap> data = nullptr);
+    SharedPtr<SceneObject> addNewStaticObject(String typeId, SharedPtr<ObjectMap> data = nullptr);
 
+    // NOTE: This shouldn't really be called directly, but if someone wants...
     SharedPtr<SceneObject> createObject(String typeId, SharedPtr<ObjectMap> data);
 
-    template<class SO, class... Args>
-    SharedPtr<SO> createObject(Args&&... args)
+    template<class SO>
+    SharedPtr<SO> createObject(SharedPtr<ObjectMap> data)
     {
-        auto type = m_registry.getType(SO::type());
-        if(!type)
-        {
-            log(LogLevel::Error) << "No type named " << SO::type() << " in SceneObjectType registry!";
-            return nullptr;
-        }
-        return make<SO>(*this, *type, std::forward<Args>(args)...);
+        return SceneObject::cast<SO>(createObject(SO::type(), data));
     }
 
-    std::vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
-    std::vector<SceneObject*> getObjects(std::string typeId);
+    Vector<SceneObject*> getObjects(std::function<bool(SceneObject*)> predicate);
+    Vector<SceneObject*> getObjects(std::string typeId);
 
     SharedPtr<SceneObject> getObject(UidType id);
     SharedPtr<SceneObject> getStaticObject(UidType id);

@@ -76,18 +76,13 @@ public:
 
     friend class Particle;
 
-    ParticleSystem2D(Scene& owner, const SceneObjectType& type, sf::FloatRect spawnRect = {})
-    : SceneObject2D(owner, type), m_spawnRect(spawnRect) {}
+    ParticleSystem2D(Scene& owner)
+    : SceneObject2D(owner) {}
 
-    virtual sf::FloatRect getBoundingBox() const
-    {
-        return m_spawnRect;
-    }
+    virtual sf::FloatRect getBoundingBox() const { return m_spawnRect; }
 
-    sf::FloatRect getSpawnRect() const
-    {
-        return m_spawnRect;
-    }
+    sf::FloatRect getSpawnRect() const { return m_spawnRect; }
+    void setSpawnRect(sf::FloatRect rect) { m_spawnRect = rect; }
 
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;

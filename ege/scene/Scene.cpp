@@ -58,10 +58,10 @@ bool Scene::saveToFile(String saveFile, const IOStreamConverter& converter)
 {
     SceneLoader loader(*this);
 
-    log() << "Objects: ";
+    ege_log.debug() << "Objects: ";
     for(auto it: m_objects)
         printObject(it.second->serialize());
-    log() << "Static Objects: ";
+    ege_log.debug() << "Static Objects: ";
     for(auto it: m_staticObjects)
         printObject(it.second->serialize());
 
@@ -97,13 +97,13 @@ void Scene::onUpdate(TickCount tickCounter)
                 if(!isHeadless()) m_loop->getProfiler()->endStartSection("deadCheck");
                 if(object.second->isDead())
                 {
-                    log(LogLevel::Debug) << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
+                    ege_log.debug() << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
                     fire<RemoveObjectEvent>(*object.second);
 
                     // Set all children dead
                     if(object.second->m_children.size() > 0)
                     {
-                        log(LogLevel::Debug) << "SceneObject is dead: Removing " << object.second->m_children.size() << " children of " << object.second;
+                        ege_log.debug() << "SceneObject is dead: Removing " << object.second->m_children.size() << " children of " << object.second;
                         for(auto& so: object.second->m_children)
                         {
                             so->setDead();
@@ -161,13 +161,13 @@ UidType Scene::addObject(SharedPtr<SceneObject> object)
     if(objIdDupe != m_objects.end())
     {
         // It's NOT normal!
-        log(LogLevel::Critical) << "Duplicate SceneObject ID: " << object->getName() << " collides with " << objIdDupe->second->getName();
+        ege_log.critical() << "Duplicate SceneObject ID: " << object->getName() << " collides with " << objIdDupe->second->getName();
         return object->getObjectId();
     }
     if(m_objectsByName.find(object->getName()) != m_objectsByName.end())
     {
         // If it happens, fix your code!
-        log(LogLevel::Crash) << "Duplicate SceneObject name: " << object->getName();
+        ege_log.crash() << "Duplicate SceneObject name: " << object->getName();
         CRASH_WITH_MESSAGE("Duplicate SceneObject name");
     }
 
@@ -208,17 +208,17 @@ UidType Scene::addStaticObject(SharedPtr<SceneObject> object, bool overwrite)
 
     if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
-        log(LogLevel::Critical) << "Duplicate SceneObject ID: " << object->getObjectId();
+        ege_log.critical() << "Duplicate SceneObject ID: " << object->getObjectId();
         return object->getObjectId();
     }
     auto it = m_objectsByName.find(object->getName());
     if(it != m_objectsByName.end())
     {
         // It's normal for static objects when static objects were saved!
-        log(LogLevel::Verbose) << "Duplicate SceneObject name: " << object->getName();
+        ege_log.verbose() << "Duplicate SceneObject name: " << object->getName();
         if(overwrite)
         {
-            log(LogLevel::Debug) << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
+            ege_log.debug() << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
             auto& oldObject = m_objectsByName[it->second->getName()];
 
             // Remove old object and add new (with new ID etc.)
@@ -253,7 +253,7 @@ std::vector<SceneObject*> Scene::getObjects(std::function<bool(SceneObject*)> pr
 
 std::vector<SceneObject*> Scene::getObjects(std::string typeId)
 {
-    return getObjects([typeId](SceneObject* object)->bool { return object->getType().getId() == typeId; });
+    return getObjects([typeId](SceneObject* object)->bool { return object->getType()->getId() == typeId; });
 }
 
 SharedPtr<SceneObject> Scene::getObject(UidType id)
@@ -301,23 +301,24 @@ SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> d
     auto type = registry.getType(typeId);
     if(!type)
     {
-        log(LogLevel::Warning) << "Invalid SceneObjectType: " << typeId;
+        ege_log.warning() << "Invalid SceneObjectType: " << typeId;
         return nullptr;
     }
 
     SharedPtr<SceneObject> sceneObject = type->createEmptyObject(*this);
     if(!sceneObject)
     {
-        err() << "Object refused creation!";
+        ege_log.error() << "Object refused creation!";
         return nullptr;
     }
+    sceneObject->setType(type);
 
     if(!data)
         return sceneObject;
 
     if(!sceneObject->deserialize(data))
     {
-        err() << "Failed to deserialize SceneObject!";
+        ege_log.error() << "Failed to deserialize SceneObject!";
         return nullptr;
     }
 

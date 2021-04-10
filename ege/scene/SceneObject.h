@@ -59,8 +59,8 @@ class Scene;
 class SceneObject : public Animatable, public Controllable, public Renderable
 {
 public:
-    SceneObject(Scene& owner, const SceneObjectType& type)
-    : Animatable((InspectorNode*)&owner, "SceneObject: " + type.getId()), m_owner(owner), m_type(type) {}
+    SceneObject(Scene& owner)
+    : Animatable((InspectorNode*)&owner, "SceneObject"), m_owner(owner) {}
 
     enum Type
     {
@@ -110,7 +110,8 @@ public:
     SharedPtrStringMap<Part>& getParts() { return m_parts; }
     Part* getPart(String name);
 
-    virtual const SceneObjectType& getType() const { return m_type; }
+    virtual SharedPtr<SceneObjectType> getType() const { return m_type; }
+    void setType(SharedPtr<SceneObjectType> type) { if(!m_type) m_type = type; }
 
     template<class SO>
     static SharedPtr<SO> cast(SharedPtr<SceneObject> obj) { return std::dynamic_pointer_cast<SO>(obj); }
@@ -126,7 +127,7 @@ public:
     int getRenderLayer() const { return m_renderLayer; }
     void setRenderLayer(int layer) { m_renderLayer = layer; }
 
-    virtual String isnInfo() const override { return m_name; }
+    virtual String isnInfo() const override { return m_type->getId() + ": " + m_name; }
 
     virtual bool allowSave() const { return true; }
 
@@ -151,7 +152,7 @@ protected:
     SceneObject* m_parent = nullptr;
     String m_parentId;
     Type m_parentType = Type::Dynamic;
-    const SceneObjectType& m_type;
+    SharedPtr<SceneObjectType> m_type;
 
     friend class ObjectRenderer;
     friend class Scene;

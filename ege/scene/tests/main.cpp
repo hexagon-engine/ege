@@ -25,11 +25,8 @@ public:
     EGE_SCENEOBJECT("MyObject");
 
     // Objects registered in Scene Object Creator must have its "empty" state!
-    MyObject(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "To Be Serialized", EGE::Vec2d pos = {})
-    : EGE::SceneObject2D(owner, type)
-    {
-        setName(name);
-    }
+    MyObject(EGE::Scene& owner)
+    : EGE::SceneObject2D(owner) {}
 
     virtual void onInit() override
     {
@@ -86,10 +83,9 @@ class MyBackground : public EGE::SceneObject2D
 public:
     EGE_SCENEOBJECT("MyBackground");
 
-    MyBackground(EGE::Scene& owner, const EGE::SceneObjectType& type, std::string name = "")
-    : EGE::SceneObject2D(owner, type)
+    MyBackground(EGE::Scene& owner)
+    : EGE::SceneObject2D(owner)
     {
-        setName(name);
         auto anim = make<EGE::RGBAnimation>(*this, 5.0, EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, EGE::Colors::red);
         anim->addKeyframe(0.25, EGE::Colors::cyan);
@@ -162,7 +158,8 @@ TESTCASE(serializer)
     registry.addType2D<MyBackground>();
 
     // create some object
-    auto myObject = scene->createObject<MyBackground>("My Test");
+    auto myObject = scene->createObject<MyBackground>(nullptr);
+    myObject->setName("My Test");
     myObject->setPosition(EGE::Vec2d(0.f, 0.f));
 
     // serialize object
@@ -170,7 +167,8 @@ TESTCASE(serializer)
     std::cerr << data->toString() << std::endl;
 
     // deserialize object and add result
-    auto myObject2 = scene->createObject<MyBackground>("My Object 5555");
+    auto myObject2 = scene->createObject<MyBackground>(nullptr);
+    myObject2->setName("My Object 5555");
     myObject2->setPosition(EGE::Vec2d(-100.f, -100.f));
     myObject2->deserialize(data);
     scene->addObject(myObject2);
@@ -226,7 +224,8 @@ TESTCASE(particleSystem)
     //float wind = 0.f;
 
     // create particle system
-    EGE::SharedPtr<EGE::ParticleSystem2D> particleSystem = scene->createObject<EGE::ParticleSystem2D>(sf::FloatRect(10.f, 10.f, 580.f, 1.f));
+    EGE::SharedPtr<EGE::ParticleSystem2D> particleSystem = scene->addNewObject<EGE::ParticleSystem2D>();
+    particleSystem->setSpawnRect(sf::FloatRect(10.f, 10.f, 580.f, 1.f));
     particleSystem->setSpawnChance(50.0);
     particleSystem->setParticleLifeTime(400);
     particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
@@ -250,7 +249,7 @@ TESTCASE(particleSystem)
     });
 
     particleSystem->setParticleRenderer([](const std::list<EGE::ParticleSystem2D::Particle>& particles, EGE::Renderer& renderer) {
-        log(EGE::LogLevel::Debug) << "Particles: " << particles.size();
+        ege_log.debug() << "Particles: " << particles.size();
 
         // Generate vertexes.
         std::vector<EGE::Vertex> vertexes;
@@ -275,14 +274,10 @@ TESTCASE(particleSystem)
         myData->ccp = rand() % 100 + 150.f;
     });
 
-    // assign particle system to scene
-    scene->addObject(particleSystem);
-
     // add camera
-    auto cam = scene->createObject<EGE::CameraObject2D>();
+    auto cam = scene->addNewObject<EGE::CameraObject2D>();
     cam->setScalingMode(EGE::ScalingMode::None);
     scene->setCamera(cam);
-    scene->addObject(cam);
 
     // create GUI
     EGE::SharedPtr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
@@ -305,8 +300,8 @@ class MyTileMapObject : public EGE::SceneObject2D
 public:
     EGE_SCENEOBJECT("MyTileMapObject");
 
-    MyTileMapObject(EGE::Scene2D& owner, const EGE::SceneObjectType& type)
-    : EGE::SceneObject2D(owner, type)
+    MyTileMapObject(EGE::Scene2D& owner)
+    : EGE::SceneObject2D(owner)
     {
         m_tilemap = make<EGE::ChunkedTileMap2D<MyTile, 4, 4>>();
         //m_tilemap->initialize({0, 1}); // water
@@ -364,10 +359,9 @@ TESTCASE(_tileMap)
     scene->addNewObject<MyTileMapObject>(nullptr);
 
     // Create camera
-    auto camera = scene->createObject<EGE::CameraObject2D>();
+    auto camera = scene->addNewObject<EGE::CameraObject2D>();
     camera->setPosition({512, 512});
     camera->setScalingMode(EGE::ScalingMode::Centered);
-    scene->addObject(camera);
     scene->setCamera(camera);
 
     // Display it.
@@ -393,7 +387,7 @@ TESTCASE(sceneLoader)
     EGE::SceneLoader loader(*scene);
     if(!loader.loadSceneAndSave("test.json", "scenes/test.json"))
     {
-        log() << "Failed to load scene!";
+        ege_log.error() << "Failed to load scene!";
         return 1;
     }
 
@@ -436,8 +430,8 @@ class SimpleRectangleObject : public EGE::SceneObject2D
 public:
     EGE_SCENEOBJECT("SimpleRectangleObject");
 
-    SimpleRectangleObject(EGE::Scene& scene, const EGE::SceneObjectType& type)
-    : EGE::SceneObject2D(scene, type)
+    SimpleRectangleObject(EGE::Scene& scene)
+    : EGE::SceneObject2D(scene)
     {
         auto anim = make<EGE::Vec2Animation>(*this, 1.0, EGE::Timer::Mode::Infinite);
         anim->addKeyframe(0.0, m_initialPosition - EGE::Vec2d(10.0, 0));
@@ -496,10 +490,9 @@ TESTCASE(parenting)
 
     // Add camera
     {
-        auto camera = scene->createObject<EGE::CameraObject2D>();
+        auto camera = scene->addNewObject<EGE::CameraObject2D>();
         camera->setPosition({0, 0});
         camera->setScalingMode(EGE::ScalingMode::Centered);
-        scene->addObject(camera);
         scene->setCamera(camera);
     }
 
