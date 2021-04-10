@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.11)
 project(EGE)
 
 set(EGE_LIB_ROOT ${CMAKE_SOURCE_DIR})
 include(${EGE_LIB_ROOT}/cmake/EGEUtils.cmake)
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/root")
-set(CMAKE_CXX_FLAGS "-std=c++17 -Wall -Wextra")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### SFML ###
 
@@ -36,7 +37,7 @@ add_custom_target(tests
 )
 
 macro(ege_add_all_tests_for targetname)
-    file(GLOB TEST_FILES "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
+    file(GLOB TEST_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
 
     foreach(testfile ${TEST_FILES})
         get_filename_component(testfile_only_name ${testfile} NAME_WE)
