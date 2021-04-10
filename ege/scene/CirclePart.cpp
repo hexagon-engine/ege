@@ -49,6 +49,8 @@ void CirclePart::render(Renderer& renderer) const
 
 bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
 {
+    if(!Part::deserialize(data))
+        return false;
     position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
     radius = data->getObject("radius").asFloat().valueOr(0);
     fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));

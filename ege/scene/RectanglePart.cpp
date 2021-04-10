@@ -48,6 +48,8 @@ void RectanglePart::render(Renderer& renderer) const
 
 bool RectanglePart::deserialize(SharedPtr<ObjectMap> data)
 {
+    if(!Part::deserialize(data))
+        return false;
     rect = Serializers::toRect(data->getObject("rect").to<ObjectMap>().valueOr({}));
     fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
     outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));

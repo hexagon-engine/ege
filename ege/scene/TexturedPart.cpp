@@ -65,6 +65,8 @@ void TexturedPart::setTextureName(String tex)
 
 bool TexturedPart::deserialize(SharedPtr<ObjectMap> data)
 {
+    if(!Part::deserialize(data))
+        return false;
     position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
     m_textureName = data->getObject("textureName").asString().valueOr("");
     setGeometryNeedUpdate();
