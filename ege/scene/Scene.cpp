@@ -45,9 +45,16 @@
 namespace EGE
 {
 
+Scene::~Scene()
+{
+    if(!m_lastLoadFile.empty())
+        saveToFile(m_lastLoadFile);
+}
+
 bool Scene::loadFromFile(String saveFile, String sceneFile,
                          const IOStreamConverter& converter)
 {
+    m_lastLoadFile = saveFile;
     SceneLoader loader(*this);
     bool success = loader.loadSceneAndSave(saveFile, sceneFile, converter);
 

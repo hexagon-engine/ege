@@ -87,6 +87,8 @@ public:
     Scene(GUIGameLoop* loop)
     : EventLoop(loop, "Scene"), m_loop(loop) {}
 
+    virtual ~Scene();
+
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
     typedef StringMap<SceneObject*> ObjectMapByName;
     typedef std::multimap<int, SceneObject*> ObjectMapByLayer;
@@ -169,6 +171,7 @@ protected:
     ObjectMapByName m_objectsByName;
     ObjectMapByLayer m_objectsByLayer;
     SceneObjectRegistry m_registry;
+    String m_lastLoadFile;
 
 private:
     UidType m_greatestId = 0;
