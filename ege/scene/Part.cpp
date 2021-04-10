@@ -58,7 +58,7 @@ sf::View Part::getCustomView(sf::RenderTarget& target) const
 
     auto view = target.getView();
     view.rotate(-so2d.getRotation());
-    view.move({(float)position.x, (float)position.y});
+    view.move({(float)-position.x, (float)-position.y});
     return view;
 }
 
