@@ -60,39 +60,39 @@ SharedPtr<Object> ObjectMap::copy() const
     return make<ObjectMap>(*this);
 }
 
-const SharedPtr<Object>& ObjectMap::addObject(std::string name, const SharedPtr<Object>& subObject)
+SharedPtr<Object> ObjectMap::addObject(std::string name, SharedPtr<Object> subObject)
 {
     auto& ref = m_subObjects[name];
     ref = subObject;
     return ref;
 }
 
-const SharedPtr<Object>& ObjectMap::addObject(String name, const Serializable& subObject)
+SharedPtr<Object> ObjectMap::addObject(String name, const Serializable& subObject)
 {
     return addObject(name, subObject.serialize());
 }
 
-const SharedPtr<Object>& ObjectMap::addFloat(std::string name, ObjectFloat::ValueType value)
+SharedPtr<Object> ObjectMap::addFloat(std::string name, ObjectFloat::ValueType value)
 {
     return addObject(name, make<ObjectFloat>(value));
 }
 
-const SharedPtr<Object>& ObjectMap::addInt(std::string name, ObjectInt::ValueType value, ObjectInt::Type type)
+SharedPtr<Object> ObjectMap::addInt(std::string name, ObjectInt::ValueType value, ObjectInt::Type type)
 {
     return addObject(name, make<ObjectInt>(value, type));
 }
 
-const SharedPtr<Object>& ObjectMap::addUnsignedInt(std::string name, ObjectUnsignedInt::ValueType value, ObjectUnsignedInt::Type type)
+SharedPtr<Object> ObjectMap::addUnsignedInt(std::string name, ObjectUnsignedInt::ValueType value, ObjectUnsignedInt::Type type)
 {
     return addObject(name, make<ObjectUnsignedInt>(value, type));
 }
 
-const SharedPtr<Object>& ObjectMap::addList(std::string name, ObjectList::ValueType value)
+SharedPtr<Object> ObjectMap::addList(std::string name, ObjectList::ValueType value)
 {
     return addObject(name, make<ObjectList>(value));
 }
 
-const SharedPtr<Object>& ObjectMap::addString(std::string name, ObjectString::ValueType value)
+SharedPtr<Object> ObjectMap::addString(std::string name, ObjectString::ValueType value)
 {
     return addObject(name, make<ObjectString>(value));
 }

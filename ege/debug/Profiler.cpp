@@ -175,7 +175,7 @@ std::string Profiler::toString()
 
 long long Profiler::getTime()
 {
-    auto et = EGE::System::exactTime();
+    auto et = System::exactTime();
     return et.s * 1000000000LL + et.ns;
 }
 
@@ -237,19 +237,18 @@ SharedPtr<ObjectMap> Profiler::Section::serialize() const
         sections.push_back(it.second.get());
 
     std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
-    SharedPtr<ObjectMap>& sectionMap = (SharedPtr<ObjectMap>&)map->addObject("sections", make<ObjectMap>());
+    SharedPtr<ObjectMap> sectionMap = make<ObjectMap>();
 
     for(auto section: sections)
     {
         sectionMap->addObject(section->m_name, section->serialize());
     }
+    map->addObject("sections", sectionMap);
     return map;
 }
 
 bool Profiler::Section::deserialize(SharedPtr<ObjectMap>)
 {
-    //TODO
-    DBG(1, "TODO: profiler deserialize not implemented");
     CRASH();
 }
 
@@ -262,8 +261,6 @@ SharedPtr<ObjectMap> Profiler::serialize() const
 
 bool Profiler::deserialize(SharedPtr<ObjectMap>)
 {
-    //TODO
-    DBG(1, "TODO: profiler deserialize not implemented");
     CRASH();
 }
 

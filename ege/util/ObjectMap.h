@@ -62,17 +62,16 @@ public:
 
     typedef SharedPtrStringMap<Object> ValueType;
 
-    const SharedPtr<Object>& addObject(String name, const SharedPtr<Object>& subObject);
-    const SharedPtr<Object>& addObject(String name, const Serializable& subObject);
+    SharedPtr<Object> addObject(String name, SharedPtr<Object> subObject);
+    SharedPtr<Object> add(String name, SharedPtr<Object> subObject) { return addObject(name, subObject); }
+    SharedPtr<Object> addObject(String name, const Serializable& subObject);
+    SharedPtr<Object> add(String name, const Serializable& subObject) { return addObject(name, subObject); }
 
-    // Set object value or add it.
-    void setObject();
-
-    const SharedPtr<Object>& addFloat(String name, ObjectFloat::ValueType value = 0.0);
-    const SharedPtr<Object>& addInt(String name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
-    const SharedPtr<Object>& addUnsignedInt(String name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
-    const SharedPtr<Object>& addList(String name, ObjectList::ValueType value = {});
-    const SharedPtr<Object>& addString(String name, ObjectString::ValueType value = "");
+    SharedPtr<Object> addFloat(String name, ObjectFloat::ValueType value = 0.0);
+    SharedPtr<Object> addInt(String name, ObjectInt::ValueType value = 0, ObjectInt::Type type = ObjectInt::Type::Long);
+    SharedPtr<Object> addUnsignedInt(String name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
+    SharedPtr<Object> addList(String name, ObjectList::ValueType value = {});
+    SharedPtr<Object> addString(String name, ObjectString::ValueType value = "");
 
     // TODO: exceptions
     class _Object
@@ -110,7 +109,9 @@ public:
     };
 
     _Object getObject(String name) const;
+    _Object get(String name) const { return getObject(name); }
     bool hasObject(String name) const;
+    bool has(String name) const { return hasObject(name); };
 
     virtual String toString() const;
 
