@@ -172,6 +172,7 @@ Part* SceneObject::getPart(String name)
 
 void SceneObject::init()
 {
+    ASSERT_WITH_MESSAGE(getType(), "Type not assigned to SceneObject. Use Scene::addNewObject<>() to create objects");
     getType()->fillObjectWithData(*this);
     onInit();
 }
