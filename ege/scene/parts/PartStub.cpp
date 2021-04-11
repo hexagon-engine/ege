@@ -38,8 +38,9 @@
 
 #include "CirclePart.h"
 #include "RectanglePart.h"
-#include "SceneObject2D.h"
 #include "TexturedPart.h"
+
+#include "../SceneObject2D.h"
 
 namespace EGE
 {

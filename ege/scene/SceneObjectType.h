@@ -41,8 +41,8 @@
 #include <ege/gpo/GameplayObject.h>
 #include <ege/util/Types.h>
 
-#include "Part.h"
-#include "PartStub.h"
+#include "parts/Part.h"
+#include "parts/PartStub.h"
 
 namespace EGE
 {

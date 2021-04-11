@@ -36,8 +36,8 @@
 
 #include "TexturedPart.h"
 
-#include "Scene.h"
-#include "SceneObject.h"
+#include "../Scene.h"
+#include "../SceneObject.h"
 
 namespace EGE
 {

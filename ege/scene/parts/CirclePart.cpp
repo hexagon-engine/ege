@@ -36,7 +36,6 @@
 
 #include "CirclePart.h"
 
-#include <ege/debug/Logger.h>
 #include <ege/util/ObjectSerializers.h>
 
 namespace EGE
@@ -56,7 +55,6 @@ bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
     fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
     outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));
     setGeometryNeedUpdate();
-    log() << radius;
     return true;
 }
 

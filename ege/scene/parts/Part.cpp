@@ -36,7 +36,7 @@
 
 #include "Part.h"
 
-#include "SceneObject2D.h"
+#include "../SceneObject2D.h"
 
 namespace EGE
 {

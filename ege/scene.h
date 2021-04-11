@@ -38,13 +38,9 @@
 
 #include <ege/scene/CameraObject2D.h>
 #include <ege/scene/CameraObject.h>
-#include <ege/scene/CirclePart.h>
 #include <ege/scene/DummyObject2D.h>
 #include <ege/scene/ObjectRenderer.h>
-#include <ege/scene/Part.h>
-#include <ege/scene/PartStub.h>
 #include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/RectanglePart.h>
 #include <ege/scene/Scene2D.h>
 #include <ege/scene/Scene.h>
 #include <ege/scene/SceneLoader.h>
@@ -53,6 +49,11 @@
 #include <ege/scene/SceneObjectRegistry.h>
 #include <ege/scene/SceneObjectType.h>
 #include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedPart.h>
 #include <ege/scene/TexturedRenderer2D.h>
 #include <ege/scene/TilemapRenderer2D.h>
+
+#include <ege/scene/parts/CirclePart.h>
+#include <ege/scene/parts/Part.h>
+#include <ege/scene/parts/PartStub.h>
+#include <ege/scene/parts/RectanglePart.h>
+#include <ege/scene/parts/TexturedPart.h>
