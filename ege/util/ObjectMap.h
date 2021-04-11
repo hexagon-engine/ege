@@ -37,6 +37,7 @@
 #pragma once
 
 #include "Object.h"
+#include "ObjectBoolean.h"
 #include "ObjectFloat.h"
 #include "ObjectInt.h"
 #include "ObjectList.h"
@@ -72,6 +73,7 @@ public:
     SharedPtr<Object> addUnsignedInt(String name, ObjectUnsignedInt::ValueType value = 0, ObjectUnsignedInt::Type type = ObjectUnsignedInt::Type::Long);
     SharedPtr<Object> addList(String name, ObjectList::ValueType value = {});
     SharedPtr<Object> addString(String name, ObjectString::ValueType value = "");
+    SharedPtr<Object> addBoolean(String name, ObjectBoolean::ValueType value = false);
 
     // TODO: exceptions
     class _Object
