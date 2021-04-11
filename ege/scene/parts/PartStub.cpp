@@ -57,7 +57,7 @@ PartCreatorMap PartStub::PartCreators;
 
 SharedPtr<Part> PartStub::makeInstance(SceneObject& sobject)
 {
-    ege_log.info() << "Creating instance of part for SO " << sobject.getName();
+    ege_log.debug() << "Creating instance of part for SO " << sobject.getName();
     auto partCreator = PartStub::PartCreators.get(m_type);
     if(!partCreator)
     {

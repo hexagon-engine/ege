@@ -64,14 +64,6 @@ bool Scene::loadFromFile(String saveFile, String sceneFile,
 bool Scene::saveToFile(String saveFile, const IOStreamConverter& converter)
 {
     SceneLoader loader(*this);
-
-    ege_log.debug() << "Objects: ";
-    for(auto it: m_objects)
-        printObject(it.second->serialize());
-    ege_log.debug() << "Static Objects: ";
-    for(auto it: m_staticObjects)
-        printObject(it.second->serialize());
-
     return loader.saveScene(saveFile, converter);
 }
 

@@ -80,7 +80,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
         SharedPtr<SceneObjectType> sotype = registry.getType(pr.first);
         if(!sotype)
         {
-            ege_log.info() << "SceneLoader: Creating generic type for " << pr.first;
+            ege_log.verbose() << "SceneLoader: Creating generic type for " << pr.first;
             auto sd_baseClass = sodata.value()->getObject("baseClass").asString().valueOr("SceneObject2D");
             if(sd_baseClass == "SceneObject2D")
                 sotype = make<SceneObjectType2D>(pr.first);
@@ -91,7 +91,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             }
         }
         else
-            ege_log.info() << "SceneLoader: Using already registered type for " << pr.first;
+            ege_log.verbose() << "SceneLoader: Using already registered type for " << pr.first;
 
         auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
         if(!sd_data.hasValue())
@@ -100,7 +100,6 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             return false; // data is not a map
         }
 
-        log() << "Loading data for SceneObjectType: " << pr.first;
         if(!sotype->deserialize(sd_data.value()))
         {
             ege_log.error() << "Invalid SceneObjectType";
@@ -231,7 +230,7 @@ bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 
 bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter) const
 {
-    log() << "Saving scene to " << fileName;
+    ege_log.info() << "Saving scene to " << fileName;
     std::ofstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
@@ -283,7 +282,7 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
 {
-    log() << "Loading static objects from " << CommonPaths::resourceDir() + "/" + fileName;
+    ege_log.info() << "Loading static objects from " << CommonPaths::resourceDir() + "/" + fileName;
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {

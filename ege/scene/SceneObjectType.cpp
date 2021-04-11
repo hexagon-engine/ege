@@ -44,8 +44,6 @@ namespace EGE
 
 bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
 {
-    ege_log.info() << "Loading SceneObjectType: " << getId();
-
     // Part list
     auto d_parts = data->getObject("parts").to<ObjectList>();
     if(d_parts.hasValue())
@@ -82,11 +80,11 @@ bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
                 return false;
             }
 
-            ege_log.info() << "Adding Part: " << part_name.value();
+            ege_log.debug() << "Adding Part: " << part_name.value();
             m_parts[part_name.value()] = partstub;
         }
     }
-    ege_log.info() << "Total part count: " << m_parts.size();
+    ege_log.verbose() << "Total part count: " << m_parts.size();
     return true;
 }
 
@@ -100,10 +98,10 @@ SharedPtr<SceneObject> SceneObjectType2D::createEmptyObject(Scene& scene) const
 void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
 {
     // Parts
-    ege_log.info() << "Adding parts to " << object.getName();
+    ege_log.debug() << "Adding parts to " << object.getName();
     for(auto it: m_parts)
     {
-        ege_log.info() << "  * " << it.first;
+        ege_log.debug() << "  * " << it.first;
         object.addPart(it.first, it.second.makeInstance(object));
     }
 }
