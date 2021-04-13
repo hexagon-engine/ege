@@ -158,6 +158,8 @@ void SceneObject::setParent(SceneObject* object)
 
 void SceneObject::addPart(String name, SharedPtr<Part> part)
 {
+    if(!part)
+        return;
     m_parts.insert(std::make_pair(name, part));
     m_partsByLayer.insert(std::make_pair(part->getRenderLayer(), part.get()));
 }
