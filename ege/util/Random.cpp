@@ -112,17 +112,17 @@ namespace EGE
         return random;
     }
 
-    MaxInt Random::randomInt(MaxInt begin, MaxInt end)
+    MaxInt randomInt(MaxInt begin, MaxInt end)
     {
         return Random::fastRandom().nextIntRanged(begin, end);
     }
 
-    float Random::randomFloat(float begin, float end)
+    float randomFloat(float begin, float end)
     {
         return Random::fastRandom().nextFloatRanged(begin, end);
     }
 
-    double Random::randomDouble(double begin, double end)
+    double randomDouble(double begin, double end)
     {
         return Random::fastRandom().nextDoubleRanged(begin, end);
     }
