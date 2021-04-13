@@ -118,4 +118,8 @@ private:
     UniquePtr<Randomizer> m_randomizer;
 };
 
+MaxInt randomInt(MaxInt begin, MaxInt end);
+float randomFloat(float begin, float end);
+double randomDouble(double begin, double end);
+
 }
