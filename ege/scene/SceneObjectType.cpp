@@ -44,6 +44,11 @@ namespace EGE
 
 bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
 {
+    // Defaults list
+    auto d_defaults = data->getObject("defaults").to<ObjectMap>();
+    if(d_defaults.hasValue())
+        m_defaults = Object::cast<ObjectMap>(d_defaults.value()->copy()).value();
+
     // Part list
     auto d_parts = data->getObject("parts").to<ObjectList>();
     if(d_parts.hasValue())
@@ -104,6 +109,9 @@ void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
         ege_log.debug() << "  * " << it.first;
         object.addPart(it.first, it.second.makeInstance(object));
     }
+
+    if(m_defaults)
+        object.deserialize(m_defaults);
 }
 
 SharedPtr<SceneObject2D> SceneObjectType2D::createEmptyObject(Scene2D& scene) const

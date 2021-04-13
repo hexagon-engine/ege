@@ -12,7 +12,12 @@
             "parts": [
                 {"name": "base", "layer": 1, "type": "Rectangle", "rect": {"pos": {"x": -6, "y": -6}, "size": {"x": 12, "y": 12}}, "fillColor": {"r": 0, "g": 1, "b": 0.5}},
                 {"name": "base2", "layer": 0, "type": "Rectangle", "rect": {"pos": {"x": -8, "y": -8}, "size": {"x": 16, "y": 16}}, "fillColor": {"r": 0, "g": 0.5, "b": 1}}
-            ]
+            ],
+            "defaults": {
+                "m": {
+                    "layer": 1
+                }
+            }
         }
     }
 }
