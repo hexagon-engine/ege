@@ -35,6 +35,8 @@ set(SOURCES
 	"parts/Part.h"
 	"parts/PartStub.cpp"
 	"parts/PartStub.h"
+	"parts/PolygonPart.cpp"
+	"parts/PolygonPart.h"
 	"parts/RectanglePart.cpp"
 	"parts/RectanglePart.h"
 	"parts/TexturedPart.cpp"

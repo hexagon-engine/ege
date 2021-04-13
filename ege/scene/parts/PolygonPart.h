@@ -34,64 +34,36 @@
 *
 */
 
-#include "PartStub.h"
+#pragma once
 
-#include "CirclePart.h"
-#include "PolygonPart.h"
-#include "RectanglePart.h"
-#include "TexturedPart.h"
+#include "Part.h"
 
-#include "../SceneObject2D.h"
+#include <ege/util/Color.h>
+#include <ege/util/Rect.h>
 
 namespace EGE
 {
 
-PartCreatorMap::PartCreatorMap()
+class SceneObject2D;
+
+class PolygonPart : public Part
 {
-    // Add default parts
-    add("Circle", EGE_PART_CREATOR_2D(EGE::CirclePart));
-    add("Polygon", EGE_PART_CREATOR_2D(EGE::PolygonPart));
-    add("Rectangle", EGE_PART_CREATOR_2D(EGE::RectanglePart));
-    add("Textured", EGE_PART_CREATOR_2D(EGE::TexturedPart));
-}
+public:
+    PolygonPart(SceneObject2D& object)
+    : Part((SceneObject&)object) {}
 
-PartCreatorMap PartStub::PartCreators;
+    virtual void render(Renderer& renderer) const override;
+    virtual void updateGeometry(Renderer& renderer) override;
 
-SharedPtr<Part> PartStub::makeInstance(SceneObject& sobject)
-{
-    ege_log.debug() << "Creating instance of part for SO " << sobject.getName();
-    auto partCreator = PartStub::PartCreators.get(m_type);
-    if(!partCreator)
-    {
-        ege_err.error() << "No such part with type: " << m_type;
-        return nullptr;
-    }
+    virtual bool deserialize(SharedPtr<ObjectMap>);
 
-    auto part = (*partCreator)(sobject);
-    if(!part)
-    {
-        ege_err.error() << "Failed to create part!";
-        return nullptr;
-    }
+    ColorRGBA fillColor;
+    // TODO: outline
 
-    if(!part->deserialize(m_map))
-        return nullptr;
-    return part;
-}
-
-SharedPtr<ObjectMap> PartStub::serialize() const
-{
-    return m_map;
-}
-
-bool PartStub::deserialize(SharedPtr<ObjectMap> data)
-{
-    m_map = Object::cast<ObjectMap>(data->copy()).value();
-    m_type = data->getObject("type").asString().valueOr("");
-    if(m_type.empty())
-        return false;
-    return true;
-}
+private:
+    // TODO: expose that
+    Vector<Vec2d> vertexes;
+    Vector<Vertex> m_vertexes;
+};
 
 }
-

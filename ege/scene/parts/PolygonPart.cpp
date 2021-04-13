@@ -34,64 +34,56 @@
 *
 */
 
-#include "PartStub.h"
-
-#include "CirclePart.h"
 #include "PolygonPart.h"
-#include "RectanglePart.h"
-#include "TexturedPart.h"
 
-#include "../SceneObject2D.h"
+#include <ege/util/ObjectSerializers.h>
 
 namespace EGE
 {
 
-PartCreatorMap::PartCreatorMap()
+void PolygonPart::render(Renderer& renderer) const
 {
-    // Add default parts
-    add("Circle", EGE_PART_CREATOR_2D(EGE::CirclePart));
-    add("Polygon", EGE_PART_CREATOR_2D(EGE::PolygonPart));
-    add("Rectangle", EGE_PART_CREATOR_2D(EGE::RectanglePart));
-    add("Textured", EGE_PART_CREATOR_2D(EGE::TexturedPart));
+    renderer.renderPrimitives(m_vertexes, sf::TriangleFan);
 }
 
-PartCreatorMap PartStub::PartCreators;
-
-SharedPtr<Part> PartStub::makeInstance(SceneObject& sobject)
+void PolygonPart::updateGeometry(Renderer& renderer)
 {
-    ege_log.debug() << "Creating instance of part for SO " << sobject.getName();
-    auto partCreator = PartStub::PartCreators.get(m_type);
-    if(!partCreator)
-    {
-        ege_err.error() << "No such part with type: " << m_type;
-        return nullptr;
-    }
+    // TODO: Support non-convex shapes
 
-    auto part = (*partCreator)(sobject);
-    if(!part)
-    {
-        ege_err.error() << "Failed to create part!";
-        return nullptr;
-    }
+    // Average
+    Vec2d avg;
+    for(auto& vertex: vertexes)
+        avg += vertex;
 
-    if(!part->deserialize(m_map))
-        return nullptr;
-    return part;
+    avg /= static_cast<double>(vertexes.size());
+
+    auto sfColor = sf::Color(fillColor.r * 255, fillColor.g * 255, fillColor.b * 255, fillColor.a * 255);
+    m_vertexes.push_back(Vertex::make({static_cast<float>(avg.x), static_cast<float>(avg.y), 0}, sfColor));
+
+    for(auto& vertex: vertexes)
+        m_vertexes.push_back(Vertex::make({static_cast<float>(vertex.x), static_cast<float>(vertex.y), 0}, sfColor));
+
+    m_vertexes.push_back(Vertex::make({static_cast<float>(vertexes.front().x), static_cast<float>(vertexes.front().y), 0}, sfColor));
 }
 
-SharedPtr<ObjectMap> PartStub::serialize() const
+bool PolygonPart::deserialize(SharedPtr<ObjectMap> data)
 {
-    return m_map;
-}
-
-bool PartStub::deserialize(SharedPtr<ObjectMap> data)
-{
-    m_map = Object::cast<ObjectMap>(data->copy()).value();
-    m_type = data->getObject("type").asString().valueOr("");
-    if(m_type.empty())
+    if(!Part::deserialize(data))
         return false;
+
+    auto _vertexes = data->getObject("vertexes").to<ObjectList>().valueOr({});
+    for(auto& vertex : *_vertexes)
+    {
+        auto _vertex = Object::cast<ObjectMap>(vertex);
+        if(!_vertex.hasValue())
+            return false;
+
+        vertexes.push_back(Serializers::toVector2(_vertex.value()));
+    }
+
+    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
+    setGeometryNeedUpdate();
     return true;
 }
 
 }
-

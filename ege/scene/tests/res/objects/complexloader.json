@@ -11,7 +11,8 @@
         "data": {
             "parts": [
                 {"name": "base", "layer": 1, "type": "Rectangle", "rect": {"pos": {"x": -6, "y": -6}, "size": {"x": 12, "y": 12}}, "fillColor": {"r": 0, "g": 1, "b": 0.5}},
-                {"name": "base2", "layer": 0, "type": "Rectangle", "rect": {"pos": {"x": -8, "y": -8}, "size": {"x": 16, "y": 16}}, "fillColor": {"r": 0, "g": 0.5, "b": 1}}
+                {"name": "base2", "layer": 0, "type": "Rectangle", "rect": {"pos": {"x": -8, "y": -8}, "size": {"x": 16, "y": 16}}, "fillColor": {"r": 0, "g": 0.5, "b": 1}},
+                {"name": "polygontest", "layer": -1, "type": "Polygon", "vertexes": [{"x": -5, "y": -20}, {"x": 5, "y": -20}, {"x": 14, "y": 10}, {"x": -14, "y": 10}], "fillColor": {"r": 1, "g": 0, "b": 0.5}}
             ],
             "defaults": {
                 "m": {
