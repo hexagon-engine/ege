@@ -52,7 +52,7 @@ public:
     : Controller((Controllable&)object), m_server(server) {}
 
     // send request to CLIENT.
-    virtual void sendRequest(const ControlObject& data);
+    virtual void sendRequest(const ControlPacket& data);
 
 private:
     EGEServer& m_server;

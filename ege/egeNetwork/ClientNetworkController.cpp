@@ -41,7 +41,7 @@
 namespace EGE
 {
 
-void ClientNetworkController::sendRequest(const ControlObject& data)
+void ClientNetworkController::sendRequest(const ControlPacket& data)
 {
     m_client.send(EGEPacket::generateCSceneObjectControl((SceneObject&)getObject(), data));
 }

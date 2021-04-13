@@ -116,7 +116,7 @@ public:
     MyObjectServerController(EGE::SceneObject& object, EGE::EGEServer& server)
     : EGE::ServerNetworkController(object, server) {}
 
-    virtual void handleRequest(const EGE::ControlObject& data) override
+    virtual void handleRequest(const EGE::ControlPacket& data) override
     {
         std::string type = data.getType();
         auto& object = (MyObject&)getObject();
@@ -134,7 +134,7 @@ public:
     MyObjectClientController(EGE::SceneObject& object, EGE::EGEClient& client)
     : EGE::ClientNetworkController(object, client) {}
 
-    virtual void handleRequest(const EGE::ControlObject& data) override
+    virtual void handleRequest(const EGE::ControlPacket& data) override
     {
         std::string type = data.getType();
         auto& object = (MyObject&)getObject();
@@ -209,7 +209,7 @@ public:
         EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
         _map->addInt("moving", moving);
         _map->addInt("dir", dir);
-        requestControl(nullptr, EGE::ControlObject("move", _map));
+        requestControl(nullptr, EGE::ControlPacket("move", _map));
     }
 
     void move2(bool moving, int dir)
@@ -217,7 +217,7 @@ public:
         EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
         _map->addInt("moving", moving);
         _map->addInt("dir", dir);
-        requestControl(getScene()->getObject(-1).get(), EGE::ControlObject("move", _map));
+        requestControl(getScene()->getObject(-1).get(), EGE::ControlPacket("move", _map));
     }
 };
 

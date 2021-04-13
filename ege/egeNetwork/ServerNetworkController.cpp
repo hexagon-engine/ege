@@ -42,7 +42,7 @@
 namespace EGE
 {
 
-void ServerNetworkController::sendRequest(const ControlObject& data)
+void ServerNetworkController::sendRequest(const ControlPacket& data)
 {
     m_server.sendToAll(EGEPacket::generateSSceneObjectControl((SceneObject&)getObject(), data));
 }

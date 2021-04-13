@@ -52,7 +52,7 @@ public:
     : Controller((Controllable&)object), m_client(client) {}
 
     // send request to SERVER.
-    virtual void sendRequest(const ControlObject& data);
+    virtual void sendRequest(const ControlPacket& data);
 
     // Called when this controller is set as default on Client.
     virtual void onSetDefault() {}

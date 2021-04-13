@@ -45,11 +45,10 @@
 namespace EGE
 {
 
-// TODO: Give it a better name!
-class ControlObject
+class ControlPacket
 {
 public:
-    ControlObject(std::string type, SharedPtr<ObjectMap> args = make<ObjectMap>())
+    ControlPacket(std::string type, SharedPtr<ObjectMap> args = make<ObjectMap>())
     : m_type(type)
     , m_args(args) {}
 

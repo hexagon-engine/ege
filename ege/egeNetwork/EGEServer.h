@@ -92,10 +92,10 @@ public:
     void removeAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
 
     virtual SharedPtr<ServerNetworkController> makeController(SceneObject&) { return nullptr; }
-    void control(SceneObject& object, const ControlObject& data);
-    void requestControl(SceneObject& object, const ControlObject& data);
+    void control(SceneObject& object, const ControlPacket& data);
+    void requestControl(SceneObject& object, const ControlPacket& data);
 
-    virtual bool canControlObject(ServerNetworkController& controller, EGEClientConnection& client);
+    virtual bool canControlPacket(ServerNetworkController& controller, EGEClientConnection& client);
 
 private:
     std::map<UidType, SharedPtr<ServerNetworkController>> m_controllersForObjects;

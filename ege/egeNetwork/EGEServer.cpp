@@ -40,7 +40,7 @@
 #include "EGEPacket.h"
 
 #include <ege/asyncLoop/AsyncTask.h>
-#include <ege/controller/ControlObject.h>
+#include <ege/controller/ControlPacket.h>
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 #include <ege/network/ClientConnection.h>
@@ -201,14 +201,14 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
 
             auto controller = getController(id.value());
 
-            if(!canControlObject(*controller, egeClient))
+            if(!canControlPacket(*controller, egeClient))
             {
                 err() << "Client " << egeClient.getID() << " tried to use controller with ID " << id.value() << " without permission!";
                 return EventResult::Failure;
             }
 
             if(controller)
-                controller->handleRequest(ControlObject(data_name.value(), data_args.value()));
+                controller->handleRequest(ControlPacket(data_name.value(), data_args.value()));
             else
                 return EventResult::Failure; // kick f*****g cheaters
         }
@@ -335,7 +335,7 @@ void EGEServer::onTick(TickCount)
             // cleared when network thread receives any data from client.
             client->setPinged();
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
-        }bool canControlObject(SharedPtr<SceneObject> object, EGEClientConnection* client);
+        }bool canControlPacket(SharedPtr<SceneObject> object, EGEClientConnection* client);
     }
 
     // Update scene, because it's not done in GameLoop.
@@ -404,21 +404,21 @@ SharedPtr<ServerNetworkController> EGEServer::getController(UidType objectId)
     return m_controllersForObjects[objectId];
 }
 
-void EGEServer::control(SceneObject& object, const ControlObject& data)
+void EGEServer::control(SceneObject& object, const ControlPacket& data)
 {
     auto controller = getController(object.getObjectId());
     ASSERT(controller);
     controller->handleRequest(data);
 }
 
-void EGEServer::requestControl(SceneObject& object, const ControlObject& data)
+void EGEServer::requestControl(SceneObject& object, const ControlPacket& data)
 {
     auto controller = getController(object.getObjectId());
     ASSERT(controller);
     controller->sendRequest(data);
 }
 
-bool EGEServer::canControlObject(ServerNetworkController& controller, EGEClientConnection& client)
+bool EGEServer::canControlPacket(ServerNetworkController& controller, EGEClientConnection& client)
 {
     auto& so = (SceneObject&)controller.getObject();
     return so.getObjectId() == client.getControlledSceneObject() || client.hasAdditionalController(so.getObjectId());

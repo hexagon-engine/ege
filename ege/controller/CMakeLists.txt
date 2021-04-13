@@ -3,8 +3,8 @@ set(SOURCES
 	"Controllable.h"
 	"Controller.cpp"
 	"Controller.h"
-	"ControlObject.cpp"
-	"ControlObject.h"
+	"ControlPacket.cpp"
+	"ControlPacket.h"
 )
 
 ege_add_module(controller)

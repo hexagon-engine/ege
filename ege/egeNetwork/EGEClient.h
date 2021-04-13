@@ -114,8 +114,8 @@ public:
     SharedPtr<SceneObject> getControlledObject(UidType objectId);
 
     virtual SharedPtr<ClientNetworkController> makeController(SceneObject&) = 0;
-    void control(SceneObject* object, const ControlObject& data);
-    void requestControl(SceneObject* object, const ControlObject& data);
+    void control(SceneObject* object, const ControlPacket& data);
+    void requestControl(SceneObject* object, const ControlPacket& data);
 
     void requestObject(UidType id);
 

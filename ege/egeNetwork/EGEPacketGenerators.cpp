@@ -146,7 +146,7 @@ SharedPtr<EGEPacket> EGEPacket::generateSSceneDeletion(SharedPtr<ObjectMap>)
     return nullptr;
 }
 
-SharedPtr<EGEPacket> EGEPacket::generateCSceneObjectControl(SceneObject& object, const ControlObject& data) //SResult
+SharedPtr<EGEPacket> EGEPacket::generateCSceneObjectControl(SceneObject& object, const ControlPacket& data) //SResult
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object.getObjectId()));
@@ -174,7 +174,7 @@ SharedPtr<EGEPacket> EGEPacket::generateCSceneObjectRequest(UidType id)
     return make<EGEPacket>(EGEPacket::Type::CSceneObjectRequest, args);
 }
 
-SharedPtr<EGEPacket> EGEPacket::generateSSceneObjectControl(SceneObject& object, const ControlObject& data)
+SharedPtr<EGEPacket> EGEPacket::generateSSceneObjectControl(SceneObject& object, const ControlPacket& data)
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object.getObjectId()));

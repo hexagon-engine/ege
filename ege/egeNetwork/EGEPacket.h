@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/controller/ControlObject.h>
+#include <ege/controller/ControlPacket.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/network/SFMLPacket.h>
@@ -127,10 +127,10 @@ public:
     static SharedPtr<EGEPacket> generateSSceneObjectDeletion(UidType id);
     static SharedPtr<EGEPacket> generateSSceneCreation(SharedPtr<ObjectMap> userData = nullptr);
     static SharedPtr<EGEPacket> generateSSceneDeletion(SharedPtr<ObjectMap> userData = nullptr);
-    static SharedPtr<EGEPacket> generateCSceneObjectControl(SceneObject& object, const ControlObject& data); //SResult
+    static SharedPtr<EGEPacket> generateCSceneObjectControl(SceneObject& object, const ControlPacket& data); //SResult
     static SharedPtr<EGEPacket> generateSDefaultControllerId(SceneObject* object);
     static SharedPtr<EGEPacket> generateCSceneObjectRequest(UidType id);
-    static SharedPtr<EGEPacket> generateSSceneObjectControl(SceneObject& object, const ControlObject& data);
+    static SharedPtr<EGEPacket> generateSSceneObjectControl(SceneObject& object, const ControlPacket& data);
     static SharedPtr<EGEPacket> generate_Version(int value, std::string str);
     static SharedPtr<EGEPacket> generateSAdditionalControllerId(SceneObject& object, bool remove);
 

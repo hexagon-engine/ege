@@ -216,7 +216,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
             auto controller = getController(id.value());
 
             if(controller)
-                controller->handleRequest(ControlObject(data_name.value(), data_args.value()));
+                controller->handleRequest(ControlPacket(data_name.value(), data_args.value()));
         }
         break;
     case EGEPacket::Type::_Version:
@@ -404,7 +404,7 @@ SharedPtr<SceneObject> EGEClient::getControlledObject(UidType objectId)
     return std::dynamic_pointer_cast<SceneObject>(getController(objectId));
 }
 
-void EGEClient::control(SceneObject* object, const ControlObject& data)
+void EGEClient::control(SceneObject* object, const ControlPacket& data)
 {
     if(!object)
     {
@@ -424,7 +424,7 @@ void EGEClient::control(SceneObject* object, const ControlObject& data)
     controller->handleRequest(data);
 }
 
-void EGEClient::requestControl(SceneObject* object, const ControlObject& data)
+void EGEClient::requestControl(SceneObject* object, const ControlPacket& data)
 {
     if(!object)
     {

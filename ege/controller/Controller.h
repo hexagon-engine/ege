@@ -37,7 +37,7 @@
 #pragma once
 
 #include "Controllable.h"
-#include "ControlObject.h"
+#include "ControlPacket.h"
 
 #include <ege/util/ObjectMap.h>
 #include <memory>
@@ -56,10 +56,10 @@ public:
     Controllable& getObject() { return m_object; }
 
     // handle requests from opposite side
-    virtual void handleRequest(const ControlObject& data) = 0;
+    virtual void handleRequest(const ControlPacket& data) = 0;
 
     // send request to opposite side
-    virtual void sendRequest(const ControlObject& data) = 0;
+    virtual void sendRequest(const ControlPacket& data) = 0;
 
 private:
     Controllable& m_object;

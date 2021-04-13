@@ -34,7 +34,7 @@
 *
 */
 
-#include "ControlObject.h"
+#include "ControlPacket.h"
 
 namespace EGE
 {
