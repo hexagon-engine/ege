@@ -52,7 +52,7 @@ public:
     virtual String toString() const;
 
     // TODO: int representations
-    virtual String asString() const { return m_value ? "1" : "0"; }
+    virtual String asString() const { return m_value ? "true" : "false"; }
     virtual MaxInt asInt() const { return m_value; };
     virtual MaxUint asUnsignedInt() { return m_value; }
     virtual Boolean asBool() const { return m_value; }
