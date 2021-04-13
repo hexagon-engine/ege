@@ -40,6 +40,7 @@
 
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
+#include <ege/util/GlobalConfig.h>
 #include <ege/util/PointerUtils.h>
 #include <SFML/Graphics.hpp>
 
@@ -59,16 +60,10 @@ sf::FloatRect Widget::getBoundingBox()
 }
 sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
 {
-    DUMP(0, getSize().x);
-    DUMP(0, getSize().y);
-
     sf::Vector2u windowSize;
     windowSize = target.getSize();
 
     EGE::Vec2d widgetPosition = getAbsolutePosition();
-
-    DUMP(0, widgetPosition.x);
-    DUMP(0, widgetPosition.y);
 
     sf::FloatRect currentRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
                   getSize().x / windowSize.x, getSize().y / windowSize.y);
@@ -86,7 +81,7 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
 void Widget::render(Renderer& renderer) const
 {
     // draw some debug shape
-    if constexpr(WIDGET_DEBUG)
+    if(EGE_GCONFIG_IS_SET(GUI_LayoutBox))
     {
         // TODO: Use Renderer's methods
         sf::RectangleShape rs(sf::Vector2f(getSize().x, getSize().y) - sf::Vector2f(2.f, 2.f));

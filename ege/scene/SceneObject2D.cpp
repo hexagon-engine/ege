@@ -38,6 +38,7 @@
 
 #include <ege/debug/Dump.h>
 #include <ege/scene/Scene.h>
+#include <ege/util/GlobalConfig.h>
 #include <ege/util/ObjectFloat.h>
 #include <ege/util/ObjectSerializers.h>
 #include <ege/util/Types.h>
@@ -110,7 +111,7 @@ bool SceneObject2D::flyTo(Vec2d toPos, double time, std::function<double(double)
 void SceneObject2D::render(Renderer& renderer) const
 {
     // debug shape
-    if constexpr(SCENEOBJECT2D_DEBUG)
+    if(EGE_GCONFIG_IS_SET(SceneObject_BoundingBox))
     {
         sf::FloatRect rect(getBoundingBox());
         renderer.renderRectangle(rect.left + 1, rect.top + 1, rect.width - 2, rect.height - 2, Colors::transparent, Colors::cyan);

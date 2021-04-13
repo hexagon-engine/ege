@@ -11,6 +11,8 @@ set(SOURCES
 	"EquationSystem.h"
 	"Geometry.cpp"
 	"Geometry.h"
+	"GlobalConfig.cpp"
+	"GlobalConfig.h"
 	"JSONConverter.cpp"
 	"JSONConverter.h"
 	"Math.cpp"
