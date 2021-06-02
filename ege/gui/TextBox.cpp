@@ -184,7 +184,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                     break;
                 case '\r':
                     {
-                        err(LogLevel::Debug) << "New line";
+                        ege_log.debug() << "New line";
                     } break;
                 }
             }
@@ -222,7 +222,7 @@ void TextBox::onTextEnter(sf::Event::TextEvent& event)
                     } break;
                 case '\r':
                     {
-                        err(LogLevel::Debug) << "New line";
+                        ege_log.debug() << "New line";
                     } break;
                 }
             }

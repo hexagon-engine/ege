@@ -51,7 +51,7 @@ int GameLoop::run()
 
     if(result == EventResult::Failure)
     {
-        err(LogLevel::Critical) << "0001 EGE/gui: load failed";
+        ege_log.critical() << "GameLoop: onLoad() failed";
         return 0x0001;
     }
 
@@ -96,7 +96,7 @@ int GameLoop::run()
 
     if(result == EventResult::Failure)
     {
-        err(LogLevel::Critical) << "0002 EGE/gui: finish failed";
+        ege_log.critical() << "GameLoop: onFinish() failed";
         return 0x0002;
     }
 

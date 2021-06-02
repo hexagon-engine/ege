@@ -75,7 +75,7 @@ SpinBox::SpinBox(Widget& parent, String id)
         buttonUp->align.x = LayoutAlign::Right;
         buttonUp->setLabel("");
         buttonUp->events<Button::ClickEvent>().add([this](Button::ClickEvent&) {
-            log() << "Up";
+            ege_log.debug() << "Up";
             m_textBox->fire<SubmitEvent>(*m_textBox, m_textBox->getText());
             m_value += 1;
             m_textBox->setText(std::to_string(m_value));
@@ -86,7 +86,7 @@ SpinBox::SpinBox(Widget& parent, String id)
         buttonDown->align.x = LayoutAlign::Right;
         buttonDown->setLabel("");
         buttonDown->events<Button::ClickEvent>().add([this](Button::ClickEvent&) {
-            log() << "Down";
+            ege_log.debug() << "Down";
             m_textBox->fire<SubmitEvent>(*m_textBox, m_textBox->getText());
             m_value -= 1;
             m_textBox->setText(std::to_string(m_value));

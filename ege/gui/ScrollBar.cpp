@@ -152,13 +152,13 @@ void ScrollBar::scroll(double val)
         m_updateCallback(val);
 
     m_value = val;
-    log() << "scroll(" << val << ")";
+    ege_log.debug() << "scroll(" << val << ")";
 }
 
 void ScrollBar::scrollToPosition(double pos)
 {
     double space = getScrollableSpace();
-    log() << "ScrollBar: " << pos << "/" << space << " -> " << pos / space << " (max=" << getMaxValue() << ")";
+    ege_log.debug() << "ScrollBar: " << pos << "/" << space << " -> " << pos / space << " (max=" << getMaxValue() << ")";
     scroll(pos / space * getMaxValue());
 }
 

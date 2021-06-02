@@ -62,7 +62,7 @@ ComboBox::ComboBox(Widget& parent, String id)
     m_listBox = addNewWidget<ListBox>("CBList");
     m_listBox->hide();
     m_listBox->events<ListBox::SelectEvent>().add([this](ListBox::SelectEvent& event) {
-        log() << "ListBox::SelectEvent ()";
+        ege_log.info() << "ListBox::SelectEvent ()";
         m_listBox->hide();
         m_cbSel->setString(m_listBox->selection());
 

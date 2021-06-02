@@ -63,7 +63,7 @@ EventResult GUIGameLoop::onLoad()
     else
     {
         // Print a message and create some default resource manager (to not crash Scene)
-        err(LogLevel::Critical) << "The ResourceManager is not set!";
+        ege_log.warning() << "GUIGameLoop: No ResourceManager set, using default dummy one";
         m_resourceManager = make<ResourceManager>();
     }
 

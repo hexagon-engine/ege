@@ -57,7 +57,7 @@ void Slider::scrollWithMouse(double x)
     m_value = round(m_value);
     m_value *= m_step;
 
-    log() << m_value;
+    ege_log.debug() << m_value;
 }
 
 void Slider::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
@@ -79,7 +79,7 @@ void Slider::onMouseMove(sf::Event::MouseMoveEvent& event)
     Widget::onMouseMove(event);
     if(m_knobDragged)
     {
-        log() << "Slider slide.";
+        ege_log.debug() << "Slider slide.";
         scrollWithMouse(event.x - getAbsolutePosition().x);
     }
 }

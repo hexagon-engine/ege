@@ -70,7 +70,7 @@ void SFMLSystemWindow::initialize()
     GLenum rc = glewInit();
     if(rc != GLEW_OK)
     {
-        err(LogLevel::Crash) << "GLEW initialization failed: " << glewGetErrorString(rc);
+        ege_log.crash() << "GLEW initialization failed: " << glewGetErrorString(rc);
         return;
     }
     m_glExtensions = true;

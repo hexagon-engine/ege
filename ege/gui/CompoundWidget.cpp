@@ -45,10 +45,10 @@ namespace EGE
 
 void CompoundWidget::onResize(sf::Event::SizeEvent& event)
 {
-    log(LogLevel::Debug) << "CompoundWidget::onResize(" << event.width << "," << event.height << ") on " << getId();
+    ege_log.debug() << "CompoundWidget::onResize(" << event.width << "," << event.height << ") on " << getId();
     for(auto widget: m_childWidgets)
     {
-        log(LogLevel::Debug) << "  Widget " << widget->getId();
+        ege_log.debug() << "  Widget " << widget->getId();
         ASSERT(widget);
         widget->onResize(event);
     }
@@ -101,7 +101,7 @@ void CompoundWidget::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     Vec2d position = Vec2d(event.x, event.y);
-    log(LogLevel::Debug) << "CompoundWidget::onMouseButtonPress(" << position.x << "," << position.y << ")";
+    ege_log.debug() << "CompoundWidget::onMouseButtonPress(" << position.x << "," << position.y << ")";
     for(auto widget: m_childWidgets)
     {
         ASSERT(widget);
@@ -109,11 +109,11 @@ void CompoundWidget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
             continue;
 
         // Change focused widget.
-        log(LogLevel::Debug) << "  Widget " << widget->getId() << " pos(" << widget->getAbsolutePosition().x << "," << widget->getAbsolutePosition().y << ")"
+        ege_log.debug() << "  Widget " << widget->getId() << " pos(" << widget->getAbsolutePosition().x << "," << widget->getAbsolutePosition().y << ")"
         << " size(" << widget->getSize().x << "," << widget->getSize().y << ")";
         if(widget->isMouseOver(position) && event.button == sf::Mouse::Left)
         {
-            log(LogLevel::Debug) << "- isMouseOver!";
+            ege_log.debug() << "- isMouseOver!";
             setFocus(*widget);
 
             sf::Event::MouseButtonEvent event2 { event.button, (int)position.x, (int)position.y };
@@ -261,7 +261,7 @@ void CompoundWidget::onUpdate(long long tickCounter)
 
 void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 {
-    if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
+    if constexpr(WIDGET_DEBUG) ege_log.debug() << "CompoundWidget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
 
     // Render self
     Widget::doRender(renderer, states);
@@ -277,7 +277,7 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
         }
 
         setCustomView(renderer.getTarget());
-        if constexpr(WIDGET_DEBUG) log(LogLevel::Debug) << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
+        if constexpr(WIDGET_DEBUG) ege_log.debug() << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
         widget->doRender(renderer, states);
     }
 

@@ -57,7 +57,7 @@ ListBox::ListBox(Widget& parent, String id)
         // Y position is hardcoded to allow scrolling!
         double offset = getSize().y * val;
 
-        log() << "LB: val=" << val << " off=" << offset;
+        ege_log.debug() << "LB: val=" << val << " off=" << offset;
 
         m_entries->setPosition(LVec2d({0, EGE_LAYOUT_PIXELS}, {-offset, EGE_LAYOUT_PIXELS}));
         setGeometryNeedUpdate();
@@ -96,7 +96,7 @@ void ListBox::scrollBy(int direction, bool changeFocus)
             auto focused = m_entries->getFocusedWidget();
             double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
             double esize = m_entries->getSize().y;
-            log() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
+            ege_log.debug() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
             if(fpos + epos > getSize().y - 20)
                 m_scrollbar->scrollToPosition((fpos - getSize().y + 20) * ((esize - 6) / esize));
         }
@@ -114,7 +114,7 @@ void ListBox::scrollBy(int direction, bool changeFocus)
             auto focused = m_entries->getFocusedWidget();
             double fpos = focused->getPosition().y, epos = m_entries->getPosition().y;
             double esize = m_entries->getSize().y;
-            log() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
+            ege_log.debug() << fpos << ", " << epos << " -> " << fpos + epos << " (sz=" << esize << ")";
             if(fpos + epos < 0)
                 m_scrollbar->scrollToPosition(fpos * ((esize - 6) / esize));
         }
@@ -136,7 +136,7 @@ void ListBox::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
         int i = m_entries->getFocusedWidgetIndex();
         if(i != -1 && getFocusedWidget()->getId() == "ListBoxList")
         {
-            log() << "Firing SelectEvent for " << i << " (T[" << i << "] == " << getFocusedWidget()->getId() << ")";
+            ege_log.debug() << "Firing SelectEvent for " << i << " (T[" << i << "] == " << getFocusedWidget()->getId() << ")";
             fire<SelectEvent>(*this, i, selection());
         }
     }
@@ -191,7 +191,7 @@ void ListBox::updateGeometry(Renderer& renderer)
     Widget::updateGeometry(renderer);
     if(m_entries->getSize().y > 0)
     {
-        log() << "LB: Set max val!";
+        ege_log.debug() << "LB: Set max val!";
         double maxVal = (m_entries->getSize().y + 4) / getSize().y;
         m_scrollbar->setMaxValue(maxVal);
     }

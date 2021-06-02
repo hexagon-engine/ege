@@ -83,7 +83,7 @@ void AsyncHandler::updateAsyncTasks()
         if(state.finished)
         {
             if(state.returnCode != 0)
-                err(LogLevel::Verbose) << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
+                ege_log.error() << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
 
             m_asyncTasks.erase(it);
             if(m_asyncTasks.empty())

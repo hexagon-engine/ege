@@ -44,7 +44,7 @@ namespace EGE
 
 void Label::setString(sf::String str)
 {
-    log(LogLevel::Debug) << "Label::setString(" << str.toAnsiString() << ")";
+    ege_log.debug() << "Label::setString(" << str.toAnsiString() << ")";
     m_string = str;
     setGeometryNeedUpdate();
 }
