@@ -75,8 +75,8 @@ ComboBox::ComboBox(Widget& parent, String id)
 
 void ComboBox::render(Renderer& renderer) const
 {
-    renderer.renderTextBoxLikeBackground(0, 0, getSize().x, 24);
-    renderer.renderTextBoxLikeBorder(0, 0, getSize().x, 24);
+    renderer.getThemeRenderer()->renderTextBoxLikeBackground(renderer, 0, 0, getSize().x, 24);
+    renderer.getThemeRenderer()->renderTextBoxLikeBorder(renderer, 0, 0, getSize().x, 24);
 }
 
 }

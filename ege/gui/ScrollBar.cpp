@@ -112,12 +112,12 @@ void ScrollBar::render(Renderer& renderer) const
     renderer.renderRectangle(0.0, 20.0, getSize().x, getSize().y - 40.0, ColorRGBA::fromBytes(175, 175, 175));
 
     // scroll buttons
-    renderer.renderButtonLike(0.0, 0.0, 20.0, 20.0);
-    renderer.renderButtonLike(0.0, getSize().y - 20.0, 20.0, 20.0);
+    renderer.getThemeRenderer()->renderButtonLike(renderer, 0.0, 0.0, 20.0, 20.0);
+    renderer.getThemeRenderer()->renderButtonLike(renderer, 0.0, getSize().y - 20.0, 20.0, 20.0);
 
     // knob
     sf::FloatRect rect = getKnobBounds();
-    renderer.renderButtonLike(rect.left, rect.top, rect.width, rect.height);
+    renderer.getThemeRenderer()->renderButtonLike(renderer, rect.left, rect.top, rect.width, rect.height);
 
     Widget::render(renderer);
 }

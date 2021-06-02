@@ -70,7 +70,7 @@ void TextBox::render(Renderer& renderer) const
     rs.setOutlineThickness(1.f);
 
     // background
-    renderer.renderTextBoxLikeBackground(0, 0, getSize().x, getSize().y);
+    renderer.getThemeRenderer()->renderTextBoxLikeBackground(renderer, 0, 0, getSize().x, getSize().y);
 
     // label
     renderer.getTarget().draw(m_textDrawable);
@@ -92,7 +92,7 @@ void TextBox::render(Renderer& renderer) const
     if(m_border)
     {
         // border
-        renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+        renderer.getThemeRenderer()->renderTextBoxLikeBorder(renderer, 0, 0, getSize().x, getSize().y);
     }
 
     Widget::render(renderer);

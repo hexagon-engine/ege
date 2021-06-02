@@ -161,7 +161,7 @@ void ListBox::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 void ListBox::render(Renderer& renderer) const
 {
     // Background
-    renderer.renderTextBoxLikeBackground(0, 0, getSize().x - m_scrollbar->getSize().x + 1, getSize().y);
+    renderer.getThemeRenderer()->renderTextBoxLikeBackground(renderer, 0, 0, getSize().x - m_scrollbar->getSize().x + 1, getSize().y);
 }
 
 sf::String ListBox::selection() const
@@ -183,7 +183,7 @@ void ListBox::renderOverlay(Renderer& renderer) const
     }
 
     // Border2
-    renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+    renderer.getThemeRenderer()->renderTextBoxLikeBorder(renderer, 0, 0, getSize().x, getSize().y);
 }
 
 void ListBox::updateGeometry(Renderer& renderer)

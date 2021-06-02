@@ -97,7 +97,7 @@ SpinBox::SpinBox(Widget& parent, String id)
 
 void SpinBox::render(Renderer& renderer) const
 {
-    renderer.renderTextBoxLikeBorder(0, 0, getSize().x, getSize().y);
+    renderer.getThemeRenderer()->renderTextBoxLikeBorder(renderer, 0, 0, getSize().x, getSize().y);
 }
 
 }
