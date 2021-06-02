@@ -100,7 +100,7 @@ public:
 
     virtual bool isMouseOver(Vec2d position);
     virtual sf::View getCustomView(sf::RenderTarget& target) const override;
-    virtual bool isCustomViewNeeded() const { return true; }
+    virtual bool isCustomViewNeeded() const override { return true; }
 
     bool hasFocus() const { return m_hasFocus; }
 

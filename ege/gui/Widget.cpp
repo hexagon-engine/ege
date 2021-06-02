@@ -156,7 +156,14 @@ bool Widget::isMouseOver(EGE::Vec2d position)
 sf::View Widget::getCustomView(sf::RenderTarget& target) const
 {
     sf::FloatRect viewport = getViewport(target);
-    sf::View view(sf::FloatRect(sf::Vector2f(),
+
+    // We need to calculate offset if viewport position is not corresponding to actual position.
+    // It may happen when we intersect viewports.
+    auto [x, y] = getAbsolutePosition();
+    auto [vx, vy] = viewport.getPosition();
+    sf::Vector2f offsetPosition = sf::Vector2f(vx * target.getSize().x - x, vy * target.getSize().y - y);
+
+    sf::View view(sf::FloatRect(offsetPosition,
                                 sf::Vector2f(viewport.getSize().x * target.getSize().x, viewport.getSize().y * target.getSize().y)));
     view.setViewport(viewport);
     return view;
