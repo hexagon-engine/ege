@@ -36,20 +36,24 @@
 
 #pragma once
 
+#include <ege/gui/Widget.h>
 #include <ege/util/Progress.h>
 
 namespace EGE
 {
 
-class Renderer;
-
-class ThemeRenderer
+class ProgressBar : public Widget
 {
 public:
-    virtual void renderButtonLike(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderProgressBar(Renderer& renderer, double x, double y, double width, double height, Progress& progress) = 0;
+    ProgressBar(EGE::Widget& parent, Progress& progress)
+    : Widget(parent), m_progress(progress) {}
+
+    void step();
+
+    virtual void render(EGE::Renderer&) const override;
+
+private:
+    Progress& m_progress;
 };
 
 }

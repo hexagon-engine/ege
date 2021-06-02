@@ -34,22 +34,14 @@
 *
 */
 
-#pragma once
-
-#include <ege/util/Progress.h>
+#include "ProgressBar.h"
 
 namespace EGE
 {
 
-class Renderer;
-
-class ThemeRenderer
+void ProgressBar::render(EGE::Renderer& renderer) const
 {
-public:
-    virtual void renderButtonLike(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height) = 0;
-    virtual void renderProgressBar(Renderer& renderer, double x, double y, double width, double height, Progress& progress) = 0;
-};
+    renderer.getThemeRenderer()->renderProgressBar(renderer, getPosition().x, getPosition().y, getSize().x, getSize().y, m_progress);
+}
 
 }

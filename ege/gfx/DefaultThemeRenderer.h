@@ -47,6 +47,7 @@ public:
     virtual void renderButtonLike(Renderer& renderer, double x, double y, double width, double height) override;
     virtual void renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height) override;
     virtual void renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height) override;
+    virtual void renderProgressBar(Renderer &renderer, double x, double y, double width, double height, Progress &progress) override;
 };
 
 }

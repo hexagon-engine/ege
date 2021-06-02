@@ -52,6 +52,7 @@
 #include <ege/gui/LayoutElement.h>
 #include <ege/gui/LayoutSize.h>
 #include <ege/gui/ListBox.h>
+#include <ege/gui/ProgressBar.h>
 #include <ege/gui/RadioButton.h>
 #include <ege/gui/RadioGroup.h>
 #include <ege/gui/ScrollBar.h>

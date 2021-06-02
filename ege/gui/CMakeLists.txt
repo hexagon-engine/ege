@@ -31,6 +31,8 @@ set(SOURCES
 	"LayoutSize.h"
 	"ListBox.cpp"
 	"ListBox.h"
+	"ProgressBar.cpp"
+	"ProgressBar.h"
 	"RadioButton.cpp"
 	"RadioButton.h"
 	"RadioGroup.cpp"

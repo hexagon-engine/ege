@@ -58,5 +58,16 @@ void DefaultThemeRenderer::renderTextBoxLikeBorder(Renderer& renderer, double x,
     renderer.renderRectangle(x + 1, y + 1, width - 2, height - 2, Colors::transparent, ColorRGBA::fromBytes(210, 210, 210));
 }
 
+void DefaultThemeRenderer::renderProgressBar(Renderer& renderer, double x, double y, double width, double height, Progress& progress)
+{
+    // Background 1 (no progress)
+    renderTextBoxLikeBackground(renderer, x, y, width, height);
+
+    // Foreground with progress
+    renderer.renderRectangle(x + 2, y + 2, width * progress.getFactor() - 4, height - 4, ColorRGBA::fromBytes(0, 200, 0));
+
+    // Border
+    renderTextBoxLikeBorder(renderer, x, y, width, height);
 }
 
+}
