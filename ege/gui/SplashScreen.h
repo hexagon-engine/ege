@@ -55,14 +55,14 @@ public:
 
     State state() const { return m_state; }
 
-    // int load(int& progress)
-    // progress -> % of task
-    // The worker is required to leave progress = 100.
+    // int load(Progress& progress)
     // It indicates that loading succeeded.
-    typedef std::function<void(int&)> Worker;
+    typedef std::function<void(Progress&)> Worker;
 
     SplashScreen(GUIGameLoop& gameLoop, String id = "SplashScreen (root)")
     : GUIScreen(gameLoop, id) {}
+
+    Progress& createProgress(size_t steps) { m_progress = make<Progress>(steps); return *m_progress; }
 
     // Sets a background image.
     void setImage(String name);
@@ -91,6 +91,7 @@ private:
     Texture* m_texture = nullptr;
     String m_textureName;
     bool m_running = false;
+    SharedPtr<Progress> m_progress;
 };
 
 }

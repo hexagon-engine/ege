@@ -50,6 +50,7 @@ void SplashScreen::setImage(String name)
 
 void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::State)> callback)
 {
+    ASSERT_WITH_MESSAGE(m_progress, "A SplashScreen must have assigned a Progress. Use `createProgress()` to do it.");
     if(m_state != State::None)
     {
         ege_log.warning() << "SplashScreen: Cannot start loading, one already is in progress";
@@ -57,14 +58,12 @@ void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::Sta
     }
 
     m_state = State::Loading;
-    addAsyncTask(make<AsyncTask>([worker]() {
-        // TODO: Do something with progress!
-        int progress;
-        worker(progress);
+    addAsyncTask(make<AsyncTask>([this, worker]() {
+        worker(*m_progress);
 
-        if(progress != 100)
+        if(m_progress->error())
         {
-            ege_log.warning() << "SplashScreen: Loading worker progress is not 100%. The AsyncTask will fail.";
+            ege_log.warning() << "SplashScreen: Worker set error()!";
             return 1;
         }
         ege_log.info() << "SplashScreen: Loading finished successfully.";

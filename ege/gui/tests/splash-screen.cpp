@@ -15,12 +15,21 @@ TESTCASE(loading)
 
     auto splashScreen = make<EGE::SplashScreen>(loop);
     splashScreen->setImage("splash.png");
-    splashScreen->startLoading([](int& progress) {
+
+    auto wrapper = splashScreen->addNewWidget<EGE::CompoundWidget>();
+    wrapper->layoutDirection = EGE::LayoutElement::Direction::Horizontal;
+    wrapper->setSize({"1N", "50px"});
+    wrapper->setPadding({"5px", "5px"});
+
+    auto progressBar = wrapper->addNewWidget<EGE::ProgressBar>(splashScreen->createProgress(100));
+
+    splashScreen->startLoading([](EGE::Progress& progress) {
         for(int i = 0; i < 1000000000; i++)
         {
-            progress = i / 10000000 + 1;
-            if(i % 10000000 == 0)
-                ege_log.info() << "Loading... " << progress << "%";
+            if(i % 10000000 == 0) {
+                ege_log.info() << "Loading... " << progress;
+                progress.step();
+            }
         }
     }, [&loop](EGE::AsyncTask::State state) {
         ege_log.notice() << "YAY!! Splash Screen loading finished with rc=" << state.returnCode;
@@ -43,10 +52,12 @@ TESTCASE(displaying)
     loop.setResourceManager(bootstrap);
 
     auto splashScreen = make<EGE::SplashScreen>(loop);
+    splashScreen->createProgress(100);
     splashScreen->setImage("splash.png");
     splashScreen->start(EGE::Time(5), [&loop]() {
         ege_log.notice() << "YAY!! Splash Screen display finished!";
     });
+
     loop.setCurrentGUIScreen(splashScreen);
 
     return loop.run();
