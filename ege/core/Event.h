@@ -41,7 +41,7 @@
 #define EGE_EVENT(_type) \
 public: \
     static EGE::Event::EventType type() { return _type; } \
-    virtual EGE::Event::EventType getType() { return type(); } \
+    virtual EGE::Event::EventType getType() const override { return type(); } \
 
 #define EGE_SIMPLE_EVENT(_type, _name) \
 class _type : public EGE::Event \
@@ -57,7 +57,7 @@ class Event
 public:
     typedef std::string EventType;
 
-    virtual EGE::Event::EventType getType() = 0;
+    virtual EGE::Event::EventType getType() const = 0;
 
     bool isCanceled() { return m_canceled; }
     void cancel() { m_canceled = true; }
