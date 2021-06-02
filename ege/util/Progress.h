@@ -36,34 +36,38 @@
 
 #pragma once
 
-#include <ege/util/Color.h>
-#include <ege/util/CommonPaths.h>
-#include <ege/util/Converter.h>
-#include <ege/util/Equation.h>
-#include <ege/util/EquationSystem.h>
-#include <ege/util/Geometry.h>
-#include <ege/util/GlobalConfig.h>
-#include <ege/util/JSONConverter.h>
-#include <ege/util/Math.h>
-#include <ege/util/Object.h>
-#include <ege/util/ObjectArray.h>
-#include <ege/util/ObjectBoolean.h>
-#include <ege/util/ObjectFloat.h>
-#include <ege/util/ObjectInt.h>
-#include <ege/util/ObjectList.h>
-#include <ege/util/ObjectMap.h>
-#include <ege/util/ObjectSerializers.h>
-#include <ege/util/ObjectString.h>
-#include <ege/util/ObjectUnsignedInt.h>
-#include <ege/util/PointerUtils.h>
-#include <ege/util/Progress.h>
-#include <ege/util/Random.h>
-#include <ege/util/Rect.h>
-#include <ege/util/Serializable.h>
-#include <ege/util/StringUtils.h>
-#include <ege/util/Time.h>
-#include <ege/util/Types.h>
-#include <ege/util/Vector.h>
+#include "Types.h"
 
-#include <ege/util/system.h>
+namespace EGE
+{
 
+class Progress
+{
+public:
+    explicit Progress(size_t maxStepCount)
+    : m_maxStepCount(maxStepCount) {}
+
+    inline void step() { m_stepCount++; }
+    inline void setError() { m_error = true; }
+
+    constexpr size_t getStepCount() const { return m_stepCount; }
+    constexpr size_t getMaxStepCount() const { return m_maxStepCount; }
+    constexpr size_t getRemainingStepCount() const { return getMaxStepCount() - getStepCount(); }
+    constexpr float getFactor() const { return static_cast<float>(m_stepCount) / m_maxStepCount; }
+    constexpr float getPercent() const { return getFactor() * 100; }
+
+    constexpr bool error() const { return m_error; }
+    constexpr bool finished() const { return m_stepCount == m_maxStepCount; }
+
+private:
+    size_t m_maxStepCount = 0;
+    size_t m_stepCount = 0;
+    bool m_error = false;
+};
+
+inline std::ostream& operator<<(std::ostream& stream, const Progress& arg)
+{
+    return stream << arg.getPercent() << "%";
+}
+
+}
