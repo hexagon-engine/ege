@@ -324,47 +324,48 @@ public:
     MyGameLoop(int port)
     : m_port(port) {}
 
-    virtual EventResult load() override {
-      // Create GUI and assign it to client.
-      auto gui = make<EGE::GUIScreen>(*this);
-      setCurrentGUIScreen(gui);
+    virtual EventResult load() override
+    {
+        // Create GUI and assign it to client.
+        auto gui = make<EGE::GUIScreen>(*this);
+        setCurrentGUIScreen(gui);
 
-      // Create client - define server IP and port.
-      m_client = make<MyClient>(m_port);
+        // Create client - define server IP and port.
+        m_client = make<MyClient>(m_port);
 
-      // Create scene and assign it to client.
-      auto scene = make<EGE::Scene2D>(this);
-      m_client->setScene(scene);
+        // Create scene and assign it to client.
+        auto scene = make<EGE::Scene2D>(this);
+        m_client->setScene(scene);
 
-      // Create SceneWidget to be displayed in the window.
-      gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+        // Create SceneWidget to be displayed in the window.
+        gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
-      // Register SceneObject types for Client.
-      scene->getRegistry().addType2D<MyObject>();
+        // Register SceneObject types for Client.
+        scene->getRegistry().addType2D<MyObject>();
 
-      // Set exit handler for Client. It will be called when client is
-      // disconnected.
-      m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent &event) {
-        std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
-        exit(event.returnValue);
+        // Set exit handler for Client. It will be called when client is
+        // disconnected.
+        m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent &event) {
+            std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
+            exit(event.returnValue);
+            return EGE::EventResult::Success;
+        });
+
+        // Add keybind handler. It will pass keyboard events to Controller.
+        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(),
+                                                                    m_client);
+
+        // Initialize Camera.
+        m_camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
+        m_camera->setScalingMode(EGE::ScalingMode::Centered);
+        scene->setCamera(m_camera);
+
+        // Set our Client as sub-loop. It will automatically connect to server
+        // now.
+        if(!addSubLoop(m_client))
+            return EGE::EventResult::Failure;
+
         return EGE::EventResult::Success;
-      });
-
-      // Add keybind handler. It will pass keyboard events to Controller.
-      events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(),
-                                                                  m_client);
-
-      // Initialize Camera.
-      m_camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
-      m_camera->setScalingMode(EGE::ScalingMode::Centered);
-      scene->setCamera(m_camera);
-
-      // Set our Client as sub-loop. It will automatically connect to server
-      // now.
-      if (!addSubLoop(m_client))
-        return EGE::EventResult::Failure;
-
-      return EGE::EventResult::Success;
     }
 
     virtual void onTick(long long tick) override
