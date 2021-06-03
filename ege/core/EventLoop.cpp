@@ -38,6 +38,7 @@
 
 #include "TimerEvent.h"
 
+#include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/util/system/Time.h>
@@ -105,9 +106,22 @@ void EventLoop::removeTimer(const std::string& timer)
 
 void EventLoop::onUpdate()
 {
-    if(m_subLoop)
-        m_subLoop->onUpdate();
+    // Update all subloops
+    for(auto& subLoop: m_subLoops)
+        subLoop->onUpdate();
 
+    // Remove subloops that exited.
+    auto it = std::remove_if(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop> otherLoop) {
+        return !otherLoop->isRunning();
+    });
+
+    if(it != m_subLoops.end())
+    {
+        ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
+        m_subLoops.erase(it);
+    }
+
+    // Do updates of self
     updateTimers();
     callDeferredInvokes();
     m_ticks++;
@@ -170,6 +184,11 @@ void EventLoop::exit(int exitCode)
 {
     m_exitCode = exitCode;
     m_running = false;
+
+    for(auto& subLoop: m_subLoops)
+    {
+        subLoop->exit(exitCode);
+    }
 }
 
 int EventLoop::run()
@@ -177,6 +196,18 @@ int EventLoop::run()
     while(m_running)
         onUpdate();
     return m_exitCode;
+}
+
+void EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
+{
+    ASSERT(loop);
+    m_subLoops.push_back(loop);
+    loop->isnSetParent(this);
+}
+
+void EventLoop::removeSubLoop(EventLoop& loop)
+{
+    loop.exit(0);
 }
 
 }

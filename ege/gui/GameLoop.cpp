@@ -67,9 +67,6 @@ int GameLoop::run()
         onTick(getTickCount());
 
         m_profiler->endStartSection("subLoopTick");
-        auto subLoop = getSubGameLoop();
-        if(subLoop)
-            subLoop->onTick(getTickCount());
 
         m_profiler->endStartSection("update");
         onUpdate();
@@ -86,13 +83,8 @@ int GameLoop::run()
 
     result = onFinish(m_exitCode);
 
-    auto subLoop = getSubGameLoop();
-    if(subLoop)
-    {
-        auto result2 = subLoop->onFinish(m_exitCode);
-        if(result2 == EventResult::Failure)
-            result = EventResult::Failure;
-    }
+    for(auto& subLoop: m_subLoops)
+        subLoop->exit(m_exitCode);
 
     if(result == EventResult::Failure)
     {
@@ -104,30 +96,31 @@ int GameLoop::run()
     return m_exitCode;
 }
 
-bool GameLoop::setSubLoop(SharedPtr<GameLoop> loop)
+void GameLoop::onUpdate()
+{
+    EventLoop::onUpdate();
+    onTick(getTickCount());
+}
+
+bool GameLoop::addSubLoop(SharedPtr<GameLoop> loop)
 {
     ASSERT(loop);
     if(loop->onLoad() == EventResult::Failure)
         return false;
-    EventLoop::setSubLoop(loop);
+    EventLoop::addSubLoop(loop);
     return true;
+}
+
+void GameLoop::removeSubLoop(GameLoop& loop)
+{
+    loop.onFinish(0);
+    EventLoop::removeSubLoop(loop);
 }
 
 void GameLoop::exit(int exitCode)
 {
     EventLoop::exit(exitCode);
     onExit(exitCode);
-
-    auto subLoop = getSubGameLoop();
-    if(subLoop)
-    {
-        subLoop->onExit(m_exitCode);
-    }
-}
-
-GameLoop* GameLoop::getSubGameLoop()
-{
-    return std::dynamic_pointer_cast<GameLoop>(getSubLoop()).get();
 }
 
 }

@@ -55,19 +55,21 @@ public:
     GameLoop(String id = "GameLoop")
     : ThreadSafeEventLoop(id) {}
 
-    int run();
-    virtual void exit(int exitCode = 0);
+    virtual int run() override;
+    virtual void exit(int exitCode = 0) override;
 
     // NOTE: it's synchronous load so cannot be used to display loading screen
     virtual EventResult onLoad() = 0;
     virtual void onTick(long long tickCount) = 0;
     virtual void onExit(int exitCode) = 0;
     virtual EventResult onFinish(int exitCode) = 0;
+    virtual void onUpdate() override;
 
     // It also calls onLoad for loop. Beware of it when you are setting
     // EGE::EGEClient or EGE::EGEServer, which will be started now
     // (and it creates threads, opens ports etc.)
-    virtual bool setSubLoop(SharedPtr<GameLoop> loop);
+    virtual bool addSubLoop(SharedPtr<GameLoop> loop);
+    virtual void removeSubLoop(GameLoop& loop);
 
     virtual void setMinimalTickTime(Time time)
     {
@@ -83,8 +85,6 @@ protected:
     SharedPtr<Profiler> m_profiler;
 
 private:
-    virtual GameLoop* getSubGameLoop();
-
     Time m_minTickTime = {0.0, Time::Unit::Seconds};
 };
 

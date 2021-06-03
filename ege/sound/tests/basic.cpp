@@ -18,9 +18,11 @@ TESTCASE(basic)
         soundManager->playSound(*popSound);
         soundManager->setVolume(volume);
         volume /= 1.1f;
+        if(volume <= 0.1f)
+            soundManager->exit(0);
     }));
 
-    loop.setSubLoop(soundManager);
+    loop.addSubLoop(soundManager);
     return loop.run();
 }
 

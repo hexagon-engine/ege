@@ -63,6 +63,8 @@ public:
     EventLoop(String id = "EventLoop")
     : InspectorNode(id) {}
 
+    virtual ~EventLoop() { if(m_running) exit(0); }
+
     template<class EvtT = Event>
     class EventArray
     {
@@ -188,21 +190,15 @@ public:
     bool isRunning() { return m_running; }
     long long getTickCount() { return m_ticks; }
 
-    virtual bool setSubLoop(SharedPtr<EventLoop> loop)
-    {
-        ASSERT(loop);
-        m_subLoop = loop;
-        loop->isnSetParent(this);
-        return true;
-    }
-
-    SharedPtr<EventLoop> getSubLoop() { return m_subLoop; }
+    virtual void addSubLoop(SharedPtr<EventLoop> loop);
+    virtual void removeSubLoop(EventLoop& loop);
 
 protected:
     virtual void updateTimers();
     virtual void callDeferredInvokes();
     bool m_running = true;
     int m_exitCode = 0;
+    SharedPtrVector<EventLoop> m_subLoops;
 
 private:
     EventArray<Event>& events(Event::EventType type);
@@ -210,7 +206,6 @@ private:
     int m_ticks = 0;
     std::multimap<std::string, SharedPtr<Timer>> m_timers;
     Map<Event::EventType, EventArray<Event>> m_eventHandlers;
-    SharedPtr<EventLoop> m_subLoop;
     std::queue<std::function<void()>> m_deferredInvokes;
     std::mutex m_mutex;
 };

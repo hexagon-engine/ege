@@ -19,29 +19,31 @@
 #include <iostream>
 #include <memory>
 
-TESTCASE(converter)
-{
-    EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-    map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
-    map->addObject("String", make<EGE::ObjectString>("test"));
-    map->addObject("IntAsString", make<EGE::ObjectString>("543"));
-    EGE::SharedPtr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
-    subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
-    map->addObject("SubMapTest", subMap);
+using EGE::EventResult;
 
-    std::cerr << "Object: " << map->toString() << std::endl;
+TESTCASE(converter) {
+  EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+  map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
+  map->addObject("String", make<EGE::ObjectString>("test"));
+  map->addObject("IntAsString", make<EGE::ObjectString>("543"));
+  EGE::SharedPtr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
+  subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
+  map->addObject("SubMapTest", subMap);
 
-    EGE::EGEPacket packet(EGE::EGEPacket::Type::_Data, map);
-    sf::Packet sfPacket = packet.toSFMLPacket();
+  std::cerr << "Object: " << map->toString() << std::endl;
 
-    std::cerr << "Hex dump: " << std::endl;
-    EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(), EGE::HexDumpSettings{8});
+  EGE::EGEPacket packet(EGE::EGEPacket::Type::_Data, map);
+  sf::Packet sfPacket = packet.toSFMLPacket();
 
-    EGE::EGEPacket packet2(sfPacket);
-    std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
-    std::cerr << std::dec;
+  std::cerr << "Hex dump: " << std::endl;
+  EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(),
+               EGE::HexDumpSettings{8});
 
-    return 0;
+  EGE::EGEPacket packet2(sfPacket);
+  std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
+  std::cerr << std::dec;
+
+  return 0;
 }
 
 class MyObject : public EGE::SceneObject2D
@@ -168,7 +170,7 @@ public:
         return nullptr;
     }
 
-    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, EGE::SharedPtr<EGE::ObjectMap> data)
+    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, EGE::SharedPtr<EGE::ObjectMap> data) override
     {
         // Synchronize client with server.
         EGE::EGEServer::onLogin(client, data);
@@ -321,54 +323,56 @@ public:
     MyGameLoop(int port)
     : m_port(port) {}
 
-    EGE::EventResult load() override
-    {
-        // Create GUI and assign it to client.
-        auto gui = make<EGE::GUIScreen>(*this);
-        setCurrentGUIScreen(gui);
+    virtual EventResult load() override {
+      // Create GUI and assign it to client.
+      auto gui = make<EGE::GUIScreen>(*this);
+      setCurrentGUIScreen(gui);
 
-        // Create client - define server IP and port.
-        m_client = make<MyClient>(m_port);
+      // Create client - define server IP and port.
+      m_client = make<MyClient>(m_port);
 
-        // Create scene and assign it to client.
-        auto scene = make<EGE::Scene2D>(this);
-        m_client->setScene(scene);
+      // Create scene and assign it to client.
+      auto scene = make<EGE::Scene2D>(this);
+      m_client->setScene(scene);
 
-        // Create SceneWidget to be displayed in the window.
-        gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+      // Create SceneWidget to be displayed in the window.
+      gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
-        // Register SceneObject types for Client.
-        scene->getRegistry().addType2D<MyObject>();
+      // Register SceneObject types for Client.
+      scene->getRegistry().addType2D<MyObject>();
 
-        // Set exit handler for Client. It will be called when client is disconnected.
-        m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent& event) {
-            std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
-            exit(event.returnValue);
-            return EGE::EventResult::Success;
-        });
-
-        // Add keybind handler. It will pass keyboard events to Controller.
-        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);
-
-        // Initialize Camera.
-        m_camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
-        m_camera->setScalingMode(EGE::ScalingMode::Centered);
-        scene->setCamera(m_camera);
-
-        // Set our Client as sub-loop. It will automatically connect to server now.
-        if(!setSubLoop(m_client))
-            return EGE::EventResult::Failure;
-
+      // Set exit handler for Client. It will be called when client is
+      // disconnected.
+      m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent &event) {
+        std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
+        exit(event.returnValue);
         return EGE::EventResult::Success;
+      });
+
+      // Add keybind handler. It will pass keyboard events to Controller.
+      events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(),
+                                                                  m_client);
+
+      // Initialize Camera.
+      m_camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
+      m_camera->setScalingMode(EGE::ScalingMode::Centered);
+      scene->setCamera(m_camera);
+
+      // Set our Client as sub-loop. It will automatically connect to server
+      // now.
+      if (!addSubLoop(m_client))
+        return EGE::EventResult::Failure;
+
+      return EGE::EventResult::Success;
     }
 
-    void onTick(long long tick)
+    virtual void onTick(long long tick) override
     {
         EGE::GUIGameLoop::onTick(tick);
         // Camera: follow currently controlled object.
         auto controller = m_client->getDefaultController();
         if(controller)
-            m_camera->setParent(dynamic_cast<EGE::SceneObject2D*>(&controller->getObject()));
+            m_camera->setParent(dynamic_cast<EGE::SceneObject*>(&controller->getObject()));
     }
 };
 
