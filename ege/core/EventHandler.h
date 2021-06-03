@@ -50,7 +50,7 @@ namespace EGE
 class EventHandler
 {
 public:
-    virtual Event::EventType type() = 0;
+    virtual Event::EventType type() const = 0;
     virtual EventResult handle(Event& event) { (void)event; return EventResult::Failure; }
 };
 
@@ -64,7 +64,7 @@ public:
         : m_handler(handler)
     {}
 
-    virtual Event::EventType type() { return Evt::type(); }
+    virtual Event::EventType type() const override { return Evt::type(); }
 
     virtual EventResult handle(Event& event) override
     {
