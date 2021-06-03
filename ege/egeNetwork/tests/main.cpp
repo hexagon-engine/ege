@@ -21,29 +21,30 @@
 
 using EGE::EventResult;
 
-TESTCASE(converter) {
-  EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
-  map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
-  map->addObject("String", make<EGE::ObjectString>("test"));
-  map->addObject("IntAsString", make<EGE::ObjectString>("543"));
-  EGE::SharedPtr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
-  subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
-  map->addObject("SubMapTest", subMap);
+TESTCASE(converter)
+{
+    EGE::SharedPtr<EGE::ObjectMap> map = make<EGE::ObjectMap>();
+    map->addObject("packetTestInt", make<EGE::ObjectInt>(62452));
+    map->addObject("String", make<EGE::ObjectString>("test"));
+    map->addObject("IntAsString", make<EGE::ObjectString>("543"));
+    EGE::SharedPtr<EGE::ObjectMap> subMap = make<EGE::ObjectMap>();
+    subMap->addObject("MapTest", make<EGE::ObjectString>("YYYTEST555??"));
+    map->addObject("SubMapTest", subMap);
 
-  std::cerr << "Object: " << map->toString() << std::endl;
+    std::cerr << "Object: " << map->toString() << std::endl;
 
-  EGE::EGEPacket packet(EGE::EGEPacket::Type::_Data, map);
-  sf::Packet sfPacket = packet.toSFMLPacket();
+    EGE::EGEPacket packet(EGE::EGEPacket::Type::_Data, map);
+    sf::Packet sfPacket = packet.toSFMLPacket();
 
-  std::cerr << "Hex dump: " << std::endl;
-  EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(),
-               EGE::HexDumpSettings{8});
+    std::cerr << "Hex dump: " << std::endl;
+    EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(),
+                EGE::HexDumpSettings{8});
 
-  EGE::EGEPacket packet2(sfPacket);
-  std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
-  std::cerr << std::dec;
+    EGE::EGEPacket packet2(sfPacket);
+    std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
+    std::cerr << std::dec;
 
-  return 0;
+    return 0;
 }
 
 class MyObject : public EGE::SceneObject2D
