@@ -6,8 +6,3 @@ macro(ege_message level text)
 		message(FATAL "EGE Build System: A critical error has occurred and the build must stop")
 	endif()
 endmacro()
-
-macro(ege_link_sfml target)
-	target_include_directories(${target} PUBLIC ${SFML_INCLUDE_DIR})
-	target_link_libraries(${target} PUBLIC ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
-endmacro()

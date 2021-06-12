@@ -1,7 +1,5 @@
 #!/bin/bash
 
-trap exit SIGINT
-
 function ege_echo() {
 	printf "\n\e[37mEGE_BUILD_SYSTEM \e[0;1;36m%s\e[0;35m : %s\e[0m\n\n" "$1" "$2"
 }
@@ -23,7 +21,7 @@ make --version || exit 1
 ege_echo INFO "Downloading SFML..."
 mkdir ${BUILD_DIR}
 cd ${BUILD_DIR}
-git clone https://github.com/sfml/SFML.git
+git clone https://github.com/sfml/SFML.git --depth 1
 cd SFML
 mkdir build
 cd build

@@ -7,4 +7,4 @@ set(SOURCES
 
 ege_add_module(sound)
 ege_depend_module(sound core)
-ege_depend_module(sound sfml)
+target_link_libraries(ege-sound PUBLIC sfml-audio)

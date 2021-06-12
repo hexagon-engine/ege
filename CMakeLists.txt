@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ### SFML ###
 
 # SFML preparation
-set(CMAKE_MODULE_PATH "${EGE_LIB_ROOT}/cmake" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${EGE_LIB_ROOT}/SFML/cmake")
 set(SFML_STATIC_LIBRARIES TRUE)
 
 if(NOT DEFINED EGE_SFML_ROOT)
@@ -25,7 +25,7 @@ ege_message("INFO" "CMAKE_BINARY_DIR is '${CMAKE_BINARY_DIR}'")
 
 cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
 # TODO: find_path is buggy?
-find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS network audio graphics window system REQUIRED)
 
 if(SFML_FOUND)
 	ege_message("INFO" "Adding SFML as dependency (SFML_INCLUDE_DIR=${SFML_INCLUDE_DIR})")
@@ -67,7 +67,7 @@ endmacro()
 
 macro(ege_depend_module target dependtarget)
 	#ege_message("INFO", "Adding DEPENDENCY: ${target} >> ${dependtarget}")
-	target_link_libraries("ege-${target}" PUBLIC "ege-${dependtarget}")
+	target_link_libraries(ege-${target} PUBLIC ege-${dependtarget})
 endmacro()
 
 include_directories("${CMAKE_SOURCE_DIR}")

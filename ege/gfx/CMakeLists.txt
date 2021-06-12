@@ -15,5 +15,5 @@ set(SOURCES
 
 ege_add_module(gfx)
 ege_depend_module(gfx core)
-ege_depend_module(gfx sfml)
 ege_depend_module(gfx resources)
+target_link_libraries(ege-gfx PUBLIC sfml-graphics)

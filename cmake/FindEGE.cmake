@@ -1,3 +1,5 @@
+# FIXME: Make it a real CMake package
+
 if(NOT IS_DIRECTORY ${EGE_LIB_ROOT})
 	message(FATAL_ERROR "EGE_LIB_ROOT must be an existing directory (currently is set to '${EGE_LIB_ROOT}')")
 endif()

@@ -11,5 +11,5 @@ set(SOURCES
 
 ege_add_module(resources)
 ege_depend_module(resources debug)
-ege_depend_module(resources sfml)
 ege_depend_module(resources util)
+target_link_libraries(ege-resources PUBLIC sfml-graphics)
