@@ -48,11 +48,11 @@ class SceneObject2D;
 class CirclePart : public Part
 {
 public:
-    CirclePart(SceneObject2D& object)
+    CirclePart(SceneObject& object)
     : Part((SceneObject&)object) {}
 
     virtual void render(Renderer& renderer) const override;
-    virtual bool deserialize(SharedPtr<ObjectMap>);
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 
     Vec2d position;
     double radius;

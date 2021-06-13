@@ -46,7 +46,9 @@
 #include <ege/gfx/RenderStates.h>
 #include <ege/gfx/Renderable.h>
 #include <ege/gui/Animatable.h>
+#include <ege/gui/AnimationEasingFunctions.h>
 #include <ege/util/Serializable.h>
+#include <ege/util/Rect.h>
 
 #define EGE_SCENEOBJECT(typeId) \
     static EGE::String type() { return typeId; }
@@ -56,7 +58,7 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public Controllable, public Renderable
+class SceneObject : public Animatable, public Controllable, public Renderable, public Serializable
 {
 public:
     SceneObject(Scene& owner)
@@ -71,7 +73,8 @@ public:
     virtual ~SceneObject();
 
     virtual void onUpdate(long long tickCounter);
-    virtual void doRender(Renderer& renderer, const RenderStates& states = {});
+    virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
+    virtual void render(Renderer& renderer) const override {}
 
     bool isDead() const { return m_dead; }
 
@@ -81,8 +84,8 @@ public:
     std::string getName() const { return m_name; }
     void setName(std::string name) { m_name = name; setChanged(); }
 
-    virtual SharedPtr<ObjectMap> serialize() const;
-    virtual bool deserialize(SharedPtr<ObjectMap>);
+    virtual SharedPtr<ObjectMap> serialize() const override;
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 
     virtual SharedPtr<ObjectMap> serializeMain() const;
     virtual bool deserializeMain(SharedPtr<ObjectMap>);
@@ -102,7 +105,6 @@ public:
 
     void setDead() { m_dead = true; }
     Scene& getOwner() const { return m_owner; }
-    void setRenderer(SharedPtr<ObjectRenderer> renderer) { m_renderer = std::static_pointer_cast<ObjectRenderer>(renderer); }
 
     void setParent(SceneObject* object);
 
@@ -131,7 +133,47 @@ public:
 
     virtual bool allowSave() const { return true; }
 
+    void setPosition(Vec3d position) { m_position = position; }
+    Vec3d getPosition() const;
+
+    void setMotion(Vec3d motion) { m_motion = motion; }
+
+    // This motion is absolute (relative to scene, NOT to parent).
+    Vec3d getMotion() const;
+
+    virtual RectD getBoundingBox() const { return RectD({m_position.x, m_position.y}, {}); }
+
+    enum RotationMode
+    {
+        Inherit, // Object angle is parent angle + own angle
+        Lock     // Parent angle is ignored
+    };
+
+    void setYawRotationMode(RotationMode mode) { m_yawMode = mode; setGeometryNeedUpdate(); }
+    void setPitchRotationMode(RotationMode mode) { m_pitchMode = mode; setGeometryNeedUpdate(); }
+    void setRollRotationMode(RotationMode mode) { m_rollMode = mode; setGeometryNeedUpdate(); }
+    void setRotationMode(RotationMode mode) { m_yawMode = mode; setGeometryNeedUpdate(); }
+
+    void setYaw(double value) { m_yaw = value; setGeometryNeedUpdate(); }
+    void setPitch(double value) { m_pitch = value; setGeometryNeedUpdate(); }
+    void setRoll(double value) { m_roll = value; setGeometryNeedUpdate(); }
+
+    // Alias for setYaw in 2D coordinates.
+    void setRotation(double value) { m_yaw = value; setGeometryNeedUpdate(); }
+
+    double getYaw() const;
+    double getPitch() const;
+    double getRoll() const;
+
+    // Alias for setYaw in 2D coordinates.
+    double getRotation() const { return m_yaw; }
+
+    bool moveTo(Vec3d targetPos);
+    bool flyTo(Vec3d targetPos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
+
 protected:
+    friend class Scene;
+
     void setMainChanged() { m_mainChanged = true; setChanged(); }
     void setExtendedChanged() { m_extendedChanged = true; setChanged(); }
     void setChanged() { m_changedSinceLoad = true; }
@@ -145,7 +187,6 @@ protected:
     bool m_mainChanged = true;
     bool m_extendedChanged = true;
     bool m_changedSinceLoad = false;
-    SharedPtr<ObjectRenderer> m_renderer;
     int m_renderLayer = 0;
 
     Set<SceneObject*> m_children;
@@ -154,12 +195,19 @@ protected:
     Type m_parentType = Type::Dynamic;
     SharedPtr<SceneObjectType> m_type;
 
-    friend class ObjectRenderer;
-    friend class Scene;
-
 private:
     SharedPtrStringMap<Part> m_parts;
     std::multimap<int, Part*> m_partsByLayer;
+
+    Vec3d m_position;
+    Vec3d m_motion;
+    double m_yaw = 0;
+    double m_pitch = 0;
+    double m_roll = 0;
+    RotationMode m_yawMode = RotationMode::Inherit;
+    RotationMode m_pitchMode = RotationMode::Inherit;
+    RotationMode m_rollMode = RotationMode::Inherit;
+    bool m_deserialized = false;
 };
 
 }

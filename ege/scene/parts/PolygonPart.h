@@ -49,13 +49,13 @@ class SceneObject2D;
 class PolygonPart : public Part
 {
 public:
-    PolygonPart(SceneObject2D& object)
+    PolygonPart(SceneObject& object)
     : Part((SceneObject&)object) {}
 
     virtual void render(Renderer& renderer) const override;
     virtual void updateGeometry(Renderer& renderer) override;
 
-    virtual bool deserialize(SharedPtr<ObjectMap>);
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 
     ColorRGBA fillColor;
     // TODO: outline

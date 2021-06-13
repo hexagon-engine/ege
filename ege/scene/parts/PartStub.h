@@ -41,12 +41,9 @@
 #include <ege/util/Serializable.h>
 #include <functional>
 
-#define EGE_PART_CREATOR_2D(_type) [](EGE::SceneObject& sobject)->EGE::SharedPtr<EGE::Part> \
+#define EGE_PART_CREATOR(_type) [](EGE::SceneObject& sobject)->EGE::SharedPtr<EGE::Part> \
 { \
-    auto sobject2d = dynamic_cast<EGE::SceneObject2D*>(&sobject); \
-    if(!sobject2d) \
-        return nullptr; \
-    return make<_type>(*sobject2d); \
+    return make<_type>(sobject); \
 }
 
 namespace EGE

@@ -64,6 +64,7 @@
 #include <ege/util/Time.h>
 #include <ege/util/Types.h>
 #include <ege/util/Vector.h>
+#include <ege/util/VectorOperations.h>
 
 #include <ege/util/system.h>
 

@@ -34,9 +34,25 @@
 *
 */
 
-#include "CameraObject.h"
+#pragma once
+
+#include "SceneObject.h"
+#include <ege/gfx/Renderer.h>
 
 namespace EGE
 {
-    // currently nothing
+
+class Camera : public SceneObject
+{
+public:
+    Camera(Scene& scene)
+    : SceneObject(scene) {}
+
+    virtual bool allowSave() const override { return false; }
+    virtual void applyTransform(Renderer& renderer) const = 0;
+
+    virtual Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const = 0;
+    virtual Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const = 0;
+};
+
 }

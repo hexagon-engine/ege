@@ -47,7 +47,7 @@ namespace EGE
 
 class SceneObject;
 
-class ObjectRenderer : public Renderable
+class [[deprecated]] ObjectRenderer : public Renderable
 {
 public:
     ObjectRenderer(SceneObject& sceneObject)

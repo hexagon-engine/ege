@@ -8,9 +8,9 @@
 #include <ege/event/SystemWindow.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/GUIScreen.h>
-#include <ege/scene/Scene2D.h>
+#include <ege/scene/Scene.h>
 #include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedRenderer2D.h>
+#include <ege/scene/Plain2DCamera.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/ObjectString.h>
@@ -47,13 +47,13 @@ TESTCASE(converter)
     return 0;
 }
 
-class MyObject : public EGE::SceneObject2D
+class MyObject : public EGE::SceneObject
 {
 public:
     EGE_SCENEOBJECT("MyObject")
 
     MyObject(EGE::Scene& owner)
-    : EGE::SceneObject2D(owner) {}
+    : EGE::SceneObject(owner) {}
 
     virtual void onInit() override
     {
@@ -68,19 +68,19 @@ public:
             });
 
             addTimer("timer", timer);
-            m_motion = EGE::Vec2d(rand() % 5 - 2, rand() % 5 - 2);
+            setMotion(EGE::Vec2d(rand() % 5 - 2, rand() % 5 - 2));
         }
-        m_rotation = rand() % 360;
+        setRotation(rand() % 360);
         m_scale = EGE::Vec2d(rand() % 2 + 1, rand() % 2 + 1);
     }
 
     virtual void render(EGE::Renderer& renderer) const override
     {
-        EGE::SceneObject2D::render(renderer);
+        EGE::SceneObject::render(renderer);
 
         sf::RectangleShape rs(sf::Vector2f(10.f, 10.f));
         rs.setPosition(getPosition().x - 5, getPosition().y - 5);
-        rs.setRotation(m_rotation);
+        rs.setRotation(getRotation());
         rs.setScale(m_scale.x, m_scale.y);
         rs.setOrigin(m_origin.x, m_origin.y);
         renderer.getTarget().draw(rs);
@@ -88,29 +88,32 @@ public:
 
     virtual void move(bool moving, int dir)
     {
+        // TODO: Use KeybindManager
         if(moving)
         {
             switch(dir)
             {
-                case 0: m_motion.x = -5.f; break; // a
-                case 1: m_motion.y = 5.f; break; // s
-                case 2: m_motion.x = 5.f; break; // d
-                case 3: m_motion.y = -5.f; break; // w
+                case 0: setMotion({-5.0, getMotion().y}); break; // a
+                case 1: setMotion({getMotion().y, 5.0}); break; // s
+                case 2: setMotion({5.0, getMotion().y}); break; // d
+                case 3: setMotion({getMotion().y, -5.0}); break; // w
             }
         }
         else
         {
             switch(dir)
             {
-                case 0: if(m_motion.x == -5.f) m_motion.x = 0.f; break; // a
-                case 1: if(m_motion.y == 5.f) m_motion.y = 0.f; break; // s
-                case 2: if(m_motion.x == 5.f) m_motion.x = 0.f; break; // d
-                case 3: if(m_motion.y == -5.f) m_motion.y = 0.f; break; // w
+                case 0: if(getMotion().x == -5.f) setMotion({0.0, getMotion().y}); break; // a
+                case 1: if(getMotion().y == 5.f) setMotion({getMotion().y, 0.0}); break; // s
+                case 2: if(getMotion().x == 5.f) setMotion({0.0, getMotion().y}); break; // d
+                case 3: if(getMotion().y == -5.f) setMotion({getMotion().y, 0.0}); break; // w
             }
         }
         setMainChanged();
     }
     bool m_playerControlled;
+    EGE::Vec2d m_scale;
+    EGE::Vec2d m_origin;
 };
 
 class MyObjectServerController : public EGE::ServerNetworkController
@@ -233,7 +236,7 @@ TESTCASE(server)
 
         server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
 
-        auto scene = make<EGE::Scene2D>(nullptr);
+        auto scene = make<EGE::Scene>(nullptr);
 
         auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
             auto object = scene->addNewObject<MyObject>();
@@ -244,7 +247,7 @@ TESTCASE(server)
         server.setScene(scene);
 
         // Register SceneObject types for Client.
-        scene->getRegistry().addType2D<MyObject>();
+        scene->getRegistry().addType<MyObject>();
 
         return server.run();
     };
@@ -317,7 +320,7 @@ private:
 class MyGameLoop : public EGE::GUIGameLoop
 {
     EGE::SharedPtr<MyClient> m_client;
-    EGE::SharedPtr<EGE::CameraObject2D> m_camera;
+    EGE::SharedPtr<EGE::Plain2DCamera> m_camera;
     int m_port;
 
 public:
@@ -334,14 +337,14 @@ public:
         m_client = make<MyClient>(m_port);
 
         // Create scene and assign it to client.
-        auto scene = make<EGE::Scene2D>(this);
+        auto scene = make<EGE::Scene>(this);
         m_client->setScene(scene);
 
         // Create SceneWidget to be displayed in the window.
         gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
 
         // Register SceneObject types for Client.
-        scene->getRegistry().addType2D<MyObject>();
+        scene->getRegistry().addType<MyObject>();
 
         // Set exit handler for Client. It will be called when client is
         // disconnected.
@@ -356,7 +359,7 @@ public:
                                                                     m_client);
 
         // Initialize Camera.
-        m_camera = scene->addNewObject<EGE::CameraObject2D>(nullptr);
+        m_camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
         m_camera->setScalingMode(EGE::ScalingMode::Centered);
         scene->setCamera(m_camera);
 

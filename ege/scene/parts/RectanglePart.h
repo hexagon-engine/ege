@@ -49,12 +49,12 @@ class SceneObject2D;
 class RectanglePart : public Part
 {
 public:
-    RectanglePart(SceneObject2D& object)
+    RectanglePart(SceneObject& object)
     : Part((SceneObject&)object) {}
 
     virtual void render(Renderer& renderer) const override;
 
-    virtual bool deserialize(SharedPtr<ObjectMap>);
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 
     RectD rect;
     ColorRGBA fillColor;

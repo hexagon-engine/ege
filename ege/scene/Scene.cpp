@@ -42,8 +42,22 @@
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 
+#include "Plain2DCamera.h"
+#include "DummyObject2D.h"
+#include "ParticleSystem2D.h"
+
 namespace EGE
 {
+
+Scene::Scene(GUIGameLoop* loop)
+: EventLoop(loop, "Scene"), m_loop(loop)
+{
+    // Add default SceneObjectTypes.
+    m_registry.addType<Plain2DCamera>();
+
+    m_registry.addType<DummyObject2D>();
+    m_registry.addType<ParticleSystem2D>();
+}
 
 Scene::~Scene()
 {
@@ -73,6 +87,8 @@ void Scene::render(Renderer& renderer) const
     // since it's NOT necessary (Scene itself is an EventLoop)
     ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
 
+    if(!m_cameraObject.expired())
+        m_cameraObject.lock()->applyTransform(renderer);
     for(auto pr: m_objectsByLayer)
         pr.second->doRender(renderer);
 }
@@ -295,6 +311,7 @@ SharedPtr<SceneObject> Scene::addNewStaticObject(String typeId, SharedPtr<Object
 
 SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> data)
 {
+    ege_log.info() << "Creating SceneObject " << typeId << ": " << (data ? data->toString() : "null");
     auto registry = getRegistry();
 
     auto type = registry.getType(typeId);
@@ -333,6 +350,18 @@ void Scene::rebuildLayers()
 
     for(auto pr: m_objects)
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
+}
+
+Vec2d Scene::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
+{
+    ASSERT(!isHeadless());
+    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToScreenCoords(renderer, scene) : scene.toVec2d();
+}
+
+Vec3d Scene::mapToSceneCoords(Renderer& renderer, Vec2d screen) const
+{
+    ASSERT(!isHeadless());
+    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToSceneCoords(renderer, screen) : screen;
 }
 
 }

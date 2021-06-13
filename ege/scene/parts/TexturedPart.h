@@ -46,13 +46,13 @@ class SceneObject2D;
 class TexturedPart : public Part
 {
 public:
-    TexturedPart(SceneObject2D& object)
+    TexturedPart(SceneObject& object)
     : Part((SceneObject&)object) {}
 
     virtual void updateGeometry(Renderer& renderer) override;
     virtual void render(Renderer& renderer) const override;
 
-    virtual bool deserialize(SharedPtr<ObjectMap>);
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 
     Vec2d position;
 

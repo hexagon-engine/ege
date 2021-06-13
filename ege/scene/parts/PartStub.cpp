@@ -41,7 +41,9 @@
 #include "RectanglePart.h"
 #include "TexturedPart.h"
 
-#include "../SceneObject2D.h"
+#include "../SceneObject.h"
+
+#include <ege/debug/Logger.h>
 
 namespace EGE
 {
@@ -49,10 +51,10 @@ namespace EGE
 PartCreatorMap::PartCreatorMap()
 {
     // Add default parts
-    add("Circle", EGE_PART_CREATOR_2D(EGE::CirclePart));
-    add("Polygon", EGE_PART_CREATOR_2D(EGE::PolygonPart));
-    add("Rectangle", EGE_PART_CREATOR_2D(EGE::RectanglePart));
-    add("Textured", EGE_PART_CREATOR_2D(EGE::TexturedPart));
+    add("Circle", EGE_PART_CREATOR(EGE::CirclePart));
+    add("Polygon", EGE_PART_CREATOR(EGE::PolygonPart));
+    add("Rectangle", EGE_PART_CREATOR(EGE::RectanglePart));
+    add("Textured", EGE_PART_CREATOR(EGE::TexturedPart));
 }
 
 PartCreatorMap PartStub::PartCreators;

@@ -37,7 +37,7 @@
 #pragma once
 
 #include "ObjectRenderer.h"
-#include "SceneObject2D.h"
+#include "SceneObject.h"
 
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
@@ -46,7 +46,7 @@
 namespace EGE
 {
 
-class TexturedRenderer2D : public ObjectRenderer
+class [[deprecated]] TexturedRenderer2D : public ObjectRenderer
 {
 public:
     TexturedRenderer2D(SceneObject& sceneObject)

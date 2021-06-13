@@ -37,6 +37,7 @@
 #pragma once
 
 #include "Vector.h"
+#include <cmath>
 
 namespace EGE
 {

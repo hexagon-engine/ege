@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
+#include "SceneObject.h"
 
 #include <ege/gfx/RenderStates.h>
 #include <list>
@@ -50,7 +50,7 @@ namespace EGE
     The Particle System is an Object which have many simple Sub Objects.
     The sub objects are rendered and updated in a single way.
 */
-class ParticleSystem2D : public SceneObject2D
+class ParticleSystem2D : public SceneObject
 {
 public:
     EGE_SCENEOBJECT("EGE::ParticleSystem2D");
@@ -66,7 +66,7 @@ public:
         void update();
         void setDead() { ttl = 0; }
 
-        Vec2d position;
+        Vec3d position;
         unsigned ttl = 0;
         ParticleSystem2D& system;
 
@@ -77,12 +77,12 @@ public:
     friend class Particle;
 
     ParticleSystem2D(Scene& owner)
-    : SceneObject2D(owner) {}
+    : SceneObject(owner) {}
 
-    virtual sf::FloatRect getBoundingBox() const { return m_spawnRect; }
+    virtual RectD getBoundingBox() const override { return m_spawnRect; }
 
-    sf::FloatRect getSpawnRect() const { return m_spawnRect; }
-    void setSpawnRect(sf::FloatRect rect) { m_spawnRect = rect; }
+    RectD getSpawnRect() const { return m_spawnRect; }
+    void setSpawnRect(RectD rect) { m_spawnRect = rect; }
 
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;
@@ -103,7 +103,7 @@ public:
 private:
     Vec2d randomPosition();
 
-    sf::FloatRect m_spawnRect;
+    RectD m_spawnRect;
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
     std::function<void(Particle&)> m_particleUpdater;

@@ -42,6 +42,7 @@
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/scene/SceneLoader.h>
 #include <ege/scene/SceneObject.h>
+#include <ege/scene/Camera.h>
 #include <ege/util/Converter.h>
 #include <ege/util/JSONConverter.h>
 #include <functional>
@@ -84,9 +85,7 @@ public:
 class Scene : public EventLoop, public Renderable
 {
 public:
-    Scene(GUIGameLoop* loop)
-    : EventLoop(loop, "Scene"), m_loop(loop) {}
-
+    Scene(GUIGameLoop* loop);
     virtual ~Scene();
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
@@ -160,6 +159,11 @@ public:
 
     SceneObjectRegistry& getRegistry() { return m_registry; }
 
+    void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
+
+    Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const;
+    Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const;
+
 protected:
     friend class SceneLoader;
 
@@ -172,6 +176,7 @@ protected:
     ObjectMapByLayer m_objectsByLayer;
     SceneObjectRegistry m_registry;
     String m_lastLoadFile;
+    WeakPtr<Camera> m_cameraObject;
 
 private:
     UidType m_greatestId = 0;

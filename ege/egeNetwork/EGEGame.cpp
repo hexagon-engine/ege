@@ -37,7 +37,6 @@
 #include "EGEGame.h"
 
 #include <ege/debug/Logger.h>
-#include <ege/scene/CameraObject2D.h>
 #include <functional>
 
 namespace EGE
@@ -53,7 +52,7 @@ bool EGEGame::initialize()
 {
     if(m_versionString.empty())
     {
-        log(LogLevel::Warning) << "EGEGame: Version string is empty!";
+        ege_log.warning() << "EGEGame: Version string is empty!";
         m_versionString = "Game";
     }
     return true;

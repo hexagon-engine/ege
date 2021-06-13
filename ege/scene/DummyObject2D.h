@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "SceneObject2D.h"
+#include "SceneObject.h"
 #include "Scene.h"
 
 #include <ege/gfx/RenderStates.h>
@@ -46,13 +46,13 @@ namespace EGE
 {
 
 // invisible wall :)
-class DummyObject2D : public SceneObject2D
+class DummyObject2D : public SceneObject
 {
 public:
     EGE_SCENEOBJECT("EGE::DummyObject2D");
 
     DummyObject2D(Scene& owner)
-    : SceneObject2D(owner) {}
+    : SceneObject(owner) {}
 
     void setSize(Vec2d size)
     {
@@ -62,9 +62,9 @@ public:
     {
         return m_size;
     }
-    sf::FloatRect getBoundingBox()
+    virtual RectD getBoundingBox() const override
     {
-        return sf::FloatRect(getPosition().x, getPosition().y, m_size.x, m_size.y);
+        return RectD({getPosition().toVec2d()}, m_size);
     }
 
     virtual void render(Renderer&) const override {}

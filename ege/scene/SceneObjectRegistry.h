@@ -52,19 +52,19 @@ public:
     SharedPtr<SceneObjectType> getType(String typeId);
 
     template<class SO>
-    class SimpleSceneObjectType2D : public SceneObjectType2D
+    class SimpleSceneObjectType : public SceneObjectType
     {
     public:
-        SimpleSceneObjectType2D(String typeId)
-        : SceneObjectType2D(typeId) {}
+        SimpleSceneObjectType(String typeId)
+        : SceneObjectType(typeId) {}
 
-        virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const override
+        virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const override
             { return make<SO>(scene); }
     };
 
     template<class SO>
-    void addType2D()
-        { addType(make<SimpleSceneObjectType2D<SO>>(SO::type())); }
+    void addType()
+        { addType(make<SimpleSceneObjectType<SO>>(SO::type())); }
 
     void addType(SharedPtr<SceneObjectType> type);
     bool loadFromFile(String fileName, const IOStreamConverter& converter = JSONConverter());

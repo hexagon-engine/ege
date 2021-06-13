@@ -44,7 +44,7 @@ namespace EGE
 
 void ParticleSystem2D::render(Renderer& renderer) const
 {
-    SceneObject2D::render(renderer);
+    SceneObject::render(renderer);
     if(m_particleRenderer)
         m_particleRenderer(m_particles, renderer);
 }
@@ -54,7 +54,7 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->startSection("particleSystem");
 
-    SceneObject2D::onUpdate(tickCounter);
+    SceneObject::onUpdate(tickCounter);
 
     // update existing particles
     if(!getOwner().isHeadless())
@@ -104,11 +104,11 @@ Vec2d ParticleSystem2D::randomPosition()
     int rand1 = rand() % 1024;
     int rand2 = rand() % 1024;
 
-    float randSize1 = rand1 / 1024.f * m_spawnRect.width;
-    float randSize2 = rand2 / 1024.f * m_spawnRect.height;
+    float randSize1 = rand1 / 1024.f * m_spawnRect.size.x;
+    float randSize2 = rand2 / 1024.f * m_spawnRect.size.y;
 
-    float val1 = randSize1 + m_spawnRect.left;
-    float val2 = randSize2 + m_spawnRect.top;
+    float val1 = randSize1 + m_spawnRect.position.x;
+    float val2 = randSize2 + m_spawnRect.position.y;
 
     return Vec2d(val1, val2);
 }

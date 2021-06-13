@@ -37,7 +37,8 @@
 #pragma once
 
 #include "ObjectRenderer.h"
-#include "Scene2D.h"
+#include "Scene.h"
+#include "SceneObject.h"
 
 #include <ege/gfx/Renderer.h>
 #include <ege/resources/Texture.h>
@@ -51,7 +52,7 @@ template<class TMap>
 class TilemapRenderer2D : public ObjectRenderer
 {
 public:
-    TilemapRenderer2D(SceneObject2D& sceneObject, SharedPtr<TMap> tilemap)
+    TilemapRenderer2D(SceneObject& sceneObject, SharedPtr<TMap> tilemap)
     : ObjectRenderer(sceneObject), m_tileMap(tilemap) { setLayerCount(1); }
 
     void setAtlasTextureName(std::string name, Size layer = 0)
@@ -112,111 +113,115 @@ public:
         // TODO: don't check tiles outside the bounds
         // TODO: allow checking bounds inside tilemap if it's applicable
         for(MaxInt cx = beginChunk.x; cx <= endChunk.x; cx++)
-        for(MaxInt cy = beginChunk.y; cy <= endChunk.y; cy++)
         {
-            const typename TMap::ChunkType* chunk = (m_useEnsure
-                                                            ? &m_tileMap->ensureChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
-                                                            : m_tileMap->getChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
-                                                        );
-            if(!chunk)
-                continue;
-
-            for(Size x = 0; x < chunkSize.x; x++)
-            for(Size y = 0; y < chunkSize.y; y++)
+            for(MaxInt cy = beginChunk.y; cy <= endChunk.y; cy++)
             {
-                const typename TMap::TileType& tile = chunk->getTile({x, y});
+                const typename TMap::ChunkType* chunk = (m_useEnsure
+                                                                ? &m_tileMap->ensureChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
+                                                                : m_tileMap->getChunk({(typename TMap::SizeType)cx, (typename TMap::SizeType)cy})
+                                                            );
+                if(!chunk)
+                    continue;
 
-                MaxInt vx = cx * (MaxInt)chunkSize.x + (MaxInt)x;
-                MaxInt vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
-
-                AtlasInfo info;
-                m_tileMapper(tile, {vx, vy}, layer, info);
-
-                // tex coords
-                Size index2 = index;
+                for(Size x = 0; x < chunkSize.x; x++)
                 {
-                    sf::Vertex& vertex = vertexes[index2++];
-                    vertex.texCoords.x = info.texCoords.x;
-                    vertex.texCoords.y = info.texCoords.y;
-                }
+                    for(Size y = 0; y < chunkSize.y; y++)
+                    {
+                        const typename TMap::TileType& tile = chunk->getTile({x, y});
 
-                {
-                    sf::Vertex& vertex = vertexes[index2++];
-                    vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
-                    vertex.texCoords.y = info.texCoords.y;
-                }
+                        MaxInt vx = cx * (MaxInt)chunkSize.x + (MaxInt)x;
+                        MaxInt vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
 
-                {
-                    sf::Vertex& vertex = vertexes[index2++];
-                    vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
-                    vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
-                }
+                        AtlasInfo info;
+                        m_tileMapper(tile, {vx, vy}, layer, info);
 
-                {
-                    sf::Vertex& vertex = vertexes[index2++];
-                    vertex.texCoords.x = info.texCoords.x;
-                    vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
-                }
+                        // tex coords
+                        Size index2 = index;
+                        {
+                            sf::Vertex& vertex = vertexes[index2++];
+                            vertex.texCoords.x = info.texCoords.x;
+                            vertex.texCoords.y = info.texCoords.y;
+                        }
 
-                // position & color
-                {
-                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
-                    sf::Vertex& vertex = vertexes[realIndex];
-                    vertex.position.x = vx * tileSize.x + objPos.x;
-                    vertex.position.y = vy * tileSize.y + objPos.y;
+                        {
+                            sf::Vertex& vertex = vertexes[index2++];
+                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
+                            vertex.texCoords.y = info.texCoords.y;
+                        }
 
-                    // color
-                    vertex.color.r = 255;
-                    vertex.color.g = 255;
-                    vertex.color.b = 255;
-                    vertex.color.a = 255;
+                        {
+                            sf::Vertex& vertex = vertexes[index2++];
+                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
+                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                        }
 
-                    index++;
-                }
+                        {
+                            sf::Vertex& vertex = vertexes[index2++];
+                            vertex.texCoords.x = info.texCoords.x;
+                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                        }
 
-                {
-                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
-                    sf::Vertex& vertex = vertexes[realIndex];
-                    vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                    vertex.position.y = vy * tileSize.y + objPos.y;
+                        // position & color
+                        {
+                            realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                            sf::Vertex& vertex = vertexes[realIndex];
+                            vertex.position.x = vx * tileSize.x + objPos.x;
+                            vertex.position.y = vy * tileSize.y + objPos.y;
 
-                    // color
-                    vertex.color.r = 255;
-                    vertex.color.g = 255;
-                    vertex.color.b = 255;
-                    vertex.color.a = 255;
+                            // color
+                            vertex.color.r = 255;
+                            vertex.color.g = 255;
+                            vertex.color.b = 255;
+                            vertex.color.a = 255;
 
-                    index++;
-                }
+                            index++;
+                        }
 
-                {
-                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
-                    sf::Vertex& vertex = vertexes[realIndex];
-                    vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                    vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                        {
+                            realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                            sf::Vertex& vertex = vertexes[realIndex];
+                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                            vertex.position.y = vy * tileSize.y + objPos.y;
 
-                    // color
-                    vertex.color.r = 255;
-                    vertex.color.g = 255;
-                    vertex.color.b = 255;
-                    vertex.color.a = 255;
+                            // color
+                            vertex.color.r = 255;
+                            vertex.color.g = 255;
+                            vertex.color.b = 255;
+                            vertex.color.a = 255;
 
-                    index++;
-                }
+                            index++;
+                        }
 
-                {
-                    realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
-                    sf::Vertex& vertex = vertexes[realIndex];
-                    vertex.position.x = vx * tileSize.x + objPos.x;
-                    vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                        {
+                            realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                            sf::Vertex& vertex = vertexes[realIndex];
+                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
+                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
 
-                    // color
-                    vertex.color.r = 255;
-                    vertex.color.g = 255;
-                    vertex.color.b = 255;
-                    vertex.color.a = 255;
+                            // color
+                            vertex.color.r = 255;
+                            vertex.color.g = 255;
+                            vertex.color.b = 255;
+                            vertex.color.a = 255;
 
-                    index++;
+                            index++;
+                        }
+
+                        {
+                            realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
+                            sf::Vertex& vertex = vertexes[realIndex];
+                            vertex.position.x = vx * tileSize.x + objPos.x;
+                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+
+                            // color
+                            vertex.color.r = 255;
+                            vertex.color.g = 255;
+                            vertex.color.b = 255;
+                            vertex.color.a = 255;
+
+                            index++;
+                        }
+                    }
                 }
             }
         }
@@ -241,14 +246,13 @@ public:
         ASSERT(tileSize.y != 0);
         ASSERT(chunkSize.x != 0);
         ASSERT(chunkSize.y != 0);
-
-        SceneObject2D& sceneObject = (SceneObject2D&)m_sceneObject;
-        Scene2D& scene = (Scene2D&)sceneObject.getOwner();
+        Scene& scene = (Scene&)m_sceneObject.getOwner();
 
         // TODO: allow setting tilemap bounds
-        Vec2d beginCoord = scene.mapScreenToScene(renderer.getTarget(), sf::Vector2i(0, 0));
-        Vec2d endCoord = scene.mapScreenToScene(renderer.getTarget(), sf::Vector2i(renderer.getTarget().getSize()));
-        Vec2d objPos = sceneObject.getPosition();
+        Vec2d beginCoord = scene.mapToSceneCoords(renderer, {0, 0}).toVec2d();
+        auto targetSize = renderer.getTarget().getSize();
+        Vec2d endCoord = scene.mapToSceneCoords(renderer, {static_cast<double>(targetSize.x), static_cast<double>(targetSize.y)}).toVec2d();
+        Vec2d objPos = m_sceneObject.getPosition().toVec2d();
 
         Vector2<MaxInt> beginChunk = {
             (MaxInt)((beginCoord.x - objPos.x) / ((MaxInt)tileSize.x * chunkSize.x) - 1),

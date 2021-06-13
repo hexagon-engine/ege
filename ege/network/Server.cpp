@@ -38,6 +38,7 @@
 
 #include <ege/debug/Logger.h>
 #include <iostream>
+#include <string.h>
 
 namespace EGE
 {
@@ -47,17 +48,17 @@ bool Server::start()
     sf::Socket::Status status = m_listener.listen(m_serverPort);
     if(status != sf::Socket::Done)
     {
-        err(LogLevel::Error) << "0011 EGE/network: Failed to start server on " << m_serverPort;
+        ege_log.error() << "Failed to start server on " << m_serverPort;
         return false;
     }
     m_selector.add(m_listener);
-    err(LogLevel::Info) << "0010 EGE/network: Server listening on " << m_serverPort;
+    ege_log.info() << "Server listening on " << m_serverPort;
     return true;
 }
 
 void Server::close()
 {
-    err(LogLevel::Info) << "0012 EGE/network: Closing server";
+    ege_log.info() << "Closing server";
     m_selector.clear();
     {
         sf::Lock lock(m_clientsAccessMutex);
@@ -118,7 +119,7 @@ int Server::addClient(SharedPtr<ClientConnection> client)
     EventResult result = onClientConnect(*client);
     if(result == EventResult::Failure)
     {
-        err(LogLevel::Error) << "0014 EGE/network: Event ClientConnect failed (rejected by EventHandler)";
+        ege_log.error() << "Event ClientConnect failed (rejected by EventHandler)";
         return 0;
     }
 
@@ -138,7 +139,7 @@ void Server::kickClient(ClientConnection& client)
     if(client.getSocket().expired())
         return;
 
-    err(LogLevel::Info) << "001B EGE/network: Kicking client (" << client.getSocket().lock()->getRemoteAddress() << ":" << client.getSocket().lock()->getRemotePort() << ")";
+    ege_log.info() << "Kicking client (" << client.getSocket().lock()->getRemoteAddress() << ":" << client.getSocket().lock()->getRemotePort() << ")";
     onClientDisconnect(client);
 
     // close socket etc.
@@ -149,8 +150,6 @@ void Server::kickClient(ClientConnection& client)
     sf::Lock lock(m_clientsAccessMutex);
     m_clients.erase(m_clients.find(client.getID()));
 }
-
-#include <string.h>
 
 // accepts new clients, removes disconnected clients, etc.
 void Server::select()
@@ -172,7 +171,7 @@ void Server::select()
                     if(id)
                     {
                         // TODO: onClientSuccessfulConnect()
-                        err(LogLevel::Info) << "0013 EGE/network: Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")";
+                        ege_log.info() << "Client connected (" << socket->getRemoteAddress() << ":" << socket->getRemotePort() << ")";
                     }
                 }
             }
@@ -193,7 +192,7 @@ void Server::select()
                             EventResult result = onReceive(*pr.second, packet);
                             if(result == EventResult::Failure)
                             {
-                                err(LogLevel::Error) << "0014 EGE/network: Event Receive failed (rejected by EventHandler)";
+                                ege_log.error() << "Event Receive failed (rejected by EventHandler)";
                                 kickClient(*pr.second);
 
                                 // FIXME: update `it' instead of giving up on one client !! :)
@@ -221,7 +220,7 @@ void Server::select()
                 {
                     if(!pr.second->isConnected())
                     {
-                        err(LogLevel::Info) << "0018 EGE/network: Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect";
+                        ege_log.info() << "Kicking client " << pr.second->getSocket().lock()->getRemoteAddress() << ":" << pr.second->getSocket().lock()->getRemotePort() << " due to explicit disconnect";
                         kickClient(*pr.second);
 
                         // FIXME: update `it' instead of giving up on one client !! :)

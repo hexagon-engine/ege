@@ -48,8 +48,6 @@ namespace EGE
 {
 
 class Scene;
-class Scene2D;
-class SceneObject2D;
 
 class SceneObjectType : public GameplayObject
 {
@@ -59,8 +57,8 @@ public:
 
     void addPartStub(String name, PartStub partStub) { m_parts.insert(std::make_pair(name, partStub)); }
 
-    virtual void fillObjectWithData(SceneObject&) const = 0;
-    virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const = 0;
+    virtual void fillObjectWithData(SceneObject&, bool applyDefaults) const;
+    virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const { return make<SceneObject>(scene); }
 
     virtual bool deserialize(SharedPtr<ObjectMap> data) override;
     virtual SharedPtr<ObjectMap> serialize([[maybe_unused]] SharedPtr<ObjectMap> data) const final { return nullptr; }
@@ -71,19 +69,6 @@ public:
 protected:
     StringMap<PartStub> m_parts;
     SharedPtr<ObjectMap> m_defaults;
-};
-
-class SceneObjectType2D : public SceneObjectType
-{
-public:
-    SceneObjectType2D(String typeId)
-    : SceneObjectType(typeId) {}
-
-    virtual void fillObjectWithData(SceneObject&) const override;
-    virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const final;
-
-protected:
-    virtual SharedPtr<SceneObject2D> createEmptyObject(Scene2D& scene) const;
 };
 
 }

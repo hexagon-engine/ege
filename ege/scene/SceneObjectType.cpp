@@ -37,7 +37,6 @@
 #include "SceneObjectType.h"
 
 #include "Scene.h"
-#include "Scene2D.h"
 
 namespace EGE
 {
@@ -93,14 +92,7 @@ bool SceneObjectType::deserialize(SharedPtr<ObjectMap> data)
     return true;
 }
 
-SharedPtr<SceneObject> SceneObjectType2D::createEmptyObject(Scene& scene) const
-{
-    ASSERT(dynamic_cast<Scene2D*>(&scene));
-    auto sceneObject = createEmptyObject((Scene2D&)scene);
-    return sceneObject;
-}
-
-void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
+void SceneObjectType::fillObjectWithData(SceneObject& object, bool applyDefaults) const
 {
     // Parts
     ege_log.debug() << "Adding parts to " << object.getName();
@@ -110,13 +102,8 @@ void SceneObjectType2D::fillObjectWithData(SceneObject& object) const
         object.addPart(it.first, it.second.makeInstance(object));
     }
 
-    if(m_defaults)
+    if(m_defaults && applyDefaults)
         object.deserialize(m_defaults);
-}
-
-SharedPtr<SceneObject2D> SceneObjectType2D::createEmptyObject(Scene2D& scene) const
-{
-    return make<SceneObject2D>(scene);
 }
 
 }

@@ -41,6 +41,7 @@
 
 #include <ege/util/EquationSystem.h>
 #include <ege/util/Geometry.h>
+#include <ege/util/PointerUtils.h>
 
 namespace EGE
 {

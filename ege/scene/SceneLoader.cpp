@@ -81,14 +81,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
         if(!sotype)
         {
             ege_log.verbose() << "SceneLoader: Creating generic type for " << pr.first;
-            auto sd_baseClass = sodata.value()->getObject("baseClass").asString().valueOr("SceneObject2D");
-            if(sd_baseClass == "SceneObject2D")
-                sotype = make<SceneObjectType2D>(pr.first);
-            else
-            {
-                ege_log.error() << "Invalid base class for SceneObjectType";
-                return false;
-            }
+            sotype = make<SceneObjectType>(pr.first);
         }
         else
             ege_log.verbose() << "SceneLoader: Using already registered type for " << pr.first;
@@ -231,6 +224,13 @@ bool SceneLoader::deserializeStaticSceneObjects(SharedPtr<ObjectMap> data)
 bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter) const
 {
     ege_log.info() << "Saving scene to " << fileName;
+
+    if(!EGE::System::createPath(CommonPaths::saveDir()))
+    {
+        ege_log.warning() << "Scene saving failed - failed to create path!";
+        return false;
+    }
+
     std::ofstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
@@ -241,7 +241,7 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
     auto object = serializeSceneObjects();
     if(!object)
     {
-        ege_log.error() << "Scene loading failed - failed to generate data!";
+        ege_log.error() << "Scene saving failed - failed to generate data!";
         return false;
     }
 
@@ -251,6 +251,7 @@ bool SceneLoader::saveScene(String fileName, const IOStreamConverter& converter)
 bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 {
     ege_log.info() << "Loading scene from " << CommonPaths::saveDir() + "/" + fileName;
+
     std::ifstream file(CommonPaths::saveDir() + "/" + fileName);
     if(!file.good())
     {
@@ -283,6 +284,7 @@ bool SceneLoader::loadScene(String fileName, const IOStreamConverter& converter)
 bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& converter)
 {
     ege_log.info() << "Loading static objects from " << CommonPaths::resourceDir() + "/" + fileName;
+
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {

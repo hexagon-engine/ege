@@ -36,7 +36,13 @@
 
 #pragma once
 
-#include "Scene.h"
+#include "Camera.h"
+#include "SceneObject.h"
+
+#include <ege/gfx/RenderStates.h>
+#include <SFML/Graphics.hpp>
+
+#define CAMERA_DEBUG 0
 
 namespace EGE
 {
@@ -51,36 +57,46 @@ enum class ScalingMode
     Scaled, // the view is forced to be scaled to specified SIZE ("manual mode")
 };
 
-// requirements for CoordType:
-//  must have default constructor public
-template<class CoordType>
-class CameraObject
+class Plain2DCamera : public Camera
 {
 public:
-    CameraObject(EGE::Scene& parent)
-    : m_parent(parent) {}
+    EGE_SCENEOBJECT("EGE::Plain2DCamera");
 
-    CoordType getEyePosition() { return CoordType(); };
+    Plain2DCamera(EGE::Scene& scene)
+    : Camera(scene) {}
+
     void setScalingMode(ScalingMode mode) { m_scalingMode = mode; }
     ScalingMode getScalingMode() { return m_scalingMode; }
+
     void setFOV(float fov) { m_fov = fov; }
-
     float getFOV() const { return m_fov; }
-    void setSize(CoordType size) { m_size = size; }
-    CoordType getSize() { return m_size; }
 
-    float getZoom() const { return m_zoom; }
+    void setDisplaySize(Vec2d size) { m_displaySize = size; }
+    Vec2d getDisplaySize() const { return m_displaySize; }
+
     void setZoom(float zoom) { ASSERT(zoom != 0); m_zoom = zoom; }
+    float getZoom() const { return m_zoom; }
 
-    void setFollowObject(SharedPtr<EGE::SceneObject> object) { m_following = object; }
+    // TODO: What if object dies?
+    void setFollowObject(EGE::SceneObject* object) { m_following = object; }
 
-protected:
+    void setEyePosition(Vec2d position) { setPosition(position); }
+    Vec2d getEyePosition() const { return m_following ? m_following->getPosition().toVec2d() : getPosition().toVec2d(); }
+
+    virtual void applyTransform(Renderer& renderer) const override;
+
+    virtual Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const override;
+    virtual Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const override;
+
+private:
+    sf::View getView(sf::View parentView) const;
+
     float m_fov = 0.f;
     float m_zoom = 1.f;
-    CoordType m_size;
-    EGE::Scene& m_parent;
+    Vec2d m_displaySize;
     ScalingMode m_scalingMode = ScalingMode::None;
-    SharedPtr<EGE::SceneObject> m_following;
+    EGE::SceneObject* m_following = nullptr;
 };
 
 }
+

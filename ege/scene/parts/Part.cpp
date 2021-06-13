@@ -36,7 +36,7 @@
 
 #include "Part.h"
 
-#include "../SceneObject2D.h"
+#include "../SceneObject.h"
 
 namespace EGE
 {
@@ -53,12 +53,11 @@ bool Part::deserialize(SharedPtr<ObjectMap> data)
 sf::View Part::getCustomView(sf::RenderTarget& target) const
 {
     // TODO: 2d / 3d !
-    SceneObject2D& so2d = (SceneObject2D&)m_object;
-    auto position = so2d.getPosition();
+    auto position = m_object.getPosition();
 
     auto view = target.getView();
-    view.rotate(-so2d.getRotation());
-    view.move({(float)-position.x, (float)-position.y});
+    view.rotate(-m_object.getRotation());
+    view.move(sf::Vector2f(-position.x, -position.y));
     return view;
 }
 
