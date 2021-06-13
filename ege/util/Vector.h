@@ -37,6 +37,7 @@
 #pragma once
 
 #include "Types.h"
+#include <ege/main/Config.h>
 
 namespace EGE
 {
@@ -74,10 +75,10 @@ public:
     : Vector3({},{},{}) {}
 
     Vector3(T _x, T _y)
-    : x(_x), y(_y), z({}) {}
+    : x(_x), y(_y), z() {}
 
     Vector3(const Vector2<T>& other)
-    : x(other.x), y(other.y), z({}) {}
+    : x(other.x), y(other.y), z() {}
 
     Vector3(T _x, T _y, T _z)
     : x(_x), y(_y), z(_z) {}
@@ -85,6 +86,8 @@ public:
     template<class V>
     Vector3(const Vector3<V>& another)
     : Vector3(another.x, another.y, another.z) {}
+
+    Vector2<T> toVec2d() const { return {x,y}; }
 
     T x,y,z;
 };
@@ -137,8 +140,173 @@ std::ostream& operator<<(std::ostream& _str, const EGE::PolarVector2<T>& data)
     return _str << "[" << data.length << "*" << data.angle << "deg]";
 }
 
-#define VECTOR_H
 
-#include "VectorOperations.h"
+//// 2D VECTORS
 
-#define VECTOR_H_END
+// Operations
+template<class T>
+EGE::Vector2<T> operator+(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return EGE::Vector2<T>(_1.x + _2.x, _1.y + _2.y);
+}
+
+template<class T>
+EGE::Vector2<T> operator-(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return EGE::Vector2<T>(_1.x - _2.x, _1.y - _2.y);
+}
+
+template<class T>
+EGE::Vector2<T> operator*(const EGE::Vector2<T> _1, const T _2)
+{
+    return EGE::Vector2<T>(_1.x * _2, _1.y * _2);
+}
+
+template<class T>
+EGE::Vector2<T> operator/(const EGE::Vector2<T> _1, const T _2)
+{
+    ASSERT(_2 != 0);
+    return EGE::Vector2<T>(_1.x / _2, _1.y / _2);
+}
+
+// Equal / Not equal
+template<class T>
+bool operator==(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return _1.x == _2.x && _1.y == _2.y;
+}
+
+template<class T>
+bool operator!=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return !(_1 == _2);
+}
+
+// Less / Not less
+template<class T>
+bool operator<(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return _1.x > _2.x || (_1.x == _2.x && _1.y > _2.y);
+}
+
+template<class T>
+bool operator>=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return !(_1 < _2);
+}
+
+// Greater / Not greater
+template<class T>
+bool operator>(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return _1.x < _2.x || (_1.x == _2.x && _1.y < _2.y);
+}
+
+template<class T>
+bool operator<=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
+{
+    return !(_1 > _2);
+}
+
+// Operations
+template<class T>
+EGE::Vector2<T>& operator+=(EGE::Vector2<T>& _1, const EGE::Vector2<T> _2)
+{
+    return _1 = _1 + _2;
+}
+
+template<class T>
+EGE::Vector2<T>& operator-=(EGE::Vector2<T>& _1, const EGE::Vector2<T> _2)
+{
+    return _1 = _1 - _2;
+}
+
+template<class T>
+EGE::Vector2<T>& operator*=(EGE::Vector2<T>& _1, const T _2)
+{
+    return _1 = _1 * _2;
+}
+
+template<class T>
+EGE::Vector2<T>& operator/=(EGE::Vector2<T>& _1, const T _2)
+{
+    return _1 = _1 / _2;
+}
+
+//// 3D VECTORS
+
+// Operations
+template<class T>
+EGE::Vector3<T> operator+(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return EGE::Vector3<T>(_1.x + _2.x, _1.y + _2.y, _1.z + _2.z);
+}
+
+template<class T>
+EGE::Vector3<T> operator-(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return EGE::Vector3<T>(_1.x - _2.x, _1.y - _2.y, _1.z - _2.z);
+}
+
+template<class T>
+EGE::Vector3<T> operator*(const EGE::Vector3<T> _1, const T _2)
+{
+    return EGE::Vector3<T>(_1.x * _2, _1.y * _2, _1.z * _2);
+}
+
+template<class T>
+EGE::Vector3<T> operator/(const EGE::Vector3<T> _1, const T _2)
+{
+    ASSERT(_2 != 0);
+    return EGE::Vector3<T>(_1.x / _2, _1.y / _2, _1.z / _2);
+}
+
+// Equal / Not equal
+template<class T>
+bool operator==(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return _1.x == _2.x && _1.y == _2.y && _1.z == _2.z;
+}
+
+template<class T>
+bool operator!=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return !(_1 == _2);
+}
+
+template<class T>
+bool operator>=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return !(_1 < _2);
+}
+
+template<class T>
+bool operator<=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
+{
+    return !(_1 > _2);
+}
+
+// Operations
+template<class T>
+EGE::Vector3<T>& operator+=(EGE::Vector3<T>& _1, const EGE::Vector3<T> _2)
+{
+    return _1 = _1 + _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator-=(EGE::Vector3<T>& _1, const EGE::Vector3<T> _2)
+{
+    return _1 = _1 - _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator*=(EGE::Vector3<T>& _1, const T _2)
+{
+    return _1 = _1 * _2;
+}
+
+template<class T>
+EGE::Vector3<T>& operator/=(EGE::Vector3<T>& _1, const T _2)
+{
+    return _1 = _1 / _2;
+}

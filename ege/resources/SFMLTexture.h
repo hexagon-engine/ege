@@ -38,6 +38,8 @@
 
 #include "Texture.h"
 
+#include <ege/util/PointerUtils.h>
+
 #include <SFML/Graphics.hpp>
 
 namespace EGE
@@ -46,7 +48,7 @@ namespace EGE
 class SFMLTexture : public Texture
 {
 public:
-    static SharedPtr<SFMLTexture> fromFile(const EGE::String& fileName)
+    static SharedPtr<SFMLTexture> fromFile(const String& fileName)
     {
         auto tex = make<SFMLTexture>();
         if(!tex->loadFromFile(fileName))
@@ -55,7 +57,7 @@ public:
         return tex;
     }
 
-    virtual bool loadFromFile(const EGE::String& fileName)
+    virtual bool loadFromFile(const String& fileName)
     {
         setName(fileName);
         return m_texture.loadFromFile(fileName);

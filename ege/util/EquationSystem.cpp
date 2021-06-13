@@ -119,6 +119,29 @@ std::string SquareMatrix::toString() const
     return oss.str();
 }
 
+SquareMatrix SquareMatrix::operator*(const SquareMatrix& other)
+{
+    ASSERT(size() == other.size());
+    std::vector<std::vector<double>> result;
+
+    // FIXME: Don't be naive
+    for(size_t i = 0; i < size(); i++)
+    {
+        std::vector<double> row;
+        for(size_t j = 0; j < size(); j++)
+        {
+            double val = 0;
+            for(size_t oc = 0; oc < size(); oc++)
+            {
+                val += value(oc, i) * other.value(j, oc);
+            }
+            row.push_back(val);
+        }
+        result.push_back(row);
+    }
+    return SquareMatrix(result);
+}
+
 EquationResult EquationSystemResult::resultFor(size_t variable) const
 {
     ASSERT(variable < m_results.size());

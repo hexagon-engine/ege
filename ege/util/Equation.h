@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include <ege/util/Vector.h>
 #include <vector>
+#include <ege/util/Vector.h>
 
 namespace EGE
 {

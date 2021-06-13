@@ -159,6 +159,7 @@ private:
 
 typedef Animation<MaxFloat> NumberAnimation;
 typedef Animation<Vec2d> Vec2Animation;
+typedef Animation<Vec3d> Vec3Animation;
 typedef Animation<ColorRGBA> RGBAnimation;
 
 }

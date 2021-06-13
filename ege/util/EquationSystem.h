@@ -39,6 +39,7 @@
 #include "Equation.h"
 
 #include <vector>
+#include <ege/main/Config.h>
 
 namespace EGE
 {
@@ -90,6 +91,9 @@ public:
     double det() const;
 
     std::string toString() const;
+
+    // TODO: Tests
+    SquareMatrix operator*(const SquareMatrix& other);
 
 private:
     void init(const std::vector<std::vector<double>>& values);

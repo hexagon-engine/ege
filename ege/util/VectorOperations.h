@@ -36,16 +36,13 @@
 
 #pragma once
 
-// It should be included only from Vector.h!
-#if !defined(VECTOR_H) || defined(VECTOR_H_END)
-#error "VectorOperations should not be included directly"
-#endif
-
 #include "Math.h"
 
 #include <cmath>
 #include <ege/main/Config.h>
-#include <ege/util/PointerUtils.h>
+#include "PointerUtils.h"
+#include "EquationSystem.h"
+#include "Vector.h"
 
 namespace EGE
 {
@@ -143,140 +140,34 @@ Vector2<T> rotate(Vector2<T> in, double angle, Vector2<T> center = {})
     return out + center;
 }
 
+template<class T>
+Vector3<T> transform(const Vector3<T>& in, const SquareMatrix& matrix)
+{
+    // FIXME: Support matrices with size other than 3
+    ASSERT(matrix.size() == 3);
+    Vector3<T> out;
+    out.x = in.x * matrix.value(0, 0) + in.y * matrix.value(0, 1) + in.z * matrix.value(0, 2);
+    out.y = in.x * matrix.value(1, 0) + in.y * matrix.value(1, 1) + in.z * matrix.value(1, 2);
+    out.z = in.x * matrix.value(2, 0) + in.y * matrix.value(2, 1) + in.z * matrix.value(2, 2);
+    return out;
+}
+
+// TODO: Tests
+template<class T>
+Vector3<T> rotateYawPitchRoll(Vector3<T> in, double yaw, double pitch, double roll, Vector3<T> center = {})
+{
+    Vector3<T> tmp = in - center;
+    double yawR = Math::deg2rad(yaw);
+    double pitchR = Math::deg2rad(pitch);
+    double rollR = Math::deg2rad(roll);
+    auto yawMatrix = SquareMatrix({{cos(yawR), -sin(yawR), 0}, {sin(yawR), cos(yawR), 0}, {0, 0, 1}});
+    auto pitchMatrix = SquareMatrix({{cos(pitchR), 0, sin(pitchR)}, {0, 1, 0}, {-sin(pitchR), 0, cos(pitchR)}});
+    auto rollMatrix = SquareMatrix({{1, 0, 0}, {0, cos(rollR), -sin(rollR)}, {0, sin(rollR), cos(rollR)}});
+    Vector3<T> out = transform(in, yawMatrix * pitchMatrix * rollMatrix);
+    return out + center;
+}
+
 } // namespace VectorOperations
-
-//// 2D VECTORS
-
-// Operations
-template<class T>
-EGE::Vector2<T> operator+(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return EGE::Vector2<T>(_1.x + _2.x, _1.y + _2.y);
-}
-
-template<class T>
-EGE::Vector2<T> operator-(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return EGE::Vector2<T>(_1.x - _2.x, _1.y - _2.y);
-}
-
-template<class T>
-EGE::Vector2<T> operator*(const EGE::Vector2<T> _1, const T _2)
-{
-    return EGE::Vector2<T>(_1.x * _2, _1.y * _2);
-}
-
-template<class T>
-EGE::Vector2<T> operator/(const EGE::Vector2<T> _1, const T _2)
-{
-    ASSERT(_2 != 0);
-    return EGE::Vector2<T>(_1.x / _2, _1.y / _2);
-}
-
-// Equal / Not equal
-template<class T>
-bool operator==(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return _1.x == _2.x && _1.y == _2.y;
-}
-
-template<class T>
-bool operator!=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return !(_1 == _2);
-}
-
-// Less / Not less
-template<class T>
-bool operator<(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return _1.x > _2.x || (_1.x == _2.x && _1.y > _2.y);
-}
-
-template<class T>
-bool operator>=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return !(_1 < _2);
-}
-
-// Greater / Not greater
-template<class T>
-bool operator>(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return _1.x < _2.x || (_1.x == _2.x && _1.y < _2.y);
-}
-
-template<class T>
-bool operator<=(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
-{
-    return !(_1 > _2);
-}
-
-// Operations
-template<class T>
-EGE::Vector2<T>& operator+=(EGE::Vector2<T>& _1, const EGE::Vector2<T> _2)
-{
-    return _1 = _1 + _2;
-}
-
-template<class T>
-EGE::Vector2<T>& operator-=(EGE::Vector2<T>& _1, const EGE::Vector2<T> _2)
-{
-    return _1 = _1 - _2;
-}
-
-template<class T>
-EGE::Vector2<T>& operator*=(EGE::Vector2<T>& _1, const T _2)
-{
-    return _1 = _1 * _2;
-}
-
-template<class T>
-EGE::Vector2<T>& operator/=(EGE::Vector2<T>& _1, const T _2)
-{
-    return _1 = _1 / _2;
-}
-
-//// 3D VECTORS
-
-// Operations
-template<class T>
-EGE::Vector3<T> operator+(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return EGE::Vector3<T>(_1.x + _2.x, _1.y + _2.y, _1.z + _2.z);
-}
-
-template<class T>
-EGE::Vector3<T> operator-(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return EGE::Vector3<T>(_1.x - _2.x, _1.y - _2.y, _1.z - _2.z);
-}
-
-template<class T>
-EGE::Vector3<T> operator*(const EGE::Vector3<T> _1, const T _2)
-{
-    return EGE::Vector3<T>(_1.x * _2, _1.y * _2, _1.z * _2);
-}
-
-template<class T>
-EGE::Vector3<T> operator/(const EGE::Vector3<T> _1, const T _2)
-{
-    ASSERT(_2 != 0);
-    return EGE::Vector3<T>(_1.x / _2, _1.y / _2, _1.z / _2);
-}
-
-// Equal / Not equal
-template<class T>
-bool operator==(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return _1.x == _2.x && _1.y == _2.y && _1.z == _2.z;
-}
-
-template<class T>
-bool operator!=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return !(_1 == _2);
-}
 
 // Less / Not less
 template<class T>
@@ -285,48 +176,11 @@ bool operator<(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
     return EGE::VectorOperations::lengthSquared(_1) < EGE::VectorOperations::lengthSquared(_2);
 }
 
-template<class T>
-bool operator>=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return !(_1 < _2);
-}
-
 // Greater / Not greater
 template<class T>
 bool operator>(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
 {
     return EGE::VectorOperations::lengthSquared(_1) > EGE::VectorOperations::lengthSquared(_2);
-}
-
-template<class T>
-bool operator<=(const EGE::Vector3<T> _1, const EGE::Vector3<T> _2)
-{
-    return !(_1 > _2);
-}
-
-// Operations
-template<class T>
-EGE::Vector3<T>& operator+=(EGE::Vector3<T>& _1, const EGE::Vector3<T> _2)
-{
-    return _1 = _1 + _2;
-}
-
-template<class T>
-EGE::Vector3<T>& operator-=(EGE::Vector3<T>& _1, const EGE::Vector3<T> _2)
-{
-    return _1 = _1 - _2;
-}
-
-template<class T>
-EGE::Vector3<T>& operator*=(EGE::Vector3<T>& _1, const T _2)
-{
-    return _1 = _1 * _2;
-}
-
-template<class T>
-EGE::Vector3<T>& operator/=(EGE::Vector3<T>& _1, const T _2)
-{
-    return _1 = _1 / _2;
 }
 
 } // namespace EGE

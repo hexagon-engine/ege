@@ -35,6 +35,9 @@
 */
 
 #include "Renderer.h"
+#include <ege/util/Vector.h>
+#include <ege/util/VectorOperations.h>
+#include <ege/main/Config.h>
 
 #include <SFML/OpenGL.hpp>
 

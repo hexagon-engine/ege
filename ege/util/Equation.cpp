@@ -1,5 +1,7 @@
 #include "Equation.h"
 
+#include <cmath>
+
 namespace EGE
 {
 
@@ -48,7 +50,7 @@ EquationResult SquareEquation::solve() const
     else
     {
         //std::cerr << "square: 2 solutions" << std::endl;
-        double sqrt_delta = std::sqrt(d);
+        double sqrt_delta = sqrt(d);
         return {{ (-m_b - sqrt_delta) / (2 * m_a), (-m_b + sqrt_delta) / (2 * m_a) }};
     }
 }

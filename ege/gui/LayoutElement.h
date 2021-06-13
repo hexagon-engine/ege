@@ -40,6 +40,7 @@
 
 #include <ege/gfx/Renderable.h>
 #include <ege/util/Vector.h>
+#include <ege/util/VectorOperations.h>
 
 #include <SFML/System/NonCopyable.hpp>
 
