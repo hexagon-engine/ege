@@ -73,6 +73,12 @@ public:
     Vector3()
     : Vector3({},{},{}) {}
 
+    Vector3(T _x, T _y)
+    : x(_x), y(_y), z({}) {}
+
+    Vector3(const Vector2<T>& other)
+    : x(other.x), y(other.y), z({}) {}
+
     Vector3(T _x, T _y, T _z)
     : x(_x), y(_y), z(_z) {}
 
