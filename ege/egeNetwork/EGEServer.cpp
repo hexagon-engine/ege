@@ -335,7 +335,7 @@ void EGEServer::onTick(TickCount)
             // cleared when network thread receives any data from client.
             client->setPinged();
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
-        }bool canControlPacket(SharedPtr<SceneObject> object, EGEClientConnection* client);
+        }
     }
 
     // Update scene, because it's not done in GameLoop.
