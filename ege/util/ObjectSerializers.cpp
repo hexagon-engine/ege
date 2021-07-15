@@ -92,11 +92,10 @@ ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
     if(!map)
         return {};
     auto r = map->getObject("r").asFloat().valueOr(0);
-    auto g = map->getObject("g").asFloat().valueOr(0);
+    auto g = map->getObject("g").asFloat().valueOr(0); 
     auto b = map->getObject("b").asFloat().valueOr(0);
-    auto a = map->getObject("a").asFloat().valueOr(1);
+    auto a = map->getObject("a").asFloat().valueOr(1); 
     return ColorRGBA(r, g, b, a);
-
 }
 
 RectD toRect(SharedPtr<ObjectMap> map)
