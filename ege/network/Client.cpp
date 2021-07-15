@@ -53,6 +53,7 @@ bool Client::connect(sf::IpAddress ip, unsigned short port)
     if(status != sf::Socket::Done)
     {
         err(LogLevel::Error) << "0019 EGE/network: Client: Connection failed to (" << ip << ":" << port << ")";
+        disconnect();
         return false;
     }
     return true;
