@@ -256,7 +256,7 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
             size_t readPos = input.getReadPosition();
             const void* data = input.getData();
             unsigned char chr = ((unsigned char*)data)[readPos];
-            if(chr != '0')
+            if(chr != 0)
             {
                 if(!(input >> key))
                 {
@@ -300,7 +300,7 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
             size_t readPos = input.getReadPosition();
             const void* data = input.getData();
             unsigned char chr = ((unsigned char*)data)[readPos];
-            if(chr != '0')
+            if(chr != 0)
             {
                 // value type
                 sf::Uint8 type;
@@ -376,7 +376,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
                 success |= outputObject(output, *pr.second);
             }
         }
-        output << (sf::Uint8)'0';
+        output << (sf::Uint8)0;
         return success;
     }
     else if(object.isList())
@@ -387,7 +387,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
         {
             success |= outputObject(output, *it);
         }
-        output << (sf::Uint8)'0';
+        output << (sf::Uint8)0;
         return success;
     }
     else if(object.isUnsignedInt())
