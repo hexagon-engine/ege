@@ -252,21 +252,13 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
         std::string key;
         if(!input.endOfPacket())
         {
-            // TODO: maybe peek() function?
-            size_t readPos = input.getReadPosition();
-            const void* data = input.getData();
-            unsigned char chr = ((unsigned char*)data)[readPos];
-            if(chr != 0)
+            if(!(input >> key))
             {
-                if(!(input >> key))
-                {
-                    return {"expected Key", input.getReadPosition()};
-                }
+                return {"expected Key", input.getReadPosition()};
             }
-            else
+            if(key.empty())
             {
-                // actually read the character.
-                input >> chr;
+                // End of map. 
                 return {};
             }
         }
@@ -376,7 +368,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
                 success |= outputObject(output, *pr.second);
             }
         }
-        output << (sf::Uint8)0;
+        output << "";
         return success;
     }
     else if(object.isList())
