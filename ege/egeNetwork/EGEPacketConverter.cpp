@@ -272,8 +272,6 @@ static Internal::_ParseResult parseMap(sf::Packet& input, ObjectMap& object)
 
         // value
         SharedPtr<Object> specific = parseSpecific(type, input);
-        if(!specific)
-            return {"expected value after value type in map", input.getReadPosition()};
         object.addObject(key, specific);
     }
 
@@ -303,8 +301,6 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
 
                 // value
                 SharedPtr<Object> specific = parseSpecific(type, input);
-                if(!specific)
-                    return {"expected value after value type in list", input.getReadPosition()};
                 object.addObject(specific);
             }
             else
@@ -354,56 +350,61 @@ static bool outputUnsignedInt(sf::Packet& output, MaxUint object)
     return true;
 }
 
-static bool outputObject(sf::Packet& output, const Object& object)
+static bool outputObject(sf::Packet& output, Object const* object)
 {
-    if(object.isMap())
+    if(!object)
+    {
+        output << (sf::Uint8)0;
+        return true;
+    }
+    else if(object->isMap())
     {
         output << (sf::Uint8)'m';
         bool success = true;
-        for(auto pr: object.asMap())
+        for(auto pr: object->asMap())
         {
             if(pr.second)
             {
                 output << pr.first;
-                success |= outputObject(output, *pr.second);
+                success |= outputObject(output, pr.second.get());
             }
         }
         output << "";
         return success;
     }
-    else if(object.isList())
+    else if(object->isList())
     {
         output << (sf::Uint8)'l';
         bool success = true;
-        for(auto it: object.asList())
+        for(auto it: object->asList())
         {
-            success |= outputObject(output, *it);
+            success |= outputObject(output, it.get());
         }
         output << (sf::Uint8)0;
         return success;
     }
-    else if(object.isUnsignedInt())
+    else if(object->isUnsignedInt())
     {
-        return outputUnsignedInt(output, object.asUnsignedInt());
+        return outputUnsignedInt(output, object->asUnsignedInt());
     }
-    else if(object.isInt())
+    else if(object->isInt())
     {
-        return outputInt(output, object.asInt());
+        return outputInt(output, object->asInt());
     }
-    else if(object.isFloat())
+    else if(object->isFloat())
     {
         // SFML does not support long doubles :(
-        output << (sf::Uint8)'f' << (Double)object.asFloat();
+        output << (sf::Uint8)'f' << (Double)object->asFloat();
         return true;
     }
-    else if(object.isString())
+    else if(object->isString())
     {
-        output << (sf::Uint8)'s' << object.asString();
+        output << (sf::Uint8)'s' << object->asString();
         return true;
     }
-    else if(object.isBool())
+    else if(object->isBool())
     {
-        output << (sf::Uint8)'B' << object.asBool();
+        output << (sf::Uint8)'B' << object->asBool();
         return true;
     }
     return false;
@@ -411,7 +412,7 @@ static bool outputObject(sf::Packet& output, const Object& object)
 
 bool EGEPacketConverter::out(sf::Packet& output, const Object& object) const
 {
-    return outputObject(output, object);
+    return outputObject(output, &object);
 }
 
 }
