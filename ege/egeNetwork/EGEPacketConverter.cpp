@@ -99,7 +99,7 @@ static bool parseUnsignedInt(sf::Packet& input, ObjectUnsignedInt& object)
             object.setType(ObjectUnsignedInt::Type::Long);
         } return true;
     }
-    err(LogLevel::Debug) << "EGEPacketConverter: Invalid Unsigned Integer " << type;
+    ege_log.debug() << "EGEPacketConverter: Invalid Unsigned Integer " << type;
     return false;
 }
 
@@ -140,7 +140,7 @@ static bool parseInt(sf::Packet& input, ObjectInt& object)
             object.setType(ObjectInt::Type::Long);
         } return true;
     }
-    err(LogLevel::Debug) << "EGEPacketConverter: Invalid Integer " << type;
+    ege_log.debug() << "EGEPacketConverter: Invalid Integer " << type;
     return false;
 }
 
@@ -333,7 +333,7 @@ bool EGEPacketConverter::in(sf::Packet& input, SharedPtr<Object>& object) const
     Internal::_ParseResult result = parseMap(input, (ObjectMap&)*object);
     if(!result.message.empty())
     {
-        err(LogLevel::Verbose) << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
+        ege_log.verbose() << "001D EGE/egeNetwork: Packet parsing error at byte " << std::hex << result.byte << std::dec << ":" << result.message;
         hexDump(input.getData(), input.getDataSize());
         return false;
     }
