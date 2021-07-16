@@ -57,7 +57,7 @@ int GameLoop::run()
 
     // TODO: maybe our own clocks?
     Clock tickClock(this);
-    while(m_running)
+    while(isRunning())
     {
         m_profiler = make<Profiler>();
         m_profiler->start();

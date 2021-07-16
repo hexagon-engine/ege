@@ -339,7 +339,7 @@ EventResult EGEClient::onLoad()
         {
             update();
             if(!isConnected())
-                m_running = false;
+                exit(0);
         }
 
         return 0;

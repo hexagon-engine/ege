@@ -196,7 +196,6 @@ public:
 protected:
     virtual void updateTimers();
     virtual void callDeferredInvokes();
-    bool m_running = true;
     int m_exitCode = 0;
     SharedPtrVector<EventLoop> m_subLoops;
 
@@ -204,6 +203,7 @@ private:
     EventArray<Event>& events(Event::EventType type);
 
     int m_ticks = 0;
+    bool m_running = true;
     std::multimap<std::string, SharedPtr<Timer>> m_timers;
     Map<Event::EventType, EventArray<Event>> m_eventHandlers;
     std::queue<std::function<void()>> m_deferredInvokes;
