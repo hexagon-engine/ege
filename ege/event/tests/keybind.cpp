@@ -13,7 +13,7 @@ public:
         EGE::SFMLSystemWindow wnd;
         wnd.create(sf::VideoMode(500, 500), "Keybind Test");
 
-        while(m_running)
+        while(isRunning())
             wnd.callEvents(*this);
 
         return 0;
