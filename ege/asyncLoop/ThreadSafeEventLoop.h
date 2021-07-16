@@ -68,7 +68,6 @@ public:
     virtual void removeAsyncTasks(std::string name = "");
 
     virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
-    virtual void safeRemoveAsyncTasks();
 
 protected:
     sf::Mutex m_timerMutex;

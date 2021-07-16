@@ -39,7 +39,8 @@
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <functional>
-#include <SFML/System.hpp>
+#include <thread>
+#include <atomic>
 
 #define ASYNC_TASK_DEBUG 0
 
@@ -57,24 +58,26 @@ public:
         bool finished;
     };
 
+    inline static constexpr State UnfinishedState = { 0, false };
+
     // WORKER runs in OTHER thread
     // CALLBACK runs in MAIN thread (The same as AsyncLoop)
     // So if you want callback to be called, you must update AsyncLoop!
-    AsyncTask(std::function<int()> worker, std::function<void(State)> callback);
+    AsyncTask(std::function<int(AsyncTask& task)> worker, std::function<void(State)> callback);
 
-    // NOTE: it calls terminate()! so it's recommended to call stop() before
-    // destroying AsyncTasks.
     virtual ~AsyncTask();
 
     void start();
     State update();
 
-    // Safe.
-    virtual void stop() {}
+    void requestStop() { m_stopRequested.store(true); }
     void wait();
 
-    // Not safe!
+    // Wait for thread but assume it will finish soon and call
+    // callback (with unfinished state) before it returns.
     void terminate();
+
+    bool stopRequested() const { return m_stopRequested; }
 
     void setName(std::string name)
     {
@@ -82,24 +85,19 @@ public:
             m_name = name;
     }
 
-    std::string getName()
-    {
-        return m_name;
-    }
-
-    bool finished()
-    {
-        return m_currentState.finished;
-    }
+    std::string getName() const { return m_name; }
+    bool finished() const { return m_finished.load(); }
 
 private:
     void entryPoint();
 
-    sf::Thread m_thread;
-    std::function<int()> m_worker;
+    std::thread m_thread;
+    std::function<int(AsyncTask& task)> m_worker;
     std::function<void(State)> m_callback;
 
-    State m_currentState {0, false};
+    std::atomic<int> m_returnCode { 0 };
+    std::atomic<bool> m_finished { false };
+    std::atomic<bool> m_stopRequested { false };
     std::string m_name;
 };
 

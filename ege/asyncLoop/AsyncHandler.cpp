@@ -69,11 +69,6 @@ void AsyncHandler::removeAsyncTasks(std::string name)
     }
 }
 
-void AsyncHandler::safeRemoveAsyncTasks()
-{
-    ASSERT(false);
-}
-
 void AsyncHandler::updateAsyncTasks()
 {
     for(auto it = m_asyncTasks.begin(); it != m_asyncTasks.end(); it++)

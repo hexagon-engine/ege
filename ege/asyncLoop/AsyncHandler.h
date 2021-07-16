@@ -53,13 +53,9 @@ class AsyncHandler
 public:
     virtual void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
 
-    // unsafe due to thread termination
     virtual void removeAsyncTasks(std::string name = "");
 
     virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
-
-    // TODO
-    virtual void safeRemoveAsyncTasks();
 
 protected:
     virtual void updateAsyncTasks();

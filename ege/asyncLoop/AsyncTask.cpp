@@ -42,48 +42,52 @@
 namespace EGE
 {
 
-AsyncTask::AsyncTask(std::function<int()> worker, std::function<void(AsyncTask::State)> callback)
-: m_thread(&AsyncTask::entryPoint, this), m_worker(worker), m_callback(callback) {}
+AsyncTask::AsyncTask(std::function<int(AsyncTask& task)> worker, std::function<void(AsyncTask::State)> callback)
+: m_worker(std::move(worker)), m_callback(std::move(callback)) {}
 
 AsyncTask::~AsyncTask()
 {
-    if(!m_currentState.finished)
-        m_thread.terminate();
+    terminate();
 }
 
 void AsyncTask::start()
 {
-    m_thread.launch();
+    m_thread = std::thread(&AsyncTask::entryPoint, this);
 }
 
 AsyncTask::State AsyncTask::update()
 {
-    if(m_currentState.finished)
+    bool finished = m_finished.load();
+    if(finished)
     {
-        DBG(ASYNC_TASK_DEBUG, "worker finished with status " + std::to_string(m_currentState.returnCode));
-        m_callback(m_currentState);
+        int returnCode = m_returnCode.load();
+        DBG(ASYNC_TASK_DEBUG, "worker finished with status " + std::to_string(returnCode));
+        auto state = State{returnCode, true};
+        ASSERT(m_callback);
+        m_callback(state);
+        return state;
     }
-    return m_currentState;
+    return UnfinishedState;
 }
 
 void AsyncTask::entryPoint()
 {
-    // atomic?
-    m_currentState = AsyncTask::State{m_worker(), true};
+    m_returnCode.store(m_worker(*this));
+    m_finished.store(true);
 }
 
 void AsyncTask::wait()
 {
-    m_thread.wait();
+    m_thread.join();
 }
 
 void AsyncTask::terminate()
 {
-    // it calls callback with m_currentState.finished == false
     if(m_callback)
-        m_callback(m_currentState);
+        m_callback(UnfinishedState);
 
-    m_thread.terminate();
+    requestStop();
+    wait();
 }
 
 }

@@ -87,13 +87,6 @@ std::vector<std::weak_ptr<AsyncTask>> ThreadSafeEventLoop::getAsyncTasks(std::st
     return AsyncHandler::getAsyncTasks(name);
 }
 
-// TODO
-void ThreadSafeEventLoop::safeRemoveAsyncTasks()
-{
-    sf::Lock lock(m_asyncTaskMutex);
-    AsyncHandler::safeRemoveAsyncTasks();
-}
-
 void ThreadSafeEventLoop::updateTimers()
 {
     sf::Lock lock(m_timerMutex);
