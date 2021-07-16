@@ -124,6 +124,7 @@ void EventLoop::onUpdate()
     // Do updates of self
     updateTimers();
     callDeferredInvokes();
+    updateAsyncTasks();
     m_ticks++;
 }
 
@@ -208,6 +209,54 @@ void EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
 void EventLoop::removeSubLoop(EventLoop& loop)
 {
     loop.exit(0);
+}
+
+
+void EventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
+{
+    task->setName(name);
+    task->start();
+    m_asyncTasks.insert(std::make_pair(name, task));
+}
+
+std::vector<std::weak_ptr<AsyncTask>> EventLoop::getAsyncTasks(std::string name)
+{
+    std::vector<std::weak_ptr<AsyncTask>> tasks;
+    decltype(m_asyncTasks)::iterator it;
+    while((it = m_asyncTasks.find(name)) != m_asyncTasks.end())
+    {
+        tasks.push_back(it->second);
+    }
+    return tasks;
+}
+
+void EventLoop::removeAsyncTasks(std::string name)
+{
+    decltype(m_asyncTasks)::iterator it;
+    while((it = m_asyncTasks.find(name)) != m_asyncTasks.end())
+    {
+        m_asyncTasks.erase(it);
+    }
+}
+
+void EventLoop::updateAsyncTasks()
+{
+    for(auto it = m_asyncTasks.begin(); it != m_asyncTasks.end(); it++)
+    {
+        auto task = *it;
+        AsyncTask::State state = task.second.get()->update();
+        if(state.finished)
+        {
+            if(state.returnCode != 0)
+                ege_log.error() << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
+
+            m_asyncTasks.erase(it);
+            if(m_asyncTasks.empty())
+                return;
+
+            it = m_asyncTasks.find(task.first);
+        }
+    }
 }
 
 }

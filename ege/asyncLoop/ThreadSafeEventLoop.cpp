@@ -59,7 +59,7 @@ void ThreadSafeEventLoop::removeTimer(const std::string& timer)
 void ThreadSafeEventLoop::onUpdate()
 {
     EventLoop::onUpdate();
-    AsyncHandler::updateAsyncTasks();
+    EventLoop::updateAsyncTasks();
 }
 
 void ThreadSafeEventLoop::deferredInvoke(std::function<void()> func)
@@ -71,20 +71,20 @@ void ThreadSafeEventLoop::deferredInvoke(std::function<void()> func)
 void ThreadSafeEventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {
     sf::Lock lock(m_asyncTaskMutex);
-    AsyncHandler::addAsyncTask(task, name);
+    EventLoop::addAsyncTask(task, name);
 }
 
 // unsafe due to thread termination
 void ThreadSafeEventLoop::removeAsyncTasks(std::string name)
 {
     sf::Lock lock(m_asyncTaskMutex);
-    AsyncHandler::removeAsyncTasks(name);
+    EventLoop::removeAsyncTasks(name);
 }
 
 std::vector<std::weak_ptr<AsyncTask>> ThreadSafeEventLoop::getAsyncTasks(std::string name)
 {
     sf::Lock lock(m_asyncTaskMutex);
-    return AsyncHandler::getAsyncTasks(name);
+    return EventLoop::getAsyncTasks(name);
 }
 
 void ThreadSafeEventLoop::updateTimers()
@@ -96,7 +96,7 @@ void ThreadSafeEventLoop::updateTimers()
 void ThreadSafeEventLoop::updateAsyncTasks()
 {
     sf::Lock lock(m_asyncTaskMutex);
-    AsyncHandler::updateAsyncTasks();
+    EventLoop::updateAsyncTasks();
 }
 
 }

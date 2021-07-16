@@ -58,7 +58,7 @@ void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::Sta
     }
 
     m_state = State::Loading;
-    addAsyncTask(make<AsyncTask>([this, worker]() {
+    auto task = make<AsyncTask>([this, worker](AsyncTask& task) {
         worker(*m_progress);
 
         if(m_progress->error())
@@ -72,7 +72,9 @@ void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::Sta
         ege_log.verbose() << "SplashScreen: Callback with finished=" << state.finished << ", rc=" << state.returnCode;
         callback(state);
         m_state = State::None;
-    }), "splashScreen");
+    });
+    m_progress->setTask(task.get());
+    addAsyncTask(task, "splashScreen");
 }
 
 void SplashScreen::start(Time time, std::function<void()> callback)
@@ -88,12 +90,6 @@ void SplashScreen::start(Time time, std::function<void()> callback)
         callback();
         m_state = State::None;
     }));
-}
-
-void SplashScreen::onUpdate(TickCount ticks)
-{
-    GUIScreen::onUpdate(ticks);
-    AsyncHandler::updateAsyncTasks();
 }
 
 void SplashScreen::updateGeometry(Renderer&)

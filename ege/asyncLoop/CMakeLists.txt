@@ -1,10 +1,4 @@
 set(SOURCES
-	"AsyncHandler.cpp"
-	"AsyncHandler.h"
-	"AsyncLoop.cpp"
-	"AsyncLoop.h"
-	"AsyncTask.cpp"
-	"AsyncTask.h"
 	"ThreadSafeEventLoop.cpp"
 	"ThreadSafeEventLoop.h"
 )

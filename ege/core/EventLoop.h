@@ -38,6 +38,7 @@
 
 #include "EventHandler.h"
 
+#include "AsyncTask.h"
 #include "Timer.h"
 
 #include <ege/debug/InspectorNode.h>
@@ -193,8 +194,16 @@ public:
     virtual void addSubLoop(SharedPtr<EventLoop> loop);
     virtual void removeSubLoop(EventLoop& loop);
 
+    virtual void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
+    virtual void removeAsyncTasks(std::string name = "");
+    virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
+
+private:
+    std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;
+
 protected:
     virtual void updateTimers();
+    virtual void updateAsyncTasks();
     virtual void callDeferredInvokes();
     int m_exitCode = 0;
     SharedPtrVector<EventLoop> m_subLoops;

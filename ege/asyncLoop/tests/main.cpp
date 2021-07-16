@@ -1,13 +1,12 @@
 #include <testsuite/Tests.h>
 
-#include <ege/asyncLoop/AsyncLoop.h>
-#include <ege/asyncLoop/AsyncTask.h>
 #include <ege/asyncLoop/ThreadSafeEventLoop.h>
+#include <ege/core/EventLoop.h>
 #include <ege/core/Timer.h>
 #include <ege/util/PointerUtils.h>
 #include <SFML/System.hpp>
 
-int myWorker()
+int myWorker(EGE::AsyncTask& task)
 {
     for(int i = 0; i < 4; i++)
     {
@@ -24,7 +23,7 @@ void myCallback(EGE::AsyncTask::State state)
 
 TESTCASE(simple)
 {
-    EGE::AsyncLoop loop;
+    EGE::EventLoop loop;
     auto myTask = make<EGE::AsyncTask>(myWorker, myCallback);
     loop.addAsyncTask(myTask, "myTask");
 
@@ -54,7 +53,7 @@ TESTCASE(threadSafeEventLoop)
     float progress = 0;
     srand(time(NULL));
 
-    auto loadingWorker = [&progress, &loop]()->int {
+    auto loadingWorker = [&progress, &loop](EGE::AsyncTask& task)->int {
         std::cerr << "Loading..." << std::endl;
         int mt = 14355;
         for(int i = 0; i < mt; i++)
@@ -65,6 +64,9 @@ TESTCASE(threadSafeEventLoop)
                 std::cerr << "Doing something at i=" << i << std::endl;
             if(i == 5478)
                 loop.deferredInvoke([&loop]() { loop.exit(); }); // It will be called in main thread.
+
+            if(task.stopRequested())
+                return 1;
         }
         return 0;
     };

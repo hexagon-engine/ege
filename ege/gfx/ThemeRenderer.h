@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/util/Progress.h>
+#include <ege/core/Progress.h>
 
 namespace EGE
 {

@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <ege/core/AsyncTask.h>
 #include <ege/core/Clock.h>
 #include <ege/core/EventCast.h>
 #include <ege/core/Event.h>

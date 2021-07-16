@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/asyncLoop/AsyncLoop.h>
+#include <ege/core/EventLoop.h>
 #include <ege/core/EventHandler.h>
 #include <map>
 #include <memory>
@@ -46,14 +46,14 @@
 namespace EGE
 {
 
-class ThreadSafeEventLoop : public AsyncLoop
+class ThreadSafeEventLoop : public EventLoop
 {
 public:
     ThreadSafeEventLoop(InspectorNode* parent, String id = "ThreadSafeEventLoop")
-    : AsyncLoop(parent, id) {}
+    : EventLoop(parent, id) {}
 
     ThreadSafeEventLoop(String id = "ThreadSafeEventLoop")
-    : AsyncLoop(id) {}
+    : EventLoop(id) {}
 
     virtual void addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart start = EventLoop::TimerImmediateStart::Yes);
     virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);

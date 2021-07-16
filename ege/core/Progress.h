@@ -36,28 +36,42 @@
 
 #pragma once
 
-#include "AsyncHandler.h"
-
-#include <ege/core/EventLoop.h>
-
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
+#include <ege/core/AsyncTask.h>
+#include <ege/util/Types.h>
 
 namespace EGE
 {
 
-class AsyncLoop : public AsyncHandler, public EventLoop
+class Progress
 {
 public:
-    AsyncLoop(InspectorNode* parent, String id = "AsyncLoop")
-    : EventLoop(parent, id) {}
+    explicit Progress(size_t maxStepCount)
+    : m_maxStepCount(maxStepCount) {}
 
-    AsyncLoop(String id = "AsyncLoop")
-    : EventLoop(id) {}
+    void setTask(AsyncTask* task) { m_task = task;}
+    inline void step() { m_stepCount++; }
+    inline void setError() { m_error = true; }
 
-    virtual void onUpdate();
+    constexpr size_t getStepCount() const { return m_stepCount; }
+    constexpr size_t getMaxStepCount() const { return m_maxStepCount; }
+    constexpr size_t getRemainingStepCount() const { return getMaxStepCount() - getStepCount(); }
+    constexpr float getFactor() const { return static_cast<float>(m_stepCount) / m_maxStepCount; }
+    constexpr float getPercent() const { return getFactor() * 100; }
+
+    constexpr bool error() const { return m_error; }
+    constexpr bool finished() const { return m_stepCount == m_maxStepCount; }
+    constexpr AsyncTask* task() { return m_task; }
+
+private:
+    size_t m_maxStepCount = 0;
+    size_t m_stepCount = 0;
+    bool m_error = false;
+    AsyncTask* m_task;
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const Progress& arg)
+{
+    return stream << arg.getPercent() << "%";
+}
 
 }

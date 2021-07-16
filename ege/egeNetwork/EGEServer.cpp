@@ -39,8 +39,8 @@
 #include "EGEClientConnection.h"
 #include "EGEPacket.h"
 
-#include <ege/asyncLoop/AsyncTask.h>
 #include <ege/controller/ControlPacket.h>
+#include <ege/core/AsyncTask.h>
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 #include <ege/network/ClientConnection.h>
@@ -268,7 +268,7 @@ EventResult EGEServer::onLoad()
         return EventResult::Failure;
 
     // Run server thread
-    auto serverNetworkWorker = [this]()->int {
+    auto serverNetworkWorker = [this](AsyncTask& task)->int {
         err(LogLevel::Info) << "001E EGE/egeNetwork: Starting server";
         log(LogLevel::Notice) << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
         log(LogLevel::Notice) << "Agent: " << getVersionString() << " v" << getVersion();
@@ -276,7 +276,11 @@ EventResult EGEServer::onLoad()
             return 1;
 
         while(isRunning())
+        {
             select();
+            if(task.stopRequested())
+                return 0;
+        }
 
         return 0;
     };

@@ -36,14 +36,14 @@
 
 #pragma once
 
-#include <ege/asyncLoop/AsyncHandler.h>
+#include <ege/core/Progress.h>
 #include <ege/gui/GUIScreen.h>
 #include <ege/resources/Texture.h>
 
 namespace EGE
 {
 
-class SplashScreen : public GUIScreen, public AsyncHandler
+class SplashScreen : public GUIScreen
 {
 public:
     enum class State
@@ -77,8 +77,6 @@ public:
     // It does not create any loading thread.
     // `callback` is called when the time runs out.
     void start(Time time, std::function<void()> callback);
-
-    virtual void onUpdate(TickCount ticks) override;
 
     // TODO: use ThemeRenderer
     virtual void updateGeometry(Renderer& renderer) override;

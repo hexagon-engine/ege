@@ -77,6 +77,7 @@ SharedPtr<EGEPacket> EGEPacket::generateSResult(UidType uid, SharedPtr<ObjectMap
 
 SharedPtr<EGEPacket> EGEPacket::generateCLogin(SharedPtr<ObjectMap> userData) //SResult
 {
+    // FIXME: Create ObjectMap if required
     if(userData)
         EGEPacket::appendUID(userData);
     else
