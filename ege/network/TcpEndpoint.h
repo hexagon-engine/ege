@@ -34,51 +34,81 @@
 *
 */
 
-#include "SFMLNetworkImpl.h"
+#pragma once
+
+#include <memory>
+#include <SFML/Network.hpp>
 
 #include <ege/debug/Logger.h>
-#include <iostream>
+#include <ege/util/Types.h>
+
+#include "TcpPacket.h"
 
 namespace EGE
 {
 
-bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, SharedPtr<Packet> packet)
+// P must be derived from TcpPacket
+template<class P>
+class TcpEndpoint
 {
-    // Abort sending empty packet (or TO empty endpoint) with success state.
-    if(!packet || !endpoint)
-        return true;
+public:
+    using Packet = P;
 
-    //sf::Lock lock(endpoint->getMutex());
-    SFMLPacket* packet2 = (SFMLPacket*)packet.get();
+    TcpEndpoint() = default;
+    TcpEndpoint(const TcpEndpoint&) = delete;
+    TcpEndpoint(TcpEndpoint&&) = delete;
 
-    sf::Packet sfPacket = packet2->toSFMLPacket();
-    sf::Socket::Status status = endpoint->getSocket().lock()->send(sfPacket);
-    if(status != sf::Socket::Done)
+    virtual ~TcpEndpoint() { disconnect(); }
+
+    bool send(Packet const& packet)
     {
-        ege_log.error() << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
-        //endpoint->disconnect();
-        return false;
+        return packet.send(m_socket);
     }
-    return true;
-}
-
-SharedPtr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
-{
-    // Abort receiving FROM empty endpoint with empty state.
-    if(!endpoint)
-        return nullptr;
-
-    //sf::Lock lock(endpoint->getMutex());
-
-    sf::Packet sfPacket;
-    sf::Socket::Status status = endpoint->getSocket().lock()->receive(sfPacket);
-    if(status != sf::Socket::Done)
+    Packet receive()
     {
-        ege_log.error() << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
-        //endpoint->disconnect();
-        return nullptr;
+        if(!isConnected())
+            return {};
+        Packet packet;
+        if(!packet.receive(m_socket))
+        {
+            disconnect();
+            return {};
+        }
+        return std::move(packet);
     }
-    return makePacket(sfPacket);
-}
+
+    bool isConnected() const { return m_connected; }
+
+    virtual void disconnect()
+    {
+        if(!m_connected)
+            return;
+
+        m_connected = false;
+        onDisconnect();
+        m_socket.disconnect();
+    }
+
+    const sf::TcpSocket& socket() const { return m_socket; }
+    sf::TcpSocket& socket() { return m_socket; }
+
+    std::string toString() const
+    {
+        return "TcpEndpoint{"
+        + m_socket.getRemoteAddress().toString()
+        + ":"
+        + std::to_string(m_socket.getRemotePort())
+        + "}";
+    }
+
+    std::string getIPAddressString() const { return socket().getRemoteAddress().toString(); }
+    Uint16 port() const { return socket().getRemotePort(); }
+
+    virtual void onDisconnect() {}
+
+protected:
+    sf::TcpSocket m_socket;
+    bool m_connected = true;
+};
 
 }

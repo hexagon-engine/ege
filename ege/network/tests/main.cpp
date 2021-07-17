@@ -1,150 +1,98 @@
 #include <testsuite/Tests.h>
 
-#include <ege/network/Server.h>
-#include <ege/network/Client.h>
-#include <ege/network/SFMLNetworkImpl.h>
+#include <ege/network/TcpServer.h>
+#include <ege/network/TcpClient.h>
+#include <ege/network/TcpClientConnection.h>
+#include <ege/network/SFMLPacket.h>
 
 int PORT;
 
 class MyPacket : public EGE::SFMLPacket
 {
 public:
-    // sender-side
-    MyPacket(std::string str)
-    : m_string(str) {}
+    MyPacket() = default;
 
-    // receiver-side
-    MyPacket(sf::Packet& packet)
-    : m_string("<invalid packet>")
-    {
-        if(!fromSFMLPacket(packet))
-            std::cerr << "invalid packet received!" << std::endl;
-    }
+    explicit MyPacket(std::string string)
+    : m_string(string) {}
 
-    virtual bool fromSFMLPacket(sf::Packet& packet)
+    virtual bool deserializeFromSFML(sf::Packet& packet) override
     {
         if(!(packet >> m_string))
         {
             std::cerr << "fromSFMLPacket: expected std::string" << std::endl;
             return false;
         }
-        m_valid = true;
         return true;
     }
 
-    virtual sf::Packet toSFMLPacket()
+    virtual sf::Packet serializeToSFML() const override
     {
         sf::Packet packet;
         packet << m_string;
         return packet;
     }
 
-    std::string getString()
-    {
-        return m_string;
-    }
-
-    bool isValid()
-    {
-        return m_valid;
-    }
+    std::string getString() const { return m_string; }
 
 private:
     std::string m_string;
-    bool m_valid = false;
 };
 
-class MyClientConnection : public EGE::ClientConnection, public EGE::SFMLNetworkImpl
+class MyClientConnection;
+
+class MyServer : public EGE::TcpServer<MyPacket, MyClientConnection>
 {
 public:
-    MyClientConnection(EGE::Server& server, EGE::SharedPtr<sf::TcpSocket> socket)
-    : EGE::ClientConnection(server, socket) {}
-
-    EGE::SharedPtr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
-    {
-        return make<MyPacket>(packet);
-    }
-
-    virtual bool send(EGE::SharedPtr<EGE::Packet> packet)
-    {
-        return sendTo(this, packet);
-    }
-
-    virtual EGE::SharedPtr<EGE::Packet> receive()
-    {
-        return receiveFrom(this);
-    }
-};
-
-class MyServer : public EGE::Server
-{
-public:
-    MyServer()
-    : EGE::Server(PORT) {}
-
-    EGE::SharedPtr<EGE::ClientConnection> makeClient(EGE::Server& server, EGE::SharedPtr<sf::TcpSocket> socket)
-    {
-        return make<MyClientConnection>(server, socket);
-    }
-
-    virtual EGE::EventResult onClientConnect(EGE::ClientConnection* client)
-    {
-        if(client->getSocket().expired())
-            return EGE::EventResult::Failure;
-
-        client->send(make<MyPacket>("Hello, " + client->getSocket().lock()->getRemoteAddress().toString()));
-        client->send(make<MyPacket>("please login"));
-        sendToAll(make<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " connected to server"));
-        return EGE::EventResult::Success;
-    }
-
-    virtual EGE::EventResult onClientDisconnect(EGE::ClientConnection* client)
-    {
-        if(client->getSocket().expired())
-            return EGE::EventResult::Failure;
-
-        sendToAll(make<MyPacket>(client->getSocket().lock()->getRemoteAddress().toString() + " disconnected from server"));
-        return EGE::EventResult::Success;
-    }
-
-    virtual EGE::EventResult onReceive(EGE::ClientConnection* client, EGE::SharedPtr<EGE::Packet> packet)
-    {
-        MyPacket* mypacket = (MyPacket*) packet.get();
-        std::cerr << client->getID() << " sent message: " << mypacket->getString() << std::endl;
-        return EGE::EventResult::Success;
-    }
+    virtual void onClientConnect(ClientConnection& client) override;
+    virtual void onClientDisconnect(ClientConnection& client) override;
+    virtual void onReceive(ClientConnection& client, Packet const& packet) override;
 
     bool running = true;
+    int nextId = 0;
 };
 
-class MyClient : public EGE::Client, public EGE::SFMLNetworkImpl
+class MyClientConnection : public EGE::TcpClientConnection<MyServer>
 {
 public:
-    EGE::SharedPtr<EGE::SFMLPacket> makePacket(sf::Packet& packet)
-    {
-        return make<MyPacket>(packet);
-    }
+    MyClientConnection(MyServer& server)
+    : EGE::TcpClientConnection<MyServer>(server) {}
 
-    virtual EGE::EventResult onReceive(EGE::SharedPtr<EGE::Packet> packet)
+    void setId(int id) { m_id = id;}
+    int getId() const { return m_id; }
+
+private:
+    int m_id = -1;
+};
+
+void MyServer::onClientConnect(ClientConnection& client)
+{
+    client.setId(++nextId);
+    client.send(MyPacket("Hello, " + client.getIPAddressString()));
+    client.send(MyPacket("please login"));
+    sendToAll(MyPacket(client.getIPAddressString() + " connected to server"));
+}
+
+void MyServer::onClientDisconnect(ClientConnection& client)
+{
+    sendToAll(MyPacket(client.getIPAddressString() + " disconnected from server"));
+}
+
+void MyServer::onReceive(ClientConnection& client, Packet const& packet)
+{
+    std::cerr << client.getIPAddressString() << " sent message: " << packet.getString() << std::endl;
+}
+
+class MyClient : public EGE::TcpClient<MyPacket>
+{
+public:
+    virtual void onReceive(MyPacket const& packet) override
     {
-        MyPacket* mypacket = (MyPacket*) packet.get();
-        std::string msg = mypacket->getString();
+        std::string msg = packet.getString();
 
         if(msg == "please login")
-            send(make<MyPacket>("yes, here you are: login 1234 password 1234."));
+            send(MyPacket("yes, here you are: login 1234 password 1234."));
 
-        std::cerr << "Server sent message: " << mypacket->getString() << std::endl;
-        return EGE::EventResult::Success;
-    }
-
-    virtual bool send(EGE::SharedPtr<EGE::Packet> packet)
-    {
-        return sendTo(this, packet);
-    }
-
-    virtual EGE::SharedPtr<EGE::Packet> receive()
-    {
-        return receiveFrom(this);
+        std::cerr << "Server sent message: " << packet.getString() << std::endl;
     }
 };
 
@@ -156,78 +104,73 @@ TESTCASE(abstract)
     MyServer server;
     MyClient client1;
     MyClient client2;
+    MyClient client3;
 
-    auto serverThreadFunc = [&server]() {
+    if(!server.listen(PORT))
+    {
+        std::cerr << "Failed to start server!" << std::endl;
+        return 1;
+    }
 
-        if(!server.start())
-        {
-            std::cerr << "Failed to start server!" << std::endl;
-            FAIL_TEST();
-            return;
-        }
+    std::cerr << "Server is running! :)" << std::endl;
 
-        std::cerr << "Server is running! :)" << std::endl;
-        while(server.running)
-            server.select();
-        std::cerr << "Server finished! :)" << std::endl;
+    // Create 2 clients at once
+    // wait a second to ensure that server is started
+    sf::sleep(sf::seconds(1.f));
+    if(!client1.connect(sf::IpAddress::LocalHost, PORT))
+    {
+        std::cerr << "Failed to connect to server!" << std::endl;
+        return 1;
+    }
 
-    };
-    sf::Thread serverThread(serverThreadFunc);
-    serverThread.launch();
+    std::cerr << "Client 1 is running! :)" << std::endl;
+    if(!client1.send(MyPacket("hello, Server! I'm Client ONE")))
+    {
+        std::cerr << "Failed to send packet!" << std::endl;
+        return 1;
+    }
 
+    if(!client2.connect(sf::IpAddress::LocalHost, PORT))
+    {
+        std::cerr << "Failed to connect to server!" << std::endl;
+        return 1;
+    }
 
-    auto client1ThreadFunc = [&client1]() {
+    std::cerr << "Client 2 is running! :)" << std::endl;
+    if(!client2.send(MyPacket("hello, Server! I'm Client TWO")))
+    {
+        std::cerr << "Failed to send packet!" << std::endl;
+        return 1;
+    }
 
-        // wait a second to ensure that server is started
-        sf::sleep(sf::seconds(1.f));
-        if(!client1.connect(sf::IpAddress::LocalHost, PORT))
-        {
-            std::cerr << "Failed to connect to server!" << std::endl;
-            FAIL_TEST();
-            return;
-        }
+    // Create third client to test select errors
+    // wait a second to ensure that server is started
+    sf::sleep(sf::seconds(1.f));
+    if(!client3.connect(sf::IpAddress::LocalHost, PORT))
+    {
+        std::cerr << "Failed to connect to server!" << std::endl;
+        return 1;
+    }
 
-        std::cerr << "Client 1 is running! :)" << std::endl;
-        client1.send(make<MyPacket>("hello, Server! I'm Client ONE"));
-        while(client1.isConnected())
-            client1.update();
-        std::cerr << "Client 1 finished! :)" << std::endl;
-
-    };
-    sf::Thread client1Thread(client1ThreadFunc);
-    client1Thread.launch();
-
-
-    auto client2ThreadFunc = [&client2]() {
-
-        // wait 2 seconds to ensure that server is started
-        sf::sleep(sf::seconds(2.f));
-        if(!client2.connect(sf::IpAddress::LocalHost, PORT))
-        {
-            std::cerr << "Failed to connect to server!" << std::endl;
-            FAIL_TEST();
-            return;
-        }
-
-        std::cerr << "Client 2 is running! :)" << std::endl;
-        client2.send(make<MyPacket>("hello, Server! I'm Client TWO"));
-        while(client2.isConnected())
-            client2.update();
-        std::cerr << "Client 2 finished! :)" << std::endl;
-    };
-    sf::Thread client2Thread(client2ThreadFunc);
-    client2Thread.launch();
+    std::cerr << "Client 2 is running! :)" << std::endl;
+    if(!client3.send(MyPacket("hello, Server! I'm Client TWO")))
+    {
+        std::cerr << "Failed to send packet!" << std::endl;
+        return 1;
+    }
 
     // wait for enter
     getchar();
 
+    ege_log.info() << "enter!";
     client1.disconnect();
     // wait for server reaction
     sf::sleep(sf::seconds(10.f));
-    server.close();
+    server.exit();
     // wait for client reaction
     sf::sleep(sf::seconds(1.f));
     client2.disconnect();
+    client3.disconnect();
     server.running = false;
 
     return 0;

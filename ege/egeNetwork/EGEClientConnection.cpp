@@ -35,16 +35,17 @@
 */
 
 #include "EGEClientConnection.h"
+#include "EGEServer.h"
 
 #include "EGEPacket.h"
 
 namespace EGE
 {
 
-SharedPtr<SFMLPacket> EGEClientConnection::makePacket(sf::Packet& packet)
-{
-    return make<EGEPacket>(packet);
-}
+EGEClientConnection::EGEClientConnection(EGEServer& server)
+: TcpClientConnection(server)
+, m_lastRecv(server.time(Time::Unit::Seconds))
+, m_createTime(server.time(Time::Unit::Seconds)) {}
 
 void EGEClientConnection::setLastRecvTime(Time t)
 {

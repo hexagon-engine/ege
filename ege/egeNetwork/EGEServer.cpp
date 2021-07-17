@@ -43,37 +43,24 @@
 #include <ege/core/AsyncTask.h>
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
-#include <ege/network/ClientConnection.h>
 #include <iomanip>
 #include <iostream>
 
 namespace EGE
 {
 
-EventResult EGEServer::onClientConnect(ClientConnection& client)
+void EGEServer::onClientConnect(ClientConnection& client)
 {
-    sf::Lock lock(m_clientsAccessMutex);
-
     // FIXME: should it be asynchronous?
-    if(!client.send(EGEPacket::generate_Ping()))
-        return EventResult::Failure;
-    if(!client.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION)))
-        return EventResult::Failure;
-    if(!client.send(EGEPacket::generate_Version(getVersion(), getVersionString())))
-        return EventResult::Failure;
-    if(!client.send(EGEPacket::generateSLoginRequest(getLoginData(client))))
-        return EventResult::Failure;
-
-    return EventResult::Success;
+    client.send(EGEPacket::generate_Ping());
+    client.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
+    client.send(EGEPacket::generate_Version(getVersion(), getVersionString()));
+    client.send(EGEPacket::generateSLoginRequest(getLoginData(client)));
 }
 
-EventResult EGEServer::onClientDisconnect(ClientConnection& client)
+void EGEServer::onClientDisconnect(ClientConnection& client)
 {
-    sf::Lock lock(m_clientsAccessMutex);
-    if(!client.send(EGEPacket::generateSDisconnectReason("Disconnected")))
-        return EventResult::Failure;
-
-    return EventResult::Success;
+    client.send(EGEPacket::generateSDisconnectReason("Disconnected"));
 }
 
 void EGEServer::setScene(SharedPtr<Scene> scene)
@@ -101,11 +88,10 @@ void EGEServer::setScene(SharedPtr<Scene> scene)
         sendToAll(EGEPacket::generateSSceneObjectDeletion(event.object.getObjectId()));
 
         // Notify players that were controlling the object that object was removed.
-        sendTo(EGEPacket::generateSDefaultControllerId(nullptr), [event](ClientConnection& client)->bool {
-            EGEClientConnection& egeClient = (EGEClientConnection&)client;
-            if(egeClient.getControlledSceneObject() == event.object.getObjectId())
+        sendToIf(EGEPacket::generateSDefaultControllerId(nullptr), [event](ClientConnection& client) {
+            if(client.getControlledSceneObject() == event.object.getObjectId())
             {
-                ege_log.verbose() << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << event.object.getObjectId();
+                ege_log.verbose() << "EGEServer: Notifying " << client.toString() << " about deletion of controller for " << event.object.getObjectId();
                 return true;
             }
             return false;
@@ -116,15 +102,12 @@ void EGEServer::setScene(SharedPtr<Scene> scene)
     EGEGame::setScene(scene);
 }
 
-EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> packet)
+void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
 {
-    sf::Lock lock(m_clientsAccessMutex);
-    EGEPacket* egePacket = (EGEPacket*)packet.get();
-
     if constexpr(EGEPACKET_DEBUG)
     {
-        ege_log.debug() << "EGEServer: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")";
-        printObject(egePacket->getArgs());
+        ege_log.debug() << "EGEServer: Received packet (" << EGEPacket::typeString(packet.getType()) << ")";
+        printObject(packet.getArgs());
     }
 
     EGEClientConnection& egeClient = (EGEClientConnection&)client;
@@ -139,14 +122,15 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
     if((!egeClient.agentVerCheckSucceeded() || !egeClient.protVerCheckSucceeded())
     && time(Time::Unit::Seconds) - egeClient.getCreateTime().getValue() > 10)
     {
-        ege_log.error() << "EGEServer: Version check timed out for client " << egeClient.getID();
-        return EventResult::Failure;
+        ege_log.error() << "EGEServer: Version check timed out for client " << egeClient.toString();
+        client.disconnect();
+        return;
     }
 
-    switch(egePacket->getType())
+    switch(packet.getType())
     {
     case EGEPacket::Type::_Data:
-        onData(egeClient, egePacket->getArgs());
+        onData(egeClient, packet.getArgs());
         break;
     case EGEPacket::Type::_Ping:
         egeClient.send(EGEPacket::generate_Pong());
@@ -156,13 +140,13 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
     case EGEPacket::Type::_ProtocolVersion:
         {
             egeClient.send(EGEPacket::generate_ProtocolVersion(EGE_PROTOCOL_VERSION));
-            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
+            int value = packet.getArgs()->getObject("value").asInt().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
                 String message = "Invalid protocol version (need " + std::to_string(EGE_PROTOCOL_VERSION) + ", got " + std::to_string(value) + ")";
                 ege_log.debug() << message;
                 kickClientWithReason(egeClient, message);
-                return EventResult::Failure;
+                return;
             }
             egeClient.send(EGEPacket::generate_Pong());
             egeClient.setProtVerCheckSuccess();
@@ -170,31 +154,50 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
         break;
     case EGEPacket::Type::CLogin:
         {
-            return onLogin(egeClient, egePacket->getArgs());
+            if(onLogin(egeClient, packet.getArgs()) == EventResult::Failure)
+            {
+                client.disconnect();
+                return;
+            }
         }
         break;
     case EGEPacket::Type::CSceneObjectControl:
         {
-            SharedPtr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = packet.getArgs();
 
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             auto data = args->getObject("data").to<ObjectMap>();
             if(!data.hasValue())
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             auto data_name = data.value()->getObject("type").asString();
             if(!data_name.hasValue())
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             auto data_args = data.value()->getObject("args").to<ObjectMap>();
             if(!data_args.hasValue())
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             if(!getScene()) // cannot control object when no scene is created!
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             if constexpr(EGESERVER_DEBUG)
                 ege_log.debug() << "EGEServer: Trying to control object: " <<  id.value();
@@ -203,30 +206,43 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
 
             if(!canControlPacket(*controller, egeClient))
             {
-                ege_log.error() << "EGEServer: Client " << egeClient.getID() << " tried to use controller with ID " << id.value() << " without permission!";
-                return EventResult::Failure;
+                ege_log.error() << "EGEServer: Client " << egeClient.toString() << " tried to use controller with ID " << id.value() << " without permission!";
+                client.disconnect();
+                return;
             }
 
             if(controller)
                 controller->handleRequest(ControlPacket(data_name.value(), data_args.value()));
             else
-                return EventResult::Failure; // kick f*****g cheaters
+            {
+                client.disconnect();
+                return;
+            } // kick f*****g cheaters
         }
         break;
     case EGEPacket::Type::CSceneObjectRequest:
         {
-            SharedPtr<ObjectMap> args = egePacket->getArgs();
+            SharedPtr<ObjectMap> args = packet.getArgs();
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             auto scene = getScene();
             if(!scene) // cannot request object when no scene is created!
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             auto sceneObject = scene->getObject(id.value());
             if(!sceneObject) // object doesn't exist
-                return EventResult::Failure;
+            {
+                client.disconnect();
+                return;
+            }
 
             ege_log.debug() << "SceneObject requested: " << id.value();
             egeClient.send(EGEPacket::generateSSceneObjectCreation(*sceneObject, sceneObject->getType()->getId()));
@@ -236,78 +252,50 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
         break;
     case EGEPacket::Type::_Version:
         {
-            int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
-            String str = egePacket->getArgs()->getObject("string").asString().valueOr("Generic EGE::EGEClient");
+            int value = packet.getArgs()->getObject("value").asInt().valueOr(0);
+            String str = packet.getArgs()->getObject("string").asString().valueOr("Generic EGE::EGEClient");
 
             if(value != getVersion())
             {
                 ege_log.error() << "EGEServer: Invalid client version! (need " << getVersion() << ", got " << value << ")";
-                return EventResult::Failure;
+                client.disconnect();
+                return;
             }
 
             if(str != getVersionString())
             {
                 ege_log.error() << "EGEServer: Invalid client! (need '" << getVersionString() << "', got '" << str << "')";
-                return EventResult::Failure;
+                client.disconnect();
+                return;
             }
 
             egeClient.setAgentVerCheckSuccess();
         }
         break;
     default:
-        ege_log.error() << "EGEServer: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
-        return EventResult::Failure;
+        ege_log.error() << "EGEServer: Unimplemented packet handler: " + EGEPacket::typeString(packet.getType());
+        client.disconnect();
     }
-
-    return EventResult::Success;
 }
 
 EventResult EGEServer::onLoad()
 {
+    ege_log.notice() << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
+    ege_log.notice() << "Agent: " << getVersionString() << " v" << getVersion();
     if(!EGEGame::initialize())
         return EventResult::Failure;
 
-    // Run server thread
-    auto serverNetworkWorker = [this](AsyncTask& task)->int {
-        ege_log.notice() << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
-        ege_log.notice() << "Agent: " << getVersionString() << " v" << getVersion();
-        if(!start())
-            return 1;
-
-        while(isRunning())
-        {
-            select();
-            if(task.stopRequested())
-                return 0;
-        }
-
-        return 0;
-    };
-    auto serverNetworkCallback = [this](AsyncTask::State state) {
-        ege_log.info() << "EGEServer: Closing";
-        exit(state.returnCode);
-    };
-
-    SharedPtr<AsyncTask> task = make<AsyncTask>(serverNetworkWorker, serverNetworkCallback);
-    addAsyncTask(task, "EGEServer network task");
+    if(!listen(m_port))
+        return EventResult::Failure;
 
     return EventResult::Success;
 }
 
-void EGEServer::onExit(int exitCode)
+void EGEServer::onTick(TickCount tickCount)
 {
-    (void) exitCode;
-    close();
-}
-
-void EGEServer::onTick(TickCount)
-{
-    sf::Lock lock(m_clientsAccessMutex);
-
     // Check if clients are alive.
-    for(auto it: *this)
+    for(auto& client: clients())
     {
-        EGEClientConnection* client = (EGEClientConnection*)it.second.get();
         double _time = time(Time::Unit::Seconds);
 
         // If client is not talking to us, ping it to check if it's alive.
@@ -388,12 +376,7 @@ void EGEServer::kickClientWithReason(EGEClientConnection& client, std::string re
 {
     client.send(EGEPacket::generateSDisconnectReason(reason));
     onClientDisconnect(client, reason);
-    kickClient(client);
-}
-
-SharedPtr<ClientConnection> EGEServer::makeClient(Server& server, SharedPtr<sf::TcpSocket> socket)
-{
-    return make<EGEClientConnection>((EGEServer&)server, socket);
+    client.disconnect();
 }
 
 void EGEServer::setDefaultController(EGEClientConnection& client, SceneObject* sceneObject)

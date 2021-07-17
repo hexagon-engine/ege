@@ -36,22 +36,50 @@
 
 #pragma once
 
-#include <memory>
-#include <SFML/Network.hpp>
+#include "TcpEndpoint.h"
 
-#include "NetworkEndpoint.h"
-#include "SFMLPacket.h"
+#include <ege/core/MainLoop.h>
 
 namespace EGE
 {
 
-class SFMLNetworkImpl
+// P must be derived from TcpPacket
+template<class P>
+class TcpClient : public MainLoop, public TcpEndpoint<P>
 {
 public:
-    virtual bool sendTo(NetworkEndpoint* endpoint, SharedPtr<Packet> packet);
-    virtual SharedPtr<Packet> receiveFrom(NetworkEndpoint* endpoint);
+    using Packet = P;
+    virtual ~TcpClient() {}
 
-    virtual SharedPtr<SFMLPacket> makePacket(sf::Packet& packet) = 0;
+    bool connect(sf::IpAddress ip, unsigned short port)
+    {
+        if(TcpEndpoint<P>::socket().connect(ip, port) != sf::Socket::Done)
+        {
+            ege_log.info() << "TcpClient: Failed to connect to " << ip.toString() << ":" << port;
+            return false;
+        }
+        ege_log.info() << "TcpClient: Connected to " << ip.toString() << ":" << port;
+        addAsyncTask(make<AsyncTask>([this](AsyncTask& task) {
+            while(true)
+            {
+                if(!TcpEndpoint<P>::isConnected())
+                    return 0;
+
+                auto packet = TcpEndpoint<P>::receive();
+
+                if(packet.isValid())
+                    onReceive(packet);
+                if(task.stopRequested())
+                    return 0;
+            }
+        }, [this](AsyncTask::State state) { ege_log.info() << "TcpClient: Disconnected!"; exit(0); }), "TcpClient");
+        return true;
+    }
+
+    virtual void onReceive(Packet const&) {}
+
+private:
+    SharedPtr<AsyncTask> m_networkTask;
 };
 
 }

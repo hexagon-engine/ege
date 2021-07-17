@@ -34,15 +34,8 @@
 *
 */
 
-#pragma once
-
-#include <SFML/Network.hpp>
+#include "TcpServer.h"
 
 namespace EGE
 {
-
-class Packet
-{
-};
-
 }

@@ -75,21 +75,17 @@ std::string EGEPacket::typeString(Type type)
     }
 }
 
-bool EGEPacket::fromSFMLPacket(sf::Packet& packet)
+bool EGEPacket::deserializeFromSFML(sf::Packet& packet)
 {
-    bool success = true;
-    success &= !packet.endOfPacket();
     packet >> (unsigned int&)m_type;
-    success &= !packet.endOfPacket();
     SharedPtr<Object> args = make<ObjectMap>();
     if(!(packet >> objectIn(args, EGEPacketConverter())))
         return false;
     m_args = std::dynamic_pointer_cast<ObjectMap>(args);
-    ASSERT(m_args);
     return true;
 }
 
-sf::Packet EGEPacket::toSFMLPacket()
+sf::Packet EGEPacket::serializeToSFML() const
 {
     sf::Packet packet;
     packet << (unsigned int)m_type;

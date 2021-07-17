@@ -37,10 +37,10 @@
 #pragma once
 
 #include "EGEGame.h"
+#include "EGEPacket.h"
 #include "ServerNetworkController.h"
 
-#include <ege/network/Packet.h>
-#include <ege/network/Server.h>
+#include <ege/network/TcpServer.h>
 #include <ege/util/ObjectMap.h>
 #include <memory>
 
@@ -52,15 +52,15 @@ namespace EGE
 
 class EGEClientConnection;
 
-class EGEServer : public Server, public MainLoop, public EGEGame
+class EGEServer : public TcpServer<EGEPacket, EGEClientConnection>, public EGEGame
 {
 public:
-    EGEServer(int port)
-    : Server(port) {}
+    EGEServer(Uint16 port = 0)
+    : m_port(port) {}
 
-    virtual EventResult onClientConnect(ClientConnection& client);
-    virtual EventResult onClientDisconnect(ClientConnection& client);
-    virtual EventResult onReceive(ClientConnection& client, SharedPtr<Packet> packet);
+    virtual void onClientConnect(ClientConnection& client) override;
+    virtual void onClientDisconnect(ClientConnection& client) override;
+    virtual void onReceive(ClientConnection& client, Packet const& packet) override;
 
     // to be overridden by user
     // args: client, reason message
@@ -73,15 +73,13 @@ public:
     virtual EventResult onLogin(EGEClientConnection&, SharedPtr<ObjectMap>);
     virtual void onData(EGEClientConnection&, SharedPtr<ObjectMap>) {}
 
-    virtual EventResult onLoad();
-    virtual void onTick(TickCount tickCount);
+    virtual EventResult onLoad() override;
+    virtual void onTick(TickCount tickCount) override;
 
-    virtual void onExit(int exitCode);
-    virtual EventResult onFinish(int) { return EventResult::Success; }
+    virtual EventResult onFinish(int) override { return EventResult::Success; }
 
     void kickClientWithReason(EGEClientConnection& client, std::string reason);
-    virtual SharedPtr<ClientConnection> makeClient(Server& server, SharedPtr<sf::TcpSocket> socket);
-    virtual void setScene(SharedPtr<Scene> scene);
+    virtual void setScene(SharedPtr<Scene> scene) override;
     SharedPtr<ServerNetworkController> getController(UidType objectId);
 
     void setDefaultController(EGEClientConnection& client, SceneObject* sceneObject);
@@ -97,6 +95,7 @@ public:
 
 private:
     std::map<UidType, SharedPtr<ServerNetworkController>> m_controllersForObjects;
+    Uint16 m_port;
 };
 
 }

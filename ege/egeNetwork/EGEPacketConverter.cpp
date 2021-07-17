@@ -318,10 +318,18 @@ static Internal::_ParseResult parseList(sf::Packet& input, ObjectList& object)
 
 bool EGEPacketConverter::in(sf::Packet& input, SharedPtr<Object>& object) const
 {
-    // value type must be 'm'
+    // value type must be 'm' or null
     sf::Uint8 type;
-    if(!(input >> type) || type != 'm')
+    if(input.endOfPacket())
     {
+        // Everything OK!
+        object = nullptr;
+        return true;
+    }
+    input >> type;
+    if(type != 'm')
+    {
+        // It must be a map, this is an error.
         return false;
     }
 

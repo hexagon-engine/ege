@@ -38,16 +38,19 @@
 
 #include <SFML/Network.hpp>
 
-#include "Packet.h"
+#include "TcpPacket.h"
 
 namespace EGE
 {
 
-// abstract
-class SFMLPacket : public Packet
+class SFMLPacket : public TcpPacket
 {
 public:
-    virtual sf::Packet toSFMLPacket() = 0;
+    virtual sf::Packet serializeToSFML() const = 0;
+    virtual bool deserializeFromSFML(sf::Packet& packet) = 0;
+
+    virtual bool send(sf::TcpSocket& socket) const override;
+    virtual bool receive(sf::TcpSocket& socket) override;
 };
 
 }

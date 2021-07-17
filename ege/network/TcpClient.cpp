@@ -34,50 +34,8 @@
 *
 */
 
-#pragma once
-
-#include <memory>
-#include <SFML/Network.hpp>
-
-#include <ege/util/Types.h>
-
-#include "Packet.h"
+#include "TcpClient.h"
 
 namespace EGE
 {
-
-// abstract
-class NetworkEndpoint
-{
-public:
-    virtual ~NetworkEndpoint() {}
-
-    // almost always synchronous
-    virtual bool send(SharedPtr<Packet> packet) = 0;
-    virtual SharedPtr<Packet> receive() = 0;
-
-    bool isConnected()
-    {
-        return m_connected;
-    }
-
-    std::weak_ptr<sf::TcpSocket> getSocket()
-    {
-        return m_socket;
-    }
-
-    sf::Mutex& getMutex()
-    {
-        return m_accessMutex;
-    }
-
-    // synchronous
-    virtual void disconnect();
-
-protected:
-    SharedPtr<sf::TcpSocket> m_socket;
-    bool m_connected = true;
-    sf::Mutex m_accessMutex;
-};
-
 }

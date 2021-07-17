@@ -36,21 +36,35 @@
 
 #pragma once
 
-#include "NetworkEndpoint.h"
-
-#include <ege/core/EventResult.h>
+#include "TcpEndpoint.h"
 
 namespace EGE
 {
 
-class Client : public NetworkEndpoint
+template<class P, class C>
+class TcpServer;
+
+// S must be derived from TcpServer
+template<class S>
+class TcpClientConnection : public TcpEndpoint<typename S::Packet>
 {
 public:
-    virtual ~Client() {}
+    using Packet = typename S::Packet;
+    using ClientConnection = typename S::ClientConnection;
+    using Server = S;
 
-    bool connect(sf::IpAddress ip, unsigned short port);
-    void update();
-    virtual EventResult onReceive(SharedPtr<Packet>) { return EventResult::Failure; }
+    TcpClientConnection(Server& server)
+    : m_server(server) {}
+
+    virtual void disconnect()
+    {
+        m_server.disconnect(TcpEndpoint<Packet>::socket());
+        TcpEndpoint<Packet>::disconnect();
+    }
+
+private:
+    Server& m_server;
+    int m_id = 0;
 };
 
 }

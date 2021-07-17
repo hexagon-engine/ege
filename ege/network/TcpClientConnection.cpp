@@ -34,7 +34,7 @@
 *
 */
 
-#include "Packet.h"
+#include "TcpClientConnection.h"
 
 namespace EGE
 {

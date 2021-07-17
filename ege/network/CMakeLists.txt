@@ -1,18 +1,16 @@
 set(SOURCES
-	"Client.cpp"
-	"Client.h"
-	"ClientConnection.cpp"
- 	"ClientConnection.h"
-	"NetworkEndpoint.cpp"
-	"NetworkEndpoint.h"
-	"Packet.cpp"
-	"Packet.h"
-	"Server.cpp"
-	"Server.h"
-	"SFMLNetworkImpl.cpp"
-	"SFMLNetworkImpl.h"
 	"SFMLPacket.cpp"
 	"SFMLPacket.h"
+	"TcpClient.cpp"
+	"TcpClient.h"
+	"TcpClientConnection.cpp"
+ 	"TcpClientConnection.h"
+	"TcpEndpoint.cpp"
+	"TcpEndpoint.h"
+	"TcpPacket.cpp"
+	"TcpPacket.h"
+	"TcpServer.cpp"
+	"TcpServer.h"
 )
 
 ege_add_module(network)

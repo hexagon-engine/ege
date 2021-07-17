@@ -40,9 +40,7 @@
 #include "EGEGame.h"
 #include "EGEPacket.h"
 
-#include <ege/network/Client.h>
-#include <ege/network/Packet.h>
-#include <ege/network/SFMLNetworkImpl.h>
+#include <ege/network/TcpClient.h>
 #include <ege/network/SFMLPacket.h>
 #include <ege/util/ObjectMap.h>
 #include <memory>
@@ -64,12 +62,11 @@ public:
     int returnValue;
 };
 
-class EGEClient : public Client, public SFMLNetworkImpl, public EventLoop, public EGEGame
+class EGEClient : public TcpClient<EGEPacket>, public EGEGame
 {
 public:
     EGEClient(sf::IpAddress addr, unsigned short port)
-    : Client()
-    , m_ip(addr)
+    : m_ip(addr)
     , m_port(port) {}
 
     virtual ~EGEClient();
@@ -77,34 +74,19 @@ public:
     virtual SharedPtr<ObjectMap> getLoginData(SharedPtr<ObjectMap>) { return nullptr; }
     virtual void onData(SharedPtr<ObjectMap>) {}
 
-    virtual EventResult onReceive(SharedPtr<Packet> packet);
+    virtual void onReceive(EGEPacket const& packet) override;
     EventResult createSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id, String typeId);
     EventResult updateSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id);
 
-    virtual void setScene(SharedPtr<Scene> scene);
+    virtual void setScene(SharedPtr<Scene> scene) override;
 
-    virtual EventResult onLoad();
-    virtual void onTick(TickCount);
+    virtual EventResult onLoad() override;
+    virtual void onExit(int exitCode) override;
 
-    virtual void onExit(int) {}
-    virtual EventResult onFinish(int exitCode);
-
+    virtual void onDisconnect() override { onDisconnect("Disconnected"); }
     virtual void onDisconnect(String) {}
 
-    virtual bool send(SharedPtr<Packet> packet)
-    {
-        return sendTo(this, packet);
-    }
-
-    bool sendWithUID(SharedPtr<EGEPacket> packet);
-
-    virtual SharedPtr<Packet> receive()
-    {
-        return receiveFrom(this);
-    }
-
-    virtual SharedPtr<SFMLPacket> makePacket(sf::Packet& packet);
-    virtual void disconnect();
+    bool sendWithUID(EGEPacket const& packet);
 
     SharedPtr<ClientNetworkController> getDefaultController() { return m_defaultController; }
     SharedPtr<ClientNetworkController> getController(UidType objectId);

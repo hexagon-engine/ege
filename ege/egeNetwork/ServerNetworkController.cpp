@@ -36,6 +36,7 @@
 
 #include "ServerNetworkController.h"
 
+#include "EGEClientConnection.h"
 #include "EGEPacket.h"
 #include "EGEServer.h"
 

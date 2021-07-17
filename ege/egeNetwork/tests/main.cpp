@@ -34,13 +34,14 @@ TESTCASE(converter)
     std::cerr << "Object: " << map->toString() << std::endl;
 
     EGE::EGEPacket packet(EGE::EGEPacket::Type::_Data, map);
-    sf::Packet sfPacket = packet.toSFMLPacket();
+    sf::Packet sfPacket = packet.serializeToSFML();
 
     std::cerr << "Hex dump: " << std::endl;
     EGE::hexDump(sfPacket.getData(), sfPacket.getDataSize(),
                 EGE::HexDumpSettings{8});
 
-    EGE::EGEPacket packet2(sfPacket);
+    EGE::EGEPacket packet2;
+    packet2.deserializeFromSFML(sfPacket);
     std::cerr << "Parsed object: " << packet2.getArgs()->toString() << std::endl;
     std::cerr << std::dec;
 
@@ -231,30 +232,24 @@ TESTCASE(server)
 {
     srand(time(nullptr));
 
-    auto serverThread = []() {
-        MyServer server;
+    MyServer server;
 
-        server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
+    server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
 
-        auto scene = make<EGE::Scene>(nullptr);
+    auto scene = make<EGE::Scene>(nullptr);
 
-        auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
-            auto object = scene->addNewObject<MyObject>();
-            object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
-        });
-        server.addTimer("timer", timer);
+    auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
+        auto object = scene->addNewObject<MyObject>();
+        object->setPosition({(double)(rand() % 50 - 25), (double)(rand() % 50 - 25)});
+    });
+    server.addTimer("timer", timer);
 
-        server.setScene(scene);
+    server.setScene(scene);
 
-        // Register SceneObject types for Client.
-        scene->getRegistry().addType<MyObject>();
+    // Register SceneObject types for Client.
+    scene->getRegistry().addType<MyObject>();
 
-        return server.run();
-    };
-    sf::Thread thread1(serverThread);
-    thread1.launch();
-
-    return 0;
+    return server.run();
 }
 
 class MySystemEventHandler : public EGE::DefaultSystemEventHandler
@@ -393,7 +388,7 @@ TESTCASE(client)
     MyGameLoop loop(PORT);
     loop.openWindow(sf::VideoMode(300, 300), "EGE Protocol Test");
     loop.getWindow().setKeyRepeatEnabled(false);
-    loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 fps
+    loop.setMaxTicksPerSecond(60);
 
     // Run main loop.
     return loop.run();

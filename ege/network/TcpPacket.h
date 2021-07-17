@@ -34,25 +34,30 @@
 *
 */
 
-#include "NetworkEndpoint.h"
+#pragma once
 
-#include <ege/debug/Logger.h>
-#include <iostream>
+#include <SFML/Network.hpp>
 
 namespace EGE
 {
 
-void NetworkEndpoint::disconnect()
+class TcpPacket
 {
-    if(!m_connected)
-        return;
-    m_connected = false;
+public:
+    TcpPacket() = default;
+    TcpPacket(const TcpPacket&) = delete;
+    TcpPacket(TcpPacket&&) = default;
 
-    if(m_socket)
-    {
-        ege_log.error() << "001A EGE/network: Disconnecting network endpoint: " << m_socket->getLocalPort() << " -> " << m_socket->getRemotePort();
-        m_socket->disconnect();
-    }
-}
+    virtual bool send(sf::TcpSocket& socket) const = 0;
+    virtual bool receive(sf::TcpSocket& socket) = 0;
+
+    bool isValid() const { return m_valid; }
+
+protected:
+    void setValid() { m_valid = true; }
+
+private:
+    bool m_valid = false;
+};
 
 }

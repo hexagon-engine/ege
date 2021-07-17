@@ -83,56 +83,42 @@ public:
         SAdditionalControllerId = 0x12
     };
 
+    EGEPacket() = default;
+
+    EGEPacket(Type type, SharedPtr<ObjectMap> args)
+    : m_type(type), m_args(args) {}
+
     static std::string typeString(Type type);
 
-    // receiver
-    EGEPacket(sf::Packet& data)
-    {
-        fromSFMLPacket(data);
-    }
+    virtual bool deserializeFromSFML(sf::Packet& packet) override;
+    virtual sf::Packet serializeToSFML() const override;
 
-    // sender
-    EGEPacket(Type type, SharedPtr<ObjectMap> args)
-    : m_type(type)
-    , m_args(args)
-    {}
-
-    bool fromSFMLPacket(sf::Packet& packet);
-    virtual sf::Packet toSFMLPacket();
-
-    Type getType()
-    {
-        return m_type;
-    }
-
-    SharedPtr<ObjectMap> getArgs()
-    {
-        return m_args;
-    }
+    Type getType() const { return m_type; }
+    SharedPtr<ObjectMap> getArgs() const { return m_args; }
 
     static long long generateUID();
     static void appendUID(SharedPtr<ObjectMap> packetArgs);
 
-    static SharedPtr<EGEPacket> generate_Data(SharedPtr<ObjectMap> data);
-    static SharedPtr<EGEPacket> generate_Ping();
-    static SharedPtr<EGEPacket> generate_Pong();
-    static SharedPtr<EGEPacket> generate_ProtocolVersion(int value);
-    static SharedPtr<EGEPacket> generateSResult(UidType uid, SharedPtr<ObjectMap> userData = nullptr);
-    static SharedPtr<EGEPacket> generateCLogin(SharedPtr<ObjectMap> userData = nullptr); //SResult
-    static SharedPtr<EGEPacket> generateSLoginRequest(SharedPtr<ObjectMap> userData = nullptr);
-    static SharedPtr<EGEPacket> generateSDisconnectReason(std::string message);
-    static SharedPtr<EGEPacket> generateSSceneObjectCreation(SceneObject& object, std::string typeId);
-    static SharedPtr<EGEPacket> generateSSceneObjectUpdate_Main(SceneObject& object);
-    static SharedPtr<EGEPacket> generateSSceneObjectUpdate_Extended(SceneObject& object);
-    static SharedPtr<EGEPacket> generateSSceneObjectDeletion(UidType id);
-    static SharedPtr<EGEPacket> generateSSceneCreation(SharedPtr<ObjectMap> userData = nullptr);
-    static SharedPtr<EGEPacket> generateSSceneDeletion(SharedPtr<ObjectMap> userData = nullptr);
-    static SharedPtr<EGEPacket> generateCSceneObjectControl(SceneObject& object, const ControlPacket& data); //SResult
-    static SharedPtr<EGEPacket> generateSDefaultControllerId(SceneObject* object);
-    static SharedPtr<EGEPacket> generateCSceneObjectRequest(UidType id);
-    static SharedPtr<EGEPacket> generateSSceneObjectControl(SceneObject& object, const ControlPacket& data);
-    static SharedPtr<EGEPacket> generate_Version(int value, std::string str);
-    static SharedPtr<EGEPacket> generateSAdditionalControllerId(SceneObject& object, bool remove);
+    static EGEPacket generate_Data(SharedPtr<ObjectMap> data);
+    static EGEPacket generate_Ping();
+    static EGEPacket generate_Pong();
+    static EGEPacket generate_ProtocolVersion(int value);
+    static EGEPacket generateSResult(UidType uid, SharedPtr<ObjectMap> userData = nullptr);
+    static EGEPacket generateCLogin(SharedPtr<ObjectMap> userData = nullptr); //SResult
+    static EGEPacket generateSLoginRequest(SharedPtr<ObjectMap> userData = nullptr);
+    static EGEPacket generateSDisconnectReason(std::string message);
+    static EGEPacket generateSSceneObjectCreation(SceneObject& object, std::string typeId);
+    static EGEPacket generateSSceneObjectUpdate_Main(SceneObject& object);
+    static EGEPacket generateSSceneObjectUpdate_Extended(SceneObject& object);
+    static EGEPacket generateSSceneObjectDeletion(UidType id);
+    static EGEPacket generateSSceneCreation(SharedPtr<ObjectMap> userData = nullptr);
+    static EGEPacket generateSSceneDeletion(SharedPtr<ObjectMap> userData = nullptr);
+    static EGEPacket generateCSceneObjectControl(SceneObject& object, const ControlPacket& data); //SResult
+    static EGEPacket generateSDefaultControllerId(SceneObject* object);
+    static EGEPacket generateCSceneObjectRequest(UidType id);
+    static EGEPacket generateSSceneObjectControl(SceneObject& object, const ControlPacket& data);
+    static EGEPacket generate_Version(int value, std::string str);
+    static EGEPacket generateSAdditionalControllerId(SceneObject& object, bool remove);
 
 private:
     Type m_type;
