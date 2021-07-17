@@ -71,15 +71,9 @@ public:
         m_gameplayObjectManager = gpom;
     }
 
-    std::weak_ptr<Profiler> getProfiler()
-    {
-        return m_profiler;
-    }
-
     int run();
 
 protected:
-    SharedPtr<Profiler> m_profiler;
     SharedPtr<GameplayObjectManager> m_gameplayObjectManager;
     SharedPtr<GUIGameLoop> m_gameLoop;
 };

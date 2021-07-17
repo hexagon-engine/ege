@@ -42,14 +42,12 @@ namespace EGE
 Game::Game()
 {
     m_gameLoop = make<GUIGameLoop>();
-    m_profiler = make<Profiler>();
 }
 
 int Game::run()
 {
     if(m_gameplayObjectManager)
         m_gameplayObjectManager->reload();
-    m_gameLoop->setProfiler(getProfiler());
     return m_gameLoop->run();
 }
 
