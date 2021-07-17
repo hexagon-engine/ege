@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <ctime>
 
 namespace EGE
@@ -48,7 +49,7 @@ class ExactTime
 {
 public:
     static inline ExactTime zero() { return {}; }
-    static inline ExactTime fromSeconds(time_t s) { return ExactTime(s, 0); }
+    static inline ExactTime fromSeconds(double s) { return ExactTime(s, (s - std::floor(s)) * 1000000000); }
     static inline ExactTime fromMilliseconds(long long ms) { return ExactTime(ms / 1000, ms * 1000000); }
     static inline ExactTime fromMicroseconds(long long us) { return ExactTime(us / 1000000, us * 1000); }
     static inline ExactTime fromNanoseconds(long long ns) { return ExactTime(ns / 1000000000, ns); }

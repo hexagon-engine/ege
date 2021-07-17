@@ -32,7 +32,7 @@ TESTCASE(asyncTask)
     while(running)
     {
         loop.onUpdate();
-        EGE::System::sleep(EGE::System::ExactTime::fromMilliseconds(250));
+        EGE::System::sleep(EGE::System::ExactTime::fromSeconds(0.25));
         std::cerr << "main thread" << std::endl;
 
         if(myTask->finished())
