@@ -134,9 +134,6 @@ public:
     class LockingEventArray
     {
     public:
-        explicit LockingEventArray(std::mutex& mutex)
-        : m_lock(mutex) {}
-
         template<class Evt = EvtT>
         LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
             { m_array->add(handler); return *this; }
@@ -160,6 +157,9 @@ public:
 
     private:
         friend class EventLoop;
+
+        explicit LockingEventArray(std::mutex& mutex)
+        : m_lock(mutex) {}
 
         EventArray<EvtT>* m_array;
         std::unique_lock<std::mutex> m_lock;
