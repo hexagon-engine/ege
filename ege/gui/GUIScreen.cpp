@@ -341,7 +341,7 @@ void GUIScreen::openDialog(SharedPtr<GUIScreen> dialog)
 
     deferredInvoke([this, dialog] {
         m_dialog = dialog;
-        m_dialog->onLoad();
+        m_dialog->onCreate();
 
         sf::Vector2u wndSize = getLoop().getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};

@@ -87,7 +87,7 @@ void GUIGameLoop::onTick(long long tickCount)
             m_currentGui->onUnload();
         }
         m_currentGui = m_pendingGui;
-        m_currentGui->onLoad();
+        m_currentGui->onCreate();
 
         // allow GUI screens know about window's size when creating
         sf::Vector2u wndSize = getWindow().getSize();
@@ -140,7 +140,7 @@ void GUIGameLoop::setCurrentGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImme
            m_currentGui->onUnload();
 
         m_currentGui = screen;
-        m_currentGui->onLoad();
+        m_currentGui->onCreate();
 
         // allow GUI screens know about window's size when creating
         sf::Vector2u wndSize = getWindow().getSize();

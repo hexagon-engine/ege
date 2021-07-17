@@ -291,7 +291,7 @@ void CompoundWidget::addWidget(SharedPtr<Widget> widget)
     DUMP(GUI_DEBUG, "addWidget");
     DUMP(GUI_DEBUG, widget.get());
     ASSERT(widget);
-    widget->onLoad();
+    widget->onCreate();
 
     // allow widgets know about window's size when creating
     sf::Vector2u wndSize = getLoop().getWindow().getSize();
