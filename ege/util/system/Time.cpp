@@ -54,6 +54,11 @@ ExactTime exactTime()
     return impl().exactTime();
 }
 
+void sleep(ExactTime time)
+{
+    return impl().sleep(time);
+}
+
 } // System
 
 }

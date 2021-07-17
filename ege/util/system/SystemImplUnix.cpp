@@ -36,6 +36,7 @@
 
 #include "SystemImplUnix.h"
 
+#include <ctime>
 #include <dirent.h>
 #include <errno.h>
 #include <limits.h>
@@ -73,6 +74,14 @@ System::ExactTime SystemImplUnix::exactTime()
     }
 
     return System::ExactTime::fromSecondsAndNanoseconds(_ts.tv_sec, _ts.tv_nsec);
+}
+
+void SystemImplUnix::sleep(System::ExactTime time)
+{
+    timespec requested = {.tv_sec = time.onlySeconds(), .tv_nsec = time.onlyNanoseconds()};
+    timespec remaining;
+    if(clock_nanosleep(CLOCK_REALTIME, 0, &requested, &remaining) < 0)
+        m_lastErrno = errno;
 }
 
 // FileSystem

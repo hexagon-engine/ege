@@ -77,6 +77,7 @@ private:
 time_t unixTime();
 
 ExactTime exactTime();
+void sleep(ExactTime time);
 
 }
 

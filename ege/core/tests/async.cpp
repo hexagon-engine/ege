@@ -2,6 +2,7 @@
 
 #include <ege/core/EventLoop.h>
 #include <ege/core/Timer.h>
+#include <ege/util/system.h>
 #include <ege/util/PointerUtils.h>
 
 int myWorker(EGE::AsyncTask& task)
@@ -9,8 +10,7 @@ int myWorker(EGE::AsyncTask& task)
     for(int i = 0; i < 4; i++)
     {
         // TODO: Add EGE::System::sleep()
-        time_t currentTime = time(nullptr);
-        while(time(nullptr) < currentTime + i) ;
+        EGE::System::sleep(EGE::System::ExactTime::fromSeconds(i));
         std::cerr << "worker: " << i << std::endl;
     }
     return 1;
@@ -32,9 +32,7 @@ TESTCASE(asyncTask)
     while(running)
     {
         loop.onUpdate();
-        // TODO: Add EGE::System::sleep()
-        time_t currentTime = time(nullptr);
-        while(time(nullptr) < currentTime + 1) ;
+        EGE::System::sleep(EGE::System::ExactTime::fromMilliseconds(250));
         std::cerr << "main thread" << std::endl;
 
         if(myTask->finished())
@@ -61,8 +59,7 @@ TESTCASE(eventLoopIsThreadSafe)
         for(int i = 0; i < mt; i++)
         {
             progress = (float)i / mt;
-            // TODO: Add EGE::System::sleep()
-            for(size_t s = 0; s < 10000; s++) ;
+            EGE::System::sleep(EGE::System::ExactTime::fromMilliseconds(1));
             if(rand() % 100 == 0)
                 std::cerr << "Doing something at i=" << i << std::endl;
             if(i == 5478)

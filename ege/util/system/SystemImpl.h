@@ -54,6 +54,7 @@ public:
     // Time
     virtual time_t unixTime() { CRASH(); }
     virtual System::ExactTime exactTime() { CRASH(); }
+    virtual void sleep(System::ExactTime) { CRASH(); }
 
     // FileSystem
     virtual System::FileInfo stat(std::string) { CRASH(); }

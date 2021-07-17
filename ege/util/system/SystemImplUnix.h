@@ -50,6 +50,7 @@ public:
     // Time
     time_t unixTime();
     System::ExactTime exactTime();
+    void sleep(System::ExactTime);
 
     // FileSystem
     System::FileInfo stat(std::string path);
