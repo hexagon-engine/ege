@@ -78,8 +78,11 @@ void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventL
             this->onTimerTick(_timer);
        });
     }
-    std::lock_guard<std::mutex> lock(m_timersMutex);
-    m_timers.insert(std::make_pair(name, timer));
+    // deferredInvoke to prevent deadlocks when adding timers from timer callback
+    deferredInvoke([this, name, timer] {
+        std::lock_guard<std::mutex> lock(m_timersMutex);
+        m_timers.insert(std::make_pair(name, timer));
+    });
 }
 
 std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
