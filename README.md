@@ -9,8 +9,8 @@ The main, biggest dependency of engine is [**SFML**](https://github.com/sfml/SFM
 Full feature list is in docs/features.md
 
 ## Modules
-* **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
 * **controller** - System used for synchronizing scenes over the network
+* **core** - Basic utilities (event loop, data manager)
 * **debug** - Debug utility
 * **egeNetwork** - Protocol for network games
 * **event** - System (window) event handlers
@@ -19,7 +19,6 @@ Full feature list is in docs/features.md
 * **gfx** - Graphics renderer
 * **gpo** - "Gameplay Object" Manager
 * **gui** - User interface utility
-* **loop** - Basic event loop utility
 * **main** - Engine-global functionality & configuration (ASSERT etc.)
 * **network** - Low-level network library (opening sockets etc.)
 * **resources** - ResourceManager for loading textures, fonts, shaders etc.

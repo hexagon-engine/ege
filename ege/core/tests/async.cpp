@@ -1,16 +1,16 @@
 #include <testsuite/Tests.h>
 
-#include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/core/EventLoop.h>
 #include <ege/core/Timer.h>
 #include <ege/util/PointerUtils.h>
-#include <SFML/System.hpp>
 
 int myWorker(EGE::AsyncTask& task)
 {
     for(int i = 0; i < 4; i++)
     {
-        sf::sleep(sf::seconds(i));
+        // TODO: Add EGE::System::sleep()
+        time_t currentTime = time(nullptr);
+        while(time(nullptr) < currentTime + i) ;
         std::cerr << "worker: " << i << std::endl;
     }
     return 1;
@@ -21,7 +21,7 @@ void myCallback(EGE::AsyncTask::State state)
     std::cerr << "callback: finished=" << state.finished << " returnCode=" << state.returnCode << std::endl;
 }
 
-TESTCASE(simple)
+TESTCASE(asyncTask)
 {
     EGE::EventLoop loop;
     auto myTask = make<EGE::AsyncTask>(myWorker, myCallback);
@@ -32,7 +32,9 @@ TESTCASE(simple)
     while(running)
     {
         loop.onUpdate();
-        sf::sleep(sf::seconds(0.25f));
+        // TODO: Add EGE::System::sleep()
+        time_t currentTime = time(nullptr);
+        while(time(nullptr) < currentTime + 1) ;
         std::cerr << "main thread" << std::endl;
 
         if(myTask->finished())
@@ -47,9 +49,9 @@ TESTCASE(simple)
     return 0;
 }
 
-TESTCASE(threadSafeEventLoop)
+TESTCASE(eventLoopIsThreadSafe)
 {
-    EGE::ThreadSafeEventLoop loop;
+    EGE::EventLoop loop;
     float progress = 0;
     srand(time(NULL));
 
@@ -59,7 +61,8 @@ TESTCASE(threadSafeEventLoop)
         for(int i = 0; i < mt; i++)
         {
             progress = (float)i / mt;
-            sf::sleep(sf::milliseconds(1));
+            // TODO: Add EGE::System::sleep()
+            for(size_t s = 0; s < 10000; s++) ;
             if(rand() % 100 == 0)
                 std::cerr << "Doing something at i=" << i << std::endl;
             if(i == 5478)
@@ -83,4 +86,4 @@ TESTCASE(threadSafeEventLoop)
     return loop.run();
 }
 
-RUN_TESTS(asyncLoop);
+RUN_TESTS(async);

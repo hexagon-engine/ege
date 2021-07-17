@@ -52,11 +52,6 @@
 namespace EGE
 {
 
-EventLoop::EventArray<Event>& EventLoop::events(Event::EventType type)
-{
-    return m_eventHandlers[type];
-}
-
 void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
 {
     ASSERT(timer);
@@ -82,6 +77,7 @@ void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventL
             this->onTimerTick(_timer);
        });
     }
+    std::lock_guard<std::mutex> lock(m_timersMutex);
     m_timers.insert(std::make_pair(name, timer));
 }
 
@@ -89,6 +85,7 @@ std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
 {
     std::vector<std::weak_ptr<Timer>> timers;
     decltype(m_timers)::iterator it;
+    std::lock_guard<std::mutex> lock(m_timersMutex);
     while((it = m_timers.find(timer)) != m_timers.end())
     {
         timers.push_back(it->second);
@@ -98,6 +95,7 @@ std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
 void EventLoop::removeTimer(const std::string& timer)
 {
     decltype(m_timers)::iterator it;
+    std::lock_guard<std::mutex> lock(m_timersMutex);
     while((it = m_timers.find(timer)) != m_timers.end())
     {
         m_timers.erase(it);
@@ -107,18 +105,24 @@ void EventLoop::removeTimer(const std::string& timer)
 void EventLoop::onUpdate()
 {
     // Update all subloops
-    for(auto& subLoop: m_subLoops)
-        subLoop->onUpdate();
+    {
+        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
+        for(auto& subLoop: m_subLoops)
+            subLoop->onUpdate();
+    }
 
     // Remove subloops that exited.
-    auto it = std::remove_if(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop> otherLoop) {
-        return !otherLoop->isRunning();
-    });
-
-    if(it != m_subLoops.end())
     {
-        ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
-        m_subLoops.erase(it);
+        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
+        auto it = std::remove_if(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop> otherLoop) {
+            return !otherLoop->isRunning();
+        });
+
+        if(it != m_subLoops.end())
+        {
+            ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
+            m_subLoops.erase(it);
+        }
     }
 
     // Do updates of self
@@ -130,6 +134,7 @@ void EventLoop::onUpdate()
 
 void EventLoop::updateTimers()
 {
+    std::lock_guard<std::mutex> lock(m_timersMutex);
     for(auto it = m_timers.begin(); it != m_timers.end(); it++)
     {
         auto timer = *it;
@@ -153,11 +158,13 @@ void EventLoop::updateTimers()
 
 void EventLoop::deferredInvoke(std::function<void()> func)
 {
+    std::lock_guard<std::mutex> lock(m_deferredInvokesMutex);
     m_deferredInvokes.push(func);
 }
 
 void EventLoop::callDeferredInvokes()
 {
+    std::lock_guard<std::mutex> lock(m_deferredInvokesMutex);
     while(!m_deferredInvokes.empty())
     {
         m_deferredInvokes.front()();
@@ -168,7 +175,7 @@ void EventLoop::callDeferredInvokes()
 double EventLoop::time(Time::Unit unit)
 {
     if(unit == Time::Unit::Ticks)
-        return m_ticks;
+        return m_ticks.load();
     else if(unit == Time::Unit::Seconds)
     {
         #if defined(WIN32)
@@ -178,14 +185,15 @@ double EventLoop::time(Time::Unit unit)
             return _time.s + _time.ns / 1000000000.0;
         #endif
     }
-    ASSERT(false);
+    CRASH();
 }
 
 void EventLoop::exit(int exitCode)
 {
-    m_exitCode = exitCode;
-    m_running = false;
+    m_exitCode.store(exitCode);
+    m_running.store(false);
 
+    std::lock_guard<std::mutex> lock(m_subLoopsMutex);
     for(auto& subLoop: m_subLoops)
     {
         subLoop->exit(exitCode);
@@ -194,14 +202,15 @@ void EventLoop::exit(int exitCode)
 
 int EventLoop::run()
 {
-    while(m_running)
+    while(m_running.load())
         onUpdate();
-    return m_exitCode;
+    return m_exitCode.load();
 }
 
 void EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
 {
     ASSERT(loop);
+    std::lock_guard<std::mutex> lock(m_subLoopsMutex);
     m_subLoops.push_back(loop);
     loop->isnSetParent(this);
 }
@@ -216,6 +225,7 @@ void EventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {
     task->setName(name);
     task->start();
+    std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
     m_asyncTasks.insert(std::make_pair(name, task));
 }
 
@@ -223,9 +233,12 @@ std::vector<std::weak_ptr<AsyncTask>> EventLoop::getAsyncTasks(std::string name)
 {
     std::vector<std::weak_ptr<AsyncTask>> tasks;
     decltype(m_asyncTasks)::iterator it;
-    while((it = m_asyncTasks.find(name)) != m_asyncTasks.end())
     {
-        tasks.push_back(it->second);
+        std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
+        while((it = m_asyncTasks.find(name)) != m_asyncTasks.end())
+        {
+            tasks.push_back(it->second);
+        }
     }
     return tasks;
 }
@@ -233,6 +246,7 @@ std::vector<std::weak_ptr<AsyncTask>> EventLoop::getAsyncTasks(std::string name)
 void EventLoop::removeAsyncTasks(std::string name)
 {
     decltype(m_asyncTasks)::iterator it;
+    std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
     while((it = m_asyncTasks.find(name)) != m_asyncTasks.end())
     {
         m_asyncTasks.erase(it);
@@ -241,6 +255,7 @@ void EventLoop::removeAsyncTasks(std::string name)
 
 void EventLoop::updateAsyncTasks()
 {
+    std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
     for(auto it = m_asyncTasks.begin(); it != m_asyncTasks.end(); it++)
     {
         auto task = *it;
@@ -248,7 +263,7 @@ void EventLoop::updateAsyncTasks()
         if(state.finished)
         {
             if(state.returnCode != 0)
-                ege_log.error() << "001C EGE/asyncLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
+                ege_log.error() << "EventLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
 
             m_asyncTasks.erase(it);
             if(m_asyncTasks.empty())

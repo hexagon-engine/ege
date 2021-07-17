@@ -39,7 +39,6 @@
 #include "EGEGame.h"
 #include "ServerNetworkController.h"
 
-#include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/gui/GameLoop.h>
 #include <ege/network/Packet.h>
 #include <ege/network/Server.h>

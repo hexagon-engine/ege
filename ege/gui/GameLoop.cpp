@@ -83,7 +83,7 @@ int GameLoop::run()
 
     result = onFinish(m_exitCode);
 
-    for(auto& subLoop: m_subLoops)
+    for(auto& subLoop: getSubloops())
         subLoop->exit(m_exitCode);
 
     if(result == EventResult::Failure)

@@ -40,7 +40,6 @@
 #include "EGEGame.h"
 #include "EGEPacket.h"
 
-#include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/gui/GameLoop.h>
 #include <ege/network/Client.h>
 #include <ege/network/Packet.h>

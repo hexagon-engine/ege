@@ -37,7 +37,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/scene/SceneLoader.h>

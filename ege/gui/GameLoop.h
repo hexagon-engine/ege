@@ -36,9 +36,9 @@
 
 #pragma once
 
-#include <ege/asyncLoop/ThreadSafeEventLoop.h>
 #include <ege/debug/Profiler.h>
 #include <ege/core/EventHandler.h>
+#include <ege/core/EventLoop.h>
 #include <ege/core/EventResult.h>
 #include <ege/core/Timer.h>
 #include <ege/util/Time.h>
@@ -49,11 +49,11 @@
 namespace EGE
 {
 
-class GameLoop : public ThreadSafeEventLoop
+class GameLoop : public EventLoop
 {
 public:
     GameLoop(String id = "GameLoop")
-    : ThreadSafeEventLoop(id) {}
+    : EventLoop(id) {}
 
     virtual int run() override;
     virtual void exit(int exitCode = 0) override;

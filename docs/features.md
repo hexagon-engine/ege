@@ -1,8 +1,9 @@
 ## Full feature list
-* **asyncLoop** - Asynchronous (and thread-safe) implementation of Event Loop
-    * Thread-safe EventLoop
-    * Async tasks
 * **controller** - API used for synchronizing scenes over the network
+* **core** - Event Loop and basic utilities
+    * EventLoop - event system
+    * Timers & clocks
+    * Async tasks
 * **debug** - Debug utility
     * EGE custom logger
     * Configurable hex dump
@@ -28,9 +29,6 @@
     * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox) and modal dialogs
     * Simple layout calculation
     * Splash screens
-* **loop** - Basic event loop utility
-    * EventLoop - event system
-    * Timers & clocks
 * **main** - Engine-global functionality & configuration (ASSERT etc.)
 * **network** - Low-level network library (opening sockets etc.)
     * TCP sockets and listeners (SFML Packet compatible)

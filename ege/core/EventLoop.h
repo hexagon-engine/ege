@@ -134,37 +134,44 @@ public:
     class LockingEventArray
     {
     public:
-        LockingEventArray(EventArray<EvtT>& array, std::mutex& mutex)
-        : m_array(array), m_lock(mutex) {}
+        explicit LockingEventArray(std::mutex& mutex)
+        : m_lock(mutex) {}
 
         template<class Evt = EvtT>
         LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
-            { m_array.add(handler); return *this; }
+            { m_array->add(handler); return *this; }
 
         LockingEventArray<EvtT>& remove(EventHandler& handler)
-            { m_array.remove(handler); return *this; }
+            { m_array->remove(handler); return *this; }
 
         template<class EvtHandler, class... Args>
         LockingEventArray<EvtT>& addHandler(Args&&... args)
-            { m_array.template addHandler<EvtHandler>(args...); return *this; }
+            { m_array->template addHandler<EvtHandler>(args...); return *this; }
 
         LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler)
-            { m_array.addHandler(handler); return *this; }
+            { m_array->addHandler(handler); return *this; }
 
         template<class Evt = EvtT, class... Args>
         EventResult fire(Args&&... args)
-            { return m_array.template fire<Evt>(args...); }
+            { return m_array->template fire<Evt>(args...); }
 
         EventResult fire(EvtT& event)
-            { return m_array.fire(event); }
+            { return m_array->fire(event); }
 
     private:
-        EventArray<EvtT>& m_array;
-        std::lock_guard<std::mutex> m_lock;
+        friend class EventLoop;
+
+        EventArray<EvtT>* m_array;
+        std::unique_lock<std::mutex> m_lock;
     };
 
     template<class Evt>
-    LockingEventArray<Evt> events() { return LockingEventArray<Evt>((EventArray<Evt>&)events(Evt::type()), m_mutex); }
+    LockingEventArray<Evt> events()
+    {
+        auto array = LockingEventArray<Evt>(m_eventHandlersMutex);
+        array.m_array = (EventArray<Evt>*)&m_eventHandlers[Evt::type()];
+        return std::move(array);
+    }
 
     template<class Evt>
     EventResult fire(Evt& evt) { return events<Evt>().fire(evt); }
@@ -198,25 +205,37 @@ public:
     virtual void removeAsyncTasks(std::string name = "");
     virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
 
+    // This is temporary until EventLoop gets merged with GUI GameLoop.
+    SharedPtrVector<EventLoop>& getSubloops() { return m_subLoops; }
+
 private:
-    std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;
 
 protected:
     virtual void updateTimers();
     virtual void updateAsyncTasks();
     virtual void callDeferredInvokes();
-    int m_exitCode = 0;
-    SharedPtrVector<EventLoop> m_subLoops;
+    std::atomic<int> m_exitCode = 0;
 
 private:
     EventArray<Event>& events(Event::EventType type);
 
-    int m_ticks = 0;
-    bool m_running = true;
+    std::atomic<int> m_ticks = 0;
+    std::atomic<bool> m_running = true;
+    
+    std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;
+    std::mutex m_asyncTasksMutex;
+
     std::multimap<std::string, SharedPtr<Timer>> m_timers;
+    std::mutex m_timersMutex;
+
     Map<Event::EventType, EventArray<Event>> m_eventHandlers;
+    std::mutex m_eventHandlersMutex;
+
     std::queue<std::function<void()>> m_deferredInvokes;
-    std::mutex m_mutex;
+    std::mutex m_deferredInvokesMutex;
+
+    SharedPtrVector<EventLoop> m_subLoops;
+    std::mutex m_subLoopsMutex;
 };
 
 }
