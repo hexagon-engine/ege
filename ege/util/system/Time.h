@@ -62,6 +62,9 @@ public:
     double microseconds() const { return m_seconds * 1000000 + m_nanoseconds / 1000.0; }
     long long nanoseconds() const { return m_seconds * 1000000000 + m_nanoseconds; }
 
+    time_t onlySeconds() const { return m_seconds; }
+    long long onlyNanoseconds() const { return m_nanoseconds; }
+
 private:
     time_t m_seconds;
     long long m_nanoseconds;
