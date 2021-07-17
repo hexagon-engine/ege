@@ -43,6 +43,7 @@
 #include <ege/core/EventHandler.h>
 #include <ege/core/EventLoop.h>
 #include <ege/core/EventResult.h>
+#include <ege/core/MainLoop.h>
 #include <ege/core/TimerEvent.h>
 #include <ege/core/Timer.h>
 

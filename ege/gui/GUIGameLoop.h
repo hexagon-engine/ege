@@ -38,9 +38,9 @@
 
 #include "GUIScreen.h"
 
+#include <ege/core/MainLoop.h>
 #include <ege/event/SystemWindow.h>
 #include <ege/gfx/RenderStates.h>
-#include <ege/gui/GameLoop.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/resources/ResourceManager.h>
@@ -51,18 +51,17 @@
 namespace EGE
 {
 
-class GUIGameLoop : public GameLoop
+class GUIGameLoop : public MainLoop
 {
 public:
     //EGE_SINGLETON(GUIGameLoop);
 
     GUIGameLoop(String id = "GUIGameLoop")
-    : GameLoop(id), m_renderer(m_systemWindow) {}
+    : MainLoop(id), m_renderer(m_systemWindow) {}
 
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
     virtual void onTick(long long tickCount) override;
-    virtual void onExit(int) override {}
 
     virtual EventResult onFinish(int) override
     {
@@ -86,7 +85,6 @@ public:
 
     SharedPtr<ResourceManager> getResourceManager();
     void setResourceManager(SharedPtr<ResourceManager> manager);
-    void setProfiler(std::weak_ptr<Profiler> profiler);
 
     void setBackgroundColor(sf::Color color)
     {

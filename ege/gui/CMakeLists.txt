@@ -15,8 +15,6 @@ set(SOURCES
 	"CompoundWidget.h"
 	"Frame.cpp"
 	"Frame.h"
-	"GameLoop.cpp"
-	"GameLoop.h"
 	"GUIGameLoop.cpp"
 	"GUIGameLoop.h"
 	"GUIResourceManager.cpp"

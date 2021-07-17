@@ -198,11 +198,6 @@ void GUIGameLoop::setResourceManager(SharedPtr<ResourceManager> manager)
     m_resourceManager = manager;
 }
 
-void GUIGameLoop::setProfiler(std::weak_ptr<Profiler> profiler)
-{
-    m_profiler = profiler.lock();
-}
-
 void GUIGameLoop::render()
 {
     if(m_systemWindow.isOpen())

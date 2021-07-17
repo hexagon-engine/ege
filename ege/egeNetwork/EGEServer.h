@@ -39,7 +39,6 @@
 #include "EGEGame.h"
 #include "ServerNetworkController.h"
 
-#include <ege/gui/GameLoop.h>
 #include <ege/network/Packet.h>
 #include <ege/network/Server.h>
 #include <ege/util/ObjectMap.h>
@@ -53,7 +52,7 @@ namespace EGE
 
 class EGEClientConnection;
 
-class EGEServer : public Server, public GameLoop, public EGEGame
+class EGEServer : public Server, public MainLoop, public EGEGame
 {
 public:
     EGEServer(int port)

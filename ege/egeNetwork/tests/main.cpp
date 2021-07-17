@@ -355,8 +355,7 @@ public:
         });
 
         // Add keybind handler. It will pass keyboard events to Controller.
-        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(),
-                                                                    m_client);
+        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);
 
         // Initialize Camera.
         m_camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);

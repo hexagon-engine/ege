@@ -1,10 +1,11 @@
 #include <testsuite/Tests.h>
 #include <ege/sound.h>
+#include <ege/core/MainLoop.h>
 #include <ege/debug/Logger.h>
 
 TESTCASE(basic)
 {
-    EGE::EventLoop loop;
+    EGE::MainLoop loop;
 
     auto soundManager = make<EGE::SoundManager>();
     // https://soundbible.com/1645-Pling.html

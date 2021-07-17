@@ -11,6 +11,8 @@ set(SOURCES
 	"EventLoop.cpp"
 	"EventLoop.h"
 	"EventResult.h"
+	"MainLoop.cpp"
+	"MainLoop.h"
 	"Timer.cpp"
 	"Timer.h"
 	"TimerEvent.h"

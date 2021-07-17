@@ -90,7 +90,7 @@ public:
 
     virtual void onUpdate(long long tickCounter);
 
-    virtual void onLoad() {}
+    virtual void onCreate() {}
     virtual void onCommand(const Command&) {}
 
     virtual void onResize(sf::Event::SizeEvent& event) override;

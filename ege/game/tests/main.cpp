@@ -115,7 +115,7 @@ public:
     MyGuiScreen(EGE::GUIGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
-    void onLoad()
+    void onCreate()
     {
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
         ege_log.info() << "MyGuiScreen onLoad";

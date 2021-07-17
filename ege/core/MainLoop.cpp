@@ -34,58 +34,63 @@
 *
 */
 
-#pragma once
+#include "MainLoop.h"
 
-#include <ege/debug/Profiler.h>
-#include <ege/core/EventHandler.h>
-#include <ege/core/EventLoop.h>
-#include <ege/core/EventResult.h>
-#include <ege/core/Timer.h>
-#include <ege/util/Time.h>
-
-#include <map>
-#include <memory>
+#include <ege/core/Clock.h>
+#include <ege/debug/Inspector.h>
+#include <ege/debug/Logger.h>
+#include <ege/util/system.h>
 
 namespace EGE
 {
 
-class GameLoop : public EventLoop
+int MainLoop::run()
 {
-public:
-    GameLoop(String id = "GameLoop")
-    : EventLoop(id) {}
+    auto result = onLoad();
 
-    virtual int run() override;
-    virtual void exit(int exitCode = 0) override;
-
-    // NOTE: it's synchronous load so cannot be used to display loading screen
-    virtual EventResult onLoad() = 0;
-    virtual void onTick(long long tickCount) = 0;
-    virtual void onExit(int exitCode) = 0;
-    virtual EventResult onFinish(int exitCode) = 0;
-    virtual void onUpdate() override;
-
-    // It also calls onLoad for loop. Beware of it when you are setting
-    // EGE::EGEClient or EGE::EGEServer, which will be started now
-    // (and it creates threads, opens ports etc.)
-    virtual bool addSubLoop(SharedPtr<GameLoop> loop);
-    virtual void removeSubLoop(GameLoop& loop);
-
-    virtual void setMinimalTickTime(Time time)
+    if(result == EventResult::Failure)
     {
-        m_minTickTime = time;
+        ege_log.critical() << "EventLoop: onLoad() failed";
+        return 0x0001;
     }
 
-    SharedPtr<Profiler> getProfiler()
+    Clock tickClock(this);
+    while(isRunning())
     {
-        return m_profiler;
+        Profiler profiler;
+        m_profiler = &profiler;
+        profiler.start();
+
+        tickClock.restart();
+        profiler.startSection("update");
+        onUpdate();
+
+        // Limit tick time / frame rate
+        profiler.endStartSection("tickLimit");
+        if(m_minTickTime.getValue() > 0.0)
+            EGE::System::sleep(EGE::System::ExactTime::fromSeconds(m_minTickTime.getValue() - tickClock.getElapsedTime()));
+
+        profiler.end();
+        onProfilerResults(profiler);
+        m_profiler = nullptr;
     }
 
-protected:
-    SharedPtr<Profiler> m_profiler;
+    int exitCode = getExitCode();
+    result = onFinish(exitCode);
 
-private:
-    Time m_minTickTime = {0.0, Time::Unit::Seconds};
-};
+    for(auto& subLoop: m_subLoops)
+        subLoop->exit(exitCode);
+
+    updateSubloops();
+
+    if(result == EventResult::Failure)
+    {
+        ege_log.critical() << "EventLoop: onFinish() failed";
+        return 0x0002;
+    }
+
+    EGE::Inspector::instance().display(EGE::mainLogger());
+    return exitCode;
+}
 
 }

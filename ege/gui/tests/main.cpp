@@ -90,10 +90,10 @@ public:
     explicit MyGuiScreen(MyGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
-    virtual void onLoad() override
+    virtual void onCreate() override
     {
-        EGE::GUIScreen::onLoad();
-        ege_log.info() << "MyResourceManager onLoad";
+        EGE::GUIScreen::onCreate();
+        ege_log.info() << "MyResourceManager onCreate";
         widget1 = make<EGE::DummyWidget>(*this);
         widget1->setPosition(EGE::Vec2d(50.f, 50.f));
         widget1->setSize(EGE::Vec2d(50.f, 50.f));
@@ -181,9 +181,9 @@ public:
     explicit MyGuiScreen2(MyGameLoop& loop)
     : EGE::GUIScreen(loop) {}
 
-    virtual void onLoad() override
+    virtual void onCreate() override
     {
-        EGE::GUIScreen::onLoad();
+        EGE::GUIScreen::onCreate();
 
         getWindow().setFramerateLimit(60);
         ege_log.info() << "MyResourceManager onLoad";

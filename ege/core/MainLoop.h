@@ -36,27 +36,24 @@
 
 #pragma once
 
-#include <ege/gui/Animatable.h>
-#include <ege/gui/AnimationEasingFunctions.h>
-#include <ege/gui/Animation.h>
-#include <ege/gui/Button.h>
-#include <ege/gui/CheckBox.h>
-#include <ege/gui/ComboBox.h>
-#include <ege/gui/CompoundWidget.h>
-#include <ege/gui/Frame.h>
-#include <ege/gui/GUIGameLoop.h>
-#include <ege/gui/GUIResourceManager.h>
-#include <ege/gui/GUIScreen.h>
-#include <ege/gui/Label.h>
-#include <ege/gui/LayoutElement.h>
-#include <ege/gui/LayoutSize.h>
-#include <ege/gui/ListBox.h>
-#include <ege/gui/ProgressBar.h>
-#include <ege/gui/RadioButton.h>
-#include <ege/gui/RadioGroup.h>
-#include <ege/gui/ScrollBar.h>
-#include <ege/gui/Slider.h>
-#include <ege/gui/SpinBox.h>
-#include <ege/gui/SplashScreen.h>
-#include <ege/gui/TextBox.h>
-#include <ege/gui/Widget.h>
+#include "EventLoop.h"
+
+namespace EGE
+{
+
+class MainLoop : public EventLoop
+{
+public:
+    MainLoop(String id = "MainLoop")
+    : EventLoop(id) {}
+
+    int run();
+
+    void setMinimalTickTime(Time time) { m_minTickTime = time; }
+    void setMaxTicksPerSecond(int value) { setMinimalTickTime({1.0 / value}); }
+
+private:
+    Time m_minTickTime = {0.0, Time::Unit::Seconds};
+};
+
+}

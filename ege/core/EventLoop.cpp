@@ -38,6 +38,7 @@
 
 #include "TimerEvent.h"
 
+#include <ege/debug/Inspector.h>
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
@@ -104,6 +105,21 @@ void EventLoop::removeTimer(const std::string& timer)
 
 void EventLoop::onUpdate()
 {
+    if(m_profiler) m_profiler->startSection("onTick");
+    onTick(m_ticks.fetch_add(1) + 1);
+    if(m_profiler) m_profiler->endStartSection("updateSubloops");
+    updateSubloops();
+    if(m_profiler) m_profiler->endStartSection("updateTimers");
+    updateTimers();
+    if(m_profiler) m_profiler->endStartSection("callDeferredInvokes");
+    callDeferredInvokes();
+    if(m_profiler) m_profiler->endStartSection("updateAsyncTasks");
+    updateAsyncTasks();
+    if(m_profiler) m_profiler->endSection();
+}
+
+void EventLoop::updateSubloops()
+{
     // Update all subloops
     {
         std::lock_guard<std::mutex> lock(m_subLoopsMutex);
@@ -121,15 +137,10 @@ void EventLoop::onUpdate()
         if(it != m_subLoops.end())
         {
             ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
+            it->get()->onFinish(it->get()->m_exitCode.load());
             m_subLoops.erase(it);
         }
     }
-
-    // Do updates of self
-    updateTimers();
-    callDeferredInvokes();
-    updateAsyncTasks();
-    m_ticks++;
 }
 
 void EventLoop::updateTimers()
@@ -186,33 +197,38 @@ void EventLoop::exit(int exitCode)
     m_exitCode.store(exitCode);
     m_running.store(false);
 
-    std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-    for(auto& subLoop: m_subLoops)
-    {
-        subLoop->exit(exitCode);
-    }
+    // Deferred invoke to prevent deadlocks when exiting main loop from subloop event handler
+    deferredInvoke([&] {
+        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
+        for(auto& subLoop: m_subLoops)
+        {
+            subLoop->exit(exitCode);
+        }
+    });
+
+    onExit(exitCode);
 }
 
-int EventLoop::run()
-{
-    while(m_running.load())
-        onUpdate();
-    return m_exitCode.load();
-}
-
-void EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
+bool EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
 {
     ASSERT(loop);
-    std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-    m_subLoops.push_back(loop);
     loop->isnSetParent(this);
+
+    if(loop->onLoad() == EventResult::Failure)
+        return false;
+
+    {
+        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
+        m_subLoops.push_back(loop);
+    }
+
+    return true;
 }
 
 void EventLoop::removeSubLoop(EventLoop& loop)
 {
     loop.exit(0);
 }
-
 
 void EventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {

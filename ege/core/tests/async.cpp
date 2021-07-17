@@ -1,13 +1,13 @@
 #include <testsuite/Tests.h>
 
-#include <ege/core/EventLoop.h>
+#include <ege/core/MainLoop.h>
 #include <ege/core/Timer.h>
 #include <ege/util/system.h>
 #include <ege/util/PointerUtils.h>
 
 int myWorker(EGE::AsyncTask& task)
 {
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 2; i++)
     {
         // TODO: Add EGE::System::sleep()
         EGE::System::sleep(EGE::System::ExactTime::fromSeconds(i));
@@ -23,7 +23,7 @@ void myCallback(EGE::AsyncTask::State state)
 
 TESTCASE(asyncTask)
 {
-    EGE::EventLoop loop;
+    EGE::MainLoop loop;
     auto myTask = make<EGE::AsyncTask>(myWorker, myCallback);
     loop.addAsyncTask(myTask, "myTask");
 
@@ -49,7 +49,8 @@ TESTCASE(asyncTask)
 
 TESTCASE(eventLoopIsThreadSafe)
 {
-    EGE::EventLoop loop;
+    EGE::MainLoop loop;
+    loop.setMaxTicksPerSecond(30);
     float progress = 0;
     srand(time(NULL));
 
@@ -63,7 +64,7 @@ TESTCASE(eventLoopIsThreadSafe)
             if(rand() % 100 == 0)
                 std::cerr << "Doing something at i=" << i << std::endl;
             if(i == 5478)
-                loop.deferredInvoke([&loop]() { loop.exit(); }); // It will be called in main thread.
+                loop.exit();
 
             if(task.stopRequested())
                 return 1;

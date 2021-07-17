@@ -1,16 +1,15 @@
 #include <testsuite/Tests.h>
 #include <ege/core/DataManager.h>
-#include <ege/core/EventLoop.h>
+#include <ege/core/MainLoop.h>
 #include <ege/core/TimerEvent.h>
 #include <ege/debug/Logger.h>
 #include <ege/util/ObjectSerializers.h>
 #include <ege/util/Types.h>
 #include <iostream>
 
-using EGE::Time;
 using EGE::Timer;
 
-class MyGameLoop : public EGE::EventLoop
+class MyGameLoop : public EGE::MainLoop
 {
 public:
     virtual void onUpdate(long long tickCount);

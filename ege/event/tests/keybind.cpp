@@ -4,20 +4,22 @@
 #include <ege/event.h>
 
 // reimplement that because we don't have GUIGameLoop here yet
-class MyWndLoop : public EGE::EventLoop
+class MyWndLoop : public EGE::MainLoop
 {
 public:
-    virtual int run() override
+    virtual EGE::EventResult onLoad() override
     {
-        // we need a window to handle key events
-        EGE::SFMLSystemWindow wnd;
-        wnd.create(sf::VideoMode(500, 500), "Keybind Test");
-
-        while(isRunning())
-            wnd.callEvents(*this);
-
-        return 0;
+        m_window.create(sf::VideoMode(500, 500), "Keybind Test");
+        return EGE::EventResult::Success;
     }
+
+    virtual void onTick(EGE::TickCount tickCount) override
+    {
+        m_window.callEvents(*this);
+    }
+
+private:
+    EGE::SFMLSystemWindow m_window;
 };
 
 TESTCASE(keybind)

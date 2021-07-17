@@ -40,7 +40,6 @@
 #include "EGEGame.h"
 #include "EGEPacket.h"
 
-#include <ege/gui/GameLoop.h>
 #include <ege/network/Client.h>
 #include <ege/network/Packet.h>
 #include <ege/network/SFMLNetworkImpl.h>
@@ -65,7 +64,7 @@ public:
     int returnValue;
 };
 
-class EGEClient : public Client, public SFMLNetworkImpl, public GameLoop, public EGEGame
+class EGEClient : public Client, public SFMLNetworkImpl, public EventLoop, public EGEGame
 {
 public:
     EGEClient(sf::IpAddress addr, unsigned short port)

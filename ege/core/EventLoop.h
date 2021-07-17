@@ -42,6 +42,7 @@
 #include "Timer.h"
 
 #include <ege/debug/InspectorNode.h>
+#include <ege/debug/Profiler.h>
 
 #include <map>
 #include <memory>
@@ -182,41 +183,49 @@ public:
     virtual void onTimerFinish(Timer*) {}
     virtual void onTimerTick(Timer*) {}
 
-    virtual void addTimer(const std::string& name, SharedPtr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
-    virtual std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
-    virtual void removeTimer(const std::string& timer);
-    virtual void onUpdate();
-    virtual void deferredInvoke(std::function<void()> func);
+    void addTimer(const std::string& name, SharedPtr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
+    std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
+    void removeTimer(const std::string& timer);
+    void deferredInvoke(std::function<void()> func);
 
     // get in-loop time in ticks or ms
     // it should be used ONLY for comparisions
-    virtual double time(Time::Unit unit);
+    double time(Time::Unit unit);
 
-    virtual int run();
+    virtual void onUpdate();
+    virtual EventResult onLoad() { return EventResult::Success; }
+    virtual void onTick(long long tickCount) {}
+    virtual void onExit(int exitCode) {}
+    virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
 
     virtual void exit(int exitCode = 0);
-    bool isRunning() { return m_running; }
-    long long getTickCount() { return m_ticks; }
+    bool isRunning() const { return m_running; }
+    long long getTickCount() const { return m_ticks; }
 
-    virtual void addSubLoop(SharedPtr<EventLoop> loop);
-    virtual void removeSubLoop(EventLoop& loop);
+    bool addSubLoop(SharedPtr<EventLoop> loop);
+    void removeSubLoop(EventLoop& loop);
 
-    virtual void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
-    virtual void removeAsyncTasks(std::string name = "");
-    virtual std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
+    void addAsyncTask(SharedPtr<AsyncTask> task, std::string name = "");
+    void removeAsyncTasks(std::string name = "");
+    std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
 
-    // This is temporary until EventLoop gets merged with GUI GameLoop.
-    SharedPtrVector<EventLoop>& getSubloops() { return m_subLoops; }
+    Profiler* getProfiler() { return m_profiler; }
 
-private:
+    int getExitCode() const { return m_exitCode.load(); }
 
 protected:
+    virtual void updateSubloops();
+
+    virtual void onProfilerResults(const Profiler&) {}
+    Profiler* m_profiler = nullptr;
+    SharedPtrVector<EventLoop> m_subLoops;
+
+private:
     virtual void updateTimers();
     virtual void updateAsyncTasks();
     virtual void callDeferredInvokes();
     std::atomic<int> m_exitCode = 0;
 
-private:
     EventArray<Event>& events(Event::EventType type);
 
     std::atomic<int> m_ticks = 0;
@@ -234,7 +243,6 @@ private:
     std::queue<std::function<void()>> m_deferredInvokes;
     std::mutex m_deferredInvokesMutex;
 
-    SharedPtrVector<EventLoop> m_subLoops;
     std::mutex m_subLoopsMutex;
 };
 
