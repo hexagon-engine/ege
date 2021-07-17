@@ -56,13 +56,13 @@ InspectorNode::InspectorNode(String name)
 InspectorNode::InspectorNode(InspectorNode* parent, String name)
 : m_isnName(name)
 {
-    log(LogLevel::Debug) << "InspectorNode: \e[32mCreating node\e[0m: " << m_isnName;
+    ege_log.debug() << "InspectorNode: \e[32mCreating node\e[0m: " << m_isnName;
     isnSetParent(parent);
 }
 
 InspectorNode::~InspectorNode()
 {
-    log(LogLevel::Debug) << "InspectorNode: \e[31mRemoving node\e[0m: " << m_isnName;
+    ege_log.debug() << "InspectorNode: \e[31mRemoving node\e[0m: " << m_isnName;
 
     if(m_isnParent)
         m_isnParent->m_isnChildren.erase(this);

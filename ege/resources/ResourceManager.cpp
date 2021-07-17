@@ -59,7 +59,7 @@ SharedPtr<Texture> ResourceManager::loadTextureFromFile(std::string fileName)
     SharedPtr<SFMLTexture> texture = make<SFMLTexture>();
     if(!texture->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
-        err(LogLevel::Error) << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
+        ege_log.error() << "0005 EGE/resources: could not load resource: TEXTURE " << fileName;
         m_error = true;
         return nullptr;
     }
@@ -72,7 +72,7 @@ SharedPtr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
     SharedPtr<sf::Font> font = make<sf::Font>();
     if(!font->loadFromFile(CommonPaths::resourceDir() + "/" + fileName))
     {
-        err(LogLevel::Error) << "0006 EGE/resources: could not load resource: FONT " << fileName;
+        ege_log.error() << "0006 EGE/resources: could not load resource: FONT " << fileName;
         m_error = true;
         return nullptr;
     }
@@ -85,7 +85,7 @@ SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, 
     SharedPtr<sf::Shader> shader(new sf::Shader);
     if(!shader->loadFromFile(CommonPaths::resourceDir() + "/" + fileName, type))
     {
-        err(LogLevel::Error) << "EGE/resources: could not load resource: [" << (int)type << "] SHADER " << fileName;
+        ege_log.error() << "EGE/resources: could not load resource: [" << (int)type << "] SHADER " << fileName;
         m_error = true;
         return nullptr;
     }
@@ -99,7 +99,7 @@ SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std:
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + fragmentShader))
     {
-        err(LogLevel::Error) << "EGE/resources: could not load resource: [VF] SHADER " << vertexShader << ", " << fragmentShader;
+        ege_log.error() << "EGE/resources: could not load resource: [VF] SHADER " << vertexShader << ", " << fragmentShader;
         m_error = true;
         return nullptr;
     }
@@ -113,7 +113,7 @@ SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std:
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + geometryShader, res + "/" + fragmentShader))
     {
-        err(LogLevel::Error) << "EGE/resources: could not load resource: [VGF] SHADER " << vertexShader << ", " << geometryShader << ", " << fragmentShader;
+        ege_log.error() << "EGE/resources: could not load resource: [VGF] SHADER " << vertexShader << ", " << geometryShader << ", " << fragmentShader;
         m_error = true;
         return nullptr;
     }
@@ -184,7 +184,7 @@ SharedPtr<Texture> ResourceManager::getTexture(std::string name)
     auto it = m_loadedTextures.find(name);
     if(it == m_loadedTextures.end())
     {
-        err(LogLevel::Error) << "0008 EGE/resources: invalid TEXTURE requested: " << name << ", falling back to unknown texture";
+        ege_log.error() << "0008 EGE/resources: invalid TEXTURE requested: " << name << ", falling back to unknown texture";
         m_loadedTextures[name] = m_unknownTexture;
         return m_unknownTexture;
     }
@@ -202,7 +202,7 @@ SharedPtr<sf::Font> ResourceManager::getFont(std::string name)
     auto it = m_loadedFonts.find(name);
     if(it == m_loadedFonts.end())
     {
-        err(LogLevel::Error) << "0009 EGE/resources: invalid FONT requested: " << name;
+        ege_log.error() << "0009 EGE/resources: invalid FONT requested: " << name;
         if(name != m_defaultFont && !m_defaultFont.empty())
         {
             auto font = getDefaultFont();
@@ -227,7 +227,7 @@ SharedPtr<sf::Cursor> ResourceManager::getCursor(std::string name)
     auto it = m_loadedCursors.find(name);
     if(it == m_loadedCursors.end())
     {
-        err(LogLevel::Error) << "0023 EGE/resources: invalid CURSOR requested: " << name;
+        ege_log.error() << "0023 EGE/resources: invalid CURSOR requested: " << name;
         return nullptr;
     }
     if(!it->second)
@@ -244,7 +244,7 @@ SharedPtr<sf::Cursor> ResourceManager::getCursor(sf::Cursor::Type type)
     auto cursor = getCursor("/EGE::System::/ /_" + std::to_string((int)type));
     if(!cursor)
     {
-        err(LogLevel::Error) << "0025 EGE/resources: invalid SYSTEM CURSOR requested: " << (int)type;
+        ege_log.error() << "0025 EGE/resources: invalid SYSTEM CURSOR requested: " << (int)type;
         if(!m_systemCursorError)
             return loadSystemCursor(type);
         else
@@ -258,7 +258,7 @@ SharedPtr<sf::Shader> ResourceManager::getShader(std::string name)
     auto it = m_loadedShaders.find(name);
     if(it == m_loadedShaders.end())
     {
-        err(LogLevel::Error) << "0008 EGE/resources: invalid SHADER requested: " << name;
+        ege_log.error() << "0008 EGE/resources: invalid SHADER requested: " << name;
         return nullptr;
     }
     return it->second;
@@ -269,7 +269,7 @@ SharedPtr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
     SharedPtr<sf::Cursor> cursor(new sf::Cursor);
     if(!cursor->loadFromSystem(type))
     {
-        err(LogLevel::Error) << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type;
+        ege_log.error() << "0026 EGE/resources: could not load resource: SYSTEM CURSOR" << (int)type;
         m_error = true;
         m_systemCursorError = true;
         return nullptr;
@@ -294,7 +294,7 @@ bool ResourceManager::setDefaultFont(std::string name)
     {
         if(!loadFontFromFile(name))
         {
-            err() << "000B EGE/resources: invalid FONT requested to be default: " << name;
+            ege_log.error() << "000B EGE/resources: invalid FONT requested to be default: " << name;
             return false;
         }
         m_defaultFont = name;

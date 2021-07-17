@@ -43,7 +43,7 @@ namespace EGE
 
 bool GUIResourceManager::reload()
 {
-    log(LogLevel::Info) << "GUIResourceManager is loading "
+    ege_log.info() << "GUIResourceManager is loading "
         << m_texturesToLoad.size() << " textures, "
         << m_fontsToLoad.size() << " fonts, "
         << m_cursorsToLoad.size() << " cursors and "
@@ -85,7 +85,7 @@ bool GUIResourceManager::reload()
         }
         else
         {
-            err() << "Invalid argument for shader loader (should be {Vertex, Geometry, Fragment} or {Vertex, Fragment})";
+            ege_log.error() << "Invalid argument for shader loader (should be {Vertex, Geometry, Fragment} or {Vertex, Fragment})";
         }
 
         m_shadersToLoad.pop();

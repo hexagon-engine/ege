@@ -158,9 +158,6 @@ private:
     std::set<LogLevel> m_filteredLevels = { LogLevel::Debug, LogLevel::Verbose };
 };
 
-[[deprecated]] Internal::_LoggerHelper err(LogLevel level = LogLevel::Error);
-[[deprecated]] Internal::_LoggerHelper log(LogLevel level = LogLevel::Info);
-
 Logger& errLogger();
 Logger& mainLogger();
 
@@ -171,7 +168,3 @@ Logger& mainLogger();
 
 using EGE::LogLevel;
 using EGE::Logger;
-
-// TODO: remove it!
-using EGE::err;
-using EGE::log;

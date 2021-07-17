@@ -52,7 +52,7 @@ bool Client::connect(sf::IpAddress ip, unsigned short port)
     sf::Socket::Status status = m_socket->connect(ip, port, sf::seconds(1.f));
     if(status != sf::Socket::Done)
     {
-        err(LogLevel::Error) << "0019 EGE/network: Client: Connection failed to (" << ip << ":" << port << ")";
+        ege_log.error() << "0019 EGE/network: Client: Connection failed to (" << ip << ":" << port << ")";
         disconnect();
         return false;
     }

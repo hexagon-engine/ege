@@ -45,10 +45,10 @@ namespace EGE
 
 Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(LayoutElement::_InputDimensions& thisDimensions, Vector<LayoutElement::_InputDimensions>& dimensions)
 {
-    log(LogLevel::Verbose) << "-- calculateMainDimension() --";
+    ege_log.verbose() << "-- calculateMainDimension() --";
     if(dimensions.empty())
     {
-        log(LogLevel::Debug) << "No children to layout!";
+        ege_log.debug() << "No children to layout!";
         return {};
     }
 
@@ -66,7 +66,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     for(size_t s = 0; s < dimensions.size(); s++)
     {
         auto& element = dimensions[s];
-        log(LogLevel::Verbose) << "-- Setup --";
+        ege_log.verbose() << "-- Setup --";
         // Convert % to px
         if(element.position.unit() == EGE_LAYOUT_PERCENT)
         {
@@ -95,12 +95,12 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             object.size = element.size.value();
             object.padding = element.padding.value();
             output[s] = object;
-            log(LogLevel::Debug) << "Add immediately!!";
+            ege_log.debug() <<  "Add immediately!!";
             continue;
         }
         else if(element.size.unit() != EGE_LAYOUT_FILL) // Known size but unknown position
         {
-            log(LogLevel::Debug) << "Count";
+            ege_log.debug() << "Count";
             // Do nothing but count to used elements
         }
         else
@@ -110,7 +110,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 // TODO
                 element.position.setUnit(EGE_LAYOUT_FILL); // Ignore for now
             }
-            log(LogLevel::Debug) << "Calculate size fill u=" << element.position.unit() << " su=" << element.size.unit();
+            ege_log.debug() << "Calculate size fill u=" << element.position.unit() << " su=" << element.size.unit();
             continue;
         }
 
@@ -136,10 +136,10 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     for(size_t s = 0; s < dimensions.size(); s++)
     {
         auto& element = dimensions[s];
-        log(LogLevel::Verbose) << "-- Left-align CMD --";
+        ege_log.verbose() << "-- Left-align CMD --";
         if(element.align == LayoutAlign::Left)
         {
-            log(LogLevel::Debug) << "align=left u=" << element.position.unit() << " su=" << element.size.unit();
+            ege_log.debug() << "align=left u=" << element.position.unit() << " su=" << element.size.unit();
             if(element.position.unit() == EGE_LAYOUT_FILL)
             {
                 /* Set position relative to last part */
@@ -149,7 +149,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 if(element.size.unit() == EGE_LAYOUT_FILL)
                 {
                     /* If size is unknown, divide the remaining space into equal parts */
-                    log(LogLevel::Debug) << "Divide L";
+                    ege_log.debug() << "Divide L";
                     element.size.setUnit(EGE_LAYOUT_PIXELS);
                     element.size.setValue(partSize);
                 }
@@ -159,7 +159,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.size = element.size.value();
                 object.padding = element.padding.value();
                 output[s] = object;
-                log(LogLevel::Debug) << "Add align=left";
+                ege_log.debug() << "Add align=left";
 
                 last = element;
             }
@@ -174,11 +174,11 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
     for(size_t s = 0; s < dimensions.size(); s++)
     {
         auto& element = dimensions[s];
-        log(LogLevel::Verbose) << "-- Right-align CMD --";
+        ege_log.verbose() << "-- Right-align CMD --";
 
         if(element.align == LayoutAlign::Right)
         {
-            log(LogLevel::Debug) << "align=right u=" << element.position.unit() << " su=" << element.size.unit();
+            ege_log.debug() << "align=right u=" << element.position.unit() << " su=" << element.size.unit();
             if(element.position.unit() == EGE_LAYOUT_FILL)
             {
                 /* Set position relative to last part */
@@ -188,7 +188,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 if(element.size.unit() == EGE_LAYOUT_FILL)
                 {
                     /* If size is unknown, divide the remaining space into equal parts */
-                    log(LogLevel::Debug) << "Divide R";
+                    ege_log.debug() << "Divide R";
                     element.size.setUnit(EGE_LAYOUT_PIXELS);
                     element.size.setValue(partSize);
                 }
@@ -198,7 +198,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.size = element.size.value();
                 object.padding = element.padding.value();
                 output[s] = object;
-                log(LogLevel::Debug) << "Add align=right";
+                ege_log.debug() << "Add align=right";
 
                 // TODO: this should be outside this "if"?
                 next = element;
@@ -249,7 +249,7 @@ void LayoutElement::calculateLayout()
     // TODO: Automatic resizing
     if(!m_needRecalc)
     {
-        log(LogLevel::Debug) << "LayoutElement::calculateLayout(): " << m_id << ": no recalc needed!";
+        ege_log.debug() << "LayoutElement::calculateLayout(): " << m_id << ": no recalc needed!";
         return;
     }
 
@@ -301,8 +301,8 @@ void LayoutElement::calculateLayout()
     thisDimensionsY.padding = m_layout.padding.y;
     thisDimensionsY.align = align.y;
 
-    log(LogLevel::Debug) << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
-    log(LogLevel::Debug) << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
+    ege_log.debug() << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
+    ege_log.debug() << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
 
     // Calculate 'this' layout
     Vector<_OutputDimensions> layoutM, layoutO;
@@ -311,14 +311,14 @@ void LayoutElement::calculateLayout()
     {
         case Direction::Horizontal:
         {
-            log(LogLevel::Debug) << "Horizontal layouting";
+            ege_log.debug() << "Horizontal layouting";
             layoutM = calculateMainDimension(thisDimensionsX, dimensionsX);
             layoutO = calculateOtherDimension(thisDimensionsY, dimensionsY);
 
         } break;
         case Direction::Vertical:
         {
-            log(LogLevel::Debug) << "Vertical layouting";
+            ege_log.debug() << "Vertical layouting";
             layoutM = calculateMainDimension(thisDimensionsY, dimensionsY);
             layoutO = calculateOtherDimension(thisDimensionsX, dimensionsX);
 
@@ -384,21 +384,21 @@ void LayoutElement::removeObject(LayoutElement* el)
 void LayoutElement::setGeometryNeedUpdate(bool val)
 {
     Renderable::setGeometryNeedUpdate(val);
-    log(LogLevel::Debug) << "LayoutElement::setGeometryNeedUpdate() for " << getId();
+    ege_log.debug() << "LayoutElement::setGeometryNeedUpdate() for " << getId();
     for(auto element: m_children)
         element->setGeometryNeedUpdate();
 }
 
 void LayoutElement::updateGeometry(Renderer&)
 {
-    log(LogLevel::Debug) << "Geometry Update for " << getId();
-    log(LogLevel::Debug) << "Run Layout Update!! " << getId();
+    ege_log.debug() << "Geometry Update for " << getId();
+    ege_log.debug() << "Run Layout Update!! " << getId();
     calculateLayout();
 }
 
 void LayoutElement::runLayoutUpdate()
 {
-    log(LogLevel::Debug) << "runLayoutUpdate() " << getId();
+    ege_log.debug() << "runLayoutUpdate() " << getId();
     if(m_parent)
         m_parent->runLayoutUpdate();
     else

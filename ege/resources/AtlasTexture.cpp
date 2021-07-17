@@ -51,7 +51,7 @@ AtlasTexture::TextureRect AtlasTexture::registerIcon(SharedPtr<SFMLTexture> tex)
 
     if(texSize.x != m_unit.x || texSize.y != m_unit.y)
     {
-        log(LogLevel::Warning) << "Failed to add texture " + tex->getName() + " to"
+        ege_log.warning() << "AtlasTexture: Failed to add texture " + tex->getName() + " to"
                                     "atlas, the texture size must be equal to unit size";
         return {};
     }

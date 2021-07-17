@@ -259,7 +259,7 @@ public:
                     auto radioButton3 = radiogroup->addNewWidget<EGE::RadioButton>();
                     radioButton3->setLabel("RadioButton 3");
                     radiogroup->setCheckedButton(*radioButton2);
-                    log() << radiogroup->getCheckedButton()->getLabel().toAnsiString();
+                    ege_log.info() << radiogroup->getCheckedButton()->getLabel().toAnsiString();
                 }
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
@@ -314,7 +314,7 @@ public:
                 combobox->entries().addEntry("cb test 5");
                 combobox->entries().addEntry("cb test 6");
                 combobox->events<EGE::ListBox::SelectEvent>().add([combobox](EGE::ListBox::SelectEvent& ev) {
-                    log() << "selected: " << ev.value.toAnsiString();
+                    ege_log.info() << "selected: " << ev.value.toAnsiString();
                     return EGE::EventResult::Success;
                 });
 

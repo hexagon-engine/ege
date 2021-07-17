@@ -55,7 +55,7 @@ bool SFMLNetworkImpl::sendTo(NetworkEndpoint* endpoint, SharedPtr<Packet> packet
     sf::Socket::Status status = endpoint->getSocket().lock()->send(sfPacket);
     if(status != sf::Socket::Done)
     {
-        err(LogLevel::Error) << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
+        ege_log.error() << "0017 EGE/network: Socket Send failed (system error) to (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
         //endpoint->disconnect();
         return false;
     }
@@ -74,7 +74,7 @@ SharedPtr<Packet> SFMLNetworkImpl::receiveFrom(NetworkEndpoint* endpoint)
     sf::Socket::Status status = endpoint->getSocket().lock()->receive(sfPacket);
     if(status != sf::Socket::Done)
     {
-        err(LogLevel::Error) << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
+        ege_log.error() << "0016 EGE/network: Socket Receive failed (system error) from (" << endpoint->getSocket().lock()->getRemoteAddress() << ":" << endpoint->getSocket().lock()->getRemotePort() << ")";
         //endpoint->disconnect();
         return nullptr;
     }

@@ -72,13 +72,13 @@ bool DataManager::save(const IOStreamConverter& converter)
     std::ofstream file(m_fileName);
     if(!file.good())
     {
-        err() << "DataManager: Failed to open file";
+        ege_log.error() << "DataManager: Failed to open file";
         return false;
     }
 
     if(!(file << objectOut(*m_data, converter)))
     {
-        err() << "DataManager: Failed to generate JSON";
+        ege_log.error() << "DataManager: Failed to generate JSON";
         return false;
     }
 
@@ -92,21 +92,21 @@ bool DataManager::load(const IOStreamConverter& converter)
     std::ifstream file(m_fileName);
     if(!file.good())
     {
-        err() << "DataManager: Failed to open file";
+        ege_log.error() << "DataManager: Failed to open file";
         return false;
     }
 
     SharedPtr<Object> object;
     if(!(file >> objectIn(object, converter)))
     {
-        err() << "DataManager: Failed to parse JSON";
+        ege_log.error() << "DataManager: Failed to parse JSON";
         return false;
     }
 
     auto data = Object::cast<ObjectMap>(object);
     if(!data.hasValue())
     {
-        err() << "DataManager: Failed to load JSON map";
+        ege_log.error() << "DataManager: Failed to load JSON map";
         return false;
     }
 
