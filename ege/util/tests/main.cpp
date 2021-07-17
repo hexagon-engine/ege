@@ -333,7 +333,7 @@ TESTCASE(system)
 {
     std::cerr << "OS IMPL: " << EGE::System::name() << std::endl;
     EXPECT(EGE::System::unixTime() > 1500000000);
-    EXPECT(EGE::System::exactTime().s > 1500000000);
+    EXPECT(EGE::System::exactTime().seconds() > 1500000000);
     size_t i1 = EGE::System::getWorkingDirectory().size();
     EXPECT(i1 > 3);
     EGE::System::setWorkingDirectory("..");

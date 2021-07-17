@@ -177,14 +177,7 @@ double EventLoop::time(Time::Unit unit)
     if(unit == Time::Unit::Ticks)
         return m_ticks.load();
     else if(unit == Time::Unit::Seconds)
-    {
-        #if defined(WIN32)
-            return GetTickCount() / 1000.0;
-        #elif defined(__unix__)
-            auto _time = System::exactTime();
-            return _time.s + _time.ns / 1000000000.0;
-        #endif
-    }
+        return System::exactTime().seconds();
     CRASH();
 }
 

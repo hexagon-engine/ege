@@ -69,10 +69,10 @@ System::ExactTime SystemImplUnix::exactTime()
     if(clock_gettime(CLOCK_REALTIME, &_ts) < 0)
     {
         m_lastErrno = errno;
-        return {};
+        return System::ExactTime::zero();
     }
 
-    return {_ts.tv_sec, _ts.tv_nsec};
+    return System::ExactTime::fromSecondsAndNanoseconds(_ts.tv_sec, _ts.tv_nsec);
 }
 
 // FileSystem
@@ -193,7 +193,7 @@ std::vector<std::string> SystemImplUnix::listFiles(std::string path)
         {
             entry = readdir(dir);
             // read all (real) files in current folder
-            // , delete '!' read other 2 default folder . and ..
+            // delete '!' read other 2 default folder . and ..
             if(!entry || !entry->d_name)
                 break;
 

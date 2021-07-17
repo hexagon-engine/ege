@@ -175,8 +175,7 @@ std::string Profiler::toString()
 
 long long Profiler::getTime()
 {
-    auto et = System::exactTime();
-    return et.s * 1000000000LL + et.ns;
+    return System::exactTime().nanoseconds();
 }
 
 Profiler::Section* Profiler::Section::findSubSection(std::string name)

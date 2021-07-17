@@ -102,13 +102,13 @@ namespace EGE
     Random& Random::goodRandom()
     {
         // TODO: replace it by better generator
-        static Random random(System::exactTime().ns);
+        static Random random(System::exactTime().nanoseconds());
         return random;
     }
 
     Random& Random::fastRandom()
     {
-        static Random random(System::exactTime().ns);
+        static Random random(System::exactTime().nanoseconds());
         return random;
     }
 
