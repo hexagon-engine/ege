@@ -66,7 +66,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
 
     if constexpr(EGEPACKET_DEBUG)
     {
-        std::cerr << "Client: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")" << std::endl;
+        ege_log.debug() << "EGEClient: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")";
         printObject(egePacket->getArgs());
     }
 
@@ -85,7 +85,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
             int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
-                err() << "0020 EGE/egeNetwork: Server PROTOCOL_VERSION doesn't match client! (required "
+                ege_log.error() << "EGEClient: Server PROTOCOL_VERSION doesn't match client! (required "
                     << EGE_PROTOCOL_VERSION << ", got " << value << ")";
                 return EventResult::Failure;
             }
@@ -177,7 +177,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
                 auto sceneObject = scene->getObject(_id);
                 if(!sceneObject) // Object was not yet created on client :(
                 {
-                    if constexpr(EGECLIENT_DEBUG) log(LogLevel::Debug) << "EGEClient: Sending requestObject from SDefaultControllerId handler";
+                    if constexpr(EGECLIENT_DEBUG) ege_log.debug() << "EGEClient: Sending requestObject from SDefaultControllerId handler";
                     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(_id));
                     if(!m_requestedObjects.count(_id))
                         requestObject(_id);
@@ -226,13 +226,13 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
 
             if(value != getVersion())
             {
-                err() << "Invalid server version! (need " << getVersion() << ", got " << value << ")";
+                ege_log.error() << "EGEClient: Invalid server version! (need " << getVersion() << ", got " << value << ")";
                 return EventResult::Failure;
             }
 
             if(str != getVersionString())
             {
-                err() << "Invalid server! (need '" << getVersionString() << "', got '" << str << "')";
+                ege_log.error() << "EGEClient: Invalid server! (need '" << getVersionString() << "', got '" << str << "')";
                 return EventResult::Failure;
             }
 
@@ -245,7 +245,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
         {
             UidType id = egePacket->getArgs()->getObject("id").asInt().valueOr(0);
             bool remove = egePacket->getArgs()->getObject("remove").asBoolean().valueOr(true);
-            log() << "SAdditionalControllerId " << id << " " << remove;
+            ege_log.debug() << "SAdditionalControllerId " << id << " " << remove;
 
             if(remove)
                 removeAdditionalController(id);
@@ -254,7 +254,7 @@ EventResult EGEClient::onReceive(SharedPtr<Packet> packet)
         }
         break;
     default:
-        err() << "0022 EGE/egeNetwork: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
+        ege_log.error() << "EGEClient: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
     }
 
@@ -285,7 +285,7 @@ EventResult EGEClient::updateSceneObjectFromData(SharedPtr<ObjectMap> object, Ui
 
     if(!sceneObject)
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from update";
+        if constexpr(EGECLIENT_DEBUG) ege_log.debug() << "EGEClient: Sending requestObject from update";
         DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
         if(!m_requestedObjects.count(id))
             requestObject(id);
@@ -327,9 +327,9 @@ EventResult EGEClient::onLoad()
 
     // Run client thread
     auto clientNetworkWorker = [this](AsyncTask& task)->int {
-        log() << "001E EGE/egeNetwork: Starting client";
-        log() << "Extendable Game Engine egeNetwork Client v" << EGE_PROTOCOL_VERSION;
-        log() << "Agent: " << getVersionString() << " v" << getVersion();
+        ege_log.notice() << "Extendable Game Engine egeNetwork Client v" << EGE_PROTOCOL_VERSION;
+        ege_log.notice() << "Agent: " << getVersionString() << " v" << getVersion();
+        ege_log.info() << "EGEClient: Connecting to " << m_ip.toString() << ":" << m_port;
         if(!connect(m_ip, m_port))
             return 1;
 
@@ -347,7 +347,7 @@ EventResult EGEClient::onLoad()
         return 0;
     };
     auto clientNetworkCallback = [this](AsyncTask::State state) {
-        log() << "001F EGE/egeNetwork: Closing client";
+        ege_log.info() << "EGEClient: Closing";
 
         exit(state.returnCode);
         fire<ExitEvent>(state.returnCode);
@@ -420,7 +420,7 @@ void EGEClient::control(SceneObject* object, const ControlPacket& data)
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
     if(!controller && !m_requestedObjects.count(object->getObjectId()))
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from control";
+        if constexpr(EGECLIENT_DEBUG) ege_log.debug() << "EGEClient: Sending requestObject from control";
         requestObject(object->getObjectId());
     }
     controller->handleRequest(data);
@@ -438,7 +438,7 @@ void EGEClient::requestControl(SceneObject* object, const ControlPacket& data)
 
     if(&m_defaultController->getObject() != object && !hasAdditionalController(object->getObjectId()))
     {
-        log(LogLevel::Warning) << "Client has no additional or default controller for object " << object->getObjectId();
+        ege_log.warning() << "Client has no additional or default controller for object " << object->getObjectId();
         return;
     }
 
@@ -446,7 +446,7 @@ void EGEClient::requestControl(SceneObject* object, const ControlPacket& data)
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(object->getObjectId()));
     if(!controller && !m_requestedObjects.count(object->getObjectId()))
     {
-        if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Sending requestObject from requestControl";
+        if constexpr(EGECLIENT_DEBUG) ege_log.debug() << "EGEClient: Sending requestObject from requestControl";
         requestObject(object->getObjectId());
     }
     controller->sendRequest(data);
@@ -457,7 +457,7 @@ void EGEClient::requestControl(SceneObject* object, const ControlPacket& data)
 
 void EGEClient::requestObject(UidType id)
 {
-    if constexpr(EGECLIENT_DEBUG) std::cerr << "EGEClient: Requesting object " << id << " from server";
+    if constexpr(EGECLIENT_DEBUG) ege_log.debug() << "EGEClient: Requesting object " << id << " from server";
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));
     m_requestedObjects.insert(id);
     DUMP(EGECLIENT_DEBUG, m_requestedObjects.count(id));

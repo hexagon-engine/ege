@@ -105,7 +105,7 @@ void EGEServer::setScene(SharedPtr<Scene> scene)
             EGEClientConnection& egeClient = (EGEClientConnection&)client;
             if(egeClient.getControlledSceneObject() == event.object.getObjectId())
             {
-                err(LogLevel::Verbose) << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << event.object.getObjectId();
+                ege_log.verbose() << "EGEServer: Notifying " << egeClient.getID() << " about deletion of controller for " << event.object.getObjectId();
                 return true;
             }
             return false;
@@ -123,14 +123,14 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
 
     if constexpr(EGEPACKET_DEBUG)
     {
-        std::cerr << "Server: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")" << std::endl;
+        ege_log.debug() << "EGEServer: Received packet (" << EGEPacket::typeString(egePacket->getType()) << ")";
         printObject(egePacket->getArgs());
     }
 
     EGEClientConnection& egeClient = (EGEClientConnection&)client;
 
     if(PING_DEBUG && egeClient.wasPinged())
-        std::cerr << "%%%%% Client is now responding. clearing ping flag %%%%%" << std::endl;
+        ege_log.debug() << "%%%%% Client is now responding. clearing ping flag %%%%%";
 
     egeClient.setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
     egeClient.setPinged(false);
@@ -139,7 +139,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
     if((!egeClient.agentVerCheckSucceeded() || !egeClient.protVerCheckSucceeded())
     && time(Time::Unit::Seconds) - egeClient.getCreateTime().getValue() > 10)
     {
-        log(LogLevel::Error) << "Version check timed out for client " << egeClient.getID();
+        ege_log.error() << "EGEServer: Version check timed out for client " << egeClient.getID();
         return EventResult::Failure;
     }
 
@@ -159,9 +159,9 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
             int value = egePacket->getArgs()->getObject("value").asInt().valueOr(0);
             if(value != EGE_PROTOCOL_VERSION)
             {
-                err(LogLevel::Error) << "0021 EGE/egeNetwork: Client PROTOCOL_VERSION doesn't match server! (required "
-                    << EGE_PROTOCOL_VERSION << ", got " << value << ")";
-                kickClientWithReason(egeClient, "Invalid protocol version (need " + std::to_string(EGE_PROTOCOL_VERSION) + ", got " + std::to_string(value) + ")");
+                String message = "Invalid protocol version (need " + std::to_string(EGE_PROTOCOL_VERSION) + ", got " + std::to_string(value) + ")";
+                ege_log.debug() << message;
+                kickClientWithReason(egeClient, message);
                 return EventResult::Failure;
             }
             egeClient.send(EGEPacket::generate_Pong());
@@ -197,13 +197,13 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
                 return EventResult::Failure;
 
             if constexpr(EGESERVER_DEBUG)
-                log() << "Trying to control object: " <<  id.value();
+                ege_log.debug() << "EGEServer: Trying to control object: " <<  id.value();
 
             auto controller = getController(id.value());
 
             if(!canControlPacket(*controller, egeClient))
             {
-                err() << "Client " << egeClient.getID() << " tried to use controller with ID " << id.value() << " without permission!";
+                ege_log.error() << "EGEServer: Client " << egeClient.getID() << " tried to use controller with ID " << id.value() << " without permission!";
                 return EventResult::Failure;
             }
 
@@ -228,7 +228,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
             if(!sceneObject) // object doesn't exist
                 return EventResult::Failure;
 
-            err(LogLevel::Debug) << "SceneObject requested: " << id.value();
+            ege_log.debug() << "SceneObject requested: " << id.value();
             egeClient.send(EGEPacket::generateSSceneObjectCreation(*sceneObject, sceneObject->getType()->getId()));
             if(egeClient.getControlledSceneObject() == id.value())
                 egeClient.send(EGEPacket::generateSDefaultControllerId(sceneObject.get()));
@@ -241,13 +241,13 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
 
             if(value != getVersion())
             {
-                err() << "Invalid server version! (need " << getVersion() << ", got " << value << ")";
+                ege_log.error() << "EGEServer: Invalid client version! (need " << getVersion() << ", got " << value << ")";
                 return EventResult::Failure;
             }
 
             if(str != getVersionString())
             {
-                err() << "Invalid server! (need '" << getVersionString() << "', got '" << str << "')";
+                ege_log.error() << "EGEServer: Invalid client! (need '" << getVersionString() << "', got '" << str << "')";
                 return EventResult::Failure;
             }
 
@@ -255,7 +255,7 @@ EventResult EGEServer::onReceive(ClientConnection& client, SharedPtr<Packet> pac
         }
         break;
     default:
-        err(LogLevel::Error) << "EGEClient::onReceive: not implemented packet handler: " + EGEPacket::typeString(egePacket->getType());
+        ege_log.error() << "EGEServer: Unimplemented packet handler: " + EGEPacket::typeString(egePacket->getType());
         return EventResult::Failure;
     }
 
@@ -269,9 +269,8 @@ EventResult EGEServer::onLoad()
 
     // Run server thread
     auto serverNetworkWorker = [this](AsyncTask& task)->int {
-        err(LogLevel::Info) << "001E EGE/egeNetwork: Starting server";
-        log(LogLevel::Notice) << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
-        log(LogLevel::Notice) << "Agent: " << getVersionString() << " v" << getVersion();
+        ege_log.notice() << "Extendable Game Engine egeNetwork Server v" << EGE_PROTOCOL_VERSION;
+        ege_log.notice() << "Agent: " << getVersionString() << " v" << getVersion();
         if(!start())
             return 1;
 
@@ -285,7 +284,7 @@ EventResult EGEServer::onLoad()
         return 0;
     };
     auto serverNetworkCallback = [this](AsyncTask::State state) {
-        err(LogLevel::Info) << "001F EGE/egeNetwork: Closing server";
+        ege_log.info() << "EGEServer: Closing";
         exit(state.returnCode);
     };
 
@@ -318,13 +317,13 @@ void EGEServer::onTick(TickCount)
 
             if constexpr(PING_DEBUG)
             {
-                std::cerr << "===== PING because of no recv in 3 second =====" << std::endl;
+                ege_log.debug() << "===== PING because of no recv in 3 second =====";
             }
             DUMP(PING_DEBUG, client->wasPinged());
 
             if(client->wasPinged())
             {
-                if constexpr(PING_DEBUG) std::cerr << "===== Kicking. =====" << std::endl;
+                if constexpr(PING_DEBUG) ege_log.debug() << "===== Kicking. =====";
                 //kickClientWithReason(client, "Timed out");
                 client->setPinged(false);
 
@@ -332,7 +331,7 @@ void EGEServer::onTick(TickCount)
                 break;
             }
 
-            if constexpr(PING_DEBUG) std::cerr << "===== Sending _Ping. =====" << std::endl;
+            if constexpr(PING_DEBUG) ege_log.debug() << "===== Sending _Ping. =====";
             client->send(EGEPacket::generate_Ping());
 
             // Remember that we pinged the client. The ping flag will be
