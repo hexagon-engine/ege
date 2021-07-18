@@ -156,7 +156,7 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
         {
             if(onLogin(egeClient, packet.getArgs()) == EventResult::Failure)
             {
-                client.disconnect();
+                kickClientWithReason(client, "CLogin failed");
                 return;
             }
         }
@@ -168,34 +168,34 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl id not given");
                 return;
             }
 
             auto data = args->getObject("data").to<ObjectMap>();
             if(!data.hasValue())
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl data not given");
                 return;
             }
 
             auto data_name = data.value()->getObject("type").asString();
             if(!data_name.hasValue())
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl type not given");
                 return;
             }
 
             auto data_args = data.value()->getObject("args").to<ObjectMap>();
             if(!data_args.hasValue())
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl args not given");
                 return;
             }
 
             if(!getScene()) // cannot control object when no scene is created!
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl nonexisting scene");
                 return;
             }
 
@@ -206,14 +206,14 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
 
             if(!controller)
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl nonexisting object");
                 return;
             } // kick f*****g cheaters
 
             if(!canControlPacket(*controller, egeClient))
             {
                 ege_log.error() << "EGEServer: Client " << egeClient.toString() << " tried to use controller with ID " << id.value() << " without permission!";
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectControl access denied");
                 return;
             }
 
@@ -226,21 +226,21 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
             auto id = args->getObject("id").asInt();
             if(!id.hasValue())
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectRequest id not given");
                 return;
             }
 
             auto scene = getScene();
             if(!scene) // cannot request object when no scene is created!
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectRequest on nonexisting scene");
                 return;
             }
 
             auto sceneObject = scene->getObject(id.value());
             if(!sceneObject) // object doesn't exist
             {
-                client.disconnect();
+                kickClientWithReason(client, "CSceneObjectRequest on nonexisting object");
                 return;
             }
 
@@ -258,14 +258,14 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
             if(value != getVersion())
             {
                 ege_log.error() << "EGEServer: Invalid client version! (need " << getVersion() << ", got " << value << ")";
-                client.disconnect();
+                kickClientWithReason(client, "Invalid client version");
                 return;
             }
 
             if(str != getVersionString())
             {
                 ege_log.error() << "EGEServer: Invalid client! (need '" << getVersionString() << "', got '" << str << "')";
-                client.disconnect();
+                kickClientWithReason(client, "Invalid client");
                 return;
             }
 
@@ -312,8 +312,8 @@ void EGEServer::onTick(TickCount tickCount)
             if(client->wasPinged())
             {
                 if constexpr(PING_DEBUG) ege_log.debug() << "===== Kicking. =====";
-                //kickClientWithReason(client, "Timed out");
-                client->setPinged(false);
+                kickClientWithReason(*client, "Timed out");
+                //client->setPinged(false);
 
                 // FIXME: update `it' instead of giving up on one client !! :)
                 break;
