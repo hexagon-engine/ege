@@ -68,7 +68,7 @@ public:
                 auto packet = TcpEndpoint<P>::receive();
 
                 if(packet.isValid())
-                    deferredInvoke([this] { onReceive(packet); });
+                    onReceive(packet);
                 if(task.stopRequested())
                     return 0;
             }
