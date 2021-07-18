@@ -48,7 +48,8 @@ namespace EGE
 EventResult GUIGameLoop::onLoad()
 {
     // Call user-defined handler
-    load();
+    if(load() == EventResult::Failure)
+        return EventResult::Failure;
 
     // Do our own initializations
     if(m_resourceManager)
