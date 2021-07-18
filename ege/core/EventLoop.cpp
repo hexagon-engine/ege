@@ -133,6 +133,10 @@ void EventLoop::updateSubloops()
     // Remove subloops that exited.
     {
         std::lock_guard<std::mutex> lock(m_subLoopsMutex);
+        std::for_each(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop>& loop) {
+            if(!loop->isRunning())
+                loop->onFinish(loop->m_exitCode.load());
+        });
         auto it = std::remove_if(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop> otherLoop) {
             return !otherLoop->isRunning();
         });
@@ -140,7 +144,6 @@ void EventLoop::updateSubloops()
         if(it != m_subLoops.end())
         {
             ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
-            it->get()->onFinish(it->get()->m_exitCode.load());
             m_subLoops.erase(it);
         }
     }
@@ -213,11 +216,12 @@ void EventLoop::exit(int exitCode)
 bool EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
 {
     ASSERT(loop);
-    loop->isnSetParent(this);
 
     if(loop->onLoad() == EventResult::Failure)
         return false;
 
+    loop->isnSetParent(this);
+    loop->m_parentLoop = this;
     {
         std::lock_guard<std::mutex> lock(m_subLoopsMutex);
         m_subLoops.push_back(loop);

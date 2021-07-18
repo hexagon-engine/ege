@@ -216,8 +216,8 @@ public:
     std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
 
     Profiler* getProfiler() { return m_profiler; }
-
     int getExitCode() const { return m_exitCode.load(); }
+    EventLoop* getParentLoop() const { return m_parentLoop; }
 
 protected:
     virtual void updateSubloops();
@@ -250,6 +250,7 @@ private:
     std::recursive_mutex m_deferredInvokesMutex;
 
     std::mutex m_subLoopsMutex;
+    EventLoop* m_parentLoop = nullptr;
 };
 
 }
