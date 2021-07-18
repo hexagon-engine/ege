@@ -47,6 +47,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 
 #define SCENE_DEBUG 0
 
@@ -163,6 +164,8 @@ public:
     Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const;
     Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const;
 
+    virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
+
 protected:
     friend class SceneLoader;
 
@@ -173,6 +176,8 @@ protected:
     ObjectMapType m_staticObjects;
     ObjectMapByName m_objectsByName;
     ObjectMapByLayer m_objectsByLayer;
+    std::recursive_mutex m_objectsMutex;
+
     SceneObjectRegistry m_registry;
     String m_lastLoadFile;
     WeakPtr<Camera> m_cameraObject;

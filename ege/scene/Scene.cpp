@@ -81,6 +81,12 @@ bool Scene::saveToFile(String saveFile, const IOStreamConverter& converter)
     return loader.saveScene(saveFile, converter);
 }
 
+void Scene::doRender(Renderer& renderer, const RenderStates& states)
+{
+    std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
+    Renderable::doRender(renderer, states);
+}
+
 void Scene::render(Renderer& renderer) const
 {
     // The loop should NOT be specified for server-side
@@ -89,7 +95,8 @@ void Scene::render(Renderer& renderer) const
 
     if(!m_cameraObject.expired())
         m_cameraObject.lock()->applyTransform(renderer);
-    for(auto pr: m_objectsByLayer)
+    
+    for(auto& pr: m_objectsByLayer)
         pr.second->doRender(renderer);
 }
 
@@ -103,8 +110,7 @@ void Scene::onUpdate(TickCount tickCounter)
         {
             if(!isHeadless()) m_loop->getProfiler()->startSection("update");
             auto object = *it;
-            auto oldIt = it;
-            auto nextIt = ++it;
+            auto oldIt = it++;
             object.second->onUpdate(tickCounter);
 
             if(allowDead)
@@ -131,21 +137,21 @@ void Scene::onUpdate(TickCount tickCounter)
 
                     m_objectsByName.erase(object.second->getName());
                     objects.erase(oldIt);
-
-                    if(objects.empty())
-                        return;
+                    rebuildLayers();
                 }
             }
-            it = nextIt;
             if(!isHeadless()) m_loop->getProfiler()->endSection();
         }
     };
 
     if(!isHeadless()) m_loop->getProfiler()->endStartSection("objectUpdate");
-    doUpdateForObjectMap(m_objects, true);
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
+        doUpdateForObjectMap(m_objects, true);
 
-    if(!isHeadless()) m_loop->getProfiler()->endStartSection("staticObjectUpdate");
-    doUpdateForObjectMap(m_staticObjects, false);
+        if(!isHeadless()) m_loop->getProfiler()->endStartSection("staticObjectUpdate");
+        doUpdateForObjectMap(m_staticObjects, false);
+    }
 
     if(!isHeadless()) m_loop->getProfiler()->endSection();
 }
@@ -172,24 +178,27 @@ UidType Scene::addObject(SharedPtr<SceneObject> object)
 
     object->init();
 
-    auto objIdDupe = m_objects.find(object->getObjectId());
-    if(objIdDupe != m_objects.end())
     {
-        // It's NOT normal!
-        ege_log.critical() << "Duplicate SceneObject ID: " << object->getName() << " collides with " << objIdDupe->second->getName();
-        return object->getObjectId();
-    }
-    if(m_objectsByName.find(object->getName()) != m_objectsByName.end())
-    {
-        // If it happens, fix your code!
-        ege_log.crash() << "Duplicate SceneObject name: " << object->getName();
-        CRASH_WITH_MESSAGE("Duplicate SceneObject name");
-    }
+        std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
+        auto objIdDupe = m_objects.find(object->getObjectId());
+        if(objIdDupe != m_objects.end())
+        {
+            // It's NOT normal!
+            ege_log.critical() << "Duplicate SceneObject ID: " << object->getName() << " collides with " << objIdDupe->second->getName();
+            return object->getObjectId();
+        }
+        if(m_objectsByName.find(object->getName()) != m_objectsByName.end())
+        {
+            // If it happens, fix your code!
+            ege_log.crash() << "Duplicate SceneObject name: " << object->getName();
+            CRASH_WITH_MESSAGE("Duplicate SceneObject name");
+        }
 
-    m_objects.insert(std::make_pair(object->getObjectId(), object));
-    if(object->getName().empty())
-        object->setName("SO" + std::to_string(object->getObjectId()));
-    m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
+        m_objects.insert(std::make_pair(object->getObjectId(), object));
+        if(object->getName().empty())
+            object->setName("SO" + std::to_string(object->getObjectId()));
+        m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
+    }
 
     fire<AddObjectEvent>(*object);
     // TODO: Do not rebuild layers if adding multiple objects in one tick
@@ -221,33 +230,36 @@ UidType Scene::addStaticObject(SharedPtr<SceneObject> object, bool overwrite)
 
     object->init();
 
-    if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
     {
-        ege_log.critical() << "Duplicate SceneObject ID: " << object->getObjectId();
-        return object->getObjectId();
-    }
-    auto it = m_objectsByName.find(object->getName());
-    if(it != m_objectsByName.end())
-    {
-        // It's normal for static objects when static objects were saved!
-        ege_log.verbose() << "Duplicate SceneObject name: " << object->getName();
-        if(overwrite)
+        std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
+        if(m_staticObjects.find(object->getObjectId()) != m_staticObjects.end())
         {
-            ege_log.debug() << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
-            auto& oldObject = m_objectsByName[it->second->getName()];
-
-            // Remove old object and add new (with new ID etc.)
-            m_staticObjects.erase(oldObject->getObjectId());
-            m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
-
-            // Set another 'object by name'.
-            oldObject = object.get();
+            ege_log.critical() << "Duplicate SceneObject ID: " << object->getObjectId();
+            return object->getObjectId();
         }
-        return object->getObjectId();
-    }
+        auto it = m_objectsByName.find(object->getName());
+        if(it != m_objectsByName.end())
+        {
+            // It's normal for static objects when static objects were saved!
+            ege_log.verbose() << "Duplicate SceneObject name: " << object->getName();
+            if(overwrite)
+            {
+                ege_log.debug() << "Scene::addObject(): overwriting " << it->second << " by " << object->getName();
+                auto& oldObject = m_objectsByName[it->second->getName()];
 
-    m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
-    m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
+                // Remove old object and add new (with new ID etc.)
+                m_staticObjects.erase(oldObject->getObjectId());
+                m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
+
+                // Set another 'object by name'.
+                oldObject = object.get();
+            }
+            return object->getObjectId();
+        }
+
+        m_staticObjects.insert(std::make_pair(object->getObjectId(), object));
+        m_objectsByName.insert(std::make_pair(object->getName(), object.get()));
+    }
     // TODO: Do not rebuild layers if adding multiple objects in one tick
     rebuildLayers();
     return object->getObjectId();
@@ -343,6 +355,7 @@ SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> d
 
 void Scene::rebuildLayers()
 {
+    std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
     m_objectsByLayer.clear();
 
     for(auto pr: m_staticObjects)
