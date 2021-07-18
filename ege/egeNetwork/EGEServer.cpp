@@ -204,6 +204,12 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
 
             auto controller = getController(id.value());
 
+            if(!controller)
+            {
+                client.disconnect();
+                return;
+            } // kick f*****g cheaters
+
             if(!canControlPacket(*controller, egeClient))
             {
                 ege_log.error() << "EGEServer: Client " << egeClient.toString() << " tried to use controller with ID " << id.value() << " without permission!";
@@ -211,13 +217,7 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
                 return;
             }
 
-            if(controller)
-                controller->handleRequest(ControlPacket(data_name.value(), data_args.value()));
-            else
-            {
-                client.disconnect();
-                return;
-            } // kick f*****g cheaters
+            controller->handleRequest(ControlPacket(data_name.value(), data_args.value()));
         }
         break;
     case EGEPacket::Type::CSceneObjectRequest:
