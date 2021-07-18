@@ -226,6 +226,12 @@ public:
         _map->addInt("dir", dir);
         requestControl(getScene()->getObject(-1).get(), EGE::ControlPacket("move", _map));
     }
+
+    virtual EGE::EventResult onFinish(int exitCode) override
+    {
+        getParentLoop()->exit(exitCode);
+        return EGE::EventResult::Success;
+    }
 };
 
 TESTCASE(server)
@@ -340,14 +346,6 @@ public:
 
         // Register SceneObject types for Client.
         scene->getRegistry().addType<MyObject>();
-
-        // Set exit handler for Client. It will be called when client is
-        // disconnected.
-        m_client->events<EGE::ExitEvent>().add([this](EGE::ExitEvent &event) {
-            std::cerr << "CLIENT CLOSED, R=" << event.returnValue << std::endl;
-            exit(event.returnValue);
-            return EGE::EventResult::Success;
-        });
 
         // Add keybind handler. It will pass keyboard events to Controller.
         events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);
