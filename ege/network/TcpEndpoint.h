@@ -36,7 +36,9 @@
 
 #pragma once
 
+#include <atomic>
 #include <memory>
+#include <mutex>
 #include <SFML/Network.hpp>
 
 #include <ege/debug/Logger.h>
@@ -68,6 +70,7 @@ public:
     {
         if(!isConnected())
             return {};
+
         Packet packet;
         if(!packet.receive(m_socket))
         {
@@ -77,11 +80,11 @@ public:
         return std::move(packet);
     }
 
-    bool isConnected() const { return m_connected; }
+    bool isConnected() const { return m_connected.load(); }
 
     virtual void disconnect()
     {
-        if(!m_connected)
+        if(!m_connected.load())
             return;
 
         m_connected = false;
@@ -108,7 +111,7 @@ public:
 
 protected:
     sf::TcpSocket m_socket;
-    bool m_connected = true;
+    std::atomic<bool> m_connected = true;
 };
 
 }

@@ -94,11 +94,15 @@ public:
                 {
                     onClientConnect(*connection);
                     ege_log.info() << "TcpServer: Client connected: " << connection->toString();
-                    m_clients.push_back(connection);
+                    {
+                        std::lock_guard<std::mutex> lock(m_clientsMutex);
+                        m_clients.push_back(connection);
+                    }
                     m_selector.add(connection->socket());
                 }
             }
             // Clients
+            std::lock_guard<std::mutex> lock(m_clientsMutex);
             for(auto& it: m_clients)
             {
                 if(m_selector.isReady(it->socket()))
@@ -116,6 +120,7 @@ public:
         }
 
         // Clean up disconnected sockets
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
         for(auto it = m_clients.begin(); it != m_clients.end();)
         {
             auto oldIt = it++;
@@ -136,6 +141,7 @@ public:
     template<class Predicate>
     void sendToIf(Packet const& packet, Predicate predicate)
     {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
         for(auto& client: m_clients)
         {
             if(predicate(*client))
@@ -145,6 +151,7 @@ public:
 
     void sendToAll(Packet const& packet)
     {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
         for(auto& client: m_clients)
         {
             client->send(packet);
@@ -154,6 +161,7 @@ public:
     template<class Predicate>
     void disconnectIf(Predicate predicate)
     {
+        std::lock_guard<std::mutex> lock(m_clientsMutex);
         for(auto& client: m_clients)
         {
             if(predicate(*client))
@@ -172,6 +180,8 @@ public:
 
 private:
     ClientList m_clients;
+    std::mutex m_clientsMutex;
+
     sf::TcpListener m_listener;
     sf::SocketSelector m_selector;
 };
