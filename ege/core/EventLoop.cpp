@@ -172,13 +172,13 @@ void EventLoop::updateTimers()
 
 void EventLoop::deferredInvoke(std::function<void()> func)
 {
-    std::lock_guard<std::mutex> lock(m_deferredInvokesMutex);
+    std::lock_guard<std::recursive_mutex> lock(m_deferredInvokesMutex);
     m_deferredInvokes.push(func);
 }
 
 void EventLoop::callDeferredInvokes()
 {
-    std::lock_guard<std::mutex> lock(m_deferredInvokesMutex);
+    std::lock_guard<std::recursive_mutex> lock(m_deferredInvokesMutex);
     while(!m_deferredInvokes.empty())
     {
         m_deferredInvokes.front()();
@@ -208,8 +208,6 @@ void EventLoop::exit(int exitCode)
             subLoop->exit(exitCode);
         }
     });
-
-    onExit(exitCode);
 }
 
 bool EventLoop::addSubLoop(SharedPtr<EventLoop> loop)

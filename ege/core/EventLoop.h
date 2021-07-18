@@ -71,6 +71,10 @@ public:
     class EventArray
     {
     public:
+        EventArray() = default;
+        EventArray(const EventArray&) = delete;
+        EventArray(EventArray&&) = delete;
+
         void clear() { m_handlers.clear(); }
 
         template<class Evt = EvtT>
@@ -135,6 +139,9 @@ public:
     class LockingEventArray
     {
     public:
+        LockingEventArray(const LockingEventArray&) = delete;
+        LockingEventArray(LockingEventArray&&) = default;
+
         template<class Evt = EvtT>
         LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
             { m_array->add(handler); return *this; }
@@ -171,7 +178,7 @@ public:
     {
         auto array = LockingEventArray<Evt>(m_eventHandlersMutex);
         array.m_array = (EventArray<Evt>*)&m_eventHandlers[Evt::type()];
-        return std::move(array);
+        return array;
     }
 
     template<class Evt>
@@ -195,7 +202,6 @@ public:
     virtual void onUpdate();
     virtual EventResult onLoad() { return EventResult::Success; }
     virtual void onTick(long long tickCount) {}
-    virtual void onExit(int exitCode) {}
     virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
 
     virtual void exit(int exitCode = 0);
@@ -241,7 +247,7 @@ private:
     std::mutex m_eventHandlersMutex;
 
     std::queue<std::function<void()>> m_deferredInvokes;
-    std::mutex m_deferredInvokesMutex;
+    std::recursive_mutex m_deferredInvokesMutex;
 
     std::mutex m_subLoopsMutex;
 };

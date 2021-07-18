@@ -385,11 +385,6 @@ EventResult EGEClient::onLoad()
     return EventResult::Success;
 }
 
-void EGEClient::onExit(int exitCode)
-{
-    fire<ExitEvent>(exitCode);
-}
-
 SharedPtr<ClientNetworkController> EGEClient::getController(UidType objectId)
 {
     return m_controllersForObjects[objectId];

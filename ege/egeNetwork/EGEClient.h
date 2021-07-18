@@ -81,7 +81,6 @@ public:
     virtual void setScene(SharedPtr<Scene> scene) override;
 
     virtual EventResult onLoad() override;
-    virtual void onExit(int exitCode) override;
 
     virtual void onDisconnect() override { onDisconnect("Disconnected"); }
     virtual void onDisconnect(String) {}
