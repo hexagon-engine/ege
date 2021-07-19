@@ -48,14 +48,23 @@ void EGEGame::setScene(SharedPtr<Scene> scene)
     m_scene = scene;
 }
 
-bool EGEGame::initialize()
+void EGEGame::registerController(String name, Controller controller)
 {
-    if(m_versionString.empty())
-    {
-        ege_log.warning() << "EGEGame: Version string is empty!";
-        m_versionString = "Game";
+    auto existingController = m_controllers.find(name);
+    if(existingController != m_controllers.end())
+        ege_log.warning() << "EGEGame: Existing controlller will be overridden: " << name;
+
+    m_controllers.insert(std::make_pair(name, std::move(controller)));
+}
+
+void EGEGame::runController(SceneObject& object, const ControlPacket& packet)
+{
+    auto controller = m_controllers.find(packet.getType());
+    if(controller == m_controllers.end()) {
+        ege_log.error() << "EGEGame: Unimplemented controlller: " << packet.getType();
+        return;
     }
-    return true;
+    controller->second(object, packet.getArgs());
 }
 
 }

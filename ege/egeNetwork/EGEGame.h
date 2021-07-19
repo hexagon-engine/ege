@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <ege/controller/ControlPacket.h>
 #include <ege/debug/Logger.h>
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
@@ -51,20 +52,27 @@ public:
     virtual void setScene(SharedPtr<Scene> scene);
 
     SharedPtr<Scene> getScene() { return m_scene; }
-    virtual bool initialize();
 
     // Connection is accepted if <peer version == version>
     void setVersion(int value) { m_version = value; }
     int getVersion() { return m_version; }
 
     // Set it to name of your game.
-    void setVersionString(std::string value) { m_versionString = value; }
-    std::string getVersionString() { return m_versionString; }
+    void setVersionString(String value) { m_versionString = value; }
+    String getVersionString() { return m_versionString; }
+
+    using Controller = std::function<void(SceneObject&, SharedPtr<ObjectMap>)>;
+
+    void registerController(String name, Controller controller);
+
+protected:
+    void runController(SceneObject& object, const ControlPacket& packet);
 
 private:
     SharedPtr<Scene> m_scene;
     int m_version = 0; // 0 - "unknown"
-    std::string m_versionString = "EGE Generic";
+    String m_versionString = "EGE Generic";
+    Map<String, Controller> m_controllers;
 };
 
 }

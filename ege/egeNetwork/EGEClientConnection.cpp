@@ -47,9 +47,37 @@ EGEClientConnection::EGEClientConnection(EGEServer& server)
 , m_lastRecv(server.time(Time::Unit::Seconds))
 , m_createTime(server.time(Time::Unit::Seconds)) {}
 
-void EGEClientConnection::setLastRecvTime(Time t)
+void EGEClientConnection::disconnectWithReason(String reason)
 {
-    m_lastRecv = t;
+    ege_log.info() << "EGEClientConnection: Disconnecting " << toString() << " with reason: " << reason;
+    send(EGEPacket::generateSDisconnectReason(reason));
+    disconnect();
+}
+
+bool EGEClientConnection::canControl(SceneObject const& object) const
+{
+    return getControlledSceneObject() == &object || hasAdditionalController(object);
+}
+
+void EGEClientConnection::setControlledSceneObject(SceneObject const* object)
+{
+    m_defaultControlledObject = object;
+    ege_log.info() << "EGEClientConnection: Set default controller to " << (object ? object->getName() : "<null>") << " for " << toString();
+    send(EGEPacket::generateSDefaultControllerId(object));
+}
+
+void EGEClientConnection::addAdditionalController(SceneObject const& object)
+{
+    m_additionalControlledObjects.insert(&object);
+    ege_log.info() << "EGEClientConnection: Add additional controller " << object.getName() << " for " << toString();
+    send(EGEPacket::generateSAdditionalControllerId(object, false));
+}
+
+void EGEClientConnection::removeAdditionalController(SceneObject const& object)
+{
+    m_additionalControlledObjects.erase(&object);
+    ege_log.info() << "EGEClientConnection: Remove additional controller " << object.getName() << " for " << toString();
+    send(EGEPacket::generateSAdditionalControllerId(object, true));
 }
 
 }

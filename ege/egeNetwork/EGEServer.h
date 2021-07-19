@@ -38,7 +38,6 @@
 
 #include "EGEGame.h"
 #include "EGEPacket.h"
-#include "ServerNetworkController.h"
 
 #include <ege/network/TcpServer.h>
 #include <ege/util/ObjectMap.h>
@@ -55,8 +54,7 @@ class EGEClientConnection;
 class EGEServer : public TcpServer<EGEPacket, EGEClientConnection>, public EGEGame
 {
 public:
-    EGEServer(Uint16 port = 0)
-    : m_port(port) {}
+    virtual void setScene(SharedPtr<Scene> scene) override;
 
     virtual void onClientConnect(ClientConnection& client) override;
     virtual void onClientDisconnect(ClientConnection& client) override;
@@ -70,32 +68,12 @@ public:
 
     // Accept all logins by default, without doing anything with userData!
     // Arguments:                     client                userData
-    virtual EventResult onLogin(EGEClientConnection&, SharedPtr<ObjectMap>);
-    virtual void onData(EGEClientConnection&, SharedPtr<ObjectMap>) {}
+    virtual bool acceptLoginData(ClientConnection&, SharedPtr<ObjectMap>) { return true; }
+    virtual void onLogin(ClientConnection&) {}
 
-    virtual EventResult onLoad() override;
-    virtual void onTick(TickCount tickCount) override;
+    virtual void onTick(TickCount) override;
 
-    virtual EventResult onFinish(int) override { return EventResult::Success; }
-
-    void kickClientWithReason(EGEClientConnection& client, std::string reason);
-    virtual void setScene(SharedPtr<Scene> scene) override;
-    SharedPtr<ServerNetworkController> getController(UidType objectId);
-
-    void setDefaultController(EGEClientConnection& client, SceneObject* sceneObject);
-
-    void addAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
-    void removeAdditionalController(EGEClientConnection& client, SceneObject& sceneObject);
-
-    virtual SharedPtr<ServerNetworkController> makeController(SceneObject&) { return nullptr; }
-    void control(SceneObject& object, const ControlPacket& data);
-    void requestControl(SceneObject& object, const ControlPacket& data);
-
-    virtual bool canControlPacket(ServerNetworkController& controller, EGEClientConnection& client);
-
-private:
-    std::map<UidType, SharedPtr<ServerNetworkController>> m_controllersForObjects;
-    Uint16 m_port;
+    void control(SceneObject const& object, String action, SharedPtr<ObjectMap> data);
 };
 
 }

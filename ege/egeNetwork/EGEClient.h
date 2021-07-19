@@ -54,52 +54,21 @@ namespace EGE
 class EGEClient : public TcpClient<EGEPacket>, public EGEGame
 {
 public:
-    EGEClient(sf::IpAddress addr, unsigned short port)
-    : m_ip(addr)
-    , m_port(port) {}
+    void setLoginData(SharedPtr<ObjectMap> data) { m_loginData = data; }
+    virtual void onReceive(EGEPacket const&);
 
-    virtual ~EGEClient();
+    virtual void onSetDefaultController(SceneObject const*) {}
 
-    virtual SharedPtr<ObjectMap> getLoginData(SharedPtr<ObjectMap>) { return nullptr; }
-    virtual void onData(SharedPtr<ObjectMap>) {}
-
-    virtual void onReceive(EGEPacket const& packet) override;
-    EventResult createSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id, String typeId);
-    EventResult updateSceneObjectFromData(SharedPtr<ObjectMap> object, UidType id);
-
-    virtual void setScene(SharedPtr<Scene> scene) override;
-
-    virtual EventResult onLoad() override;
-
-    virtual void onDisconnect() override { onDisconnect("Disconnected"); }
-    virtual void onDisconnect(String) {}
-
-    bool sendWithUID(EGEPacket const& packet);
-
-    SharedPtr<ClientNetworkController> getDefaultController() { return m_defaultController; }
-    SharedPtr<ClientNetworkController> getController(UidType objectId);
-    SharedPtr<SceneObject> getDefaultControlledObject();
-    SharedPtr<SceneObject> getControlledObject(UidType objectId);
-
-    virtual SharedPtr<ClientNetworkController> makeController(SceneObject&) = 0;
-    void control(SceneObject* object, const ControlPacket& data);
-    void requestControl(SceneObject* object, const ControlPacket& data);
-
-    void requestObject(UidType id);
-
-    void addAdditionalController(UidType id) { m_additionalControllers.insert(id); }
-    void removeAdditionalController(UidType id) { m_additionalControllers.erase(id); }
-    bool hasAdditionalController(UidType id) { return m_additionalControllers.count(id); }
+    void control(SceneObject const& object, String action, SharedPtr<ObjectMap> data);
+    void control(String action, SharedPtr<ObjectMap> data);
 
 private:
-    Map<UidType, EGEPacket::Type> m_uidMap;
-    SharedPtr<AsyncTask> m_clientTask;
-    SharedPtr<ClientNetworkController> m_defaultController;
-    Map<UidType, SharedPtr<ClientNetworkController>> m_controllersForObjects;
-    std::set<UidType> m_requestedObjects;
-    Set<UidType> m_additionalControllers;
-    sf::IpAddress m_ip;
-    unsigned short m_port;
+    void setDefaultController(SceneObject* object) { m_controlledObject = object; onSetDefaultController(object); }
+
+    SharedPtr<ObjectMap> m_loginData;
+    bool m_protocolCheckSuccess = false;
+    bool m_agentCheckSuccess = false;
+    SceneObject* m_controlledObject = nullptr;
 };
 
 }

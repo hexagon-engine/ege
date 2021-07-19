@@ -113,7 +113,9 @@ EGEPacket EGEPacket::generateSSceneObjectUpdate_Main(SceneObject& object)
 {
     SharedPtr<ObjectMap> data = make<ObjectMap>();
     SharedPtr<ObjectMap> objectData = make<ObjectMap>();
-    objectData->addObject("m", object.serializeMain());
+    auto serialized = object.serializeMain();
+    ASSERT(serialized);
+    objectData->addObject("m", serialized);
     data->addObject("object", objectData);
     data->addObject("id", make<ObjectInt>(object.getObjectId()));
     return EGEPacket(EGEPacket::Type::SSceneObjectUpdate, data);
@@ -123,6 +125,8 @@ EGEPacket EGEPacket::generateSSceneObjectUpdate_Extended(SceneObject& object)
 {
     SharedPtr<ObjectMap> data = make<ObjectMap>();
     SharedPtr<ObjectMap> objectData = make<ObjectMap>();
+    auto serialized = object.serializeMain();
+    objectData->addObject("m", serialized);
     objectData->addObject("x", object.serializeExtended());
     data->addObject("object", objectData);
     data->addObject("id", make<ObjectInt>(object.getObjectId()));
@@ -145,7 +149,7 @@ EGEPacket EGEPacket::generateSSceneDeletion(SharedPtr<ObjectMap>)
     NOT_IMPLEMENTED("generateSSceneDeletion");
 }
 
-EGEPacket EGEPacket::generateCSceneObjectControl(SceneObject& object, const ControlPacket& data) //SResult
+EGEPacket EGEPacket::generateCSceneObjectControl(SceneObject const& object, const ControlPacket& data) //SResult
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object.getObjectId()));
@@ -156,7 +160,7 @@ EGEPacket EGEPacket::generateCSceneObjectControl(SceneObject& object, const Cont
     return EGEPacket(EGEPacket::Type::CSceneObjectControl, args);
 }
 
-EGEPacket EGEPacket::generateSDefaultControllerId(SceneObject* object)
+EGEPacket EGEPacket::generateSDefaultControllerId(SceneObject const* object)
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     if(!object)
@@ -173,7 +177,7 @@ EGEPacket EGEPacket::generateCSceneObjectRequest(UidType id)
     return EGEPacket(EGEPacket::Type::CSceneObjectRequest, args);
 }
 
-EGEPacket EGEPacket::generateSSceneObjectControl(SceneObject& object, const ControlPacket& data)
+EGEPacket EGEPacket::generateSSceneObjectControl(SceneObject const& object, const ControlPacket& data)
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     args->addObject("id", make<ObjectInt>(object.getObjectId()));
@@ -192,7 +196,7 @@ EGEPacket EGEPacket::generate_Version(int value, std::string str)
     return EGEPacket(EGEPacket::Type::_Version, args);
 }
 
-EGEPacket EGEPacket::generateSAdditionalControllerId(SceneObject& object, bool remove)
+EGEPacket EGEPacket::generateSAdditionalControllerId(SceneObject const& object, bool remove)
 {
     SharedPtr<ObjectMap> args = make<ObjectMap>();
     args->addInt("id", object.getObjectId());

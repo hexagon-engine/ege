@@ -1,9 +1,9 @@
 #include <testsuite/Tests.h>
 #include <ege/debug/Dump.h>
 #include <ege/egeNetwork/EGEClient.h>
+#include <ege/egeNetwork/EGEClientConnection.h>
 #include <ege/egeNetwork/EGEPacket.h>
 #include <ege/egeNetwork/EGEServer.h>
-#include <ege/egeNetwork/ServerNetworkController.h>
 #include <ege/event/SystemEventHandler.h>
 #include <ege/event/SystemWindow.h>
 #include <ege/gui/GUIGameLoop.h>
@@ -59,7 +59,7 @@ public:
     virtual void onInit() override
     {
         // only server side!
-        if(!m_playerControlled && getOwner().isHeadless())
+        if(getOwner().isHeadless())
         {
             auto timer = make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(10.0, EGE::Time::Unit::Seconds), [this](std::string, EGE::Timer*) {
                 if(getObjectId() == -1)
@@ -95,9 +95,9 @@ public:
             switch(dir)
             {
                 case 0: setMotion({-5.0, getMotion().y}); break; // a
-                case 1: setMotion({getMotion().y, 5.0}); break; // s
+                case 1: setMotion({getMotion().x, 5.0}); break; // s
                 case 2: setMotion({5.0, getMotion().y}); break; // d
-                case 3: setMotion({getMotion().y, -5.0}); break; // w
+                case 3: setMotion({getMotion().x, -5.0}); break; // w
             }
         }
         else
@@ -105,126 +105,62 @@ public:
             switch(dir)
             {
                 case 0: if(getMotion().x == -5.f) setMotion({0.0, getMotion().y}); break; // a
-                case 1: if(getMotion().y == 5.f) setMotion({getMotion().y, 0.0}); break; // s
+                case 1: if(getMotion().y == 5.f) setMotion({getMotion().x, 0.0}); break; // s
                 case 2: if(getMotion().x == 5.f) setMotion({0.0, getMotion().y}); break; // d
-                case 3: if(getMotion().y == -5.f) setMotion({getMotion().y, 0.0}); break; // w
+                case 3: if(getMotion().y == -5.f) setMotion({getMotion().x, 0.0}); break; // w
             }
         }
         setMainChanged();
     }
-    bool m_playerControlled;
     EGE::Vec2d m_scale;
     EGE::Vec2d m_origin;
-};
-
-class MyObjectServerController : public EGE::ServerNetworkController
-{
-public:
-    MyObjectServerController(EGE::SceneObject& object, EGE::EGEServer& server)
-    : EGE::ServerNetworkController(object, server) {}
-
-    virtual void handleRequest(const EGE::ControlPacket& data) override
-    {
-        std::string type = data.getType();
-        auto& object = (MyObject&)getObject();
-        bool moving = data.getArgs()->getObject("moving").asBoolean().valueOr(false);
-        int dir = data.getArgs()->getObject("dir").asInt().valueOr(0);
-
-        if(type == "move")
-            object.move(moving, dir);
-    }
-};
-
-class MyObjectClientController : public EGE::ClientNetworkController
-{
-public:
-    MyObjectClientController(EGE::SceneObject& object, EGE::EGEClient& client)
-    : EGE::ClientNetworkController(object, client) {}
-
-    virtual void handleRequest(const EGE::ControlPacket& data) override
-    {
-        std::string type = data.getType();
-        auto& object = (MyObject&)getObject();
-        bool moving = data.getArgs()->getObject("moving").asBoolean().valueOr(false);
-        int dir = data.getArgs()->getObject("dir").asInt().valueOr(0);
-
-        if(type == "move")
-            object.move(moving, dir);
-    }
 };
 
 class MyServer : public EGE::EGEServer
 {
 public:
     MyServer()
-    : EGE::EGEServer(rand() % 63536 + 2000)
     {
-        setVersion(1);
-        setVersionString("EGE Test");
+        setVersion(1); setVersionString("EGE Test");
+        registerController("move", [](EGE::SceneObject& object, EGE::SharedPtr<EGE::ObjectMap> args) {
+            // FIXME: This dynamic_cast should not be needed
+            MyObject* myObject = dynamic_cast<MyObject*>(&object);
+            if(myObject)
+            {
+                myObject->move(args->get("moving").asBoolean().valueOr(false), args->get("dir").asInt().valueOr(0));
+            }
+        });
     }
 
-    virtual EGE::SharedPtr<EGE::ServerNetworkController> makeController(EGE::SceneObject& object) override
+    virtual void onLogin(EGE::EGEClientConnection& client) override
     {
-        if(object.getType()->getId() == "MyObject")
-        {
-            // MyObject is controlled by MyObjectServerController
-            return make<MyObjectServerController>(object, *this);
-        }
-
-        // object cannot be controlled
-        return nullptr;
-    }
-
-    virtual EGE::EventResult onLogin(EGE::EGEClientConnection& client, EGE::SharedPtr<EGE::ObjectMap> data) override
-    {
-        // Synchronize client with server.
-        EGE::EGEServer::onLogin(client, data);
-
         // Spawn SceneObject that will be controlled by this client.
         ASSERT(getScene());
         auto sceneObject = getScene()->addNewObject<MyObject>();
         std::cerr << "Adding Object to Scene" << std::endl;
 
-        // Set SceneObject to be controlled by this Client.
-        setDefaultController(client, sceneObject.get());
-        addAdditionalController(client, *getScene()->getObject(-1));
-
-        return EGE::EventResult::Success;
+        client.setControlledSceneObject(sceneObject.get());
     }
 };
 
 class MyClient : public EGE::EGEClient
 {
 public:
-    MyClient(unsigned short port)
-    : EGE::EGEClient(sf::IpAddress::LocalHost, port) { setVersion(1); setVersionString("EGE Test"); }
-
-    virtual EGE::SharedPtr<EGE::ClientNetworkController> makeController(EGE::SceneObject& object) override
-    {
-        if(object.getType()->getId() == "MyObject")
-        {
-            // MyObject is controlled by MyObjectClientController
-            return make<MyObjectClientController>(object, *this);
-        }
-
-        // object cannot be controlled
-        return nullptr;
-    }
+    MyClient() { setVersion(1); setVersionString("EGE Test"); }
 
     void move(bool moving, int dir)
     {
-        EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
-        _map->addInt("moving", moving);
-        _map->addInt("dir", dir);
-        requestControl(nullptr, EGE::ControlPacket("move", _map));
+        auto object = make<EGE::ObjectMap>();
+        object->addBoolean("moving", moving);
+        object->addInt("dir", dir);
+        control("move", object);
     }
 
-    void move2(bool moving, int dir)
+    void setCamera(EGE::SharedPtr<EGE::Plain2DCamera> camera) { m_camera = camera; }
+
+    virtual void onSetDefaultController(EGE::SceneObject const* object) override
     {
-        EGE::SharedPtr<EGE::ObjectMap> _map = make<EGE::ObjectMap>();
-        _map->addInt("moving", moving);
-        _map->addInt("dir", dir);
-        requestControl(getScene()->getObject(-1).get(), EGE::ControlPacket("move", _map));
+        m_camera->setFollowObject(object);
     }
 
     virtual EGE::EventResult onFinish(int exitCode) override
@@ -232,6 +168,9 @@ public:
         getParentLoop()->exit(exitCode);
         return EGE::EventResult::Success;
     }
+
+private:
+    EGE::SharedPtr<EGE::Plain2DCamera> m_camera;
 };
 
 TESTCASE(server)
@@ -255,6 +194,7 @@ TESTCASE(server)
     // Register SceneObject types for Client.
     scene->getRegistry().addType<MyObject>();
 
+    server.listen(rand() % 1024 + 64512);
     return server.run();
 }
 
@@ -276,14 +216,6 @@ public:
             break;
         case sf::Keyboard::W: m_client->move(true, 3);
             break;
-        case sf::Keyboard::Left: m_client->move2(true, 0);
-            break;
-        case sf::Keyboard::Down: m_client->move2(true, 1);
-            break;
-        case sf::Keyboard::Right: m_client->move2(true, 2);
-            break;
-        case sf::Keyboard::Up: m_client->move2(true, 3);
-            break;
         default:
             break;
         }
@@ -300,14 +232,6 @@ public:
         case sf::Keyboard::D: m_client->move(false, 2);
             break;
         case sf::Keyboard::W: m_client->move(false, 3);
-            break;
-        case sf::Keyboard::Left: m_client->move2(false, 0);
-            break;
-        case sf::Keyboard::Down: m_client->move2(false, 1);
-            break;
-        case sf::Keyboard::Right: m_client->move2(false, 2);
-            break;
-        case sf::Keyboard::Up: m_client->move2(false, 3);
             break;
         default:
             break;
@@ -335,7 +259,7 @@ public:
         setCurrentGUIScreen(gui);
 
         // Create client - define server IP and port.
-        m_client = make<MyClient>(m_port);
+        m_client = make<MyClient>();
 
         // Create scene and assign it to client.
         auto scene = make<EGE::Scene>(this);
@@ -353,23 +277,18 @@ public:
         // Initialize Camera.
         m_camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
         m_camera->setScalingMode(EGE::ScalingMode::Centered);
+        m_client->setCamera(m_camera);
         scene->setCamera(m_camera);
 
-        // Set our Client as sub-loop. It will automatically connect to server
-        // now.
-        if(!addSubLoop(m_client))
+        // Add as subloop to handle events.
+        addSubLoop(m_client);
+
+        // Connect to server.
+        // TODO: This should automatically add as subloop if required!
+        if(!m_client->connect(sf::IpAddress::LocalHost, m_port))
             return EGE::EventResult::Failure;
 
         return EGE::EventResult::Success;
-    }
-
-    virtual void onTick(long long tick) override
-    {
-        EGE::GUIGameLoop::onTick(tick);
-        // Camera: follow currently controlled object.
-        auto controller = m_client->getDefaultController();
-        if(controller)
-            m_camera->setParent(dynamic_cast<EGE::SceneObject*>(&controller->getObject()));
     }
 };
 
@@ -383,6 +302,7 @@ TESTCASE(client)
     std::cin >> PORT;
 
     // Create GameLoop and window.
+    EGE::GlobalConfig::enableAllDebug();
     MyGameLoop loop(PORT);
     loop.openWindow(sf::VideoMode(300, 300), "EGE Protocol Test");
     loop.getWindow().setKeyRepeatEnabled(false);

@@ -71,6 +71,7 @@ std::string EGEPacket::typeString(Type type)
         case EGEPacket::Type::CSceneObjectRequest: return "CSceneObjectRequest";
         case EGEPacket::Type::SSceneObjectControl: return "SSceneObjectControl";
         case EGEPacket::Type::_Version: return "_Version";
+        case EGEPacket::Type::SAdditionalControllerId: return "SAdditionalControllerId";
         default: return "<unknown>";
     }
 }

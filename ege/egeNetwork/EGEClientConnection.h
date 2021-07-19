@@ -47,14 +47,12 @@
 namespace EGE
 {
 
-class EGEServer;
-
 class EGEClientConnection : public TcpClientConnection<EGEServer>
 {
 public:
     EGEClientConnection(Server& server);
 
-    void setLastRecvTime(Time t);
+    void setLastRecvTime(Time t) { m_lastRecv = t; }
 
     Time getLastRecvTime() const { return m_lastRecv; }
     Time getCreateTime() const { return m_createTime; }
@@ -62,23 +60,27 @@ public:
     bool wasPinged() const { return m_pinged; }
     void setPinged(bool ping = true) { m_pinged = ping; }
 
-    UidType getControlledSceneObject() const { return m_controlledSceneObjectId; }
-    void setControlledSceneObject(UidType id) { m_controlledSceneObjectId = id; }
+    SceneObject const* getControlledSceneObject() const { return m_defaultControlledObject; }
+    void setControlledSceneObject(const SceneObject* object);
 
-    void addAdditionalController(UidType id) { m_additionalControllers.insert(id); }
-    void removeAdditionalController(UidType id) { m_additionalControllers.erase(id); }
-    bool hasAdditionalController(UidType id) const { return m_additionalControllers.count(id); }
+    void addAdditionalController(SceneObject const& object);
+    void removeAdditionalController(SceneObject const& object);
+    bool hasAdditionalController(SceneObject const& object) const { return m_additionalControlledObjects.count(&object); }
 
     bool agentVerCheckSucceeded() const { return m_agentVerCheck; }
     bool protVerCheckSucceeded() const { return m_agentVerCheck; }
     void setAgentVerCheckSuccess() { m_agentVerCheck = true; }
     void setProtVerCheckSuccess() { m_agentVerCheck = true; }
 
+    bool canControl(SceneObject const&) const;
+
+    void disconnectWithReason(String reason);
+
 private:
-    UidType m_controlledSceneObjectId = 0;
+    SceneObject const* m_defaultControlledObject = 0;
     Time m_lastRecv;
     Time m_createTime;
-    Set<UidType> m_additionalControllers;
+    Set<SceneObject const*> m_additionalControlledObjects;
 
     bool m_pinged = false;
     bool m_agentVerCheck = false;

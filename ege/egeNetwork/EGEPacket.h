@@ -48,7 +48,7 @@
 // It's reported by _ProtocolVersion packet.
 #define EGE_PROTOCOL_VERSION 0
 
-#define EGEPACKET_DEBUG 0
+#define EGEPACKET_DEBUG 1
 
 namespace EGE
 {
@@ -113,12 +113,12 @@ public:
     static EGEPacket generateSSceneObjectDeletion(UidType id);
     static EGEPacket generateSSceneCreation(SharedPtr<ObjectMap> userData = nullptr);
     static EGEPacket generateSSceneDeletion(SharedPtr<ObjectMap> userData = nullptr);
-    static EGEPacket generateCSceneObjectControl(SceneObject& object, const ControlPacket& data); //SResult
-    static EGEPacket generateSDefaultControllerId(SceneObject* object);
+    static EGEPacket generateCSceneObjectControl(SceneObject const& object, const ControlPacket& data); //SResult
+    static EGEPacket generateSDefaultControllerId(SceneObject const* object);
     static EGEPacket generateCSceneObjectRequest(UidType id);
-    static EGEPacket generateSSceneObjectControl(SceneObject& object, const ControlPacket& data);
+    static EGEPacket generateSSceneObjectControl(SceneObject const& object, const ControlPacket& data);
     static EGEPacket generate_Version(int value, std::string str);
-    static EGEPacket generateSAdditionalControllerId(SceneObject& object, bool remove);
+    static EGEPacket generateSAdditionalControllerId(SceneObject const& object, bool remove);
 
 private:
     Type m_type;
