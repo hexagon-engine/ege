@@ -138,35 +138,42 @@ public:
     virtual void onClientConnect(ClientConnection& client) = 0;
     virtual void onClientDisconnect(ClientConnection& client) = 0;
 
-    template<class Predicate>
-    void sendToIf(Packet const& packet, Predicate predicate)
+    template<class Callback>
+    void forEachClient(Callback callback)
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_clientsMutex);
+        for(auto& client: m_clients)
+        {
+            callback(*client);
+        }
+    }
+
+    template<class Predicate, class Callback>
+    void forEachClientIf(Predicate predicate, Callback callback)
     {
         std::lock_guard<std::recursive_mutex> lock(m_clientsMutex);
         for(auto& client: m_clients)
         {
             if(predicate(*client))
-                client->send(packet);
+                callback(*client);
         }
+    }
+
+    template<class Predicate>
+    void sendToIf(Packet const& packet, Predicate predicate)
+    {
+        forEachClientIf(predicate, [&](auto& client) { client.send(packet); });
     }
 
     void sendToAll(Packet const& packet)
     {
-        std::lock_guard<std::recursive_mutex> lock(m_clientsMutex);
-        for(auto& client: m_clients)
-        {
-            client->send(packet);
-        }
+        forEachClientIf([&](auto& client) { client.send(packet); });
     }
 
     template<class Predicate>
     void disconnectIf(Predicate predicate)
     {
-        std::lock_guard<std::recursive_mutex> lock(m_clientsMutex);
-        for(auto& client: m_clients)
-        {
-            if(predicate(*client))
-                client->disconnect();
-        }
+        forEachClientIf(predicate, [&](auto& client) { client.disconnect(); });
     }
 
     void disconnect(sf::TcpSocket& socket)
