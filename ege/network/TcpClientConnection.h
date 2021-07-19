@@ -64,7 +64,6 @@ public:
 
 private:
     Server& m_server;
-    int m_id = 0;
 };
 
 }
