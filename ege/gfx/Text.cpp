@@ -46,6 +46,25 @@ namespace EGE
 Vec2d Text::getSize()
 {
     // TODO: calculate size if it's needed
+    sf::String utf32String(m_text);
+    if(m_size.x == 0 && m_size.y == 0)
+    {
+        int minTop = 0;
+        int maxBottom = 0;
+        for(size_t s = 0; s < utf32String.getSize(); s++)
+        {
+            Uint32 code = utf32String[s];
+            sf::Glyph glyph = m_font.getGlyph(code, settings.fontSize, settings.bold, 0);
+            float y_size = glyph.bounds.height;
+            if(minTop > glyph.bounds.top)
+                minTop = glyph.bounds.top;
+            if(maxBottom < glyph.bounds.top + glyph.bounds.height)
+                maxBottom = glyph.bounds.top + glyph.bounds.height;
+            float kerning = s == utf32String.getSize() - 1 ? 0 : m_font.getKerning(code, utf32String[s + 1], settings.fontSize);
+            m_size.x += glyph.advance + kerning;
+        }
+        m_size.y = maxBottom - minTop;
+    }
     return m_size;
 }
 
@@ -86,7 +105,10 @@ void Text::render(Renderer& renderer) const
         currentPos.x += glyph.advance + kerning;
     }
     if constexpr(TEXT_DEBUG)
+    {
         renderer.renderRectangle(startPos.x, startPos.y, currentPos.x - startPos.x, currentPos.y - startPos.y, Colors::transparent, Colors::magenta);
+        renderer.renderRectangle(settings.position.x, settings.position.y, m_size.x, m_size.y, Colors::transparent, Colors::magenta);
+    }
 }
 
 }
