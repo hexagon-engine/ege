@@ -73,6 +73,7 @@ InspectorNode::~InspectorNode()
 
 void InspectorNode::isnSetParent(InspectorNode* node)
 {
+    ege_log.debug() << "InspectorNode: \e[33mSetting parent\e[0m: " << m_isnName << " < " << (node ? node->m_isnName : "<null>");
     if(m_isnParent)
         m_isnParent->m_isnChildren.erase(this);
     m_isnParent = node;
