@@ -78,7 +78,7 @@ public:
     float getZoom() const { return m_zoom; }
 
     // TODO: What if object dies?
-    void setFollowObject(EGE::SceneObject* object) { m_following = object; }
+    void setFollowObject(EGE::SceneObject const* object) { m_following = object; }
 
     void setEyePosition(Vec2d position) { setPosition(position); }
     Vec2d getEyePosition() const { return m_following ? m_following->getPosition().toVec2d() : getPosition().toVec2d(); }
@@ -95,7 +95,7 @@ private:
     float m_zoom = 1.f;
     Vec2d m_displaySize;
     ScalingMode m_scalingMode = ScalingMode::None;
-    EGE::SceneObject* m_following = nullptr;
+    EGE::SceneObject const* m_following = nullptr;
 };
 
 }
