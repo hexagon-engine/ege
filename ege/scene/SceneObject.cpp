@@ -250,6 +250,7 @@ bool SceneObject::deserializeExtended(SharedPtr<ObjectMap>)
 
 void SceneObject::setParent(SceneObject* object)
 {
+    isnSetParent(object);
     ege_log.debug() << "SceneObject::setParent(" << object << ")";
     if(m_parent)
         m_parent->m_children.erase(this);
@@ -260,7 +261,6 @@ void SceneObject::setParent(SceneObject* object)
         return;
 
     m_parent->m_children.insert(this);
-    isnSetParent(object);
 }
 
 void SceneObject::addPart(String name, SharedPtr<Part> part)
