@@ -77,7 +77,7 @@ public:
             disconnect();
             return {};
         }
-        return std::move(packet);
+        return packet;
     }
 
     bool isConnected() const { return m_connected.load(); }

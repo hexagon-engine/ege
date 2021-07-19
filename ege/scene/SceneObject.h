@@ -74,7 +74,7 @@ public:
 
     virtual void onUpdate(long long tickCounter);
     virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
-    virtual void render(Renderer& renderer) const override {}
+    virtual void render(Renderer&) const override {}
 
     bool isDead() const { return m_dead; }
 
