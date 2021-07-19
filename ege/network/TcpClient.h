@@ -72,7 +72,7 @@ public:
                 if(task.stopRequested())
                     return 0;
             }
-        }, [this](AsyncTask::State state) { ege_log.info() << "TcpClient: Disconnected!"; exit(0); }), "TcpClient");
+        }, [this](AsyncTask::State) { ege_log.info() << "TcpClient: Disconnected!"; exit(0); }), "TcpClient");
         return true;
     }
 

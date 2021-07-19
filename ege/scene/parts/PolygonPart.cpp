@@ -46,7 +46,7 @@ void PolygonPart::render(Renderer& renderer) const
     renderer.renderPrimitives(m_vertexes, sf::TriangleFan);
 }
 
-void PolygonPart::updateGeometry(Renderer& renderer)
+void PolygonPart::updateGeometry(Renderer&)
 {
     // TODO: Support non-convex shapes
 

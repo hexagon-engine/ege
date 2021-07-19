@@ -76,7 +76,7 @@ public:
                 if(task.stopRequested())
                     return 0;
             }
-        }, [this](AsyncTask::State state) { ege_log.info() << "TcpServer: Stopped!"; exit(0); }), "TcpServer");
+        }, [this](AsyncTask::State) { ege_log.info() << "TcpServer: Stopped!"; exit(0); }), "TcpServer");
         return true;
     }
 

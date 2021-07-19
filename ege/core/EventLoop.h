@@ -201,8 +201,8 @@ public:
 
     virtual void onUpdate();
     virtual EventResult onLoad() { return EventResult::Success; }
-    virtual void onTick(long long tickCount) {}
-    virtual EventResult onFinish(int exitCode) { return EventResult::Success; }
+    virtual void onTick(long long /*tickCount*/) {}
+    virtual EventResult onFinish(int /*exitCode*/) { return EventResult::Success; }
 
     virtual void exit(int exitCode = 0);
     bool isRunning() const { return m_running; }

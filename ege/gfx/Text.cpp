@@ -55,7 +55,6 @@ Vec2d Text::getSize()
         {
             Uint32 code = utf32String[s];
             sf::Glyph glyph = m_font.getGlyph(code, settings.fontSize, settings.bold, 0);
-            float y_size = glyph.bounds.height;
             if(minTop > glyph.bounds.top)
                 minTop = glyph.bounds.top;
             if(maxBottom < glyph.bounds.top + glyph.bounds.height)
@@ -79,7 +78,6 @@ void Text::render(Renderer& renderer) const
     Vec2d currentPos = settings.position;
     Vec2d startPos = currentPos;
     auto& texture = m_font.getTexture(settings.fontSize);
-    int lineSpacing = m_font.getLineSpacing(settings.fontSize);
 
     int minTop = 0;
     for(size_t s = 0; s < utf32String.getSize(); s++)

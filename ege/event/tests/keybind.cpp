@@ -13,7 +13,7 @@ public:
         return EGE::EventResult::Success;
     }
 
-    virtual void onTick(EGE::TickCount tickCount) override
+    virtual void onTick(EGE::TickCount) override
     {
         m_window.callEvents(*this);
     }

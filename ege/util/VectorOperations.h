@@ -163,7 +163,7 @@ Vector3<T> rotateYawPitchRoll(Vector3<T> in, double yaw, double pitch, double ro
     auto yawMatrix = SquareMatrix({{cos(yawR), -sin(yawR), 0}, {sin(yawR), cos(yawR), 0}, {0, 0, 1}});
     auto pitchMatrix = SquareMatrix({{cos(pitchR), 0, sin(pitchR)}, {0, 1, 0}, {-sin(pitchR), 0, cos(pitchR)}});
     auto rollMatrix = SquareMatrix({{1, 0, 0}, {0, cos(rollR), -sin(rollR)}, {0, sin(rollR), cos(rollR)}});
-    Vector3<T> out = transform(in, yawMatrix * pitchMatrix * rollMatrix);
+    Vector3<T> out = transform(tmp, yawMatrix * pitchMatrix * rollMatrix);
     return out + center;
 }
 

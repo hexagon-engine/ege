@@ -168,7 +168,7 @@ bool SceneObject::deserializeMain(SharedPtr<ObjectMap> object)
     return true;
 }
 
-void SceneObject::onUpdate(long long tickCounter)
+void SceneObject::onUpdate(TickCount)
 {
     if(!m_parentId.empty() && !m_parent)
     {

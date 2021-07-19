@@ -5,7 +5,7 @@
 #include <ege/util/system.h>
 #include <ege/util/PointerUtils.h>
 
-int myWorker(EGE::AsyncTask& task)
+int myWorker(EGE::AsyncTask&)
 {
     for(int i = 0; i < 2; i++)
     {
