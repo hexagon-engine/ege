@@ -49,7 +49,7 @@ namespace GlobalConfig
 enum class Option
 {
     GUI_LayoutBox,                      // [DEBUG] Enables a layout box over widgets
-    SceneObject_BoundingBox,            // [DEBUG] Enables a bounding box over SceneObjects
+    SceneObject_Overlay,                // [DEBUG] Enables overlay over SceneObjects
     Count                               // Keep last!
 };
 

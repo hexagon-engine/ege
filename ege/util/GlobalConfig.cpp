@@ -69,7 +69,7 @@ void set(Option key, bool value)
 void enableAllDebug()
 {
     set(Option::GUI_LayoutBox);
-    set(Option::SceneObject_BoundingBox);
+    set(Option::SceneObject_Overlay);
 }
 
 }

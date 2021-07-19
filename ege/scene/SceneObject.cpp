@@ -42,6 +42,7 @@
 #include <ege/util/ObjectString.h>
 #include <ege/util/Vector.h>
 #include <ege/util/VectorOperations.h>
+#include <ege/util/GlobalConfig.h>
 
 namespace EGE
 {
@@ -196,6 +197,20 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
     // Render all parts :)
     for(auto it: m_partsByLayer)
         it.second->doRender(renderer, states);
+
+    // Debug overlay
+    if(EGE_GCONFIG_IS_SET(SceneObject_Overlay))
+    {
+        // TODO: Render some textual info
+        // TODO: Render part info
+        // Bounding box
+        auto boundingBox = getBoundingBox();
+        renderer.renderRectangle(boundingBox.position.x, boundingBox.position.y, boundingBox.size.x, boundingBox.size.y, Colors::transparent, Colors::red);
+
+        // Motion
+        renderer.renderCircle(getPosition().x, getPosition().y, 2, Colors::cyan, Colors::red);
+        renderer.renderPrimitives({Vertex::make(getPosition(), sf::Color::Red), Vertex::make(getPosition() + getMotion(), sf::Color::Red)}, sf::Lines);
+    }
 }
 
 SharedPtr<ObjectMap> SceneObject::serialize() const
