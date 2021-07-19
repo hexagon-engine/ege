@@ -36,6 +36,8 @@
 
 #include "Text.h"
 
+#include <ege/debug/Logger.h>
+
 #define TEXT_DEBUG 1
 
 namespace EGE
@@ -51,20 +53,35 @@ void Text::render(Renderer& renderer) const
 {
     // TODO: word wrap
     // TODO: syntax highlighting
-    // TODO: handle spaces and tabs
     // TODO: align to view to disable antialiasing
 
+    ege_log.debug() << "Text::render()";
     sf::String utf32String(m_text);
     Vec2d currentPos = settings.position;
     Vec2d startPos = currentPos;
+    auto& texture = m_font.getTexture(settings.fontSize);
+    int lineSpacing = m_font.getLineSpacing(settings.fontSize);
+
+    int minTop = 0;
+    for(size_t s = 0; s < utf32String.getSize(); s++)
+    {
+        Uint32 code = utf32String[s];
+        sf::Glyph glyph = m_font.getGlyph(code, settings.fontSize, settings.bold, 0);
+        if(minTop > glyph.bounds.top)
+            minTop = glyph.bounds.top;
+    }
+
     for(size_t s = 0; s < utf32String.getSize(); s++)
     {
         Uint32 code = utf32String[s];
         sf::Glyph glyph = m_font.getGlyph(code, settings.fontSize, settings.bold, 0);
         // TODO: handle spaces and tabs
-        renderer.renderTexturedRectangle(currentPos.x + glyph.bounds.left, currentPos.y + glyph.bounds.top, glyph.textureRect.width, glyph.textureRect.height, m_font.getTexture(settings.fontSize), glyph.textureRect);
+        ege_log.debug() << glyph.bounds.left << "," << glyph.bounds.top << "x" << glyph.bounds.width << "," << glyph.bounds.height;
+        renderer.renderTexturedRectangle(currentPos.x + glyph.bounds.left, currentPos.y + glyph.bounds.top - minTop, glyph.textureRect.width, glyph.textureRect.height, texture, glyph.textureRect);
+        
         if constexpr(TEXT_DEBUG)
-            renderer.renderRectangle(currentPos.x + glyph.bounds.left, currentPos.y + glyph.bounds.top, glyph.textureRect.width, glyph.textureRect.height, Colors::transparent, Colors::magenta);
+            renderer.renderRectangle(currentPos.x + glyph.bounds.left, currentPos.y + glyph.bounds.top - minTop, glyph.textureRect.width, glyph.textureRect.height, Colors::transparent, Colors::magenta);
+        
         float kerning = s == utf32String.getSize() - 1 ? 0 : m_font.getKerning(code, utf32String[s + 1], settings.fontSize);
         currentPos.x += glyph.advance + kerning;
     }
