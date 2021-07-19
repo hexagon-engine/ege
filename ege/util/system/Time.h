@@ -50,9 +50,9 @@ class ExactTime
 public:
     static inline ExactTime zero() { return {}; }
     static inline ExactTime fromSeconds(double s) { return ExactTime(s, (s - std::floor(s)) * 1'000'000'000); }
-    static inline ExactTime fromMilliseconds(long long ms) { return ExactTime(ms / 1'000, ms * 1'000'000); }
-    static inline ExactTime fromMicroseconds(long long us) { return ExactTime(us / 1'000'000, us * 1'000); }
-    static inline ExactTime fromNanoseconds(long long ns) { return ExactTime(ns / 1'000'000'000, ns); }
+    static inline ExactTime fromMilliseconds(long long ms) { return ExactTime(ms / 1'000, ms % 1'000 * 1'000'000); }
+    static inline ExactTime fromMicroseconds(long long us) { return ExactTime(us / 1'000'000, us % 1'000'000 * 1'000); }
+    static inline ExactTime fromNanoseconds(long long ns) { return ExactTime(ns / 1'000'000'000, ns % 1'000'000'000); }
     static inline ExactTime fromSecondsAndNanoseconds(time_t s, long long ns) { return ExactTime(s, ns % 1'000'000'000); }
 
     ExactTime roundToSeconds() const { return ExactTime(m_seconds, 0); }
