@@ -48,25 +48,25 @@ class SystemImplUnix final : public Internal::SystemImpl
 {
 public:
     // Time
-    time_t unixTime();
-    System::ExactTime exactTime();
-    void sleep(System::ExactTime);
+    virtual time_t unixTime() override;
+    virtual System::ExactTime exactTime() override;
+    virtual void sleep(System::ExactTime) override;
 
     // FileSystem
-    System::FileInfo stat(std::string path);
-    std::string getWorkingDirectory();
-    bool setWorkingDirectory(std::string dir);
-    std::string readLink(std::string link);
-    bool testFileAccess(std::string path, System::FileOpenModeMask mode);
-    bool createDirectory(std::string path, System::FileMode mode);
-    bool removeFile(std::string path);
-    std::vector<std::string> listFiles(std::string path);
+    virtual System::FileInfo stat(std::string path) override;
+    virtual std::string getWorkingDirectory() override;
+    virtual bool setWorkingDirectory(std::string dir) override;
+    virtual std::string readLink(std::string link) override;
+    virtual bool testFileAccess(std::string path, System::FileOpenModeMask mode) override;
+    virtual bool createDirectory(std::string path, System::FileMode mode) override;
+    virtual bool removeFile(std::string path) override;
+    virtual std::vector<std::string> listFiles(std::string path) override;
 
     // Global
-    std::string getErrorMessage();
-    std::string getEnv(std::string);
+    virtual std::string getErrorMessage() override;
+    virtual std::string getEnv(std::string) override;
 
-    virtual std::string className() { return "EGE::Unix::SystemImplUnix"; }
+    virtual std::string className() override { return "EGE::Unix::SystemImplUnix"; }
 
 private:
     int m_lastErrno = 0;
