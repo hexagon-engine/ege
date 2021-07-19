@@ -44,6 +44,7 @@ void Inspector::display(Logger& logger) const
     auto lh = logger.log(LogLevel::Notice);
     lh << "Inspector dump: \n\e[0m";
     lh << m_rootNode.isnDisplay();
+    logger.notice() << "Inspector dump END\n";
 }
 
 }
