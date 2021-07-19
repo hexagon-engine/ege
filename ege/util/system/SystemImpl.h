@@ -54,23 +54,23 @@ public:
     virtual ~SystemImpl() = default;
 
     // Time
-    virtual time_t unixTime() { CRASH(); }
-    virtual System::ExactTime exactTime() { CRASH(); }
-    virtual void sleep(System::ExactTime) { CRASH(); }
+    virtual time_t unixTime() = 0;
+    virtual System::ExactTime exactTime() = 0;
+    virtual void sleep(System::ExactTime) = 0;
 
     // FileSystem
-    virtual System::FileInfo stat(std::string) { CRASH(); }
-    virtual std::string getWorkingDirectory() { CRASH(); }
-    virtual bool setWorkingDirectory(std::string) { CRASH(); }
-    virtual std::string readLink(std::string) { CRASH(); }
-    virtual bool testFileAccess(std::string, System::FileOpenModeMask) { CRASH(); }
-    virtual bool createDirectory(std::string, System::FileMode) { CRASH(); }
-    virtual bool removeFile(std::string) { CRASH(); }
-    virtual std::vector<std::string> listFiles(std::string) { CRASH(); }
+    virtual System::FileInfo stat(std::string) = 0;
+    virtual std::string getWorkingDirectory() = 0;
+    virtual bool setWorkingDirectory(std::string) = 0;
+    virtual std::string readLink(std::string) = 0;
+    virtual bool testFileAccess(std::string, System::FileOpenModeMask) = 0;
+    virtual bool createDirectory(std::string, System::FileMode) = 0;
+    virtual bool removeFile(std::string) = 0;
+    virtual std::vector<std::string> listFiles(std::string) = 0;
 
     // Global
-    virtual std::string getErrorMessage() { CRASH(); }
-    virtual std::string getEnv(std::string) { CRASH(); }
+    virtual std::string getErrorMessage() = 0;
+    virtual std::string getEnv(std::string) = 0;
 
     virtual std::string className() { return "EGE::Internal::SystemImpl"; }
 };
