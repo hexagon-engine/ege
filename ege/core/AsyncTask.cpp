@@ -47,7 +47,8 @@ AsyncTask::AsyncTask(std::function<int(AsyncTask& task)> worker, std::function<v
 
 AsyncTask::~AsyncTask()
 {
-    terminate();
+    requestStop();
+    wait();
 }
 
 void AsyncTask::start()
