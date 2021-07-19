@@ -167,7 +167,7 @@ public:
 
     void sendToAll(Packet const& packet)
     {
-        forEachClientIf([&](auto& client) { client.send(packet); });
+        forEachClient([&](auto& client) { client.send(packet); });
     }
 
     template<class Predicate>
