@@ -51,6 +51,8 @@ namespace Internal
 class SystemImpl
 {
 public:
+    virtual ~SystemImpl() = default;
+
     // Time
     virtual time_t unixTime() { CRASH(); }
     virtual System::ExactTime exactTime() { CRASH(); }
