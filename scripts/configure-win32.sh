@@ -25,6 +25,9 @@ cd ${BUILD_DIR}
 ege_echo INFO "Downloading SFML..."
 git clone https://github.com/sfml/SFML.git --depth 1
 cd SFML
+ege_echo INFO "Patching SFML..."
+git apply ../../scripts/patches/*.patch
+ege_echo INFO "Building SFML..."
 mkdir build
 cd build
 CMAKE_CROSSCOMPILER_OPTIONS="-DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++"
@@ -36,7 +39,6 @@ cmake -B . -S .. -GNinja ${CMAKE_CROSSCOMPILER_OPTIONS} \
 	-DCMAKE_INSTALL_PREFIX=root \
 	-DCMAKE_SYSTEM_NAME=Windows \
 	-DOPENAL_LIBRARY=${CMAKE_EXTLIBS_PATH}/libopenal32.a
-ege_echo INFO "Building SFML..."
 #echo "The script needs sudo for installing; press Ctrl+C to cancel"
 ninja install -j$(nproc)
 cd ../..

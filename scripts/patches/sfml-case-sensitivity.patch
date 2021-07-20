@@ -1,0 +1,14 @@
+diff --git a/cmake/SFMLConfigDependencies.cmake.in b/cmake/SFMLConfigDependencies.cmake.in
+index c5813bd..8d7c45e 100644
+--- a/cmake/SFMLConfigDependencies.cmake.in
++++ b/cmake/SFMLConfigDependencies.cmake.in
+@@ -55,7 +55,8 @@ if(SFML_STATIC_LIBRARIES)
+         endif()
+ 
+         if (FIND_SFML_OS_WINDOWS)
+-            set_property(TARGET OpenGL APPEND PROPERTY INTERFACE_LINK_LIBRARIES "OpenGL32")
++            # Unix filenames are case-sensitive, this may break crosscompiling
++            set_property(TARGET OpenGL APPEND PROPERTY INTERFACE_LINK_LIBRARIES "opengl32")
+         elseif(NOT FIND_SFML_OS_IOS)
+             sfml_bind_dependency(TARGET OpenGL FRIENDLY_NAME "OpenGL" SEARCH_NAMES "OpenGL" "GL")
+         endif()
