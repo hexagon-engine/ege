@@ -49,6 +49,7 @@ namespace GlobalConfig
 enum class Option
 {
     GUI_LayoutBox,                      // [DEBUG] Enables a layout box over widgets
+    Profiler_Enable,                    // Enable EGE::Profiler
     SceneObject_Overlay,                // [DEBUG] Enables overlay over SceneObjects
     Count                               // Keep last!
 };

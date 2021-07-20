@@ -38,6 +38,7 @@
 
 #include <algorithm>
 #include <ege/main/Config.h>
+#include <ege/util/GlobalConfig.h>
 #include <ege/util/ObjectInt.h>
 #include <ege/util/ObjectMap.h>
 #include <ege/util/PointerUtils.h>
@@ -56,8 +57,9 @@ Profiler::Profiler()
 
 Profiler::~Profiler() {}
 
-void Profiler::startSection(std::string name)
+void Profiler::startSection(std::string const& name)
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     DBG(PROFILER_DEBUG, "--- START SECTION ---");
     endSectionLL(); //unspecified
     startSectionLL(name);
@@ -66,14 +68,16 @@ void Profiler::startSection(std::string name)
 
 void Profiler::endSection()
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     DBG(PROFILER_DEBUG, "--- END SECTION ---");
     endSectionLL(); //unspecified
     endSectionLL(); //current
     startSectionLL("<unspecified>");
 }
 
-void Profiler::startSectionLL(std::string name)
+void Profiler::startSectionLL(std::string const& name)
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     ASSERT(m_root.m_started);
 
     Section* section = nullptr;
@@ -113,6 +117,7 @@ void Profiler::startSectionLL(std::string name)
 }
 void Profiler::endSectionLL()
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     ASSERT(m_root.m_started);
     if(m_startedSections.empty())
     {
@@ -131,8 +136,9 @@ void Profiler::endSectionLL()
     }
 }
 
-void Profiler::endStartSection(std::string name)
+void Profiler::endStartSection(std::string const& name)
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     DBG(PROFILER_DEBUG, "--- END START SECTION ---");
     endSectionLL(); //unspecified
     endSectionLL(); //current
@@ -143,6 +149,7 @@ void Profiler::endStartSection(std::string name)
 
 void Profiler::start()
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     if(m_root.m_started) return;
     DBG(PROFILER_DEBUG, "--- START ---");
     m_root.m_started = true;
@@ -152,6 +159,7 @@ void Profiler::start()
 
 void Profiler::end()
 {
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
     if(!m_root.m_started) return;
     DBG(PROFILER_DEBUG, "--- END ---");
     m_root.m_started = false;
@@ -178,13 +186,11 @@ long long Profiler::getTime()
     return System::exactTime().nanoseconds();
 }
 
-Profiler::Section* Profiler::Section::findSubSection(std::string name)
+Profiler::Section* Profiler::Section::findSubSection(std::string const& name)
 {
     auto it = m_subSections.find(name);
     if(it == m_subSections.end())
-    {
-        return NULL;
-    }
+        return nullptr;
     return it->second.get();
 }
 

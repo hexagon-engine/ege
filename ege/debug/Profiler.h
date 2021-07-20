@@ -55,9 +55,9 @@ public:
     virtual ~Profiler();
 
     // empty name for root section
-    void startSection(std::string name = "");
+    void startSection(std::string const& name = "");
     void endSection();
-    void endStartSection(std::string name);
+    void endStartSection(std::string const&  name);
     void start();
     void end();
     std::string toString();
@@ -66,7 +66,7 @@ public:
     virtual bool deserialize(SharedPtr<ObjectMap>);
 
 private:
-    void startSectionLL(std::string name);
+    void startSectionLL(std::string const& name);
     void endSectionLL();
     long long getTime();
 
@@ -79,7 +79,7 @@ private:
         long long m_startTime;
         int m_depth = 0;
 
-        Section* findSubSection(std::string name);
+        Section* findSubSection(std::string const& name);
         void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
 
         virtual SharedPtr<ObjectMap> serialize() const;
