@@ -27,10 +27,9 @@ cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
 # TODO: find_path is buggy?
 find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
 
-macro(ege_executable targetname source_path modules)
-	ege_message("INFO" "Adding EXECUTABLE: \"${targetname}\" from ${CMAKE_SOURCE_DIR}/${source_path} (installed in ${CMAKE_INSTALL_PREFIX})")
-	file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/${source_path}/*")
-	add_executable("${targetname}" ${SOURCES})
+macro(ege_executable targetname sources modules)
+	ege_message("INFO" "Adding EXECUTABLE: \"${targetname}\" (installed in ${CMAKE_INSTALL_PREFIX})")
+	add_executable("${targetname}" ${sources})
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
 	
 	# add EGE modules

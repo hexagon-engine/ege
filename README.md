@@ -104,10 +104,17 @@ set(CMAKE_INSTALL_PREFIX "install/path")
 # Include a set of utilities to link EGE with your project.
 include(${EGE_LIB_ROOT}/cmake/FindEGE.cmake)
 
+# Specify source files
+set(SOURCES
+  "main.cpp"
+  "MyObject.cpp"
+  # ...
+)
+
 # Add an executable `mygame` in `bin` folder. Specify which
 # modules it will use.
 # NOTE: Do not add system-specific suffix (.exe).
-ege_executable(mygame bin "ege-gui;ege-resources;..other modules..")
+ege_executable(mygame "${SOURCES}" "ege-gui;ege-resources;..other modules..")
 
 # Specify resource path if you use them. It must be the same as
 # specified in CommonPaths::setResourceDir(), 'res' by default.
