@@ -98,10 +98,10 @@ public:
     void setSpawnChance(double val) { ASSERT(val > 0); m_spawnChance = val; }
     void setParticleLifeTime(unsigned ttl) { m_particleTTL = ttl; }
 
-    void spawnParticle();
+    void spawnParticle(Vec3d relativePosition);
 
 private:
-    Vec2d randomPosition();
+    Vec3d randomPosition();
 
     RectD m_spawnRect;
     double m_spawnChance = 1.0;

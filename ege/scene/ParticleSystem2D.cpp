@@ -79,18 +79,19 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->endStartSection("spawn");
 
+    auto position = getPosition();
     if(m_spawnChance == 1)
-        spawnParticle();
+        spawnParticle(position);
     else if(m_spawnChance > 1)
     {
         for(size_t s = 0; s < m_spawnChance; s++)
-            spawnParticle();
+            spawnParticle(position);
     }
     else
     {
         double val = rand() % 1024 / 1024.0;
         if(val < m_spawnChance)
-            spawnParticle();
+            spawnParticle(position);
     }
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->endSection();
@@ -99,8 +100,9 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
         getOwner().getLoop()->getProfiler()->endSection();
 }
 
-Vec2d ParticleSystem2D::randomPosition()
+Vec3d ParticleSystem2D::randomPosition()
 {
+    // TODO: Support 3D spawn ranges
     int rand1 = rand() % 1024;
     int rand2 = rand() % 1024;
 
@@ -110,7 +112,7 @@ Vec2d ParticleSystem2D::randomPosition()
     float val1 = randSize1 + m_spawnRect.position.x;
     float val2 = randSize2 + m_spawnRect.position.y;
 
-    return Vec2d(val1, val2);
+    return Vec3d(val1, val2, 0);
 }
 
 void ParticleSystem2D::Particle::update()
@@ -121,10 +123,10 @@ void ParticleSystem2D::Particle::update()
         system.m_particleUpdater(*this);
 }
 
-void ParticleSystem2D::spawnParticle()
+void ParticleSystem2D::spawnParticle(Vec3d relativePosition)
 {
     Particle particle(*this);
-    particle.position = randomPosition();
+    particle.position = randomPosition() + relativePosition;
     particle.ttl = m_particleTTL;
 
     if(m_particleOnSpawn)
