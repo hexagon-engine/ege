@@ -276,13 +276,13 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
             continue;
         }
 
-        setCustomView(renderer.getTarget());
+        applyStates(renderer);
         if constexpr(WIDGET_DEBUG) ege_log.debug() << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
         widget->doRender(renderer, states);
     }
 
     // Render self (overlay)
-    setCustomView(renderer.getTarget());
+    applyStates(renderer);
     renderOverlay(renderer);
 }
 

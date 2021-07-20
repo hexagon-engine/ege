@@ -65,7 +65,11 @@ protected:
     virtual bool isCustomViewNeeded() const { return false; }
     virtual sf::View getCustomView(sf::RenderTarget& target) const { return target.getDefaultView(); }
 
-    virtual void setCustomView(sf::RenderTarget& target);
+    virtual bool isCustomTransformNeeded() const { return false; }
+    virtual sf::Transform getCustomTransform(sf::RenderTarget&) const { return {}; }
+
+    virtual void applyStates(Renderer& renderer);
+    virtual void applyStates(Renderer& renderer, RenderStates& states);
     virtual void doUpdateGeometry(Renderer& renderer);
 
 private:
