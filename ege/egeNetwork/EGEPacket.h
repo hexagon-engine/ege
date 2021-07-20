@@ -36,12 +36,12 @@
 
 #pragma once
 
-#include <ege/controller/ControlPacket.h>
+#include <ege/egeNetwork/ControlPacket.h>
 #include <ege/main/Config.h>
-#include <ege/util/PointerUtils.h>
 #include <ege/network/SFMLPacket.h>
 #include <ege/scene/SceneObject.h>
 #include <ege/util/ObjectMap.h>
+#include <ege/util/PointerUtils.h>
 #include <memory>
 
 // Protocol version used by this implementation.

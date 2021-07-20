@@ -1,6 +1,4 @@
 set(SOURCES
-	"ClientNetworkController.cpp"
-	"ClientNetworkController.h"
 	"EGEClient.cpp"
 	"EGEClient.h"
 	"EGEClientConnection.cpp"
@@ -14,12 +12,9 @@ set(SOURCES
 	"EGEPacketGenerators.cpp"
 	"EGEServer.cpp"
 	"EGEServer.h"
-	"ServerNetworkController.cpp"
-	"ServerNetworkController.h"
 )
 
 ege_add_module(egeNetwork)
-ege_depend_module(egeNetwork controller)
 ege_depend_module(egeNetwork debug)
 ege_depend_module(egeNetwork gpo)
 ege_depend_module(egeNetwork gui)

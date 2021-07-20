@@ -36,7 +36,6 @@
 
 #pragma once
 
-#include "ClientNetworkController.h"
 #include "EGEGame.h"
 #include "EGEPacket.h"
 

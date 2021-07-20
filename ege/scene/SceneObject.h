@@ -40,7 +40,6 @@
 #include "SceneObjectType.h"
 
 #include <SFML/Graphics.hpp>
-#include <ege/controller/Controllable.h>
 #include <ege/debug/InspectorNode.h>
 #include <ege/debug/Logger.h>
 #include <ege/gfx/RenderStates.h>
@@ -58,7 +57,7 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public Controllable, public Renderable, public Serializable
+class SceneObject : public Animatable, public Renderable, public Serializable
 {
 public:
     SceneObject(Scene& owner)

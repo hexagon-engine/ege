@@ -36,8 +36,8 @@
 
 #pragma once
 
-#include <ege/controller/ControlPacket.h>
 #include <ege/debug/Logger.h>
+#include <ege/egeNetwork/ControlPacket.h>
 #include <ege/gpo/GameplayObjectManager.h>
 #include <ege/gpo/GameplayObjectRegistry.h>
 #include <ege/scene/Scene.h>

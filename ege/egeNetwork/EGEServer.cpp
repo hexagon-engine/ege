@@ -36,10 +36,10 @@
 
 #include "EGEServer.h"
 
+#include "ControlPacket.h"
 #include "EGEClientConnection.h"
 #include "EGEPacket.h"
 
-#include <ege/controller/ControlPacket.h>
 #include <ege/core/AsyncTask.h>
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
