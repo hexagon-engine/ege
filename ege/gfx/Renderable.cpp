@@ -16,9 +16,9 @@ void Renderable::applyStates(Renderer& renderer)
     auto& target = renderer.getTarget();
     if(isCustomViewNeeded())
         target.setView(getCustomView(target));
-    if(isCustomTransformNeeded())
+    auto states = renderer.getStates();
+    if(isCustomTransformNeeded() || states.sfStates().transform != sf::Transform())
     {
-        auto states = renderer.getStates();
         states.sfStates().transform = getCustomTransform(target);
         renderer.setStates(states);
     }
