@@ -51,7 +51,7 @@ public:
     : Widget(parent, "SceneWidget"), m_initialScene(initialScene) {}
 
     virtual void render(Renderer& renderer) const override;
-    virtual void onUpdate(long long tickCounter);
+    virtual void onUpdate(long long tickCounter) override;
 
     void setScene(SharedPtr<Scene> scene)
     {
