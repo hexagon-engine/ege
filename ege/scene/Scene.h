@@ -85,7 +85,7 @@ public:
 class Scene : public EventLoop, public Renderable
 {
 public:
-    Scene(GUIGameLoop* loop);
+    Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry = nullptr);
     virtual ~Scene();
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
@@ -157,7 +157,10 @@ public:
     // We don't have GUI on servers!
     bool isHeadless() const { return !getLoop(); }
 
-    SceneObjectRegistry& getRegistry() { return m_registry; }
+    // The registry is guaranteed to exist since it is created in
+    // constructor if nullptr is given.
+    const SceneObjectRegistry& getRegistry() const { return *m_registry; }
+    SceneObjectRegistry& getRegistry() { return *m_registry; }
 
     void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
 
@@ -178,7 +181,7 @@ protected:
     ObjectMapByLayer m_objectsByLayer;
     std::recursive_mutex m_objectsMutex;
 
-    SceneObjectRegistry m_registry;
+    SharedPtr<SceneObjectRegistry> m_registry = nullptr;
     String m_lastLoadFile;
     WeakPtr<Camera> m_cameraObject;
 

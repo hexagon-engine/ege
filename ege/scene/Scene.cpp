@@ -49,14 +49,17 @@
 namespace EGE
 {
 
-Scene::Scene(GUIGameLoop* loop)
-: EventLoop(loop, "Scene"), m_loop(loop)
+Scene::Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry)
+: EventLoop(loop, "Scene"), m_registry(registry), m_loop(loop)
 {
-    // Add default SceneObjectTypes.
-    m_registry.addType<Plain2DCamera>();
+    if(!m_registry)
+        m_registry = make<SceneObjectRegistry>();
 
-    m_registry.addType<DummyObject2D>();
-    m_registry.addType<ParticleSystem2D>();
+    // Add default SceneObjectTypes.
+    m_registry->addType<Plain2DCamera>();
+
+    m_registry->addType<DummyObject2D>();
+    m_registry->addType<ParticleSystem2D>();
 }
 
 Scene::~Scene()
