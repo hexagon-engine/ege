@@ -59,9 +59,10 @@ public:
     // methods and fields.
     InspectorNode* isnParent() const { return m_isnParent; }
     String isnName() const { return m_isnName; }
-    virtual String isnDisplay(size_t depth = 0) const;
+    virtual String isnDisplay() const;
     void isnSetParent(InspectorNode*);
     virtual String isnInfo() const { return ""; }
+    Set<InspectorNode*> const& isnChildren() const { return m_isnChildren; }
 
 private:
     InspectorNode* m_isnParent = nullptr;

@@ -81,28 +81,74 @@ void InspectorNode::isnSetParent(InspectorNode* node)
         m_isnParent->m_isnChildren.insert(this);
 }
 
-String InspectorNode::isnDisplay(size_t depth) const
+// TODO: Do not duplicate this and printObject() copy
+enum class IndentMode
+{
+    None,
+    Normal,
+    Object,
+    LastObject
+};
+
+static String indent(std::vector<IndentMode> modes)
+{
+    String out;
+    for(IndentMode mode: modes)
+    {
+        switch(mode)
+        {
+            case IndentMode::None:
+                out += "   "; // "   "
+                break;
+            case IndentMode::Normal:
+                out += "\u2502  "; // "|  "
+                break;
+            case IndentMode::Object:
+                out += "\u251c\u2500 "; // "|--"
+                break;
+            case IndentMode::LastObject:
+                out += "\u2514\u2500 "; // "L--"
+                break;
+        }
+    }
+    return out;
+}
+
+String _isnDisplayImpl(const InspectorNode& node, std::vector<IndentMode> modes, bool isLast)
 {
     String text;
 
     // Depth indent
-    for(size_t s = 0; s < depth; s++)
-        text += "  ";
-    text += " * ";
+    text += indent(modes);
 
     // Info
-    text += "\e[1m" + m_isnName + "\e[0m";
-    String info = isnInfo();
+    text += "\e[1m" + node.isnName() + "\e[0m";
+    String info = node.isnInfo();
     if(!info.empty())
         text += " (" + info + ")";
     text += '\n';
 
     // Child info
-    depth++;
-    for(auto child: m_isnChildren)
-        text += child->isnDisplay(depth);
+    size_t count = 0;
+    for(auto& child: node.isnChildren())
+    {
+        bool localIsLast = count == node.isnChildren().size() - 1;
+        auto newModes = modes;
+        if(!newModes.empty())
+            newModes.back() = isLast ? IndentMode::None : IndentMode::Normal;
+        newModes.push_back(localIsLast ? IndentMode::LastObject : IndentMode::Object);
+        text += _isnDisplayImpl(*child, newModes, localIsLast);
+        count++;
+        if(count > 10)
+            break;
+    }
 
     return text;
+}
+
+String InspectorNode::isnDisplay() const
+{
+    return _isnDisplayImpl(*this, {}, true);
 }
 
 }
