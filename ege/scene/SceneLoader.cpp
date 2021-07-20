@@ -86,17 +86,48 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
         else
             ege_log.verbose() << "SceneLoader: Using already registered type for " << pr.first;
 
-        auto sd_data = sodata.value()->getObject("data").to<ObjectMap>();
-        if(!sd_data.hasValue())
+        // include key has priority. If there are both keys, 'data' key is ignored.
+        SharedPtr<ObjectMap> sd_data;
+        auto sd_include = sodata.value()->get("include").asString();
+        if(sd_include.hasValue())
         {
-            ege_log.error() << "Registry entry must be a map";
-            return false; // data is not a map
+            // Try to load from specified file
+            String fileName = CommonPaths::resourceDir() + "/" + sd_include.value();
+            std::fstream input(fileName);
+            if(!input.good())
+            {
+                ege_log.error() << "Failed to open '" << fileName << "' required by SceneObjectType '" << pr.first << "'";
+                return false;
+            }
+            SharedPtr<Object> data;
+            if(!(input >> objectIn(data, converter)))
+            {
+                ege_log.error() << "Failed to load data from '" << fileName << "' required by SceneObjectType '" << pr.first << "'";
+                return false;
+            }
+            sd_data = Object::cast<ObjectMap>(data).valueOr({});
+            if(!sd_data)
+            {
+                ege_log.error() << "Invalid format of data loaded from " << fileName << ", must be a map";
+                return false;
+            }
+        }
+        else
+        {
+            // Try to load inlined
+            auto data = sodata.value()->getObject("data").to<ObjectMap>();
+            if(!data.hasValue())
+            {
+                ege_log.error() << "A registry entry must have 'data' or 'loadFrom' key";
+                return false;
+            }
+            sd_data = data.value();
         }
 
-        if(!sotype->deserialize(sd_data.value()))
+        if(!sotype->deserialize(sd_data))
         {
-            ege_log.error() << "Invalid SceneObjectType";
-            return false; // invalid sceneobjecttype!
+            ege_log.error() << "Failed to deserialize SceneObjectType '" << pr.first << "'";
+            return false;
         }
         registry.addType(sotype);
     }

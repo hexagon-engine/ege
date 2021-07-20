@@ -32,7 +32,7 @@ TESTCASE(complexLoader)
     auto camera = scene->addNewObject<EGE::Plain2DCamera>();
     camera->setFollowObject(player);
     camera->setScalingMode(EGE::ScalingMode::Fit);
-    camera->setDisplaySize({100, 100});
+    camera->setDisplaySize({200, 200});
     scene->setCamera(camera);
 
     // Setup keybinds
