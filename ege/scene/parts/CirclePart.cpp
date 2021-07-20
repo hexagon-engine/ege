@@ -53,7 +53,9 @@ bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
     position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
     radius = data->getObject("radius").asFloat().valueOr(0);
     fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
-    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr({}));
+    auto defaultOutlineColor = make<ObjectMap>();
+    defaultOutlineColor->addFloat("a", 0);
+    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").to<ObjectMap>().valueOr(defaultOutlineColor));
     setGeometryNeedUpdate();
     return true;
 }
