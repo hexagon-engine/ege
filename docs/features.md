@@ -1,13 +1,16 @@
-## Full feature list
+## Full module/feature list
 * **controller** - API used for synchronizing scenes over the network
 * **core** - Event Loop and basic utilities
     * EventLoop - event system
     * Timers & clocks
-    * Async tasks
+    * Async tasks + `Progress` class for splash screens
+    * Data Manager for managing game settings
 * **debug** - Debug utility
     * EGE custom logger
     * Configurable hex dump
     * `util`'s Object printing
+    * Object inspector (allows to see when objects are created/removed)
+    * Profiler
 * **egeNetwork** - Protocol for network games
     * `scene` synchronizing
     * Login system (not encrypted for now)
@@ -18,6 +21,7 @@
     * Keybind Manager, which allows easier management of controls
 * **game** - Game class with Gameplay Object Manager and Game Loop included
 * **geometry** - Geometry utility (computing intersections etc.)
+    * It's very WIP for now
 * **gfx** - Graphics renderer
     * Basic shape rendering (rectangles, texts, points etc.)
     * Theme renderer
@@ -26,7 +30,7 @@
     * Mainly *GameplayObjectRegistry* - a structure that manages and automatically assigns numeric IDs to registered objects.
 * **gui** - User interface utility
     * GUI animations with many easing functions
-    * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox) and modal dialogs
+    * Basic widgets (Button, CheckBox, Frame, Label, RadioButton, ScrollBar, TextBox, Slider, ProgressBar, ListBox) and modal dialogs
     * Simple layout calculation
     * Splash screens
 * **main** - Engine-global functionality & configuration (ASSERT etc.)
@@ -34,7 +38,7 @@
     * TCP sockets and listeners (SFML Packet compatible)
 * **resources** - Resource management
     * ResourceManager for loading textures, fonts, shaders etc.
-    * Texture atlas generation
+    * Simple texture atlas generation
 * **scene** - Library for managing scenes and adding objects to it.
     * Scene and SceneObjects (in 2D) with `gui` integration and camera system
     * Basic texture renderer
@@ -42,11 +46,12 @@
     * Tilemap renderer
     * Scene saving and loading from file (TODO: map editor)
 * **sfml** - Dummy module for linking SFML
+* **sound** - Basic sound utilities
 * **tilemap** - Tilemaps
     * Tilemaps: abstract, fixed sized, dynamic sized (chunked)
 * **util** - Common utility
     * Object system - used for serialization
-    * Simple JSON parser and templatizer
+    * Simple JSON parser and generator
     * System-specific stuff (filesystem, time)
     * Basic math (equations, vector operations, radians / degrees convertion)
-    * Random (LCG)
+    * Random number generators: LCG
