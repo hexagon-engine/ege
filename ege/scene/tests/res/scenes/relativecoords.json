@@ -1,0 +1,37 @@
+{
+    "objects": [
+        {
+            "typeId": "Arm",
+            "name": "center",
+            "m": {
+                "p": {"x": 30, "y": 30}
+            }
+        },
+        {
+            "typeId": "Arm",
+            "name": "rotating1",
+            "m": {
+                "p": {"x": 0, "y": -25},
+                "parent": "center",
+                "yaw": 45
+            }
+        },
+        {
+            "typeId": "Arm",
+            "name": "rotating2",
+            "m": {
+                "p": {"x": 0, "y": -25},
+                "parent": "rotating1",
+                "yaw": 45
+            }
+        },
+        {
+            "typeId": "End",
+            "name": "rotating3",
+            "m": {
+                "p": {"x": 0, "y": -25},
+                "parent": "rotating2"
+            }
+        }
+    ]
+}
