@@ -77,17 +77,17 @@ void Frame::render(Renderer& renderer) const
     // Frame (draw)
     rsFrame.move(0.f, 6.0);
     rsFrame.setSize(sf::Vector2f(rsFrame.getSize().x, rsFrame.getSize().y - 6.0));
-    target.draw(rsFrame);
+    target.draw(rsFrame, renderer.getStates().sfStates());
 
     rsFrame2.move(0.f, 6.0);
     rsFrame2.setSize(sf::Vector2f(rsFrame2.getSize().x, rsFrame2.getSize().y - 6.0));
-    target.draw(rsFrame2);
+    target.draw(rsFrame2, renderer.getStates().sfStates());
 
     // Label background (draw)
-    target.draw(rsBg);
+    target.draw(rsBg, renderer.getStates().sfStates());
 
     // Label (draw)
-    target.draw(text);
+    target.draw(text, renderer.getStates().sfStates());
 
     CompoundWidget::render(renderer);
 }

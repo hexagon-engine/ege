@@ -120,7 +120,7 @@ void Label::updateLayout()
 
 void Label::render(Renderer& renderer) const
 {
-    renderer.getTarget().draw(m_text);
+    renderer.getTarget().draw(m_text, renderer.getStates().sfStates());
     Widget::render(renderer);
 }
 

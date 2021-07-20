@@ -53,19 +53,19 @@ void RadioButton::render(Renderer& renderer) const
     cs.setPosition(2.f, 2.f);
     cs.setOutlineColor(sf::Color(60, 60, 60));
     cs.setRadius(5.5f);
-    target.draw(cs);
+    target.draw(cs, renderer.getStates().sfStates());
 
     // border
     cs.setRadius(6.f);
     cs.setPosition(1.f, 1.f);
     cs.setFillColor(sf::Color::Transparent);
     cs.setOutlineColor(sf::Color(173, 173, 173));
-    target.draw(cs);
+    target.draw(cs, renderer.getStates().sfStates());
 
     cs.setRadius(6.5f);
     cs.setPosition(1.f, 1.f);
     cs.setOutlineColor(sf::Color(210, 210, 210));
-    target.draw(cs);
+    target.draw(cs, renderer.getStates().sfStates());
 
     // border if clicked
     if(m_leftClicked)
@@ -73,7 +73,7 @@ void RadioButton::render(Renderer& renderer) const
         cs.setRadius(4.5f);
         cs.setPosition(3.f, 3.f);
         cs.setOutlineColor(sf::Color(70, 70, 70));
-        target.draw(cs);
+        target.draw(cs, renderer.getStates().sfStates());
     }
 
     // check
@@ -83,7 +83,7 @@ void RadioButton::render(Renderer& renderer) const
         cs.setOutlineColor(sf::Color::Transparent);
         cs.setPosition(5.f, 5.f);
         cs.setRadius(2.5f);
-        target.draw(cs);
+        target.draw(cs, renderer.getStates().sfStates());
     }
 
     // label
@@ -92,7 +92,7 @@ void RadioButton::render(Renderer& renderer) const
     sf::Text text(getLabel(), *font, 12);
     text.setPosition(20.f, 0.f);
     text.setFillColor(sf::Color::Black);
-    target.draw(text);
+    target.draw(text, renderer.getStates().sfStates());
 
     Widget::render(renderer);
 }

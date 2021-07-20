@@ -53,19 +53,19 @@ void CheckBox::render(Renderer& renderer) const
     rs.setPosition(2.f, 2.f);
     rs.setOutlineColor(sf::Color(60, 60, 60));
     rs.setSize(sf::Vector2f(11.f, 11.f));
-    target.draw(rs);
+    target.draw(rs, renderer.getStates().sfStates());
 
     // border
     rs.setSize(sf::Vector2f(12.f, 12.f));
     rs.setPosition(1.f, 1.f);
     rs.setFillColor(sf::Color::Transparent);
     rs.setOutlineColor(sf::Color(173, 173, 173));
-    target.draw(rs);
+    target.draw(rs, renderer.getStates().sfStates());
 
     rs.setSize(sf::Vector2f(13.f, 13.f));
     rs.setPosition(1.f, 1.f);
     rs.setOutlineColor(sf::Color(210, 210, 210));
-    target.draw(rs);
+    target.draw(rs, renderer.getStates().sfStates());
 
     // border if clicked
     if(m_leftClicked)
@@ -73,7 +73,7 @@ void CheckBox::render(Renderer& renderer) const
         rs.setSize(sf::Vector2f(9.f, 9.f));
         rs.setPosition(3.f, 3.f);
         rs.setOutlineColor(sf::Color(70, 70, 70));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
     }
 
     // check
@@ -83,7 +83,7 @@ void CheckBox::render(Renderer& renderer) const
         rs.setOutlineColor(sf::Color::Transparent);
         rs.setPosition(5.f, 5.f);
         rs.setSize(sf::Vector2f(5.f, 5.f));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
     }
 
     // label
@@ -92,7 +92,7 @@ void CheckBox::render(Renderer& renderer) const
     sf::Text text(getLabel(), *font, 12);
     text.setPosition(20.f, 0.f);
     text.setFillColor(sf::Color::Black);
-    target.draw(text);
+    target.draw(text, renderer.getStates().sfStates());
 
     Widget::render(renderer);
 }

@@ -68,18 +68,18 @@ void Button::render(Renderer& renderer) const
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(2.f, 2.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
 
         rs.setFillColor(sf::Color::Transparent);
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(200, 200, 200));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
 
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
     }
     else if(m_mouseOver)
     {
@@ -90,13 +90,13 @@ void Button::render(Renderer& renderer) const
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
 
         rs.setFillColor(sf::Color::Transparent);
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
     }
     else
     {
@@ -107,13 +107,13 @@ void Button::render(Renderer& renderer) const
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(2.f, 2.f));
         rs.setPosition(1.f, 1.f);
         rs.setOutlineColor(sf::Color(255, 255, 255));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
 
         rs.setFillColor(sf::Color::Transparent);
         rs.setSize(sf::Vector2f(size.x, size.y) - sf::Vector2f(1.f, 1.f));
         rs.setPosition(0.f, 0.f);
         rs.setOutlineColor(sf::Color(29, 29, 29));
-        target.draw(rs);
+        target.draw(rs, renderer.getStates().sfStates());
     }
 
     // label
@@ -123,7 +123,7 @@ void Button::render(Renderer& renderer) const
     text.setPosition((int)size.x / 2, (int)size.y / 2);
     text.setOrigin((int)text.getLocalBounds().width / 2, (int)text.getLocalBounds().height / 2);
     text.setFillColor(sf::Color::Black);
-    target.draw(text);
+    target.draw(text, renderer.getStates().sfStates());
 
     Widget::render(renderer);
 }

@@ -73,7 +73,7 @@ void TextBox::render(Renderer& renderer) const
     renderer.getThemeRenderer()->renderTextBoxLikeBackground(renderer, 0, 0, getSize().x, getSize().y);
 
     // label
-    renderer.getTarget().draw(m_textDrawable);
+    renderer.getTarget().draw(m_textDrawable, renderer.getStates().sfStates());
 
     // selection
     float selStart = m_textDrawable.findCharacterPos(m_selectionStart).x;
@@ -86,7 +86,7 @@ void TextBox::render(Renderer& renderer) const
         sf::RectangleShape rsCaret(sf::Vector2f(1.f, getSize().y - 6.f));
         rsCaret.setPosition(m_textDrawable.findCharacterPos(m_caretPos).x, 3.f);
         rsCaret.setFillColor(sf::Color::Black);
-        renderer.getTarget().draw(rsCaret);
+        renderer.getTarget().draw(rsCaret, renderer.getStates().sfStates());
     }
 
     if(m_border)
