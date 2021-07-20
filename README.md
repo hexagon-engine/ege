@@ -47,58 +47,85 @@ Some documentation is in `docs` folder.
 * ... and many more!
 
 ## Dependencies
-* SFML 2.5.1+ and its dependencies (automatically installed by configure script)
-* Git (required to download SFML)
 * C++ compiler with at least C++17 and #pragma once support (GCC fully supported)
-* CMake 3.0+ (latest version recommended)
-* OpenGL Utility (GLU) - it's not really required (it's never used for now), but linked
-* OpenGL Extension Wrangler (GLEW)
+* CMake 3.13+ (latest version recommended)
+* Git (required to download other dependencies)
 
-## Build
+These dependencies are automatically installed by `configure*.sh` script:
+* SFML 2.5.1+ and its dependencies (automatically installed by configure script)
+* GLEW - only on MinGW builds
+* mingw-std-threads (for std::thread support on MinGW builds)
+
+## Required packages
 * Install required packages:
   * Ubuntu
     - `sudo apt update`
-    - `sudo apt install g++ make cmake git libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libflac-dev libogg-dev libvorbis-dev libopenal-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libglew-dev`
+    - `sudo apt install g++ ninja cmake git libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libflac-dev libogg-dev libvorbis-dev libopenal-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libglew-dev`
+  * Windows
+    - **NOTE: These instructions are untested!**
+    - Download:
+      - CMake from https://cmake.org/download/
+      - Git from https://git-scm.com/downloads
+      - MinGW from https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/
 
-* Run commands:
+## Build instructions
+### Unix-like systems
 ```bash
 export EGE_ROOT="$PWD"
 scripts/configure.sh
 cd build
-make install
+ninja install -j$(nproc)
 ```
 
-## Link to your project (Unix and Unix-like system)
-Linking to projects is WIP and is very unintuitive, but works.
-To create project with EGE:
+### Windows (with Git Bash)
+> **NOTE: These instructions are untested!**
+```bash
+export EGE_ROOT="$PWD"
+scripts/configure-win32.sh # Note the `win32` suffix!
+cd build
+ninja install -j$(nproc)
+```
 
-* Build EGE with ^^ these instructions ^^.
+## Link to your project
+Linking to projects is very work-in-progress for now. To create a project with EGE:
+
+* Build EGE.
 * Create a new directory in some `${path}`.
 * Create `CMakeLists.txt` file in `${path}`.
 * Put this content to CMakeLists.txt:
 ```cmake
-cmake_minimum_required(VERSION 3.0)
-project(<<your name>>)
+cmake_minimum_required(VERSION 3.13)
+project(MyGame)
 
-set(EGE_LIB_ROOT "<<path to EGE root>>")
-set(CMAKE_INSTALL_PREFIX "<<install path>>")
+# Set install path in which the game installation director
+# will be created.
+set(CMAKE_INSTALL_PREFIX "install/path")
+
+# Include a set of utilities to link EGE with your project.
 include(${EGE_LIB_ROOT}/cmake/FindEGE.cmake)
-ege_executable(<<your exec name>> <<source path relative to ${path}>> "ege-gui;ege-resources;..other modules..")
-ege_resources(<<resource path relative to ${path}>>) # << optional
+
+# Add an executable `mygame` in `bin` folder. Specify which
+# modules it will use.
+# NOTE: Do not add system-specific suffix (.exe).
+ege_executable(mygame bin "ege-gui;ege-resources;..other modules..")
+
+# Specify resource path if you use them. It must be the same as
+# specified in CommonPaths::setResourceDir(), 'res' by default.
+ege_resources("res")
 
 ```
-* Run in shell **this code** to build game:
+* **Run in shell** this code to build game:
 ```bash
-$ cmake -B build -S .
-$ cd build
-$ make
-$ make install
+cd build
+cmake .. -GNinja -DEGE_LIB_ROOT=path/to/EGE/root
+ninja install -j$(nproc)
 ```
+* **On Windows**, if you use sound features, remember to place `OpenAL32.dll` next to executable.
+
 * To run game, run:
 ```bash
-$ cd <<install path>>
-$ ./<<your exec name>>
-$ # return to build dir using 'cd'
+cd install/path
+./bin/mygame
 ```
 
 It will be an EGE IDE, which will automate this process.
