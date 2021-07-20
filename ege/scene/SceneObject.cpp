@@ -214,6 +214,10 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
         // Motion
         renderer.renderCircle(getPosition().x, getPosition().y, 2, Colors::cyan, Colors::red);
         renderer.renderPrimitives({Vertex::make(getPosition(), sf::Color::Red), Vertex::make(getPosition() + getMotion(), sf::Color::Red)}, sf::Lines);
+
+        // Rotation
+        auto rotationVector = Vec3d(VectorOperations::fromPolar(PolVec2d(-getRotation(), 5)));
+        renderer.renderPrimitives({Vertex::make(getPosition(), sf::Color::Green), Vertex::make(getPosition() - rotationVector, sf::Color::Green)}, sf::Lines);
     }
 }
 
