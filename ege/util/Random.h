@@ -47,6 +47,8 @@ namespace EGE
 class Randomizer
 {
 public:
+    virtual ~Randomizer() = default;
+
     // Generate new (pseudo)random integer.
     virtual MaxUint nextInt() = 0;
 };
@@ -79,7 +81,7 @@ private:
 
 typedef LCGRandomizer<1103515211, 12347> DefaultLCGRandomizer;
 
-class Random
+class Random final
 {
 public:
     // Create new, empty (invalid) random.
