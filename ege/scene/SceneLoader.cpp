@@ -316,11 +316,17 @@ bool SceneLoader::loadStaticObjects(String fileName, const IOStreamConverter& co
 
 bool SceneLoader::loadSceneAndSave(String saveName, String sceneName, const IOStreamConverter& converter)
 {
+    if(sceneName.empty())
+        return true;
+
     if(!loadStaticObjects(sceneName, converter))
     {
         ege_log.critical() << "Failed to load predefined scene!";
         return false;
     }
+
+    if(saveName.empty())
+        return true;
 
     if(!loadScene(saveName, converter))
         // It's nothing wrong, we will just create a new save!
