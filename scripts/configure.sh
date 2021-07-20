@@ -28,7 +28,7 @@ cd build
 cmake -B . -S .. -GNinja -DBUILD_SHARED_LIBS=FALSE -DCMAKE_INSTALL_PREFIX=root
 ege_echo INFO "Building SFML..."
 #echo "The script needs sudo for installing; press Ctrl+C to cancel"
-make install -j$(nproc)
+ninja install -j$(nproc)
 cd ../..
 
 # run cmake
