@@ -196,9 +196,13 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
 
     // Render all parts :)
     for(auto it: m_partsByLayer)
+    {
+        applyStates(renderer);
         it.second->doRender(renderer, states);
+    }
 
     // Debug overlay
+    applyStates(renderer);
     if(EGE_GCONFIG_IS_SET(SceneObject_Overlay))
     {
         // TODO: Render some textual info
