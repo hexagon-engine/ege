@@ -1,0 +1,14 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit
+SpaceAfterTemplateKeyword: false
+AlignEscapedNewlines: true
+AlignTrailingComments: true
+AlignConsecutiveAssignments: ACS_Consecutive
+BreakBeforeInheritanceComma: false
+BreakConstructorInitializers: BeforeComma
+IndentPPDirectives: AfterHash
+BreakBeforeBraces: Allman
+BraceWrapping:
+    BeforeLambdaBody: false
+NamespaceIndentation: None

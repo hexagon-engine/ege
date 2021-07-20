@@ -42,33 +42,6 @@ add_custom_target(tests
 	USES_TERMINAL
 )
 
-macro(ege_add_all_tests_for targetname)
-    file(GLOB TEST_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
-
-    foreach(testfile ${TEST_FILES})
-        get_filename_component(testfile_only_name ${testfile} NAME_WE)
-        set(target_name "ege-test-${targetname}-${testfile_only_name}")
-        ege_message("INFO" "Adding test for module: ${target_name}")
-        add_executable(${target_name} ${testfile})
-        target_compile_options(${target_name} PUBLIC -Wall -Wextra)
-
-        # Sanitizers
-        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-            target_compile_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
-            target_link_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
-        endif()
-
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
-        target_link_libraries(${target_name} PUBLIC "ege-${targetname}")
-        install(TARGETS ${target_name} RUNTIME DESTINATION tests)
-    endforeach()
-    
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/res")
-        ege_message("INFO" "MODULE TEST: Adding resource directory for ege-${targetname}")
-        install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tests/res" DESTINATION ".")
-    endif()
-endmacro()
-
 macro(ege_add_module targetname)
     ege_message("INFO" "Adding MODULE: ege-${targetname}")
     set(target_name "ege-${targetname}")
@@ -103,4 +76,4 @@ endmacro()
 include_directories("${CMAKE_SOURCE_DIR}")
 
 add_subdirectory(ege)
-
+add_subdirectory(tests)

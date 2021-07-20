@@ -36,15 +36,9 @@
 
 #pragma once
 
-#include <ege/core/AsyncTask.h>
-#include <ege/core/Clock.h>
-#include <ege/core/DataManager.h>
-#include <ege/core/EventCast.h>
-#include <ege/core/Event.h>
-#include <ege/core/EventHandler.h>
-#include <ege/core/EventLoop.h>
-#include <ege/core/EventResult.h>
-#include <ege/core/MainLoop.h>
-#include <ege/core/TimerEvent.h>
-#include <ege/core/Timer.h>
+#include <ege/main/Config.h>
 
+#define EXPECT(something) ASSERT_WITH_MESSAGE(something, "Test failed")
+#define EXPECT_EQUAL(_1, _2) EXPECT((_1) == (_2))
+
+#define FAIL_TEST() CRASH_WITH_MESSAGE("Test failed")
