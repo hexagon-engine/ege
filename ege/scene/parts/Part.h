@@ -59,8 +59,8 @@ public:
 
     virtual bool deserialize(SharedPtr<ObjectMap> data) override;
 
-    virtual bool isCustomViewNeeded() const override { return true; }
-    virtual sf::View getCustomView(sf::RenderTarget& target) const override;
+    virtual bool isCustomTransformNeeded() const override { return true; }
+    virtual sf::Transform getCustomTransform(sf::RenderTarget& target) const override;
 
     int getRenderLayer() const { return m_renderLayer; }
     void setRenderLayer(int layer) { m_renderLayer = layer; }

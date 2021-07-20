@@ -50,15 +50,15 @@ bool Part::deserialize(SharedPtr<ObjectMap> data)
     return true;
 }
 
-sf::View Part::getCustomView(sf::RenderTarget& target) const
+sf::Transform Part::getCustomTransform(sf::RenderTarget&) const
 {
     // TODO: 2d / 3d !
     auto position = m_object.getPosition();
-
-    auto view = target.getView();
-    view.rotate(-m_object.getRotation());
-    view.move(sf::Vector2f(-position.x, -position.y));
-    return view;
+ 
+    sf::Transform transform;
+    transform.translate(sf::Vector2f(position.x, position.y));
+    transform.rotate(m_object.getRotation() + 180);
+    return transform;
 }
 
 }
