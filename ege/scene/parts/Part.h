@@ -56,7 +56,6 @@ public:
 
     // Disable serialization!
     virtual SharedPtr<ObjectMap> serialize() const final { return nullptr; }
-
     virtual bool deserialize(SharedPtr<ObjectMap> data) override;
 
     virtual bool isCustomTransformNeeded() const override { return true; }
@@ -66,6 +65,8 @@ public:
     void setRenderLayer(int layer) { m_renderLayer = layer; }
 
 private:
+    virtual String isnInfo() const override;
+
     SceneObject& m_object;
     int m_renderLayer = 0;
 };

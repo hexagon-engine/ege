@@ -42,7 +42,7 @@ namespace EGE
 {
 
 Part::Part(SceneObject& object)
-: InspectorNode((InspectorNode*)&object, "Part of " + object.getName()), m_object(object) {}
+: InspectorNode((InspectorNode*)&object, "Part"), m_object(object) {}
 
 bool Part::deserialize(SharedPtr<ObjectMap> data)
 {
@@ -59,6 +59,11 @@ sf::Transform Part::getCustomTransform(sf::RenderTarget&) const
     transform.translate(sf::Vector2f(position.x, position.y));
     transform.rotate(m_object.getRotation() + 180);
     return transform;
+}
+
+String Part::isnInfo() const
+{
+    return "of " + getObject().isnInfo();
 }
 
 }
