@@ -6,3 +6,4 @@ CMakeLists.txt.user
 EGE.*
 *.swp
 build*
+nohup.out
