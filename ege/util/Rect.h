@@ -55,8 +55,14 @@ public:
     Rect(T left, T top, T width, T height)
     : position(left, top), size(width, height) { ASSERT(width >= 0 && height >= 0); }
 
+    Rect(T width, T height)
+    : Rect(0, 0, width, height) {}
+
     Rect(Vector2<T> _position, Vector2<T> _size)
     : position(_position), size(_size) { ASSERT(size.x >= 0 && size.y >= 0); }
+
+    Rect(Vector2<T> size)
+    : Rect({}, size) {}
 
     Vector2<T> position;
     Vector2<T> size;
@@ -78,6 +84,18 @@ public:
 
         return max_x < min_x && max_y < min_y ? Rect<T>({max_x, max_y}, {min_x - max_x, min_y - max_y}) : Rect<T>();
     }
+
+    Rect<T> centeredOn(Vec2d vec) const
+        { return Rect<T>(*this).center(vec); }
+
+    Rect<T>& centerOn(Vec2d vec)
+        { position = -size / T(2) + vec; return *this; }
+
+    Rect<T> centered() const
+        { return centeredOn({}); }
+
+    Rect<T>& center()
+        { return centerOn({}); }
 
     Rect<T> operator+(const Rect<T>& other) const
         { return Rect<T>(other.position + position, other.size + size); }

@@ -21,7 +21,7 @@ public:
         setStartMotion({0, -0.15, 0});
         setStartMotionAngleRandom(18);
         setStartMotionValueRandom(0.3);
-        setSpawnRect({-1, -1, 1, 1});
+        setSpawnRect(EGE::RectD(4, 10).center());
         setParticleLifeTime(2400);
     }
 
