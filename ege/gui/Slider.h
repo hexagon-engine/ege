@@ -64,6 +64,8 @@ public:
     void setMinValue(double value) { ASSERT(value < m_maxValue); m_minValue = value; setValue(m_value); }
     void setMaxValue(double value) { ASSERT(value > m_minValue); m_maxValue = value; setValue(m_value); }
     void setStep(double step) { m_step = step; }
+    void setValueTransform(std::function<MaxFloat(MaxFloat)> function, std::function<MaxFloat(MaxFloat)> inverse)
+        { m_valueTransform = function; m_valueTransformInverse = inverse; }
 
     double getValue() const { return m_value; }
 
@@ -78,6 +80,12 @@ public:
 
 private:
     double m_value = 0;
+
+    // Used for rendering.
+    double m_nonTransformedValue = 0; 
+
+    std::function<MaxFloat(MaxFloat)> m_valueTransform;
+    std::function<MaxFloat(MaxFloat)> m_valueTransformInverse;
     double m_minValue = 0;
     double m_maxValue = 1;
     double m_step;

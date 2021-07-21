@@ -46,7 +46,17 @@ void Slider::scrollWithMouse(double x)
     double realSize = getSize().x - 10;
     x *= realSize / getSize().x;
     double newValue = m_value;
-    newValue = x * (m_maxValue - m_minValue) / realSize + m_minValue;
+
+    double valueUnit = x / realSize;
+    valueUnit = std::min(1.0, std::max(0.0, valueUnit));
+    m_nonTransformedValue = valueUnit * (m_maxValue - m_minValue) + m_minValue;
+    if(m_valueTransform)
+    {
+        ege_log.info() << ">" << valueUnit;
+        valueUnit = m_valueTransform(valueUnit);
+        ege_log.info() << "<" << valueUnit;
+    }
+    newValue = valueUnit * (m_maxValue - m_minValue) + m_minValue;
     setValue(newValue);
 }
 
@@ -61,6 +71,13 @@ void Slider::setValue(double value)
     if(value != m_value)
     {
         m_value = value;
+        if(m_valueTransformInverse)
+        {
+            auto valueUnit = (m_value - m_minValue) / (m_maxValue - m_minValue);
+            m_nonTransformedValue = m_valueTransformInverse(valueUnit) * (m_maxValue - m_minValue) + m_minValue;
+        }
+        else
+            m_nonTransformedValue = m_value;
         fire<SliderSlideEvent>(m_value);
     }
 }
@@ -99,7 +116,8 @@ void Slider::render(Renderer& renderer) const
 RectF Slider::getKnobBounds() const
 {
     double knobSize = 8.0;
-    return RectF(((m_value - m_minValue) / (m_maxValue - m_minValue)) * (getSize().x - 10) + 5 - knobSize / 2, 0, knobSize, getSize().y);
+    double valueUnit = (m_nonTransformedValue - m_minValue) / (m_maxValue - m_minValue);
+    return RectF(valueUnit * (getSize().x - 10) + 5 - knobSize / 2, 0, knobSize, getSize().y);
 }
 
 }
