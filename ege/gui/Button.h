@@ -53,6 +53,7 @@ public:
 
     virtual void setLabel(sf::String label) { m_label = label; }
     sf::String getLabel() const { return m_label; }
+    void setLabelColor(EGE::ColorRGBA color) { m_labelColor = color; }
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
@@ -63,6 +64,8 @@ protected:
     // Args: position.
     // Position may be needed for some animations.
     virtual void onClick(Vec2d) {}
+
+    EGE::ColorRGBA m_labelColor;
 
 private:
     void handleClick(Vec2d position);
