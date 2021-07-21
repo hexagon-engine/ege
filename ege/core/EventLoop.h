@@ -122,7 +122,7 @@ public:
             m_inEventHandler = true;
             for(auto& pr: m_handlers)
             {
-                result |= (pr->handle(event) == EventResult::Success);
+                result &= (pr->handle(event) == EventResult::Success);
             }
             m_inEventHandler = false;
             return result ? EventResult::Success : EventResult::Failure;
