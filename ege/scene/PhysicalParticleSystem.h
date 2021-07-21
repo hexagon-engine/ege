@@ -36,23 +36,60 @@
 
 #pragma once
 
-#include <ege/scene/Camera.h>
-#include <ege/scene/DummyObject2D.h>
-#include <ege/scene/ObjectRenderer.h>
 #include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/PhysicalParticleSystem.h>
-#include <ege/scene/Plain2DCamera.h>
-#include <ege/scene/Scene.h>
-#include <ege/scene/SceneLoader.h>
-#include <ege/scene/SceneObject.h>
-#include <ege/scene/SceneObjectRegistry.h>
-#include <ege/scene/SceneObjectType.h>
-#include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedRenderer2D.h>
-#include <ege/scene/TilemapRenderer2D.h>
 
-#include <ege/scene/parts/CirclePart.h>
-#include <ege/scene/parts/Part.h>
-#include <ege/scene/parts/PartStub.h>
-#include <ege/scene/parts/RectanglePart.h>
-#include <ege/scene/parts/TexturedPart.h>
+namespace EGE
+{
+
+class PhysicalParticle : public Particle
+{
+public:
+    Vec3d motion;
+};
+
+class PhysicalParticleSystemImpl
+{
+public:
+    Vec3d realStartMotion() const;
+
+    void setGravity(Vec3d gravity) { m_gravity = gravity; } // px/t^2
+    void setStartMotion(Vec3d motion) { m_startMotion = motion; } // px/t
+    void setStartMotionValueRandom(double value) { m_startMotionValueRnd = value; } // %
+    void setStartMotionAngleRandom(double value) { m_startMotionAngleRnd = value; } // degrees
+
+protected:
+    Vec3d m_gravity;
+    Vec3d m_startMotion;
+    double m_startMotionValueRnd = 0;
+    double m_startMotionAngleRnd = 0;
+};
+
+// PP must be derived from PhysicalParticle
+template<class PP>
+class PhysicalParticleSystem : public ParticleSystem2D<PP>, public PhysicalParticleSystemImpl
+{
+public:
+    EGE_SCENEOBJECT("EGE::PhysicalParticleSystem")
+
+    PhysicalParticleSystem(EGE::Scene& owner)
+    : ParticleSystem2D<PP>(owner) {}
+
+    virtual void onParticleSpawn(PP& particle) const override
+    {
+        particle.motion += realStartMotion();
+    }
+
+    virtual void onParticleUpdate(PP& particle) const override
+    {
+        // TODO: Collisions with other SceneObjects
+        // TODO: Disturbations (wind?)
+        particle.motion += m_gravity;
+
+        // Update motion
+        particle.position += particle.motion;
+    }
+};
+
+using DefaultPhysicalParticleSystem = PhysicalParticleSystem<PhysicalParticle>;
+
+}

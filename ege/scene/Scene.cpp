@@ -45,6 +45,7 @@
 #include "Plain2DCamera.h"
 #include "DummyObject2D.h"
 #include "ParticleSystem2D.h"
+#include "PhysicalParticleSystem.h"
 
 namespace EGE
 {
@@ -60,6 +61,7 @@ Scene::Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry)
 
     m_registry->addType<DummyObject2D>();
     m_registry->addType<DefaultParticleSystem2D>();
+    m_registry->addType<DefaultPhysicalParticleSystem>();
 }
 
 Scene::~Scene()

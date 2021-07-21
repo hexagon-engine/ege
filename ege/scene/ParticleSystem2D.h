@@ -144,8 +144,8 @@ private:
     // TODO: Find a way to move it to Particle class
     virtual void onParticleUpdate(ParticleType&) const {}
     virtual void onParticleSpawn(ParticleType&) const {}
-    virtual void renderParticles(const std::list<ParticleType>&, Renderer&) const {}
 
+    virtual void renderParticles(const std::list<ParticleType>&, Renderer&) const {}
     std::list<ParticleType> m_particles;
 };
 

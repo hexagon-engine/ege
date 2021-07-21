@@ -34,25 +34,21 @@
 *
 */
 
-#pragma once
+#include "PhysicalParticleSystem.h"
 
-#include <ege/scene/Camera.h>
-#include <ege/scene/DummyObject2D.h>
-#include <ege/scene/ObjectRenderer.h>
-#include <ege/scene/ParticleSystem2D.h>
-#include <ege/scene/PhysicalParticleSystem.h>
-#include <ege/scene/Plain2DCamera.h>
-#include <ege/scene/Scene.h>
-#include <ege/scene/SceneLoader.h>
-#include <ege/scene/SceneObject.h>
-#include <ege/scene/SceneObjectRegistry.h>
-#include <ege/scene/SceneObjectType.h>
-#include <ege/scene/SceneWidget.h>
-#include <ege/scene/TexturedRenderer2D.h>
-#include <ege/scene/TilemapRenderer2D.h>
+#include <ege/util/Random.h>
+#include <ege/util/VectorOperations.h>
 
-#include <ege/scene/parts/CirclePart.h>
-#include <ege/scene/parts/Part.h>
-#include <ege/scene/parts/PartStub.h>
-#include <ege/scene/parts/RectanglePart.h>
-#include <ege/scene/parts/TexturedPart.h>
+namespace EGE
+{
+
+Vec3d PhysicalParticleSystemImpl::realStartMotion() const
+{
+    // TODO: Randomize in 3D
+    auto startMotionPolar = VectorOperations::toPolar(m_startMotion.toVec2d());
+    startMotionPolar.length *= randomDouble(1 - m_startMotionValueRnd, 1 + m_startMotionValueRnd);
+    startMotionPolar.angle += randomDouble(-m_startMotionAngleRnd, +m_startMotionAngleRnd);
+    return Vec3d(VectorOperations::fromPolar(startMotionPolar));
+}
+
+}
