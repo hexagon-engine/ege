@@ -194,7 +194,7 @@ public:
         labelFPS = addNewWidget<EGE::Label>();
         labelFPS->setString("FPS: 0.0");
         labelFPS->setTextAlign(EGE::Label::Align::Center);
-        labelFPS->setSize({"1N", "1a"});
+        labelFPS->setSize({"1N", "20px"});
 
         auto widgets = addNewWidget<EGE::CompoundWidget>();
 
@@ -251,6 +251,7 @@ public:
                 checkBox->setLabel("CheckBox");
 
                 auto radiogroup = myFrame->addNewWidget<EGE::RadioGroup>();
+                radiogroup->setSize({"1N", "60px"});
                 {
                     auto radioButton1 = radiogroup->addNewWidget<EGE::RadioButton>();
                     radioButton1->setLabel("RadioButton 1");
