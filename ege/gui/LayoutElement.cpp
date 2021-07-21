@@ -261,7 +261,7 @@ void LayoutElement::calculateLayout()
         // For position / padding, the default value is 0.
 
         m_layout.position = { m_position.x.value(), m_position.y.value() };
-        m_layout.size = { m_size.x.value(), m_size.y.value() };
+        m_layout.size = { std::max(0.0, m_size.x.value()), std::max(0.0, m_size.y.value()) };
         m_layout.padding = { m_padding.x.value(), m_padding.y.value() };
         if(m_size.x.unit() == EGE_LAYOUT_AUTO) m_layout.autoSizingX = true;
         if(m_size.y.unit() == EGE_LAYOUT_AUTO) m_layout.autoSizingY = true;
@@ -327,9 +327,9 @@ void LayoutElement::calculateLayout()
 
     // Auto-sizing
     if(m_layout.autoSizingX)
-        m_layout.size.x = thisDimensionsX.size.value();
+        m_layout.size.x = std::max(0.0, thisDimensionsX.size.value());
     if(m_layout.autoSizingY)
-        m_layout.size.y = thisDimensionsY.size.value();
+        m_layout.size.y = std::max(0.0, thisDimensionsY.size.value());
 
     ASSERT(layoutM.size() == layoutO.size());
 
@@ -347,13 +347,13 @@ void LayoutElement::calculateLayout()
             case Direction::Horizontal:
             {
                 calc.position = Vec2d(lms.position, los.position);
-                calc.size = Vec2d(lms.size, los.size);
+                calc.size = Vec2d(std::max(0.0, lms.size), std::max(0.0, los.size));
                 calc.padding = Vec2d(lms.padding, los.padding);
             } break;
             case Direction::Vertical:
             {
                 calc.position = Vec2d(los.position, lms.position);
-                calc.size = Vec2d(los.size, lms.size);
+                calc.size = Vec2d(std::max(0.0, los.size), std::max(0.0, lms.size));
                 calc.padding = Vec2d(los.padding, lms.padding);
             } break;
         }
