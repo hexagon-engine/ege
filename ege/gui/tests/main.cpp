@@ -268,6 +268,7 @@ public:
                 }
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
+                slider->setMinValue(0.5);
                 slider->events<EGE::SliderSlideEvent>().add([](EGE::SliderSlideEvent& event) {
                     ege_log.info() << "SliderSlideEvent: " << event.value;
                     return EGE::EventResult::Success;

@@ -47,9 +47,9 @@ void Slider::scrollWithMouse(double x)
     x *= realSize / getSize().x;
     x += 5;
     double newValue = m_value;
-    newValue = x * m_maxValue / realSize;
-    if(newValue < 0)
-        newValue = 0;
+    newValue = x * (m_maxValue - m_minValue) / realSize + m_minValue;
+    if(newValue < m_minValue)
+        newValue = m_minValue;
     if(newValue > m_maxValue)
         newValue = m_maxValue;
 
@@ -99,7 +99,7 @@ void Slider::render(Renderer& renderer) const
 RectF Slider::getKnobBounds() const
 {
     double knobSize = 8.0;
-    return RectF(m_value * (getSize().x - 10) + 5 - knobSize / 2, 0, knobSize, getSize().y);
+    return RectF(((m_value - m_minValue) / (m_maxValue - m_minValue)) * (getSize().x - 10) + 5 - knobSize / 2, 0, knobSize, getSize().y);
 }
 
 }

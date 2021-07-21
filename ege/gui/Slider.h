@@ -60,8 +60,9 @@ public:
     Slider(Widget& parent, String id = "Slider")
     : Widget(parent, id) {}
 
-    void setValue(double value) { m_value = value; }
-    void setMaxValue(double value) { m_maxValue = value; }
+    void setValue(double value) { m_value = std::min(m_maxValue, std::max(m_minValue, value)); }
+    void setMinValue(double value) { ASSERT(value < m_maxValue); m_minValue = value; setValue(m_value); }
+    void setMaxValue(double value) { ASSERT(value > m_minValue); m_maxValue = value; setValue(m_value); }
     void setStep(double step) { m_step = step; }
 
     double getValue() const { return m_value; }
@@ -77,8 +78,9 @@ public:
 
 private:
     double m_value = 0;
+    double m_minValue = 0;
     double m_maxValue = 1;
-    double m_step = 0.1;
+    double m_step;
     bool m_knobDragged = false;
 };
 
