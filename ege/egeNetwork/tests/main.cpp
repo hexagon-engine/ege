@@ -277,7 +277,7 @@ public:
         m_client->setCamera(m_camera);
 
         // Create SceneWidget to be displayed in the window, and assign Camera to it.
-        auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(*gui, scene);
+        auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
         sceneWidget->setCamera(m_camera);
 
         // Add as subloop to handle events.

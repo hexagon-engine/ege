@@ -33,7 +33,6 @@ TESTCASE(complexLoader)
     camera->setFollowObject(player);
     camera->setScalingMode(EGE::ScalingMode::Fit);
     camera->setDisplaySize({200, 200});
-    scene->setCamera(camera);
 
     // Setup keybinds
     auto keybinds = make<EGE::KeybindManager>();
@@ -47,6 +46,7 @@ TESTCASE(complexLoader)
     // Setup GUI & display
     auto guiScreen = make<EGE::GUIScreen>(loop);
     auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
+    sceneWidget->setCamera(camera);
     loop.setCurrentGUIScreen(guiScreen);
     loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
     return loop.run();
