@@ -44,12 +44,14 @@
 namespace EGE
 {
 
-class SceneObjectRegistry
+class SceneObjectRegistry final
 {
 public:
     typedef SharedPtrStringMap<SceneObjectType> ValueType;
 
     SceneObjectRegistry();
+    SceneObjectRegistry(const SceneObjectRegistry&) = delete;
+    SceneObjectRegistry(SceneObjectRegistry&&) = delete;
     SharedPtr<SceneObjectType> getType(String typeId);
 
     template<class SO>

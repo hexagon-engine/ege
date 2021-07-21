@@ -317,7 +317,7 @@ SharedPtr<SceneObject> Scene::addNewStaticObject(String typeId, SharedPtr<Object
 SharedPtr<SceneObject> Scene::createObject(String typeId, SharedPtr<ObjectMap> data)
 {
     ege_log.debug() << "Creating SceneObject " << typeId << ": " << (data ? data->toString() : "null");
-    auto registry = getRegistry();
+    auto& registry = getRegistry();
 
     auto type = registry.getType(typeId);
     if(!type)
