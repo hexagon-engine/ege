@@ -122,6 +122,7 @@ public:
     virtual RectD getBoundingBox() const override { return m_spawnRect; }
 
     void killAllParticles() { m_particles.clear(); }
+    size_t getParticleCount() const { return m_particles.size(); }
 
 private:
     virtual void updateParticles() override
