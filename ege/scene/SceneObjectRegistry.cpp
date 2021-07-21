@@ -38,8 +38,23 @@
 
 #include "SceneLoader.h"
 
+#include "Plain2DCamera.h"
+#include "DummyObject2D.h"
+#include "ParticleSystem2D.h"
+#include "PhysicalParticleSystem.h"
+
 namespace EGE
 {
+
+SceneObjectRegistry::SceneObjectRegistry()
+{
+    // Add default SceneObjectTypes.
+    addType<Plain2DCamera>();
+
+    addType<DummyObject2D>();
+    addType<DefaultParticleSystem2D>();
+    addType<DefaultPhysicalParticleSystem>();
+}
 
 SharedPtr<SceneObjectType> SceneObjectRegistry::getType(String typeId)
 {

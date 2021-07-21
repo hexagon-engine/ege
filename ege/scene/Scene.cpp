@@ -42,11 +42,6 @@
 #include <ege/debug/Dump.h>
 #include <ege/debug/Logger.h>
 
-#include "Plain2DCamera.h"
-#include "DummyObject2D.h"
-#include "ParticleSystem2D.h"
-#include "PhysicalParticleSystem.h"
-
 namespace EGE
 {
 
@@ -55,13 +50,6 @@ Scene::Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry)
 {
     if(!m_registry)
         m_registry = make<SceneObjectRegistry>();
-
-    // Add default SceneObjectTypes.
-    m_registry->addType<Plain2DCamera>();
-
-    m_registry->addType<DummyObject2D>();
-    m_registry->addType<DefaultParticleSystem2D>();
-    m_registry->addType<DefaultPhysicalParticleSystem>();
 }
 
 Scene::~Scene()

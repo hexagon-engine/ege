@@ -49,6 +49,7 @@ class SceneObjectRegistry
 public:
     typedef SharedPtrStringMap<SceneObjectType> ValueType;
 
+    SceneObjectRegistry();
     SharedPtr<SceneObjectType> getType(String typeId);
 
     template<class SO>
