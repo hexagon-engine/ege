@@ -21,6 +21,8 @@ public:
         setStartMotion({0, -0.15, 0});
         setStartMotionAngleRandom(18);
         setStartMotionValueRandom(0.3);
+        setSpawnRect({-1, -1, 1, 1});
+        setParticleLifeTime(2400);
     }
 
     virtual void onParticleSpawn(MyParticle& particle) const override
@@ -57,8 +59,6 @@ TESTCASE(basic)
     registry.addType<MyParticleSystem>();
 
     auto particleSystem = scene->addNewObject<MyParticleSystem>();
-    particleSystem->setSpawnRect({-1, -1, 1, 1});
-    particleSystem->setParticleLifeTime(2400);
 
     auto camera = scene->addNewObject<EGE::Plain2DCamera>();
     camera->setScalingMode(EGE::ScalingMode::Fit);
