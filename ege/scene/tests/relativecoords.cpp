@@ -29,14 +29,17 @@ public:
     End(EGE::Scene& owner)
     : Arm(owner) {}
 
-    virtual void onInit() override
+    class ParticleSystem : public EGE::ParticleSystem2D
     {
-        Arm::onInit();
-        auto particleSystem = getOwner().addNewObject<EGE::ParticleSystem2D>();
-        particleSystem->setSpawnRect({-0.1, -0.1, 0.2, 0.2});
-        particleSystem->setParticleLifeTime(180);
-        particleSystem->setParticleRenderer([](const auto& particles, EGE::Renderer& renderer) {
-            sf::VertexArray varr(sf::Points, particles.size());
+    public:
+        EGE_SCENEOBJECT("End::ParticleSystem")
+
+        ParticleSystem(EGE::Scene& owner)
+        : EGE::ParticleSystem2D(owner) {}
+
+        virtual void renderParticles(const std::list<Particle>& particles, EGE::Renderer& renderer) const override
+        {
+            sf::VertexArray varr(sf::LineStrip, particles.size());
             size_t counter = 0;
             for(auto& particle: particles)
             {
@@ -45,7 +48,15 @@ public:
                 counter++;
             }
             renderer.getTarget().draw(varr);
-        });
+        }
+    };
+
+    virtual void onInit() override
+    {
+        Arm::onInit();
+        auto particleSystem = getOwner().addNewObject<ParticleSystem>();
+        particleSystem->setSpawnRect({-0.1, -0.1, 0.2, 0.2});
+        particleSystem->setParticleLifeTime(180);
         particleSystem->setParent(this);
         particleSystem->setRenderLayer(-1);
     }
@@ -60,6 +71,7 @@ TESTCASE(basic)
         return 1;
 
     registry->addType<Arm>();
+    registry->addType<End::ParticleSystem>();
     registry->addType<End>();
 
     auto scene = make<EGE::Scene>(&loop, registry);

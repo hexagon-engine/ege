@@ -45,8 +45,7 @@ namespace EGE
 void ParticleSystem2D::render(Renderer& renderer) const
 {
     SceneObject::render(renderer);
-    if(m_particleRenderer)
-        m_particleRenderer(m_particles, renderer);
+    renderParticles(m_particles, renderer);
 }
 
 void ParticleSystem2D::onUpdate(long long tickCounter)
@@ -118,9 +117,7 @@ Vec3d ParticleSystem2D::randomPosition()
 void ParticleSystem2D::Particle::update()
 {
     ttl--;
-
-    if(system.m_particleUpdater)
-        system.m_particleUpdater(*this);
+    system.onParticleUpdate(*this);
 }
 
 void ParticleSystem2D::spawnParticle(Vec3d relativePosition)
@@ -129,8 +126,7 @@ void ParticleSystem2D::spawnParticle(Vec3d relativePosition)
     particle.position = randomPosition() + relativePosition;
     particle.ttl = m_particleTTL;
 
-    if(m_particleOnSpawn)
-        m_particleOnSpawn(particle);
+    onParticleSpawn(particle);
 
     m_particles.push_back(std::move(particle));
 }

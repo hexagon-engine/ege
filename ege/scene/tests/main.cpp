@@ -201,6 +201,68 @@ public:
     float wind = 0.f;
 };
 
+class MyParticleSystem : public EGE::ParticleSystem2D
+{
+public:
+    EGE_SCENEOBJECT("MyParticleSystem")
+
+    MyParticleSystem(EGE::Scene& owner)
+    : EGE::ParticleSystem2D(owner) {}
+
+private:
+    virtual void onParticleUpdate(Particle&) const override;
+    virtual void onParticleSpawn(Particle&) const override;
+    virtual void renderParticles(const std::list<Particle>&, EGE::Renderer&) const override;
+};
+
+void MyParticleSystem::onParticleUpdate(Particle& particle) const
+{
+    ParticleData* myData = (ParticleData*)particle.userData.get();
+    float meltFactor = (1.f - myData->color / 1.1f);
+
+    // Gravity
+    myData->motiony += 0.05f * meltFactor;
+    particle.position.y += myData->motiony;
+    if(particle.position.y > myData->ccp && myData->color > 0.f)
+    {
+        myData->color -= (rand() % 100) / 2500.f + 0.005f;
+        if(myData->color < 0.f)
+            myData->color = 0.f;
+    }
+
+    // Wind
+    float wind = ((MyScene&)particle.system.getOwner()).wind;
+    myData->motionx = wind / (particle.position.y + 0.5f) * meltFactor;
+    particle.position.x += myData->motionx;
+}
+void MyParticleSystem::onParticleSpawn(Particle& particle) const
+{
+    // Create user data instance.
+    particle.userData = std::make_unique<ParticleData>();
+    ParticleData* myData = (ParticleData*)particle.userData.get();
+
+    // Randomize "melt" position.
+    myData->ccp = rand() % 100 + 150.f;
+}
+void MyParticleSystem::renderParticles(const std::list<Particle>& particles, EGE::Renderer& renderer) const
+{
+    ege_log.debug() << "Particles: " << particles.size();
+
+    // Generate vertexes.
+    std::vector<EGE::Vertex> vertexes;
+    for(const EGE::ParticleSystem2D::Particle& particle: particles)
+    {
+        ParticleData* myData = (ParticleData*)particle.userData.get();
+        float clf = (myData->color + 4.f) / 5.2f;
+        sf::Color color(clf * 255, clf * 255, 255);
+        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
+        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + myData->motionx, particle.position.y + myData->motiony, 0.0), color));
+    }
+
+    // Actually render them.
+    renderer.renderPrimitives(vertexes, sf::Lines);
+}
+
 TESTCASE(particleSystem)
 {
     // create loop
@@ -210,60 +272,17 @@ TESTCASE(particleSystem)
 
     // create scene
     EGE::SharedPtr<MyScene> scene = make<MyScene>(&loop);
+    auto registry = scene->getRegistry();
+    registry.addType<MyParticleSystem>();
 
     // add wind speed variable
     //float wind = 0.f;
 
     // create particle system
-    EGE::SharedPtr<EGE::ParticleSystem2D> particleSystem = scene->addNewObject<EGE::ParticleSystem2D>();
+    EGE::SharedPtr<MyParticleSystem> particleSystem = scene->addNewObject<MyParticleSystem>();
     particleSystem->setSpawnRect({10.f, 10.f, 580.f, 1.f});
     particleSystem->setSpawnChance(50.0);
     particleSystem->setParticleLifeTime(400);
-    particleSystem->setParticleUpdater([](EGE::ParticleSystem2D::Particle& particle) {
-        ParticleData* myData = (ParticleData*)particle.userData.get();
-        float meltFactor = (1.f - myData->color / 1.1f);
-
-        // Gravity
-        myData->motiony += 0.05f * meltFactor;
-        particle.position.y += myData->motiony;
-        if(particle.position.y > myData->ccp && myData->color > 0.f)
-        {
-            myData->color -= (rand() % 100) / 2500.f + 0.005f;
-            if(myData->color < 0.f)
-                myData->color = 0.f;
-        }
-
-        // Wind
-        float wind = ((MyScene&)particle.system.getOwner()).wind;
-        myData->motionx = wind / (particle.position.y + 0.5f) * meltFactor;
-        particle.position.x += myData->motionx;
-    });
-
-    particleSystem->setParticleRenderer([](const std::list<EGE::ParticleSystem2D::Particle>& particles, EGE::Renderer& renderer) {
-        ege_log.debug() << "Particles: " << particles.size();
-
-        // Generate vertexes.
-        std::vector<EGE::Vertex> vertexes;
-        for(const EGE::ParticleSystem2D::Particle& particle: particles)
-        {
-            ParticleData* myData = (ParticleData*)particle.userData.get();
-            float clf = (myData->color + 4.f) / 5.2f;
-            sf::Color color(clf * 255, clf * 255, 255);
-            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
-            vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + myData->motionx, particle.position.y + myData->motiony, 0.0), color));
-        }
-
-        // Actually render them.
-        renderer.renderPrimitives(vertexes, sf::Lines);
-    });
-    particleSystem->setParticleOnSpawn([](EGE::ParticleSystem2D::Particle& particle) {
-        // Create user data instance.
-        particle.userData = std::make_unique<ParticleData>();
-        ParticleData* myData = (ParticleData*)particle.userData.get();
-
-        // Randomize "melt" position.
-        myData->ccp = rand() % 100 + 150.f;
-    });
 
     // add camera
     auto cam = scene->addNewObject<EGE::Plain2DCamera>();

@@ -87,10 +87,6 @@ public:
     virtual void render(Renderer& renderer) const override;
     virtual void onUpdate(long long tickCounter) override;
 
-    void setParticleUpdater(std::function<void(Particle&)> func) { m_particleUpdater = func; }
-    void setParticleOnSpawn(std::function<void(Particle&)> func) { m_particleOnSpawn = func; }
-    void setParticleRenderer(std::function<void(const std::list<Particle>&, Renderer&)> func) { m_particleRenderer = func; }
-
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.
     // If val > 1, 'val' particles will be spawned.
@@ -101,14 +97,15 @@ public:
     void spawnParticle(Vec3d relativePosition);
 
 private:
+    virtual void onParticleUpdate(Particle&) const {}
+    virtual void onParticleSpawn(Particle&) const {}
+    virtual void renderParticles(const std::list<Particle>&, Renderer&) const {}
+
     Vec3d randomPosition();
 
     RectD m_spawnRect;
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
-    std::function<void(Particle&)> m_particleUpdater;
-    std::function<void(Particle&)> m_particleOnSpawn;
-    std::function<void(const std::list<Particle>&, Renderer&)> m_particleRenderer;
 
     std::list<Particle> m_particles;
 };
