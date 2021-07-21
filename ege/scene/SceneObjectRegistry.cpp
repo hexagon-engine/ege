@@ -54,7 +54,7 @@ void SceneObjectRegistry::addType(SharedPtr<SceneObjectType> type)
     auto it = m_typeMap.find(type->getId());
     if(it != m_typeMap.end())
     {
-        ege_log.info() << "Duplicate SceneObjectType: " << type->getId() << ". Trying to merge parts.";
+        ege_log.debug() << "Duplicate SceneObjectType: " << type->getId() << ". Trying to merge parts.";
         mergeTypes(type, it->second);
 
         // Replace old loaded-from-file type with custom type
