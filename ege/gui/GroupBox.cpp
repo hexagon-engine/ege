@@ -64,7 +64,7 @@ void GroupBox::render(Renderer& renderer) const
     auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 12);
-    text.setFillColor(sf::Color::Black);
+    text.setFillColor(sf::Color(m_labelColor.r * 255, m_labelColor.g * 255, m_labelColor.b * 255, m_labelColor.a * 255));
     text.setOrigin(text.getLocalBounds().width / 2.f, 0.f);
     text.setPosition(size.x / 2.f, 0.f);
 
