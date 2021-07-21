@@ -86,18 +86,10 @@ public:
     SharedPtr<ResourceManager> getResourceManager();
     void setResourceManager(SharedPtr<ResourceManager> manager);
 
-    void setBackgroundColor(sf::Color color)
-    {
-        m_backgroundColor = color;
-    }
-    sf::Color getBackgroundColor()
-    {
-        return m_backgroundColor;
-    }
-    sf::Time getLatestFrameTime()
-    {
-        return m_frameTime;
-    }
+    void setBackgroundColor(sf::Color color) { m_backgroundColor = color; }
+    sf::Color getBackgroundColor() const { return m_backgroundColor; }
+    sf::Time getLatestFrameTime() const  { return m_frameTime; }
+    double getLastTPS() const { return 1.0 / m_frameTime.asSeconds(); }
 
 protected:
     virtual EventResult load() { return EventResult::Success; }
