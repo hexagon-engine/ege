@@ -45,7 +45,6 @@ void Slider::scrollWithMouse(double x)
 {
     double realSize = getSize().x - 10;
     x *= realSize / getSize().x;
-    x += 5;
     double newValue = m_value;
     newValue = x * (m_maxValue - m_minValue) / realSize + m_minValue;
     if(newValue < m_minValue)
