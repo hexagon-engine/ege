@@ -95,7 +95,8 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             object.size = element.size.value();
             object.padding = element.padding.value();
             output[s] = object;
-            ege_log.debug() <<  "Add immediately!!";
+            ege_log.debug() <<  "Add immediately and count to usedElements (but not usedSize)";
+            usedElements++;
             continue;
         }
         else if(element.size.unit() != EGE_LAYOUT_FILL) // Known size but unknown position
