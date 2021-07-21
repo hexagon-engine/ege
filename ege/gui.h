@@ -43,7 +43,7 @@
 #include <ege/gui/CheckBox.h>
 #include <ege/gui/ComboBox.h>
 #include <ege/gui/CompoundWidget.h>
-#include <ege/gui/Frame.h>
+#include <ege/gui/GroupBox.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/gui/GUIResourceManager.h>
 #include <ege/gui/GUIScreen.h>

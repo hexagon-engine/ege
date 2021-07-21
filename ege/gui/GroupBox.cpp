@@ -34,14 +34,14 @@
 *
 */
 
-#include "Frame.h"
+#include "GroupBox.h"
 
 #include "GUIGameLoop.h"
 
 namespace EGE
 {
 
-void Frame::render(Renderer& renderer) const
+void GroupBox::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 

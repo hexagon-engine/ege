@@ -43,10 +43,10 @@
 namespace EGE
 {
 
-class Frame : public CompoundWidget
+class GroupBox : public CompoundWidget
 {
 public:
-    explicit Frame(Widget& parent, String id = "Frame")
+    explicit GroupBox(Widget& parent, String id = "GroupBox")
     : CompoundWidget(parent, id) { setPadding({10.0, 30.0}); }
 
     void setLabel(sf::String label)

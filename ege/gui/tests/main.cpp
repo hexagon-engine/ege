@@ -199,7 +199,7 @@ public:
         auto widgets = addNewWidget<EGE::CompoundWidget>();
 
         {
-            auto myFrame = widgets->addNewWidget<EGE::Frame>();
+            auto myFrame = widgets->addNewWidget<EGE::GroupBox>();
             myFrame->setLabel("Widget test");
             myFrame->layoutDirection = EGE::LayoutElement::Direction::Vertical;
             myFrame->setSize({"66%", "0N"});
@@ -266,7 +266,7 @@ public:
                 auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }
 
-            auto myFrame2 = widgets->addNewWidget<EGE::Frame>();
+            auto myFrame2 = widgets->addNewWidget<EGE::GroupBox>();
             myFrame2->setLabel("Animation test");
             myFrame2->layoutDirection = EGE::LayoutElement::Direction::Vertical;
             myFrame2->setSize({"1N", "1N"});
