@@ -50,12 +50,10 @@ void Slider::scrollWithMouse(double x)
     double valueUnit = x / realSize;
     valueUnit = std::min(1.0, std::max(0.0, valueUnit));
     m_nonTransformedValue = valueUnit * (m_maxValue - m_minValue) + m_minValue;
+
     if(m_valueTransform)
-    {
-        ege_log.info() << ">" << valueUnit;
         valueUnit = m_valueTransform(valueUnit);
-        ege_log.info() << "<" << valueUnit;
-    }
+
     newValue = valueUnit * (m_maxValue - m_minValue) + m_minValue;
     setValue(newValue);
 }
@@ -63,9 +61,13 @@ void Slider::scrollWithMouse(double x)
 void Slider::setValue(double value)
 {
     // Apply step.
-    value /= m_step;
-    value = round(value);
-    value *= m_step;
+    if(m_step > 0)
+    {
+        value /= m_step;
+        value = round(value);
+        value *= m_step;
+    }
+
     value = std::min(m_maxValue, std::max(m_minValue, value));
 
     if(value != m_value)

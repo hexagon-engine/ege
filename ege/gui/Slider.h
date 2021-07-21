@@ -88,7 +88,7 @@ private:
     std::function<MaxFloat(MaxFloat)> m_valueTransformInverse;
     double m_minValue = 0;
     double m_maxValue = 1;
-    double m_step;
+    double m_step = 0;
     bool m_knobDragged = false;
 };
 
