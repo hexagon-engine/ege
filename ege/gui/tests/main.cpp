@@ -267,6 +267,10 @@ public:
                 }
 
                 auto slider = myFrame->addNewWidget<EGE::Slider>();
+                slider->events<EGE::SliderSlideEvent>().add([](EGE::SliderSlideEvent& event) {
+                    ege_log.info() << "SliderSlideEvent: " << event.value;
+                    return EGE::EventResult::Success;
+                });
                 auto spinBox = myFrame->addNewWidget<EGE::SpinBox>();
             }
 

@@ -46,18 +46,23 @@ void Slider::scrollWithMouse(double x)
     double realSize = getSize().x - 10;
     x *= realSize / getSize().x;
     x += 5;
-    m_value = x * m_maxValue / realSize;
-    if(m_value < 0)
-        m_value = 0;
-    if(m_value > m_maxValue)
-        m_value = m_maxValue;
+    double newValue = m_value;
+    newValue = x * m_maxValue / realSize;
+    if(newValue < 0)
+        newValue = 0;
+    if(newValue > m_maxValue)
+        newValue = m_maxValue;
 
     // Apply step.
-    m_value /= m_step;
-    m_value = round(m_value);
-    m_value *= m_step;
+    newValue /= m_step;
+    newValue = round(newValue);
+    newValue *= m_step;
 
-    ege_log.debug() << m_value;
+    if(newValue != m_value)
+    {
+        m_value = newValue;
+        fire<SliderSlideEvent>(m_value);
+    }
 }
 
 void Slider::onMouseButtonPress(sf::Event::MouseButtonEvent& event)

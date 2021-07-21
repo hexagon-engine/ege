@@ -43,6 +43,17 @@
 namespace EGE
 {
 
+class SliderSlideEvent : public Event
+{
+public:
+    EGE_EVENT("EGE::SliderSlideEvent")
+
+    SliderSlideEvent(double _value)
+    : value(_value) {}
+
+    double value;
+};
+
 class Slider : public Widget
 {
 public:
