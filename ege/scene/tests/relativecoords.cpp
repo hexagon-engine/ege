@@ -29,15 +29,15 @@ public:
     End(EGE::Scene& owner)
     : Arm(owner) {}
 
-    class ParticleSystem : public EGE::ParticleSystem2D
+    class ParticleSystem : public EGE::DefaultParticleSystem2D
     {
     public:
         EGE_SCENEOBJECT("End::ParticleSystem")
 
         ParticleSystem(EGE::Scene& owner)
-        : EGE::ParticleSystem2D(owner) {}
+        : EGE::DefaultParticleSystem2D(owner) {}
 
-        virtual void renderParticles(const std::list<Particle>& particles, EGE::Renderer& renderer) const override
+        virtual void renderParticles(const std::list<ParticleType>& particles, EGE::Renderer& renderer) const override
         {
             sf::VertexArray varr(sf::LineStrip, particles.size());
             size_t counter = 0;

@@ -59,7 +59,7 @@ Scene::Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry)
     m_registry->addType<Plain2DCamera>();
 
     m_registry->addType<DummyObject2D>();
-    m_registry->addType<ParticleSystem2D>();
+    m_registry->addType<DefaultParticleSystem2D>();
 }
 
 Scene::~Scene()

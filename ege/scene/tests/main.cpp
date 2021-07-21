@@ -176,7 +176,7 @@ TESTCASE(serializer)
     return gameLoop.run();
 }
 
-struct ParticleData : public EGE::ParticleSystem2D::UserData
+struct MyParticle : public EGE::Particle
 {
     float motionx = 0.f, motiony = 0.5f;
     float color = 1.f;
@@ -201,62 +201,56 @@ public:
     float wind = 0.f;
 };
 
-class MyParticleSystem : public EGE::ParticleSystem2D
+class MyParticleSystem : public EGE::ParticleSystem2D<MyParticle>
 {
 public:
     EGE_SCENEOBJECT("MyParticleSystem")
 
     MyParticleSystem(EGE::Scene& owner)
-    : EGE::ParticleSystem2D(owner) {}
+    : EGE::ParticleSystem2D<MyParticle>(owner) {}
 
 private:
-    virtual void onParticleUpdate(Particle&) const override;
-    virtual void onParticleSpawn(Particle&) const override;
-    virtual void renderParticles(const std::list<Particle>&, EGE::Renderer&) const override;
+    virtual void onParticleUpdate(ParticleType&) const override;
+    virtual void onParticleSpawn(ParticleType&) const override;
+    virtual void renderParticles(const std::list<ParticleType>&, EGE::Renderer&) const override;
 };
 
-void MyParticleSystem::onParticleUpdate(Particle& particle) const
+void MyParticleSystem::onParticleUpdate(ParticleType& particle) const
 {
-    ParticleData* myData = (ParticleData*)particle.userData.get();
-    float meltFactor = (1.f - myData->color / 1.1f);
+    float meltFactor = (1.f - particle.color / 1.1f);
 
     // Gravity
-    myData->motiony += 0.05f * meltFactor;
-    particle.position.y += myData->motiony;
-    if(particle.position.y > myData->ccp && myData->color > 0.f)
+    particle.motiony += 0.05f * meltFactor;
+    particle.position.y += particle.motiony;
+    if(particle.position.y > particle.ccp && particle.color > 0.f)
     {
-        myData->color -= (rand() % 100) / 2500.f + 0.005f;
-        if(myData->color < 0.f)
-            myData->color = 0.f;
+        particle.color -= (rand() % 100) / 2500.f + 0.005f;
+        if(particle.color < 0.f)
+            particle.color = 0.f;
     }
 
     // Wind
-    float wind = ((MyScene&)particle.system.getOwner()).wind;
-    myData->motionx = wind / (particle.position.y + 0.5f) * meltFactor;
-    particle.position.x += myData->motionx;
+    float wind = ((MyScene&)getOwner()).wind;
+    particle.motionx = wind / (particle.position.y + 0.5f) * meltFactor;
+    particle.position.x += particle.motionx;
 }
-void MyParticleSystem::onParticleSpawn(Particle& particle) const
+void MyParticleSystem::onParticleSpawn(ParticleType& particle) const
 {
-    // Create user data instance.
-    particle.userData = std::make_unique<ParticleData>();
-    ParticleData* myData = (ParticleData*)particle.userData.get();
-
     // Randomize "melt" position.
-    myData->ccp = rand() % 100 + 150.f;
+    particle.ccp = rand() % 100 + 150.f;
 }
-void MyParticleSystem::renderParticles(const std::list<Particle>& particles, EGE::Renderer& renderer) const
+void MyParticleSystem::renderParticles(const std::list<ParticleType>& particles, EGE::Renderer& renderer) const
 {
     ege_log.debug() << "Particles: " << particles.size();
 
     // Generate vertexes.
     std::vector<EGE::Vertex> vertexes;
-    for(const EGE::ParticleSystem2D::Particle& particle: particles)
+    for(auto& particle: particles)
     {
-        ParticleData* myData = (ParticleData*)particle.userData.get();
-        float clf = (myData->color + 4.f) / 5.2f;
+        float clf = (particle.color + 4.f) / 5.2f;
         sf::Color color(clf * 255, clf * 255, 255);
         vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
-        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + myData->motionx, particle.position.y + myData->motiony, 0.0), color));
+        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + particle.motionx, particle.position.y + particle.motiony, 0.0), color));
     }
 
     // Actually render them.

@@ -44,48 +44,25 @@
 namespace EGE
 {
 
-/*
-    Particle System
+template<class P>
+class ParticleSystem2D;
 
-    The Particle System is an Object which have many simple Sub Objects.
-    The sub objects are rendered and updated in a single way.
-*/
-class ParticleSystem2D : public SceneObject
+class Particle
 {
 public:
-    EGE_SCENEOBJECT("EGE::ParticleSystem2D");
+    void setDead() { ttl = 0; }
 
-    class UserData {};
+    Vec3d position;
+    unsigned ttl = 0;
+};
 
-    class Particle
-    {
-    public:
-        Particle(ParticleSystem2D& _system)
-        : system(_system) {}
-
-        void update();
-        void setDead() { ttl = 0; }
-
-        Vec3d position;
-        unsigned ttl = 0;
-        ParticleSystem2D& system;
-
-        // TODO: it should be better a flat pointer (memory performance)
-        std::unique_ptr<UserData> userData = nullptr;
-    };
-
-    friend class Particle;
-
-    ParticleSystem2D(Scene& owner)
+class ParticleSystemImpl : public SceneObject
+{
+public:
+    ParticleSystemImpl(Scene& owner)
     : SceneObject(owner) {}
 
-    virtual RectD getBoundingBox() const override { return m_spawnRect; }
-
-    RectD getSpawnRect() const { return m_spawnRect; }
-    void setSpawnRect(RectD rect) { m_spawnRect = rect; }
-
-    virtual void render(Renderer& renderer) const override;
-    virtual void onUpdate(long long tickCounter) override;
+    virtual void onUpdate(TickCount) override;
 
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.
@@ -94,20 +71,91 @@ public:
     void setSpawnChance(double val) { ASSERT(val > 0); m_spawnChance = val; }
     void setParticleLifeTime(unsigned ttl) { m_particleTTL = ttl; }
 
-    void spawnParticle(Vec3d relativePosition);
+    RectD getSpawnRect() const { return m_spawnRect; }
+    void setSpawnRect(RectD rect) { m_spawnRect = rect; }
 
-private:
-    virtual void onParticleUpdate(Particle&) const {}
-    virtual void onParticleSpawn(Particle&) const {}
-    virtual void renderParticles(const std::list<Particle>&, Renderer&) const {}
+    virtual void spawnParticle(Vec3d relativePosition) = 0;
 
-    Vec3d randomPosition();
-
+protected:
     RectD m_spawnRect;
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
 
-    std::list<Particle> m_particles;
+    virtual void updateParticles() = 0;
+    Vec3d randomPosition();
+};
+
+/*
+    Particle System
+
+    The Particle System is an Object which have many simple Sub Objects.
+    The sub objects are rendered and updated in a single way.
+
+    P must be derived from Particle.
+*/
+template<class P = Particle>
+class ParticleSystem2D : public ParticleSystemImpl
+{
+public:
+    using ParticleType = P;
+
+    ParticleSystem2D(Scene& owner)
+    : ParticleSystemImpl(owner) {}
+
+    virtual void render(Renderer& renderer) const override
+    {
+        SceneObject::render(renderer);
+        renderParticles(m_particles, renderer);
+    }
+
+    virtual void spawnParticle(Vec3d relativePosition) override
+    {
+        ParticleType particle;
+        particle.position = randomPosition() + relativePosition;
+        particle.ttl = m_particleTTL;
+
+        onParticleSpawn(particle);
+
+        m_particles.push_back(std::move(particle));
+    }
+
+    virtual RectD getBoundingBox() const override { return m_spawnRect; }
+
+private:
+    virtual void updateParticles() override
+    {
+        for(auto it = m_particles.begin(); it != m_particles.end();)
+        {
+            auto current = it;
+            auto next = ++it;
+
+            ParticleType& particle = *current;
+            particle.ttl--;
+            onParticleUpdate(particle);
+
+            if(particle.ttl <= 0)
+            {
+                m_particles.erase(current);
+                it = next;
+            }
+        }
+    }
+
+    // TODO: Find a way to move it to Particle class
+    virtual void onParticleUpdate(ParticleType&) const {}
+    virtual void onParticleSpawn(ParticleType&) const {}
+    virtual void renderParticles(const std::list<ParticleType>&, Renderer&) const {}
+
+    std::list<ParticleType> m_particles;
+};
+
+class DefaultParticleSystem2D : public ParticleSystem2D<Particle>
+{
+public:
+    EGE_SCENEOBJECT("EGE::DefaultParticleSystem2D")
+
+    DefaultParticleSystem2D(Scene& owner)
+    : ParticleSystem2D<Particle>(owner) {}
 };
 
 }

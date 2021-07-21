@@ -42,13 +42,7 @@
 namespace EGE
 {
 
-void ParticleSystem2D::render(Renderer& renderer) const
-{
-    SceneObject::render(renderer);
-    renderParticles(m_particles, renderer);
-}
-
-void ParticleSystem2D::onUpdate(long long tickCounter)
+void ParticleSystemImpl::onUpdate(TickCount tickCounter)
 {
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->startSection("particleSystem");
@@ -59,20 +53,7 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->startSection("update");
 
-    for(auto it = m_particles.begin(); it != m_particles.end();)
-    {
-        auto current = it;
-        auto next = ++it;
-
-        Particle& particle = *current;
-        particle.update();
-
-        if(particle.ttl <= 0)
-        {
-            m_particles.erase(current);
-            it = next;
-        }
-    }
+    updateParticles();
 
     // spawn new particles
     if(!getOwner().isHeadless())
@@ -99,7 +80,7 @@ void ParticleSystem2D::onUpdate(long long tickCounter)
         getOwner().getLoop()->getProfiler()->endSection();
 }
 
-Vec3d ParticleSystem2D::randomPosition()
+Vec3d ParticleSystemImpl::randomPosition()
 {
     // TODO: Support 3D spawn ranges
     int rand1 = rand() % 1024;
@@ -112,23 +93,6 @@ Vec3d ParticleSystem2D::randomPosition()
     float val2 = randSize2 + m_spawnRect.position.y;
 
     return Vec3d(val1, val2, 0);
-}
-
-void ParticleSystem2D::Particle::update()
-{
-    ttl--;
-    system.onParticleUpdate(*this);
-}
-
-void ParticleSystem2D::spawnParticle(Vec3d relativePosition)
-{
-    Particle particle(*this);
-    particle.position = randomPosition() + relativePosition;
-    particle.ttl = m_particleTTL;
-
-    onParticleSpawn(particle);
-
-    m_particles.push_back(std::move(particle));
 }
 
 }
