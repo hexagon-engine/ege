@@ -63,10 +63,10 @@ TESTCASE(basic)
     auto camera = scene->addNewObject<EGE::Plain2DCamera>();
     camera->setScalingMode(EGE::ScalingMode::Fit);
     camera->setDisplaySize({200, 200});
-    scene->setCamera(camera);
 
     auto guiScreen = make<EGE::GUIScreen>(loop);
-    guiScreen->addNewWidget<EGE::SceneWidget>(scene);
+    auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
+    sceneWidget->setCamera(camera);
     loop.setCurrentGUIScreen(guiScreen);
     loop.openWindow(sf::VideoMode(500, 500), "EGE::PhysicalParticleSystem");
 

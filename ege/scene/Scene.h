@@ -162,15 +162,14 @@ public:
     const SceneObjectRegistry& getRegistry() const { return *m_registry; }
     SceneObjectRegistry& getRegistry() { return *m_registry; }
 
-    void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
-
-    Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const;
-    Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const;
-
     virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
+
+    // Get camera that is currently used for rendering. Returns nullptr if not rendering.
+    Camera const* getCurrentCamera() const { return m_currentCamera; }
 
 protected:
     friend class SceneLoader;
+    friend class SceneWidget;
 
     virtual void render(Renderer& renderer) const override;
     virtual void rebuildLayers();
@@ -183,13 +182,13 @@ protected:
 
     SharedPtr<SceneObjectRegistry> m_registry = nullptr;
     String m_lastLoadFile;
-    WeakPtr<Camera> m_cameraObject;
 
 private:
     UidType m_greatestId = 0;
     UidType m_greatestStaticId = 0;
     Vec2d m_size;
     GUIGameLoop* m_loop;
+    Camera* m_currentCamera = nullptr;
 };
 
 }

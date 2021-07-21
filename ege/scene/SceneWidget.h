@@ -63,12 +63,18 @@ public:
 
     SharedPtr<Scene> getScene() { return m_scene; }
 
+    void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
+
+    Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const;
+    Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const;
+
 protected:
     virtual void updateGeometry(Renderer&) override;
 
 private:
     SharedPtr<Scene> m_scene;
     SharedPtr<Scene> m_initialScene;
+    WeakPtr<Camera> m_cameraObject;
 };
 
 }

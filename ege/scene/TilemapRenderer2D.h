@@ -246,12 +246,12 @@ public:
         ASSERT(tileSize.y != 0);
         ASSERT(chunkSize.x != 0);
         ASSERT(chunkSize.y != 0);
-        Scene& scene = (Scene&)m_sceneObject.getOwner();
+        auto& scene = m_sceneObject.getOwner();
 
         // TODO: allow setting tilemap bounds
-        Vec2d beginCoord = scene.mapToSceneCoords(renderer, {0, 0}).toVec2d();
+        Vec2d beginCoord = scene.getCurrentCamera()->mapToSceneCoords(renderer, {0, 0}).toVec2d();
         auto targetSize = renderer.getTarget().getSize();
-        Vec2d endCoord = scene.mapToSceneCoords(renderer, {static_cast<double>(targetSize.x), static_cast<double>(targetSize.y)}).toVec2d();
+        Vec2d endCoord = scene.getCurrentCamera()->mapToSceneCoords(renderer, {static_cast<double>(targetSize.x), static_cast<double>(targetSize.y)}).toVec2d();
         Vec2d objPos = m_sceneObject.getPosition().toVec2d();
 
         Vector2<MaxInt> beginChunk = {

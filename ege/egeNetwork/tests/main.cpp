@@ -265,9 +265,6 @@ public:
         auto scene = make<EGE::Scene>(this);
         m_client->setScene(scene);
 
-        // Create SceneWidget to be displayed in the window.
-        gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
-
         // Register SceneObject types for Client.
         scene->getRegistry().addType<MyObject>();
 
@@ -278,7 +275,10 @@ public:
         m_camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
         m_camera->setScalingMode(EGE::ScalingMode::Centered);
         m_client->setCamera(m_camera);
-        scene->setCamera(m_camera);
+
+        // Create SceneWidget to be displayed in the window, and assign Camera to it.
+        auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(*gui, scene);
+        sceneWidget->setCamera(m_camera);
 
         // Add as subloop to handle events.
         addSubLoop(m_client);

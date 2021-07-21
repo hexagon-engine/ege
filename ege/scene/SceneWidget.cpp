@@ -45,7 +45,17 @@ namespace EGE
 void SceneWidget::render(Renderer& renderer) const
 {
     if(m_scene)
+    {
+        if(!m_cameraObject.expired())
+        {
+            auto camera = m_cameraObject.lock();
+            camera->applyTransform(renderer);
+            m_scene->m_currentCamera = camera.get();
+        }
+
         m_scene->doRender(renderer);
+        m_scene->m_currentCamera = nullptr;
+    }
 }
 
 void SceneWidget::onUpdate(long long tickCounter)
@@ -67,6 +77,16 @@ void SceneWidget::updateGeometry(Renderer&)
 {
     if(m_scene)
         m_scene->setSize(getSize());
+}
+
+Vec2d SceneWidget::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
+{
+    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToScreenCoords(renderer, scene) : scene.toVec2d();
+}
+
+Vec3d SceneWidget::mapToSceneCoords(Renderer& renderer, Vec2d screen) const
+{
+    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToSceneCoords(renderer, screen) : screen;
 }
 
 }

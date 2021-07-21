@@ -283,11 +283,11 @@ TESTCASE(particleSystem)
     // add camera
     auto cam = scene->addNewObject<EGE::Plain2DCamera>();
     cam->setScalingMode(EGE::ScalingMode::None);
-    scene->setCamera(cam);
 
     // create GUI
     EGE::SharedPtr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+    auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
+    sceneWidget->setCamera(cam);
 
     // assign GUI to loop
     loop.setCurrentGUIScreen(gui);
@@ -326,12 +326,6 @@ TESTCASE(sceneLoader)
         return 1;
     }
 
-    // Add camera
-    auto camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
-    camera->setPosition({0, 0});
-    camera->setScalingMode(EGE::ScalingMode::Centered);
-    scene->setCamera(camera);
-
     // Change something in loaded static objects
     {
         auto so1 = scene->getObjectByName("2");
@@ -346,7 +340,14 @@ TESTCASE(sceneLoader)
     // Open some window to see results.
     loop.openWindow(sf::VideoMode(600, 600), "SceneLoader");
     auto gui = make<EGE::GUIScreen>(loop);
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+    auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
+
+    // Add camera
+    auto camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
+    camera->setPosition({0, 0});
+    camera->setScalingMode(EGE::ScalingMode::Centered);
+    sceneWidget->setCamera(camera);
+
     loop.setCurrentGUIScreen(gui);
 
     if(loop.run() != 0)
@@ -416,19 +417,21 @@ TESTCASE(parenting)
     if(!scene->loadFromFile("parenting.json", "scenes/parenting.json"))
         return 1;
 
-    // Add camera
-    {
-        auto camera = scene->addNewObject<EGE::Plain2DCamera>();
-        camera->setPosition({0, 0});
-        camera->setScalingMode(EGE::ScalingMode::Centered);
-        scene->setCamera(camera);
-    }
-
     // Assign ResourceManager & open window & GUI
     loop.setResourceManager(make<MyResourceManager>());
     loop.openWindow(sf::VideoMode(600, 600), "Parenting");
     auto gui = make<EGE::GUIScreen>(loop);
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+
+    // Add camera
+    
+    {
+        auto camera = scene->addNewObject<EGE::Plain2DCamera>();
+        camera->setPosition({0, 0});
+        camera->setScalingMode(EGE::ScalingMode::Centered);
+        auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
+        sceneWidget->setCamera(camera);
+    }
+    
     loop.setCurrentGUIScreen(gui);
 
     // Run game

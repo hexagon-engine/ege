@@ -85,9 +85,6 @@ void Scene::render(Renderer& renderer) const
     // The loop should NOT be specified for server-side
     // since it's NOT necessary (Scene itself is an EventLoop)
     ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
-
-    if(!m_cameraObject.expired())
-        m_cameraObject.lock()->applyTransform(renderer);
     
     for(auto& pr: m_objectsByLayer)
         pr.second->doRender(renderer);
@@ -356,18 +353,6 @@ void Scene::rebuildLayers()
 
     for(auto pr: m_objects)
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
-}
-
-Vec2d Scene::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
-{
-    ASSERT(!isHeadless());
-    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToScreenCoords(renderer, scene) : scene.toVec2d();
-}
-
-Vec3d Scene::mapToSceneCoords(Renderer& renderer, Vec2d screen) const
-{
-    ASSERT(!isHeadless());
-    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToSceneCoords(renderer, screen) : screen;
 }
 
 }
