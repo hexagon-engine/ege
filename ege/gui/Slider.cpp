@@ -47,19 +47,20 @@ void Slider::scrollWithMouse(double x)
     x *= realSize / getSize().x;
     double newValue = m_value;
     newValue = x * (m_maxValue - m_minValue) / realSize + m_minValue;
-    if(newValue < m_minValue)
-        newValue = m_minValue;
-    if(newValue > m_maxValue)
-        newValue = m_maxValue;
+    setValue(newValue);
+}
 
+void Slider::setValue(double value)
+{
     // Apply step.
-    newValue /= m_step;
-    newValue = round(newValue);
-    newValue *= m_step;
+    value /= m_step;
+    value = round(value);
+    value *= m_step;
+    value = std::min(m_maxValue, std::max(m_minValue, value));
 
-    if(newValue != m_value)
+    if(value != m_value)
     {
-        m_value = newValue;
+        m_value = value;
         fire<SliderSlideEvent>(m_value);
     }
 }
