@@ -244,17 +244,19 @@ void MyParticleSystem::renderParticles(const std::list<ParticleType>& particles,
     ege_log.debug() << "Particles: " << particles.size();
 
     // Generate vertexes.
-    std::vector<EGE::Vertex> vertexes;
+    sf::VertexArray varr(sf::Lines, particles.size() * 2);
+    size_t counter = 0;
     for(auto& particle: particles)
     {
         float clf = (particle.color + 4.f) / 5.2f;
         sf::Color color(clf * 255, clf * 255, 255);
-        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x, particle.position.y, 0.0), color));
-        vertexes.push_back(EGE::Vertex::make(EGE::Vec3d(particle.position.x + particle.motionx, particle.position.y + particle.motiony, 0.0), color));
+        varr[counter * 2] =     {{static_cast<float>(particle.position.x), static_cast<float>(particle.position.y)}, color};
+        varr[counter * 2 + 1] = {{static_cast<float>(particle.position.x + particle.motionx), static_cast<float>(particle.position.y + particle.motiony)}, color};
+        counter++;
     }
 
     // Actually render them.
-    renderer.renderPrimitives(vertexes, sf::Lines);
+    renderer.getTarget().draw(varr, renderer.getStates().sfStates());
 }
 
 TESTCASE(particleSystem)
@@ -266,7 +268,7 @@ TESTCASE(particleSystem)
 
     // create scene
     EGE::SharedPtr<MyScene> scene = make<MyScene>(&loop);
-    auto registry = scene->getRegistry();
+    auto& registry = scene->getRegistry();
     registry.addType<MyParticleSystem>();
 
     // add wind speed variable
