@@ -118,14 +118,14 @@ public:
 
         EventResult fire(EvtT& event)
         {
-            EventResult result = EventResult::Success;
+            bool result = true;
             m_inEventHandler = true;
             for(auto& pr: m_handlers)
             {
-                (bool&)result |= (bool)pr->handle(event);
+                result |= (pr->handle(event) == EventResult::Success);
             }
             m_inEventHandler = false;
-            return result;
+            return result ? EventResult::Success : EventResult::Failure;
         }
 
     private:
