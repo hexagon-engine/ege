@@ -53,7 +53,8 @@ struct Input
         JoystickButton,
         JoystickAxis,
         MouseButton,
-        MouseWheel
+        MouseWheel,
+        KeyPair
         // TODO: mouse move
     } type;
 
@@ -70,6 +71,12 @@ struct Input
                 int button; // For type=JoystickButton
             };
         } joystick;
+
+        struct KeyPair
+        {
+            sf::Keyboard::Key minus;
+            sf::Keyboard::Key plus;
+        } keyPair;
 
         sf::Mouse::Button mouseButton; // For type=MouseButton
         sf::Mouse::Wheel mouseWheel; // For type=MouseWheel
@@ -90,6 +97,9 @@ struct Input
 
     Input(sf::Mouse::Wheel wheel)
         : type(MouseWheel), value(Value{.mouseWheel = wheel}) {}
+
+    Input(sf::Keyboard::Key minusKey, sf::Keyboard::Key plusKey)
+        : type(KeyPair), value(Value{.keyPair = Value::KeyPair{.minus = minusKey, .plus = plusKey}}) {}
 
     bool operator==(const Input& other) const;
     bool operator!=(const Input& other) const { return !(*this == other); }
@@ -112,10 +122,10 @@ public:
     // void handle(Float strength), event called on change, strength is useful for joystick keybinds.
     // strength is always in range -1 - 1
     // For non-JoystickAxis/MouseWheel: press -> strength=1; release -> strength=0
+    // For key pairs: none pressed / both pressed -> strength=0, minus pressed -> strength=-1, plus pressed -> strength=1
     typedef std::function<void(Float)> StrengthKeybindHandler; // for joystick
 
     // TODO: add API for mouse moves
-    // TODO: API for common key groups (WASD, arrows, ...)
 
     // Uses last file name if name not given. The default is 'keybinds.json'
     // The fileName is relative to 'config' dir.
@@ -157,6 +167,7 @@ private:
     void callAllTriggerKBs(Input);
     void callAllSwitchKBs(Input, Boolean value);
     void callAllStrengthKBs(Input, Float value);
+    void callAllKeyPairs(bool release, sf::Keyboard::Key key);
 
     String m_lastFileName = "keybinds.json";
     StringMap<TriggerKB> m_triggerKBs;

@@ -54,6 +54,7 @@ bool Input::operator==(const Input& other) const
         case JoystickAxis: return value.joystick.id == other.value.joystick.id && value.joystick.axis == other.value.joystick.axis;
         case MouseButton: return value.mouseButton == other.value.mouseButton;
         case MouseWheel: return value.mouseWheel == other.value.mouseWheel;
+        case KeyPair: return value.keyPair.minus == other.value.keyPair.minus || value.keyPair.plus == other.value.keyPair.plus;
         default: CRASH_WITH_MESSAGE("Unknown input type!");
     }
 }
@@ -120,12 +121,14 @@ void KeybindManager::onKeyPress(sf::Event::KeyEvent& event)
     ege_log.debug() << "KeybindManager::onKeyPress " << (int)event.code;
     callAllTriggerKBs(Input(event.code));
     callAllSwitchKBs(Input(event.code), true);
+    callAllKeyPairs(false, event.code);
 }
 
 void KeybindManager::onKeyRelease(sf::Event::KeyEvent& event)
 {
     ege_log.debug() << "KeybindManager::onKeyRelease " << (int)event.code;
     callAllSwitchKBs(Input(event.code), false);
+    callAllKeyPairs(true, event.code);
 }
 
 void KeybindManager::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
@@ -225,6 +228,28 @@ void KeybindManager::callAllStrengthKBs(Input input, Float value)
     auto vec = findAllStrengthKBs(input);
     for(auto& kb: vec)
         kb->handler(value);
+}
+
+void KeybindManager::callAllKeyPairs(bool release, sf::Keyboard::Key key)
+{
+    for(auto& it: m_strengthKBs)
+    {
+        if(it.second.input.type == Input::KeyPair)
+        {
+            auto minus = it.second.input.value.keyPair.minus;
+            auto plus = it.second.input.value.keyPair.plus;
+            bool isMinusPressed = sf::Keyboard::isKeyPressed(minus) || (key == minus && !release);
+            bool isPlusPressed = sf::Keyboard::isKeyPressed(plus) || (key == plus && !release);
+
+            // TODO: Make it configurable somehow
+            if(isMinusPressed == isPlusPressed)
+                it.second.handler(0);
+            else if(isMinusPressed)
+                it.second.handler(-1);
+            else if(isPlusPressed)
+                it.second.handler(1);
+        }
+    }
 }
 
 }

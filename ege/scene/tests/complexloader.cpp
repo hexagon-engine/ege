@@ -37,11 +37,10 @@ TESTCASE(complexLoader)
     // Setup keybinds
     auto keybinds = make<EGE::KeybindManager>();
     keybinds->addTrigger("place", sf::Mouse::Left, [scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
-    keybinds->addSwitch("L", sf::Keyboard::A, [player](bool p) { player->setMotion({-0.1*p, player->getMotion().y}); });
-    keybinds->addSwitch("R", sf::Keyboard::D, [player](bool p) { player->setMotion({0.1*p, player->getMotion().y}); });
-    keybinds->addSwitch("U", sf::Keyboard::W, [player](bool p) { player->setMotion({player->getMotion().x, -0.1*p}); });
-    keybinds->addSwitch("D", sf::Keyboard::S, [player](bool p) { player->setMotion({player->getMotion().x, 0.1*p}); });
-    loop.events<EGE::SystemEvent>().addHandler(keybinds);
+    keybinds->addSwitch("test", sf::Keyboard::Space, [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
+    keybinds->addStrength("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D}, [player](float p) { player->setMotion({0.1*p, player->getMotion().y}); });
+    keybinds->addStrength("moveVertical", {sf::Keyboard::W, sf::Keyboard::S}, [player](float p) { player->setMotion({player->getMotion().x, 0.1*p}); });
+    EGE::KeybindManager::hook(keybinds, loop);
 
     // Setup GUI & display
     auto guiScreen = make<EGE::GUIScreen>(loop);
