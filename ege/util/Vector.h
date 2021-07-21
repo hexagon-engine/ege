@@ -157,6 +157,12 @@ EGE::Vector2<T> operator-(const EGE::Vector2<T> _1, const EGE::Vector2<T> _2)
 }
 
 template<class T>
+EGE::Vector2<T> operator-(const EGE::Vector2<T> arg)
+{
+    return EGE::Vector2<T>(-arg.x, -arg.y);
+}
+
+template<class T>
 EGE::Vector2<T> operator*(const EGE::Vector2<T> _1, const T _2)
 {
     return EGE::Vector2<T>(_1.x * _2, _1.y * _2);
@@ -259,6 +265,12 @@ EGE::Vector3<T> operator/(const EGE::Vector3<T> _1, const T _2)
 {
     ASSERT(_2 != 0);
     return EGE::Vector3<T>(_1.x / _2, _1.y / _2, _1.z / _2);
+}
+
+template<class T>
+EGE::Vector3<T> operator-(const EGE::Vector3<T> arg)
+{
+    return EGE::Vector3<T>(-arg.x, -arg.y, -arg.z);
 }
 
 // Equal / Not equal
