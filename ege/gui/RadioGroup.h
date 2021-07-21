@@ -43,6 +43,16 @@ namespace EGE
 
 class RadioButton;
 
+class RadioGroupChangeEvent : public Event
+{
+public:
+    EGE_EVENT("EGE::RadioGroupChangeEvent");
+    RadioGroupChangeEvent(RadioButton& _button)
+    : button(_button) {}
+
+    RadioButton& button;
+};
+
 class RadioGroup : public CompoundWidget
 {
 public:

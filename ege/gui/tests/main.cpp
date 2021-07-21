@@ -259,6 +259,10 @@ public:
                     auto radioButton3 = radiogroup->addNewWidget<EGE::RadioButton>();
                     radioButton3->setLabel("RadioButton 3");
                     radiogroup->setCheckedButton(*radioButton2);
+                    radiogroup->events<EGE::RadioGroupChangeEvent>().add([](EGE::RadioGroupChangeEvent& event) {
+                        ege_log.info() << "RadioGroupChangeEvent: " << event.button.getLabel().toAnsiString();
+                        return EGE::EventResult::Success;
+                    });
                     ege_log.info() << radiogroup->getCheckedButton()->getLabel().toAnsiString();
                 }
 

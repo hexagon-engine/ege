@@ -68,7 +68,10 @@ void RadioGroup::didClick(RadioButton& button)
             continue;
 
         if(widget.get() == &button)
+        {
+            fire<RadioGroupChangeEvent>(*radiobutton);
             radiobutton->setChecked(true);
+        }
         else
             radiobutton->setChecked(false);
     }
