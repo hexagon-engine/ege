@@ -44,6 +44,7 @@
 #include <ege/event/DefaultSystemEventHandler.h>
 #include <ege/gfx/Renderable.h>
 #include <ege/gfx/Renderer.h>
+#include <ege/resources/ResourceManager.h>
 #include <ege/util/Vector.h>
 
 #define WIDGET_DEBUG 0
@@ -52,6 +53,7 @@ namespace EGE
 {
 
 class GUIGameLoop;
+class Window;
 
 class Widget : public Animatable, public DefaultSystemEventHandler, public LayoutElement
 {
@@ -72,18 +74,15 @@ public:
         std::string m_id;
     };
 
-    explicit Widget(Widget& parent, String id = "Widget")
-    : Animatable(&parent, "Widget: " + id)
-    , DefaultSystemEventHandler(parent.getWindow())
-    , LayoutElement(&parent, id)
-    , m_gameLoop(parent.m_gameLoop)
-    , m_parentWidget(&parent) {}
+    explicit Widget(Widget& parent, String id = "Widget");
 
     // for non-parented widgets, e.g. GUIScreen
     // NOTE: For layouting, they must have fixed (px or A) size set!
-    explicit Widget(GUIGameLoop& gameLoop, String id = "Widget (root)");
+    explicit Widget(Window& gameLoop, String id = "Widget (root)");
 
-    GUIGameLoop& getLoop() const { return m_gameLoop; }
+    GUIGameLoop& getLoop() const;
+    Window& getWindow() const { return m_window; }
+    SharedPtr<ResourceManager> getResourceManager() const;
 
     virtual sf::FloatRect getBoundingBox();
     virtual sf::FloatRect getViewport(sf::RenderTarget& target) const;
@@ -125,7 +124,7 @@ protected:
 
     bool m_mouseOver = false;
     bool m_leftClicked = false;
-    GUIGameLoop& m_gameLoop;
+    Window& m_window;
     Widget* m_parentWidget;
     bool m_hide = false;
 

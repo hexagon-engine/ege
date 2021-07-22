@@ -33,16 +33,15 @@ private:
 TESTCASE(renderTextWithBackground)
 {
     EGE::GUIGameLoop loop;
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "renderTextWithBackground");
 
     auto resourceManager = make<EGE::GUIResourceManager>();
     resourceManager->registerDefaultFont("font.ttf");
     loop.setResourceManager(resourceManager);
 
-    auto guiScreen = make<EGE::GUIScreen>(loop);
+    auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
     guiScreen->addNewWidget<TestWidget>();
-    loop.setCurrentGUIScreen(guiScreen);
 
-    loop.openWindow(sf::VideoMode(500, 500), "renderTextWithBackground");
     return loop.run();
 }
 

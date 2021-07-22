@@ -4,7 +4,7 @@
 TESTCASE(loading)
 {
     EGE::GUIGameLoop loop;
-    loop.openWindow(sf::VideoMode(500, 500), "SplashScreen");
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "SplashScreen");
 
     // We need some 'bootstrap' resource manager which will have only
     // splash screen image. We swap ResourceManagers in splash screen
@@ -13,7 +13,7 @@ TESTCASE(loading)
     bootstrap->registerTexture("splash.png");
     loop.setResourceManager(bootstrap);
 
-    auto splashScreen = make<EGE::SplashScreen>(loop);
+    auto splashScreen = window->setNewGUIScreen<EGE::SplashScreen>();
     splashScreen->setImage("splash.png");
 
     auto wrapper = splashScreen->addNewWidget<EGE::CompoundWidget>();
@@ -31,10 +31,9 @@ TESTCASE(loading)
                 progress.step();
             }
         }
-    }, [&loop](EGE::AsyncTask::State state) {
+    }, [](EGE::AsyncTask::State state) {
         ege_log.notice() << "YAY!! Splash Screen loading finished with rc=" << state.returnCode;
     });
-    loop.setCurrentGUIScreen(splashScreen);
 
     return loop.run();
 }
@@ -42,7 +41,7 @@ TESTCASE(loading)
 TESTCASE(displaying)
 {
     EGE::GUIGameLoop loop;
-    loop.openWindow(sf::VideoMode(500, 500), "SplashScreen");
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "SplashScreen");
 
     // We need some 'bootstrap' resource manager which will have only
     // splash screen image. We swap ResourceManagers in splash screen
@@ -51,14 +50,12 @@ TESTCASE(displaying)
     bootstrap->registerTexture("splash.png");
     loop.setResourceManager(bootstrap);
 
-    auto splashScreen = make<EGE::SplashScreen>(loop);
+    auto splashScreen = window->setNewGUIScreen<EGE::SplashScreen>();
     splashScreen->createProgress(100);
     splashScreen->setImage("splash.png");
-    splashScreen->start(EGE::Time(5), [&loop]() {
+    splashScreen->start(EGE::Time(5), []() {
         ege_log.notice() << "YAY!! Splash Screen display finished!";
     });
-
-    loop.setCurrentGUIScreen(splashScreen);
 
     return loop.run();
 }

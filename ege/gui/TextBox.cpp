@@ -125,7 +125,7 @@ void TextBox::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 
     // Find character to set caret next to.
     // TODO: Optimize it!
-    doUpdateGeometry(getLoop().getRenderer());
+    doUpdateGeometry(getWindow().getRenderer());
     for(size_t s = 0; s <= m_text.getSize(); s++)
     {
         if(m_textDrawable.findCharacterPos(s).x < event.x - getAbsolutePosition().x)
@@ -145,7 +145,7 @@ void TextBox::onMouseMove(sf::Event::MouseMoveEvent& event)
     if(m_leftClicked)
     {
         // TODO: Optimize it!
-        doUpdateGeometry(getLoop().getRenderer());
+        doUpdateGeometry(getWindow().getRenderer());
         for(size_t s = 0; s <= m_text.getSize(); s++)
         {
             if(m_textDrawable.findCharacterPos(s).x < event.x - getAbsolutePosition().x)

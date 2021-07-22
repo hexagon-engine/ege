@@ -345,7 +345,7 @@ void GUIScreen::openDialog(SharedPtr<GUIScreen> dialog)
         m_dialog = dialog;
         m_dialog->onCreate();
 
-        sf::Vector2u wndSize = getLoop().getWindow().getSize();
+        sf::Vector2u wndSize = getWindow().getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_dialog->onResize(event);
     });

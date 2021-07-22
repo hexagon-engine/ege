@@ -60,3 +60,4 @@
 #include <ege/gui/SplashScreen.h>
 #include <ege/gui/TextBox.h>
 #include <ege/gui/Widget.h>
+#include <ege/gui/Window.h>

@@ -59,8 +59,8 @@ public:
     // It indicates that loading succeeded.
     typedef std::function<void(Progress&)> Worker;
 
-    SplashScreen(GUIGameLoop& gameLoop, String id = "SplashScreen (root)")
-    : GUIScreen(gameLoop, id) {}
+    SplashScreen(Window& window, String id = "SplashScreen (root)")
+    : GUIScreen(window, id) {}
 
     Progress& createProgress(size_t steps) { m_progress = make<Progress>(steps); return *m_progress; }
 

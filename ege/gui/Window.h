@@ -34,59 +34,61 @@
 *
 */
 
-#include "SceneWidget.h"
+#pragma once
 
-#include <algorithm>
-#include <ege/gui/GUIGameLoop.h>
+#include <ege/core/EventLoop.h>
+#include <ege/event/SystemWindow.h>
+#include <ege/gui/GUIScreen.h>
+#include <SFML/Graphics.hpp>
 
 namespace EGE
 {
 
-void SceneWidget::render(Renderer& renderer) const
+class GUIGameLoop;
+
+class Window : public SFMLSystemWindow, public EventLoop
 {
-    if(m_scene)
+public:
+    Window(GUIGameLoop& owner, String id = "Window");
+
+    EGE_ENUM_YES_NO(GUIScreenImmediateInit);
+
+    virtual void onTick(long long) override;
+
+    void setBackgroundColor(ColorRGBA color) { m_backgroundColor = color; }
+    ColorRGBA getBackgroundColor() const { return m_backgroundColor; }
+
+    void setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init = Window::GUIScreenImmediateInit::No);
+
+    // T must be derived from GUIScreen
+    template<class T, class... Args>
+    SharedPtr<T> setNewGUIScreen(Args&&... args)
     {
-        if(!m_cameraObject.expired())
-        {
-            auto camera = m_cameraObject.lock();
-            camera->applyTransform(renderer);
-            m_scene->m_currentCamera = camera.get();
-        }
-
-        m_scene->doRender(renderer, renderer.getStates());
-        m_scene->m_currentCamera = nullptr;
+        auto gui = make<T>(*this, args...);
+        setGUIScreen(gui);
+        return gui;
     }
-}
 
-void SceneWidget::onUpdate(long long tickCounter)
-{
-    Widget::onUpdate(tickCounter);
+    SharedPtr<GUIScreen> getGUIScreen() const { return m_currentGui; }
 
-    if(!m_scene && m_initialScene)
-        setScene(m_initialScene);
+    Renderer& getRenderer() { return m_renderer; }
+    Renderer const& getRenderer() const { return m_renderer; }
 
-    if(m_scene)
-    {
-        if(getLoop().getProfiler()) getLoop().getProfiler()->startSection("sceneUpdate");
-        m_scene->onUpdate(tickCounter);
-        if(getLoop().getProfiler()) getLoop().getProfiler()->endSection();
-    }
-}
+    GUIGameLoop& getGUILoop() { return m_loop; }
+    const GUIGameLoop& getGUILoop() const { return m_loop; }
 
-void SceneWidget::updateGeometry(Renderer&)
-{
-    if(m_scene)
-        m_scene->setSize(getSize());
-}
+    void render();
 
-Vec2d SceneWidget::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
-{
-    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToScreenCoords(renderer, scene) : scene.toVec2d();
-}
+private:
+    virtual void onCreate() override;
 
-Vec3d SceneWidget::mapToSceneCoords(Renderer& renderer, Vec2d screen) const
-{
-    return m_cameraObject.expired() ? m_cameraObject.lock()->mapToSceneCoords(renderer, screen) : screen;
-}
+    SharedPtr<GUIScreen> m_currentGui;
+    // to allow animations and lazy-load
+    SharedPtr<GUIScreen> m_pendingGui;
+    Renderer m_renderer;
+    GUIGameLoop& m_loop;
+
+    ColorRGBA m_backgroundColor;
+};
 
 }

@@ -47,11 +47,18 @@
 namespace EGE
 {
 
-Widget::Widget(GUIGameLoop& gameLoop, String id)
-: Animatable(&gameLoop, id)
-, DefaultSystemEventHandler(gameLoop.getWindow())
+Widget::Widget(Widget& parent, String id)
+: Animatable(&parent, "Widget: " + id)
+, DefaultSystemEventHandler(parent.m_window)
+, LayoutElement(&parent, id)
+, m_window(parent.m_window)
+, m_parentWidget(&parent) {}
+
+Widget::Widget(Window& window, String id)
+: Animatable(&window, id)
+, DefaultSystemEventHandler(window)
 , LayoutElement(nullptr, id)
-, m_gameLoop(gameLoop)
+, m_window(window)
 , m_parentWidget(nullptr) {}
 
 sf::FloatRect Widget::getBoundingBox()
@@ -76,6 +83,16 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
     }
     else
         return currentRect;
+}
+
+SharedPtr<ResourceManager> Widget::getResourceManager() const
+{
+    return getLoop().getResourceManager();
+}
+
+GUIGameLoop& Widget::getLoop() const
+{
+    return m_window.getGUILoop();
 }
 
 void Widget::render(Renderer& renderer) const

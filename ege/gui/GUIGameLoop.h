@@ -36,11 +36,10 @@
 
 #pragma once
 
-#include "GUIScreen.h"
-
 #include <ege/core/MainLoop.h>
 #include <ege/event/SystemWindow.h>
 #include <ege/gfx/RenderStates.h>
+#include <ege/gui/Window.h>
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
 #include <ege/resources/ResourceManager.h>
@@ -54,12 +53,8 @@ namespace EGE
 class GUIGameLoop : public MainLoop
 {
 public:
-    //EGE_SINGLETON(GUIGameLoop);
-
     GUIGameLoop(String id = "GUIGameLoop")
-    : MainLoop(id), m_renderer(m_systemWindow) {}
-
-    EGE_ENUM_YES_NO(GUIScreenImmediateInit);
+    : MainLoop(id) {}
 
     virtual void onTick(long long tickCount) override;
 
@@ -73,23 +68,16 @@ public:
     // NOTE: it's double-buffered and OpenGL-backed by default!
     virtual void render();
 
-    void setCurrentGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init = EGE::GUIGameLoop::GUIScreenImmediateInit::No);
-
-    SharedPtr<GUIScreen> getCurrentGUIScreen() { return m_currentGui; }
-
-    SFMLSystemWindow& getWindow();
-    Renderer& getRenderer() { return m_renderer; }
-
-    void openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
-    void openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
-
     SharedPtr<ResourceManager> getResourceManager();
     void setResourceManager(SharedPtr<ResourceManager> manager);
 
-    void setBackgroundColor(sf::Color color) { m_backgroundColor = color; }
-    sf::Color getBackgroundColor() const { return m_backgroundColor; }
     sf::Time getLatestFrameTime() const  { return m_frameTime; }
     double getLastTPS() const { return 1.0 / m_frameTime.asSeconds(); }
+
+    SharedPtr<Window> openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
+    SharedPtr<Window> openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
+
+    void setExitOnCloseAllWindows(bool exit) { m_exitOnCloseAllWindows = exit; }
 
 protected:
     virtual EventResult load() { return EventResult::Success; }
@@ -97,16 +85,11 @@ protected:
 private:
     virtual EventResult onLoad() override;
 
-    SharedPtr<GUIScreen> m_currentGui;
-    // to allow animations and lazy-load
-    SharedPtr<GUIScreen> m_pendingGui;
+    SharedPtrVector<Window> m_windows;
     SharedPtr<ResourceManager> m_resourceManager;
-    SFMLSystemWindow m_systemWindow;
-    Renderer m_renderer;
-
-    sf::Color m_backgroundColor;
     sf::Clock m_fpsClock;
     sf::Time m_frameTime;
+    bool m_exitOnCloseAllWindows = true;
 };
 
 }

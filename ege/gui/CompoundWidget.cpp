@@ -297,7 +297,7 @@ void CompoundWidget::addWidget(SharedPtr<Widget> widget)
     widget->onCreate();
 
     // allow widgets know about window's size when creating
-    sf::Vector2u wndSize = getLoop().getWindow().getSize();
+    sf::Vector2u wndSize = getWindow().getSize();
     sf::Event::SizeEvent event{wndSize.x, wndSize.y};
     widget->onResize(event);
 

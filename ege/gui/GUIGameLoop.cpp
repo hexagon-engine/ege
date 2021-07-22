@@ -76,40 +76,15 @@ void GUIGameLoop::onTick(long long tickCount)
 {
     m_profiler->startSection("guiTick");
 
-    // Initialize pending GUI
-    m_profiler->startSection("initPendingGUI");
-    if(m_pendingGui)
+    bool isAtLeastOneWindowOpen = false;
+    for(auto& window: m_windows)
     {
-        DBG(GUI_DEBUG, "initPendingGUI");
-        if(m_currentGui)
-        {
-            events<SystemEvent>().remove(*m_currentGui);
-            // it's 'delete'd by eventhandler
-            m_currentGui->onUnload();
-        }
-        m_currentGui = m_pendingGui;
-        m_currentGui->onCreate();
-
-        // allow GUI screens know about window's size when creating
-        sf::Vector2u wndSize = getWindow().getSize();
-        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
-        m_currentGui->onResize(event);
-
-        events<SystemEvent>().addHandler(m_currentGui);
-        m_pendingGui = nullptr;
+        window->onTick(tickCount);
+        if(window->isOpen())
+            isAtLeastOneWindowOpen |= true;
     }
-
-    // Call system event handlers
-    if(m_systemWindow.isOpen())
-    {
-        m_profiler->endStartSection("systemEvents");
-        DBG(0, "systemEvents");
-        m_systemWindow.callEvents(*this, SystemWindow::WaitForEvents::No);
-    }
-
-    m_profiler->endStartSection("guiUpdate");
-    if(m_currentGui)
-        m_currentGui->onUpdate(getTickCount());
+    if(!isAtLeastOneWindowOpen && m_exitOnCloseAllWindows)
+        exit();
 
     m_profiler->endStartSection("logic");
     logicTick(tickCount);
@@ -118,9 +93,6 @@ void GUIGameLoop::onTick(long long tickCount)
     render();
     m_profiler->endSection();
 
-    if(!m_systemWindow.isOpen())
-        exit();
-
     // TODO: tick rate limit?
     //log() << m_frameTime.asMicroseconds();
     m_frameTime = m_fpsClock.restart();
@@ -128,65 +100,22 @@ void GUIGameLoop::onTick(long long tickCount)
     m_profiler->endSection();
 }
 
-void GUIGameLoop::setCurrentGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init)
+SharedPtr<Window> GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
 {
-    DBG(GUI_DEBUG, "setCurrentGUIScreen");
-
-    if(init == GUIGameLoop::GUIScreenImmediateInit::Yes)
-    {
-        events<SystemEvent>().remove(*m_currentGui);
-
-        // it's 'delete'd by eventhandler
-        if(m_currentGui)
-           m_currentGui->onUnload();
-
-        m_currentGui = screen;
-        m_currentGui->onCreate();
-
-        // allow GUI screens know about window's size when creating
-        sf::Vector2u wndSize = getWindow().getSize();
-        sf::Event::SizeEvent event{wndSize.x, wndSize.y};
-        m_currentGui->onResize(event);
-
-        events<SystemEvent>().addHandler(m_currentGui);
-    }
-    else
-        m_pendingGui = screen;
+    // FIXME: Handle code dupe in openWindow
+    auto window = make<Window>(*this, "Window: " + label.toAnsiString());
+    window->create(mode, label, style, settings);
+    m_windows.push_back(window);
+    return window;
 }
 
-SFMLSystemWindow& GUIGameLoop::getWindow()
+SharedPtr<Window> GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings)
 {
-    return m_systemWindow;
-}
-
-void GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
-{
-    m_systemWindow.create(mode, label, style, settings);
-
-    if(m_currentGui)
-    {
-        // Notify GUI about size change
-        sf::Event::SizeEvent event;
-        auto size = m_systemWindow.getSize();
-        event.width = size.x;
-        event.height = size.y;
-        m_currentGui->onResize(event);
-    }
-}
-
-void GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings)
-{
-    m_systemWindow.create(handle, settings);
-
-    if(m_currentGui)
-    {
-        // Notify GUI about size change
-        sf::Event::SizeEvent event;
-        auto size = m_systemWindow.getSize();
-        event.width = size.x;
-        event.height = size.y;
-        m_currentGui->onResize(event);
-    }
+    // FIXME: Handle code dupe in openWindow
+    auto window = make<Window>(*this);
+    window->create(handle, settings);
+    m_windows.push_back(window);
+    return window;
 }
 
 SharedPtr<ResourceManager> GUIGameLoop::getResourceManager()
@@ -201,19 +130,8 @@ void GUIGameLoop::setResourceManager(SharedPtr<ResourceManager> manager)
 
 void GUIGameLoop::render()
 {
-    if(m_systemWindow.isOpen())
-    {
-        m_profiler->startSection("clear");
-        m_systemWindow.clear(m_backgroundColor);
-
-        m_profiler->endStartSection("gui");
-        if(m_currentGui)
-            m_currentGui->doRender(m_renderer);
-
-        m_profiler->endStartSection("display");
-        m_systemWindow.display();
-        m_profiler->endSection();
-    }
+    for(auto& window: m_windows)
+        window->render();
 }
 
 }

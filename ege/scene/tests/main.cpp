@@ -135,13 +135,13 @@ TESTCASE(serializer)
 {
     // create loop
     EGE::GUIGameLoop gameLoop;
-    gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Serializer Test");
+    auto window = gameLoop.openWindow(sf::VideoMode(300, 300), "EGE Scene Serializer Test");
 
     // limit window framerate to 10
-    gameLoop.getWindow().setFramerateLimit(60);
+    window->setFramerateLimit(60);
 
     // create main GUI
-    auto gui = make<EGE::GUIScreen>(gameLoop);
+    auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
 
     // create scene
     auto scene = make<EGE::Scene>(&gameLoop);
@@ -169,9 +169,6 @@ TESTCASE(serializer)
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(make<MyResourceManager>());
-
-    // assign GUI to loop
-    gameLoop.setCurrentGUIScreen(gui);
 
     return gameLoop.run();
 }
@@ -263,7 +260,7 @@ TESTCASE(particleSystem)
 {
     // create loop
     EGE::GUIGameLoop loop;
-    loop.openWindow(sf::VideoMode(600, 600), "Particle System");
+    auto window = loop.openWindow(sf::VideoMode(600, 600), "Particle System");
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
     // create scene
@@ -285,12 +282,9 @@ TESTCASE(particleSystem)
     cam->setScalingMode(EGE::ScalingMode::None);
 
     // create GUI
-    EGE::SharedPtr<EGE::GUIScreen> gui = make<EGE::GUIScreen>(loop);
+    auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
     sceneWidget->setCamera(cam);
-
-    // assign GUI to loop
-    loop.setCurrentGUIScreen(gui);
 
     // run game
     return loop.run();
@@ -338,8 +332,8 @@ TESTCASE(sceneLoader)
     loop.setResourceManager(make<MyResourceManager>());
 
     // Open some window to see results.
-    loop.openWindow(sf::VideoMode(600, 600), "SceneLoader");
-    auto gui = make<EGE::GUIScreen>(loop);
+    auto window = loop.openWindow(sf::VideoMode(600, 600), "SceneLoader");
+    auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
 
     // Add camera
@@ -347,8 +341,6 @@ TESTCASE(sceneLoader)
     camera->setPosition({0, 0});
     camera->setScalingMode(EGE::ScalingMode::Centered);
     sceneWidget->setCamera(camera);
-
-    loop.setCurrentGUIScreen(gui);
 
     if(loop.run() != 0)
         return 2;
@@ -417,22 +409,19 @@ TESTCASE(parenting)
     if(!scene->loadFromFile("parenting.json", "scenes/parenting.json"))
         return 1;
 
-    // Assign ResourceManager & open window & GUI
+    // Assign ResourceManager
     loop.setResourceManager(make<MyResourceManager>());
-    loop.openWindow(sf::VideoMode(600, 600), "Parenting");
-    auto gui = make<EGE::GUIScreen>(loop);
 
-    // Add camera
-    
+    // Add window, GUI and camera
     {
+        auto window = loop.openWindow(sf::VideoMode(600, 600), "Parenting");
+        auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
         auto camera = scene->addNewObject<EGE::Plain2DCamera>();
         camera->setPosition({0, 0});
         camera->setScalingMode(EGE::ScalingMode::Centered);
         auto sceneWidget = gui->addNewWidget<EGE::SceneWidget>(scene);
         sceneWidget->setCamera(camera);
     }
-    
-    loop.setCurrentGUIScreen(gui);
 
     // Run game
     loop.run();

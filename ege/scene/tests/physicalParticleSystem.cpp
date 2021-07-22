@@ -102,12 +102,12 @@ private:
     MyParticleSystem& m_particleSystem;
 };
 
-// We need separate GUI screen because we don't have resourcemanager before loop.run
+// We need separate GUI screen because we don't have resourcemanager before loop.run()
 class MyGuiScreen : public EGE::GUIScreen
 {
 public:
-    MyGuiScreen(EGE::GUIGameLoop& loop)
-    : EGE::GUIScreen(loop) {}
+    MyGuiScreen(EGE::Window& window)
+    : EGE::GUIScreen(window) {}
 
     virtual void onCreate() override
     {
@@ -141,7 +141,8 @@ TESTCASE(basic)
     camera->setScalingMode(EGE::ScalingMode::Fit);
     camera->setDisplaySize({200, 200});
 
-    auto guiScreen = make<MyGuiScreen>(loop);
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "EGE::PhysicalParticleSystem");
+    auto guiScreen = window->setNewGUIScreen<MyGuiScreen>();
     guiScreen->setPadding({"5px", "5px"});
 
     {
@@ -285,9 +286,6 @@ TESTCASE(basic)
         sceneWidget->setCamera(camera);
         guiScreen->setSceneWidget(sceneWidget);
     }
-
-    loop.setCurrentGUIScreen(guiScreen);
-    loop.openWindow(sf::VideoMode(500, 500), "EGE::PhysicalParticleSystem");
 
     return loop.run();
 }

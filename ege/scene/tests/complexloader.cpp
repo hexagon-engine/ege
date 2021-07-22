@@ -43,11 +43,10 @@ TESTCASE(complexLoader)
     EGE::KeybindManager::hook(keybinds, loop);
 
     // Setup GUI & display
-    auto guiScreen = make<EGE::GUIScreen>(loop);
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
+    auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
     sceneWidget->setCamera(camera);
-    loop.setCurrentGUIScreen(guiScreen);
-    loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
     return loop.run();
 }
 

@@ -254,9 +254,11 @@ public:
 
     virtual EventResult load() override
     {
+        auto window = openWindow(sf::VideoMode(300, 300), "EGE Protocol Test");
+        window->setKeyRepeatEnabled(false);
+
         // Create GUI and assign it to client.
-        auto gui = make<EGE::GUIScreen>(*this);
-        setCurrentGUIScreen(gui);
+        auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
 
         // Create client - define server IP and port.
         m_client = make<MyClient>();
@@ -269,7 +271,7 @@ public:
         scene->getRegistry().addType<MyObject>();
 
         // Add keybind handler. It will pass keyboard events to Controller.
-        events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(getWindow(), m_client);
+        window->events<EGE::SystemEvent>().addHandler<MySystemEventHandler>(*window, m_client);
 
         // Initialize Camera.
         m_camera = scene->addNewObject<EGE::Plain2DCamera>(nullptr);
@@ -304,8 +306,6 @@ TESTCASE(client)
     // Create GameLoop and window.
     EGE::GlobalConfig::enableAllDebug();
     MyGameLoop loop(PORT);
-    loop.openWindow(sf::VideoMode(300, 300), "EGE Protocol Test");
-    loop.getWindow().setKeyRepeatEnabled(false);
     loop.setMaxTicksPerSecond(60);
 
     // Run main loop.

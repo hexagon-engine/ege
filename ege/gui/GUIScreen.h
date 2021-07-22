@@ -48,8 +48,8 @@ namespace EGE
 class GUIScreen : public CompoundWidget
 {
 public:
-    explicit GUIScreen(GUIGameLoop& gameLoop, String id = "GUIScreen (root)")
-    : CompoundWidget(gameLoop, id) {}
+    explicit GUIScreen(Window& window, String id = "GUIScreen (root)")
+    : CompoundWidget(window, id) {}
 
     // for modal dialogs
     explicit GUIScreen(Widget& parent, String id = "GUIScreen")

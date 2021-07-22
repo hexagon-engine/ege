@@ -47,6 +47,8 @@ set(SOURCES
 	"TextBox.h"
 	"Widget.cpp"
 	"Widget.h"
+	"Window.cpp"
+	"Window.h"
 )
 
 ege_add_module(gui)

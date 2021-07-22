@@ -82,11 +82,10 @@ TESTCASE(basic)
     camera->setDisplaySize({340, 340});
     camera->setScalingMode(EGE::ScalingMode::Fit);
 
-    auto guiScreen = make<EGE::GUIScreen>(loop);
+    auto window = loop.openWindow(sf::VideoMode(340, 340), "Relative Coords");
+    auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
     sceneWidget->setCamera(camera);
-    loop.setCurrentGUIScreen(guiScreen);
-    loop.openWindow(sf::VideoMode(340, 340), "Relative Coords");
 
     return loop.run();
 }

@@ -49,8 +49,8 @@ public:
     explicit CompoundWidget(Widget& parent, String id = "CompoundWidget")
     : Widget(parent, id) {}
 
-    explicit CompoundWidget(GUIGameLoop& loop, String id = "CompoundWidget (root)")
-    : Widget(loop, id) {}
+    explicit CompoundWidget(Window& window, String id = "CompoundWidget (root)")
+    : Widget(window, id) {}
 
     // System Events -- are passed to all child widgets
     virtual void onClose() override {}
@@ -112,7 +112,7 @@ public:
     Size getWidgetCount() const { return m_childWidgets.size(); }
 
 protected:
-    void setFocus(bool value = true);
+    virtual void setFocus(bool value = true) override;
 
     virtual void updateLayout() override;
 

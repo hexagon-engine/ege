@@ -53,8 +53,7 @@ class SFMLSystemWindow : public SystemWindow, public sf::RenderWindow
 {
 public:
     SFMLSystemWindow()
-    : sf::RenderWindow()
-    {}
+    : sf::RenderWindow() {}
 
     virtual void callEvents(EventLoop& loop, WaitForEvents wait = WaitForEvents::No);
 

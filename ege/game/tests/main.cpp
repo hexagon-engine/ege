@@ -112,8 +112,8 @@ class MyGuiScreen : public EGE::GUIScreen
 public:
     EGE::SharedPtrVector<ColorWidget> m_widgets;
 
-    MyGuiScreen(EGE::GUIGameLoop& loop)
-    : EGE::GUIScreen(loop) {}
+    MyGuiScreen(EGE::Window& window)
+    : EGE::GUIScreen(window) {}
 
     void onCreate()
     {
@@ -147,10 +147,10 @@ TESTCASE(simple)
     auto game = EGE::Game::instance();
     auto gpom = make<MyGameplayObjectManager>();
     game.setGameplayObjectManager(gpom);
-    game.getLoop()->openWindow(sf::VideoMode(400, 400), "EGE::Game");
+    auto window = game.getLoop()->openWindow(sf::VideoMode(400, 400), "EGE::Game");
     game.getLoop()->setResourceManager(make<MyResourceManager>());
-    game.getLoop()->setCurrentGUIScreen(make<MyGuiScreen>(*game.getLoop()));
-    game.getLoop()->setBackgroundColor(sf::Color(127, 127, 127));
+    window->setNewGUIScreen<MyGuiScreen>();
+    window->setBackgroundColor(EGE::ColorRGBA::fromBytes(127, 127, 127));
     return game.run();
 }
 
