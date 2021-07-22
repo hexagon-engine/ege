@@ -58,22 +58,24 @@ SharedPtr<Object> object(std::string t)          { return make<ObjectString>(t);
 
 SharedPtr<Object> object(Boolean t) { return make<ObjectBoolean>(t); }
 
-Vec2d toVector2(SharedPtr<ObjectMap> map)
+Vec2d toVector2(const ObjectValue& object)
 {
-    if(!map)
+    auto map = object.to<ObjectMap>();
+    if(!map.hasValue())
         return {};
-    auto x = map->getObject("x").asFloat().valueOr(0);
-    auto y = map->getObject("y").asFloat().valueOr(0);
+    auto x = map.value()->get("x").asFloat().valueOr(0);
+    auto y = map.value()->get("y").asFloat().valueOr(0);
     return Vec2d(x, y);
 }
 
-Vec3d toVector3(SharedPtr<ObjectMap> map)
+Vec3d toVector3(const ObjectValue& object)
 {
-    if(!map)
+    auto map = object.to<ObjectMap>();
+    if(!map.hasValue())
         return {};
-    auto x = map->getObject("x").asFloat().valueOr(0);
-    auto y = map->getObject("y").asFloat().valueOr(0);
-    auto z = map->getObject("z").asFloat().valueOr(0);
+    auto x = map.value()->get("x").asFloat().valueOr(0);
+    auto y = map.value()->get("y").asFloat().valueOr(0);
+    auto z = map.value()->get("z").asFloat().valueOr(0);
     return Vec3d(x, y, z);
 }
 
@@ -87,18 +89,18 @@ SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color)
     return map;
 }
 
-ColorRGBA toColorRGBA(SharedPtr<Object> object, ColorRGBA fallback)
+ColorRGBA toColorRGBA(const ObjectValue& object, ColorRGBA fallback)
 {
-    if(!object)
+    if(!object.exists())
         return fallback;
 
     auto map = Object::cast<EGE::ObjectMap>(object);
     if(map.hasValue())
     {
-        auto r = map.value()->getObject("r").asFloat().valueOr(0);
-        auto g = map.value()->getObject("g").asFloat().valueOr(0); 
-        auto b = map.value()->getObject("b").asFloat().valueOr(0);
-        auto a = map.value()->getObject("a").asFloat().valueOr(1); 
+        auto r = map.value()->get("r").asFloat().valueOr(0);
+        auto g = map.value()->get("g").asFloat().valueOr(0); 
+        auto b = map.value()->get("b").asFloat().valueOr(0);
+        auto a = map.value()->get("a").asFloat().valueOr(1); 
         return ColorRGBA(r, g, b, a);
     }
 
@@ -113,8 +115,8 @@ RectD toRect(SharedPtr<ObjectMap> map)
 {
     if(!map)
         return {};
-    auto pos = toVector2(map->getObject("pos").to<ObjectMap>().valueOr({}));
-    auto size = toVector2(map->getObject("size").to<ObjectMap>().valueOr({}));
+    auto pos = toVector2(map->get("pos"));
+    auto size = toVector2(map->get("size"));
     return RectD(pos, size);
 }
 

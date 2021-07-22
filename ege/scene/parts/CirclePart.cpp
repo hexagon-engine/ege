@@ -50,10 +50,10 @@ bool CirclePart::deserialize(SharedPtr<ObjectMap> data)
 {
     if(!Part::deserialize(data))
         return false;
-    position = Serializers::toVector2(data->getObject("pos").to<ObjectMap>().valueOr({}));
-    radius = data->getObject("radius").asFloat().valueOr(0);
-    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").object());
-    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").object(), Colors::transparent);
+    position = Serializers::toVector2(data->get("pos"));
+    radius = data->get("radius").asFloat().valueOr(0);
+    fillColor = Serializers::toColorRGBA(data->get("fillColor"));
+    outlineColor = Serializers::toColorRGBA(data->get("outlineColor"), Colors::transparent);
     setGeometryNeedUpdate();
     return true;
 }

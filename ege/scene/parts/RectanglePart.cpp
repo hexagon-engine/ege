@@ -50,9 +50,9 @@ bool RectanglePart::deserialize(SharedPtr<ObjectMap> data)
 {
     if(!Part::deserialize(data))
         return false;
-    rect = Serializers::toRect(data->getObject("rect").to<ObjectMap>().valueOr({}));
-    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").object(), Colors::white);
-    outlineColor = Serializers::toColorRGBA(data->getObject("outlineColor").object(), Colors::transparent);
+    rect = Serializers::toRect(data->get("rect"));
+    fillColor = Serializers::toColorRGBA(data->get("fillColor"), Colors::white);
+    outlineColor = Serializers::toColorRGBA(data->get("outlineColor"), Colors::transparent);
     return true;
 }
 

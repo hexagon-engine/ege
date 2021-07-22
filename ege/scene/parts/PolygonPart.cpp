@@ -74,14 +74,11 @@ bool PolygonPart::deserialize(SharedPtr<ObjectMap> data)
     auto _vertexes = data->getObject("vertexes").to<ObjectList>().valueOr({});
     for(auto& vertex : *_vertexes)
     {
-        auto _vertex = Object::cast<ObjectMap>(vertex);
-        if(!_vertex.hasValue())
-            return false;
-
-        vertexes.push_back(Serializers::toVector2(_vertex.value()));
+        // FIXME: Handle errors properly
+        vertexes.push_back(Serializers::toVector2(vertex));
     }
 
-    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").object());
+    fillColor = Serializers::toColorRGBA(data->get("fillColor"));
     setGeometryNeedUpdate();
     return true;
 }

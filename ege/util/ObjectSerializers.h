@@ -104,7 +104,7 @@ SharedPtr<ObjectMap> fromVector2(Vector2<T> vec)
     map->addObject("y", object(vec.y));
     return map;
 }
-Vec2d toVector2(SharedPtr<ObjectMap> map);
+Vec2d toVector2(const ObjectValue& object);
 
 // EGE::Vector3
 template<class T>
@@ -116,7 +116,7 @@ SharedPtr<ObjectMap> fromVector3(Vector3<T> vec)
     map->addObject("z", object(vec.z));
     return map;
 }
-Vec3d toVector3(SharedPtr<ObjectMap> map);
+Vec3d toVector3(const ObjectValue& object);
 
 // EGE::ColorRGBA
 SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color);
@@ -131,7 +131,7 @@ SharedPtr<ObjectMap> fromRect(Rect<T> rect)
     map->addObject("size", fromVector2(rect.size));
     return map;
 }
-RectD toRect(SharedPtr<ObjectMap> map);
+RectD toRect(const ObjectValue& object);
 
 }
 
