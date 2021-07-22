@@ -89,6 +89,9 @@ public:
     ObjectValue(SharedPtr<Object> object = nullptr)
     : m_object(object) {}
 
+    ObjectValue(const ObjectValue& object)
+    : m_object(object.object()->copy()) {}
+
     Optional<MaxInt> asInt() const
     { return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
 
