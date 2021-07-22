@@ -53,7 +53,7 @@ void SceneWidget::render(Renderer& renderer) const
             m_scene->m_currentCamera = camera.get();
         }
 
-        m_scene->doRender(renderer);
+        m_scene->doRender(renderer, renderer.getStates());
         m_scene->m_currentCamera = nullptr;
     }
 }

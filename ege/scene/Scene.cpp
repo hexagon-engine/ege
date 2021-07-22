@@ -87,7 +87,7 @@ void Scene::render(Renderer& renderer) const
     ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
     
     for(auto& pr: m_objectsByLayer)
-        pr.second->doRender(renderer);
+        pr.second->doRender(renderer, renderer.getStates());
 }
 
 void Scene::onUpdate(TickCount tickCounter)

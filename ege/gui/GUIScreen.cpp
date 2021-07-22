@@ -312,12 +312,14 @@ void GUIScreen::doRender(Renderer& renderer, const RenderStates& states)
     }
 
     // Actually draw child widgets
-    CompoundWidget::doRender(renderer, states);
+    auto newStates = states;
+    applyStates(renderer, newStates);
+    CompoundWidget::doRender(renderer, newStates);
 
     // Render dialog on top of GUI.
     if(m_dialog)
     {
-        m_dialog->doRender(renderer, states);
+        m_dialog->doRender(renderer, newStates);
     }
 }
 

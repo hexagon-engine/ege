@@ -268,6 +268,9 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 
     // TODO: draw only visible widgets
 
+    auto newStates = states;
+    applyStates(renderer, newStates);
+
     // Render child widgets
     for(auto widget: m_childWidgets)
     {
@@ -278,7 +281,7 @@ void CompoundWidget::doRender(Renderer& renderer, const RenderStates& states)
 
         applyStates(renderer);
         if constexpr(WIDGET_DEBUG) ege_log.debug() << "-- View: (" << renderer.getTarget().getView().getSize().x << "," << renderer.getTarget().getView().getSize().y << ")";
-        widget->doRender(renderer, states);
+        widget->doRender(renderer, newStates);
     }
 
     // Render self (overlay)
