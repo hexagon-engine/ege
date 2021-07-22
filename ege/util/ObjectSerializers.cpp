@@ -87,15 +87,26 @@ SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color)
     return map;
 }
 
-ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map)
+ColorRGBA toColorRGBA(SharedPtr<Object> object, ColorRGBA fallback)
 {
-    if(!map)
-        return {};
-    auto r = map->getObject("r").asFloat().valueOr(0);
-    auto g = map->getObject("g").asFloat().valueOr(0); 
-    auto b = map->getObject("b").asFloat().valueOr(0);
-    auto a = map->getObject("a").asFloat().valueOr(1); 
-    return ColorRGBA(r, g, b, a);
+    if(!object)
+        return fallback;
+
+    auto map = Object::cast<EGE::ObjectMap>(object);
+    if(map.hasValue())
+    {
+        auto r = map.value()->getObject("r").asFloat().valueOr(0);
+        auto g = map.value()->getObject("g").asFloat().valueOr(0); 
+        auto b = map.value()->getObject("b").asFloat().valueOr(0);
+        auto a = map.value()->getObject("a").asFloat().valueOr(1); 
+        return ColorRGBA(r, g, b, a);
+    }
+
+    auto string = Object::cast<EGE::ObjectString>(object);
+    if(string.hasValue())
+        return ColorRGBA::fromHTML(string.value()->asString());
+
+    return fallback;
 }
 
 RectD toRect(SharedPtr<ObjectMap> map)

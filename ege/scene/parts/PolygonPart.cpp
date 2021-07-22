@@ -81,7 +81,7 @@ bool PolygonPart::deserialize(SharedPtr<ObjectMap> data)
         vertexes.push_back(Serializers::toVector2(_vertex.value()));
     }
 
-    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").to<ObjectMap>().valueOr({}));
+    fillColor = Serializers::toColorRGBA(data->getObject("fillColor").object());
     setGeometryNeedUpdate();
     return true;
 }

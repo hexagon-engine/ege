@@ -120,7 +120,7 @@ Vec3d toVector3(SharedPtr<ObjectMap> map);
 
 // EGE::ColorRGBA
 SharedPtr<ObjectMap> fromColorRGBA(ColorRGBA color);
-ColorRGBA toColorRGBA(SharedPtr<ObjectMap> map);
+ColorRGBA toColorRGBA(SharedPtr<Object> object, ColorRGBA fallback = {});
 
 // EGE::Rect
 template<class T>
