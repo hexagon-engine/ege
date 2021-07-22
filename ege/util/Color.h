@@ -85,15 +85,25 @@ namespace Colors
 
 // TODO: Add all HTML colors
 #define __ENUMERATE_COLORS \
-    ENUMERATE_COLOR(transparent,   0,   0,   0,   0) \
-    ENUMERATE_COLOR(black,         0,   0,   0,   1) \
-    ENUMERATE_COLOR(white,         1,   1,   1,   1) \
-    ENUMERATE_COLOR(red,           1,   0,   0,   1) \
-    ENUMERATE_COLOR(green,         0,   1,   0,   1) \
-    ENUMERATE_COLOR(blue,          0,   0,   1,   1) \
-    ENUMERATE_COLOR(cyan,          0,   1,   1,   1) \
-    ENUMERATE_COLOR(magenta,       1,   0,   1,   1) \
-    ENUMERATE_COLOR(yellow,        1,   1,   0,   1)
+    ENUMERATE_COLOR(transparent,   0,    0,    0,    0) \
+    \
+    ENUMERATE_COLOR(gray,          0.75, 0.75, 0.75, 1) \
+    ENUMERATE_COLOR(red,           1,    0,    0,    1) \
+    ENUMERATE_COLOR(green,         0,    1,    0,    1) \
+    ENUMERATE_COLOR(blue,          0,    0,    1,    1) \
+    ENUMERATE_COLOR(cyan,          0,    1,    1,    1) \
+    ENUMERATE_COLOR(magenta,       1,    0,    1,    1) \
+    ENUMERATE_COLOR(yellow,        1,    1,    0,    1) \
+    ENUMERATE_COLOR(white,         1,    1,    1,    1) \
+    \
+    ENUMERATE_COLOR(black,         0,    0,    0,    1) \
+    ENUMERATE_COLOR(darkRed,       0.5,  0,    0,    1) \
+    ENUMERATE_COLOR(darkGreen,     0,    0.5,  0,    1) \
+    ENUMERATE_COLOR(darkBlue,      0,    0,    0.5,  1) \
+    ENUMERATE_COLOR(darkCyan,      0,    0.5,  0.5,  1) \
+    ENUMERATE_COLOR(darkMagenta,   0.5,  0,    0.5,  1) \
+    ENUMERATE_COLOR(darkYellow,    0.5,  0.5,  0,    1) \
+    ENUMERATE_COLOR(darkGray,      0.5,  0.5,  0.5,  1) \
 
 __ENUMERATE_COLORS
 
