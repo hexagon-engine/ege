@@ -87,12 +87,15 @@ void CheckBox::render(Renderer& renderer) const
     }
 
     // label
-    auto font = getLoop().getResourceManager()->getDefaultFont();
-    ASSERT(font);
-    sf::Text text(getLabel(), *font, 12);
-    text.setPosition(20.f, 0.f);
-    text.setFillColor(sf::Color(m_labelColor.r * 255, m_labelColor.g * 255, m_labelColor.b * 255, m_labelColor.a * 255));
-    target.draw(text, renderer.getStates().sfStates());
+    if(!getLabel().isEmpty())
+    {
+        auto font = getLoop().getResourceManager()->getDefaultFont();
+        ASSERT(font);
+        sf::Text text(getLabel(), *font, 12);
+        text.setPosition(20.f, 0.f);
+        text.setFillColor(sf::Color(m_labelColor.r * 255, m_labelColor.g * 255, m_labelColor.b * 255, m_labelColor.a * 255));
+        target.draw(text, renderer.getStates().sfStates());
+    }
 
     Widget::render(renderer);
 }
@@ -102,12 +105,15 @@ void CheckBox::updateLayout()
     Widget::updateLayout();
 
     // label (generate)
-    auto font = getLoop().getResourceManager()->getDefaultFont();
-    ASSERT(font);
-    sf::Text text(getLabel(), *font, 12);
+    if(!getLabel().isEmpty())
+    {
+        auto font = getLoop().getResourceManager()->getDefaultFont();
+        ASSERT(font);
+        sf::Text text(getLabel(), *font, 12);
 
-    if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
-        setSize(LVec2d({text.getLocalBounds().width + 25.f, EGE_LAYOUT_PIXELS}, {25.f, EGE_LAYOUT_PIXELS}));
+        if(getRawSize().x.unit() == EGE_LAYOUT_AUTO || getRawSize().y.unit() == EGE_LAYOUT_AUTO)
+            setSize(LVec2d({text.getLocalBounds().width + 25.f, EGE_LAYOUT_PIXELS}, {25.f, EGE_LAYOUT_PIXELS}));
+    }
 }
 
 void CheckBox::onClick(EGE::Vec2d position)

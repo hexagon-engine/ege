@@ -55,7 +55,7 @@ public:
     sf::String getLabel() const { return m_label; }
     void setLabelColor(EGE::ColorRGBA color) { m_labelColor = color; }
 
-    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
+    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
     virtual void onTouchEnd(sf::Event::TouchEvent& event) override;
 
 protected:
