@@ -44,20 +44,20 @@
 namespace EGE
 {
 
-const ObjectMap::_Object DataManager::getValue(String key) const
+ObjectValue DataManager::getValue(String key) const
 {
     if(!m_data)
         return {};
 
-    return m_data->getObject(key);
+    return m_data->get(key);
 }
 
-void DataManager::setValue(String key, SharedPtr<Object> value)
+void DataManager::setValue(String key, const ObjectValue& value)
 {
     if(!m_data)
         return;
 
-    m_data->addObject(key, value);
+    m_data->add(key, value);
     m_dirty = true;
 }
 

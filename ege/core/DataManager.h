@@ -50,8 +50,8 @@ public:
     DataManager(String fileName, const IOStreamConverter& converter = JSONConverter())
     : m_fileName(fileName) { load(converter); }
 
-    const ObjectMap::_Object getValue(String key) const;
-    void setValue(String key, SharedPtr<Object> value);
+    ObjectValue getValue(String key) const;
+    void setValue(String key, const ObjectValue& value);
 
     bool save(const IOStreamConverter& converter = JSONConverter());
     bool load(const IOStreamConverter& converter = JSONConverter());
