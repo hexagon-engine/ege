@@ -104,6 +104,7 @@ public:
         bool isInstanceOf() const { return to<T>().hasValue(); }
 
         SharedPtr<Object> object() const { return m_object; }
+        operator SharedPtr<Object>() const { return m_object; }
         bool exists() const { return m_object.get(); }
 
     private:
