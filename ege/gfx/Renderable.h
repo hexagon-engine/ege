@@ -55,6 +55,9 @@ public:
 
     bool geometryNeedUpdate() const { return m_geometryNeedUpdate; }
 
+    // FIXME: allow multiple shaders
+    void setShader(SharedPtr<sf::Shader> shader) { m_shader = shader; }
+
 protected:
     virtual void render(Renderer& renderer) const = 0;
 
@@ -74,6 +77,7 @@ protected:
 
 private:
     bool m_geometryNeedUpdate = true;
+    SharedPtr<sf::Shader> m_shader;
 };
 
 }

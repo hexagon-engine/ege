@@ -38,6 +38,7 @@ public:
             );
             counter++;
         }
+        ASSERT(renderer.getStates().sfStates().shader);
         renderer.getTarget().draw(varr, renderer.getStates().sfStates());
     }
 };
@@ -101,6 +102,25 @@ private:
     MyParticleSystem& m_particleSystem;
 };
 
+// We need separate GUI screen because we don't have resourcemanager before loop.run
+class MyGuiScreen : public EGE::GUIScreen
+{
+public:
+    MyGuiScreen(EGE::GUIGameLoop& loop)
+    : EGE::GUIScreen(loop) {}
+
+    virtual void onCreate() override
+    {
+        m_sceneWidget->setShader(getLoop().getResourceManager()->getShader("filter"));
+    }
+
+    void setSceneWidget(EGE::SharedPtr<EGE::SceneWidget> sceneWidget) { m_sceneWidget = sceneWidget; }
+
+private:
+    EGE::SharedPtr<EGE::SceneWidget> m_sceneWidget;
+};
+
+
 TESTCASE(basic)
 {
     EGE::GUIGameLoop loop;
@@ -108,6 +128,7 @@ TESTCASE(basic)
 
     auto resourceManager = make<EGE::GUIResourceManager>();
     resourceManager->registerDefaultFont("font.ttf");
+    resourceManager->registerShader("filter", {"filter.vert", "filter.frag"});
     loop.setResourceManager(resourceManager);
 
     auto scene = make<EGE::Scene>(&loop);
@@ -120,7 +141,7 @@ TESTCASE(basic)
     camera->setScalingMode(EGE::ScalingMode::Fit);
     camera->setDisplaySize({200, 200});
 
-    auto guiScreen = make<EGE::GUIScreen>(loop);
+    auto guiScreen = make<MyGuiScreen>(loop);
     guiScreen->setPadding({"5px", "5px"});
 
     {
@@ -259,8 +280,10 @@ TESTCASE(basic)
             cameraZoomSlider->slider().setMinValue(0.1);
             cameraZoomSlider->slider().setValue(1);
         }
+
         auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
         sceneWidget->setCamera(camera);
+        guiScreen->setSceneWidget(sceneWidget);
     }
 
     loop.setCurrentGUIScreen(guiScreen);

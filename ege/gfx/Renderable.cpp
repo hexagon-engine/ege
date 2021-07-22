@@ -18,10 +18,10 @@ void Renderable::applyStates(Renderer& renderer)
         target.setView(getCustomView(target));
     auto states = renderer.getStates();
     if(isCustomTransformNeeded() || states.sfStates().transform != sf::Transform())
-    {
         states.sfStates().transform = getCustomTransform(target);
-        renderer.setStates(states);
-    }
+    if(m_shader)
+        states.sfStates().shader = m_shader.get();
+    renderer.setStates(states);
 }
 
 void Renderable::applyStates(Renderer& renderer, RenderStates& states)
@@ -31,6 +31,8 @@ void Renderable::applyStates(Renderer& renderer, RenderStates& states)
         target.setView(getCustomView(target));
     if(isCustomTransformNeeded())
         states.sfStates().transform = getCustomTransform(target);
+    if(m_shader)
+        states.sfStates().shader = m_shader.get();
 }
 
 void Renderable::doRender(Renderer& renderer, const RenderStates& states)
