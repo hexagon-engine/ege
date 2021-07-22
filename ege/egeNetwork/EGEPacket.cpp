@@ -78,7 +78,9 @@ std::string EGEPacket::typeString(Type type)
 
 bool EGEPacket::deserializeFromSFML(sf::Packet& packet)
 {
-    packet >> (unsigned int&)m_type;
+    unsigned int type;
+    packet >> type;
+    m_type = static_cast<Type>(type);
     SharedPtr<Object> args = make<ObjectMap>();
     if(!(packet >> objectIn(args, EGEPacketConverter())))
         return false;
