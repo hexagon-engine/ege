@@ -155,8 +155,8 @@ SharedPtr<ObjectMap> SceneObject::serializeMain() const
 bool SceneObject::deserializeMain(SharedPtr<ObjectMap> object)
 {
     ASSERT(object);
-    m_position = Serializers::toVector3(object->getObject("p").to<ObjectMap>().valueOr({}));
-    m_motion = Serializers::toVector3(object->getObject("m").to<ObjectMap>().valueOr({}));
+    m_position = Serializers::toVector3(object->getObject("p"));
+    m_motion = Serializers::toVector3(object->getObject("m"));
     m_yaw = object->getObject("yaw").asFloat().valueOr(0);
     m_pitch = object->getObject("pitch").asFloat().valueOr(0);
     m_roll = object->getObject("roll").asFloat().valueOr(0);
