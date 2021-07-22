@@ -83,6 +83,41 @@ public:
     }
 };
 
+class ObjectValue
+{
+public:
+    ObjectValue(SharedPtr<Object> object = nullptr)
+    : m_object(object) {}
+
+    Optional<MaxInt> asInt() const
+    { return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
+
+    Optional<MaxUint> asUnsignedInt() const
+    { return m_object && m_object->isUnsignedInt() ? m_object->asUnsignedInt() : Optional<MaxUint>(); }
+
+    Optional<Float> asFloat() const
+    { return m_object && m_object->isFloat() ? m_object->asFloat() : Optional<Float>(); }
+
+    Optional<String> asString() const
+    { return m_object && m_object->isString() ? m_object->asString() : Optional<String>(); }
+
+    Optional<Boolean> asBoolean() const
+    { return m_object && m_object->isBool() ? m_object->asBool() : Optional<Boolean>(); }
+
+    template<class T>
+    Optional<SharedPtr<T>> to() const { return Object::cast<T>(m_object); }
+
+    template<class T>
+    bool isInstanceOf() const { return to<T>().hasValue(); }
+
+    SharedPtr<Object> object() const { return m_object; }
+    operator SharedPtr<Object>() const { return m_object; }
+    bool exists() const { return m_object.get(); }
+
+private:
+    SharedPtr<Object> m_object;
+};
+
 }
 
 std::ostream& operator<<(std::ostream& _str, const EGE::Object& data);

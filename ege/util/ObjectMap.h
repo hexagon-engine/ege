@@ -75,44 +75,8 @@ public:
     SharedPtr<Object> addString(String name, ObjectString::ValueType value = "");
     SharedPtr<Object> addBoolean(String name, ObjectBoolean::ValueType value = false);
 
-    // TODO: exceptions
-    class _Object
-    {
-    public:
-        _Object(SharedPtr<Object> object = nullptr)
-        : m_object(object) {}
-
-        Optional<MaxInt> asInt() const
-        { return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
-
-        Optional<MaxUint> asUnsignedInt() const
-        { return m_object && m_object->isUnsignedInt() ? m_object->asUnsignedInt() : Optional<MaxUint>(); }
-
-        Optional<Float> asFloat() const
-        { return m_object && m_object->isFloat() ? m_object->asFloat() : Optional<Float>(); }
-
-        Optional<String> asString() const
-        { return m_object && m_object->isString() ? m_object->asString() : Optional<String>(); }
-
-        Optional<Boolean> asBoolean() const
-        { return m_object && m_object->isBool() ? m_object->asBool() : Optional<Boolean>(); }
-
-        template<class T>
-        Optional<SharedPtr<T>> to() const { return Object::cast<T>(m_object); }
-
-        template<class T>
-        bool isInstanceOf() const { return to<T>().hasValue(); }
-
-        SharedPtr<Object> object() const { return m_object; }
-        operator SharedPtr<Object>() const { return m_object; }
-        bool exists() const { return m_object.get(); }
-
-    private:
-        SharedPtr<Object> m_object;
-    };
-
-    _Object getObject(String name) const;
-    _Object get(String name) const { return getObject(name); }
+    ObjectValue getObject(String name) const;
+    ObjectValue get(String name) const { return getObject(name); }
     bool hasObject(String name) const;
     bool has(String name) const { return hasObject(name); };
 
