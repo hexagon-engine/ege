@@ -93,7 +93,7 @@ public:
     SharedPtr<ObjectMap> merge(SharedPtr<ObjectMap> other);
 
 private:
-     ValueType m_subObjects;
+    ValueType m_subObjects;
 };
 
 }
