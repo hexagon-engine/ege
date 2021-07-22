@@ -101,7 +101,7 @@ public:
     ObjectValue(SharedPtr<T> object)
     : m_object(object) {}
 
-    ObjectValue(const ObjectValue& object)
+    explicit ObjectValue(const ObjectValue& object)
     : m_object(object.object()->copy()) {}
 
     // TODO: Generalize these to allow other list/map-like objects than ObjectList/Map
