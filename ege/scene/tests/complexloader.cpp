@@ -28,11 +28,8 @@ TESTCASE(complexLoader)
         player->setName("player");
     }
 
-    // Setup camera
-    auto camera = scene->addNewObject<EGE::Plain2DCamera>();
-    camera->setFollowObject(player);
-    camera->setScalingMode(EGE::ScalingMode::Fit);
-    camera->setDisplaySize({200, 200});
+    // Open the window
+    auto window = loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
 
     // Setup keybinds
     auto keybinds = make<EGE::KeybindManager>();
@@ -40,13 +37,19 @@ TESTCASE(complexLoader)
     keybinds->addSwitch("test", sf::Keyboard::Space, [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
     keybinds->addStrength("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D}, [player](float p) { player->setMotion({0.1*p, player->getMotion().y}); });
     keybinds->addStrength("moveVertical", {sf::Keyboard::W, sf::Keyboard::S}, [player](float p) { player->setMotion({player->getMotion().x, 0.1*p}); });
-    EGE::KeybindManager::hook(keybinds, loop);
+    EGE::KeybindManager::hook(keybinds, *window);
 
-    // Setup GUI & display
-    auto window = loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
+    // Setup GUI and camera
     auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);
+
+    // Setup camera
+    auto camera = scene->addNewObject<EGE::Plain2DCamera>();
+    camera->setFollowObject(player);
+    camera->setScalingMode(EGE::ScalingMode::Fit);
+    camera->setDisplaySize({200, 200});
     sceneWidget->setCamera(camera);
+
     return loop.run();
 }
 
