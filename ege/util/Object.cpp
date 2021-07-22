@@ -35,10 +35,49 @@
 */
 
 #include "Object.h"
+#include "ObjectList.h"
+#include "ObjectMap.h"
 
 namespace EGE
 {
-    // currently nothing
+
+ObjectValue ObjectValue::_ListIterator::operator*() const
+{
+    return ObjectValue(*m_iterator);
+}
+
+ObjectValue::_ListIterator ObjectValue::_ListWrapper::begin() const { return m_list->begin(); }
+ObjectValue::_ListIterator ObjectValue::_ListWrapper::end() const { return m_list->end(); }
+
+ObjectValue ObjectValue::_ListWrapper::get(Size offset) const
+{
+    return m_list->getObject(offset);
+}
+
+std::pair<String, ObjectValue> ObjectValue::_MapIterator::operator*() const
+{
+    return std::make_pair(m_iterator->first, ObjectValue(m_iterator->second));
+}
+
+ObjectValue::_MapIterator ObjectValue::_MapWrapper::begin() const { return m_map->begin(); }
+ObjectValue::_MapIterator ObjectValue::_MapWrapper::end() const { return m_map->end(); }
+
+ObjectValue ObjectValue::_MapWrapper::get(const String& key) const
+{
+    return m_map->get(key);
+}
+
+// TODO: Generalize these to allow other list/map-like objects than ObjectList/Map
+Optional<ObjectValue::_ListWrapper> ObjectValue::asList() const
+{
+    return m_object && m_object->isList() ? _ListWrapper(Object::unsafeCast<ObjectList>(m_object)) : Optional<_ListWrapper>();
+}
+
+Optional<ObjectValue::_MapWrapper> ObjectValue::asMap() const
+{
+    return m_object && m_object->isMap() ? _MapWrapper(Object::unsafeCast<ObjectMap>(m_object)) : Optional<_MapWrapper>();
+}
+
 }
 
 std::ostream& operator<<(std::ostream& _str, const EGE::Object& data)

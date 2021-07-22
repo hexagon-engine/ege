@@ -49,6 +49,7 @@ namespace EGE
 {
 
 class ObjectMap;
+class ObjectList;
 
 class Object
 {
@@ -81,6 +82,12 @@ public:
             return {};
         return ptr;
     }
+
+    template<class T>
+    static SharedPtr<T> unsafeCast(SharedPtr<Object> object)
+    {
+        return std::static_pointer_cast<T>(object);
+    }
 };
 
 class ObjectValue
@@ -89,8 +96,90 @@ public:
     ObjectValue(SharedPtr<Object> object = nullptr)
     : m_object(object) {}
 
+    // T must be derived from Object
+    template<class T>
+    ObjectValue(SharedPtr<T> object)
+    : m_object(object) {}
+
     ObjectValue(const ObjectValue& object)
     : m_object(object.object()->copy()) {}
+
+    // TODO: Generalize these to allow other list/map-like objects than ObjectList/Map
+    class _ListIterator
+    {
+    public:
+        ObjectValue operator*() const;
+        _ListIterator& operator++() { m_iterator++; return *this; }
+        bool operator==(const _ListIterator& other) const { return m_iterator == other.m_iterator; }
+        bool operator!=(const _ListIterator& other) const { return m_iterator != other.m_iterator; }
+
+    private:
+        friend class ObjectValue;
+
+        _ListIterator(SharedPtrVector<Object>::const_iterator iterator)
+        : m_iterator(iterator) {}
+
+        SharedPtrVector<Object>::const_iterator m_iterator;
+    };
+
+    class _ListWrapper
+    {
+    public:
+        _ListWrapper() = default;
+        _ListIterator begin() const;
+        _ListIterator end() const;
+
+        ObjectValue get(Size key) const;
+
+        // TODO: Remove it once _ListWrapper gets all features of ObjectList
+        SharedPtr<ObjectList> list() { return m_list; }
+
+    private:
+        friend class ObjectValue;
+
+        explicit _ListWrapper(SharedPtr<ObjectList> list)
+        : m_list(list) {}
+
+        SharedPtr<ObjectList> m_list;
+    };
+
+    class _MapIterator
+    {
+    public:
+        std::pair<String, ObjectValue> operator*() const;
+        _MapIterator& operator++() { m_iterator++; return *this; }
+        bool operator==(const _MapIterator& other) const { return m_iterator == other.m_iterator; }
+        bool operator!=(const _MapIterator& other) const { return m_iterator != other.m_iterator; }
+
+    private:
+        friend class ObjectValue;
+
+        _MapIterator(SharedPtrStringMap<Object>::const_iterator iterator)
+        : m_iterator(iterator) {}
+        SharedPtrStringMap<Object>::const_iterator m_iterator;
+    };
+
+    class _MapWrapper
+    {
+    public:
+        _MapWrapper() = default;
+        _MapIterator begin() const;
+        _MapIterator end() const;
+
+        ObjectValue get(const String& key) const;
+
+        // TODO: Remove it once _MapWrapper gets all features of ObjectMap
+        SharedPtr<ObjectMap> map() { return m_map; }
+
+    private:
+        friend class ObjectValue;
+
+        explicit _MapWrapper(SharedPtr<ObjectMap> map)
+        : m_map(map) {}
+
+        SharedPtr<ObjectMap> m_map;
+    };
+
 
     Optional<MaxInt> asInt() const
     { return m_object && m_object->isInt() ? m_object->asInt() : Optional<MaxInt>(); }
@@ -106,6 +195,9 @@ public:
 
     Optional<Boolean> asBoolean() const
     { return m_object && m_object->isBool() ? m_object->asBool() : Optional<Boolean>(); }
+
+    Optional<_ListWrapper> asList() const;
+    Optional<_MapWrapper> asMap() const;
 
     template<class T>
     Optional<SharedPtr<T>> to() const { return Object::cast<T>(m_object); }

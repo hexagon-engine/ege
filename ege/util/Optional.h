@@ -10,6 +10,7 @@ Copyright (c) Sppmacd 2020
 namespace EGE
 {
 
+// TODO: Support actually not giving value to it
 template<class T>
 class Optional
 {

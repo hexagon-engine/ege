@@ -102,7 +102,7 @@ SharedPtr<Object> ObjectMap::addBoolean(String name, ObjectBoolean::ValueType va
     return addObject(name, make<ObjectBoolean>(value));
 }
 
-ObjectMap::_Object ObjectMap::getObject(String name) const
+ObjectValue ObjectMap::getObject(String name) const
 {
     auto it = m_subObjects.find(name);
     if(it != m_subObjects.end())

@@ -111,12 +111,15 @@ ColorRGBA toColorRGBA(const ObjectValue& object, ColorRGBA fallback)
     return fallback;
 }
 
-RectD toRect(SharedPtr<ObjectMap> map)
+RectD toRect(const ObjectValue& object)
 {
-    if(!map)
+    if(!object.exists())
         return {};
-    auto pos = toVector2(map->get("pos"));
-    auto size = toVector2(map->get("size"));
+    auto map = object.asMap();
+    if(!map.hasValue())
+        return {};
+    auto pos = toVector2(map.value().get("pos"));
+    auto size = toVector2(map.value().get("size"));
     return RectD(pos, size);
 }
 

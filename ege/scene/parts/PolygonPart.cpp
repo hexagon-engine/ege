@@ -71,8 +71,10 @@ bool PolygonPart::deserialize(SharedPtr<ObjectMap> data)
     if(!Part::deserialize(data))
         return false;
 
-    auto _vertexes = data->getObject("vertexes").to<ObjectList>().valueOr({});
-    for(auto& vertex : *_vertexes)
+    auto _vertexes = data->get("vertexes").asList();
+    if(!_vertexes.hasValue())
+        return false;
+    for(auto vertex : _vertexes.value())
     {
         // FIXME: Handle errors properly
         vertexes.push_back(Serializers::toVector2(vertex));

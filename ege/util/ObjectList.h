@@ -59,7 +59,8 @@ public:
     const SharedPtr<Object>& addObject(const SharedPtr<Object>& subObject);
 
     const SharedPtr<Object>& insertObject(Size position, const SharedPtr<Object>& subObject);
-    WeakPtr<Object> getObject(Size offset) const;
+    ObjectValue getObject(Size offset) const;
+    ObjectValue get(Size offset) { return getObject(offset); }
 
     ValueType::const_iterator begin() const;
     ValueType::const_iterator end() const;

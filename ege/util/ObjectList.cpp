@@ -78,7 +78,7 @@ const SharedPtr<Object>& ObjectList::insertObject(size_t position, const SharedP
     return subObject;
 }
 
-std::weak_ptr<Object> ObjectList::getObject(size_t offset) const
+ObjectValue ObjectList::getObject(size_t offset) const
 {
     ASSERT(offset < size());
     return m_objects[offset];
