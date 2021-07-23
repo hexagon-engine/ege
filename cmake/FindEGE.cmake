@@ -50,8 +50,8 @@ macro(ege_executable targetname sources modules)
 
 	# sanitizers
 	if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-		target_compile_options(mygame PUBLIC -fsanitize=undefined,address)
-		target_link_options(mygame PUBLIC -fsanitize=undefined,address)
+		target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
+		target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
 	endif()
 	install(TARGETS "${targetname}" RUNTIME DESTINATION ".")
 endmacro()
