@@ -45,7 +45,7 @@ namespace EGE
 class ProgressBar : public Widget
 {
 public:
-    ProgressBar(EGE::Widget& parent, Progress& progress)
+    ProgressBar(EGE::Widget& parent, SharedPtr<Progress> progress)
     : Widget(parent), m_progress(progress) {}
 
     void step();
@@ -53,7 +53,7 @@ public:
     virtual void render(EGE::Renderer&) const override;
 
 private:
-    Progress& m_progress;
+    SharedPtr<Progress> m_progress;
 };
 
 }

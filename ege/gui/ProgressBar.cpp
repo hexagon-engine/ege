@@ -41,7 +41,7 @@ namespace EGE
 
 void ProgressBar::render(EGE::Renderer& renderer) const
 {
-    renderer.getThemeRenderer()->renderProgressBar(renderer, getPosition().x, getPosition().y, getSize().x, getSize().y, m_progress);
+    renderer.getThemeRenderer()->renderProgressBar(renderer, getPosition().x, getPosition().y, getSize().x, getSize().y, *m_progress);
 }
 
 }

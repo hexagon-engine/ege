@@ -59,7 +59,7 @@ void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::Sta
 
     m_state = State::Loading;
     auto task = make<AsyncTask>([this, worker](AsyncTask&) {
-        worker(*m_progress);
+        worker(m_progress);
 
         if(m_progress->error())
         {

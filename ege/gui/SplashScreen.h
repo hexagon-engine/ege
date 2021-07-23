@@ -57,12 +57,12 @@ public:
 
     // int load(Progress& progress)
     // It indicates that loading succeeded.
-    typedef std::function<void(Progress&)> Worker;
+    typedef std::function<void(SharedPtr<Progress>)> Worker;
 
     SplashScreen(Window& window, String id = "SplashScreen (root)")
     : GUIScreen(window, id) {}
 
-    Progress& createProgress(size_t steps) { m_progress = make<Progress>(steps); return *m_progress; }
+    SharedPtr<Progress> createProgress(size_t steps) { return m_progress = make<Progress>(steps); }
 
     // Sets a background image.
     void setImage(String name);

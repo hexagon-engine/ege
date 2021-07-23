@@ -23,12 +23,12 @@ TESTCASE(loading)
 
     auto progressBar = wrapper->addNewWidget<EGE::ProgressBar>(splashScreen->createProgress(100));
 
-    splashScreen->startLoading([](EGE::Progress& progress) {
+    splashScreen->startLoading([](EGE::SharedPtr<EGE::Progress> progress) {
         for(int i = 0; i < 1000000000; i++)
         {
             if(i % 10000000 == 0) {
-                ege_log.info() << "Loading... " << progress;
-                progress.step();
+                ege_log.info() << "Loading... " << *progress;
+                progress->step();
             }
         }
     }, [](EGE::AsyncTask::State state) {
