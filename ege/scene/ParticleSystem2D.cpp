@@ -56,28 +56,37 @@ void ParticleSystemImpl::onUpdate(TickCount tickCounter)
     updateParticles();
 
     // spawn new particles
-    if(!getOwner().isHeadless())
-        getOwner().getLoop()->getProfiler()->endStartSection("spawn");
+    if(m_enabled)
+    {
+        if(!getOwner().isHeadless())
+            getOwner().getLoop()->getProfiler()->endStartSection("spawn");
 
-    auto position = getPosition();
-    if(m_spawnChance == 1)
-        spawnParticle(position);
-    else if(m_spawnChance > 1)
-    {
-        for(size_t s = 0; s < m_spawnChance; s++)
+        auto position = getPosition();
+        if(m_spawnChance == 1)
             spawnParticle(position);
-    }
-    else
-    {
-        double val = rand() % 1024 / 1024.0;
-        if(val < m_spawnChance)
-            spawnParticle(position);
+        else if(m_spawnChance > 1)
+        {
+            for(size_t s = 0; s < m_spawnChance; s++)
+                spawnParticle(position);
+        }
+        else
+        {
+            double val = rand() % 1024 / 1024.0;
+            if(val < m_spawnChance)
+                spawnParticle(position);
+        }
     }
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->endSection();
 
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->endSection();
+}
+
+void ParticleSystemImpl::spawnParticles(size_t count)
+{
+    for(size_t s = 0; s < count; s++)
+        spawnParticle(getPosition());
 }
 
 Vec3d ParticleSystemImpl::randomPosition()

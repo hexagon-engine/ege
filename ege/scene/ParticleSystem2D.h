@@ -76,10 +76,14 @@ public:
 
     virtual void spawnParticle(Vec3d relativePosition) = 0;
 
+    void spawnParticles(size_t count);
+    void setEnabled(bool enabled) { m_enabled = enabled; }
+
 protected:
     RectD m_spawnRect;
     double m_spawnChance = 1.0;
     unsigned m_particleTTL = 60; // 1s
+    bool m_enabled = true;
 
     virtual void updateParticles() = 0;
     Vec3d randomPosition();
