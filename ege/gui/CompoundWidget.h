@@ -111,6 +111,8 @@ public:
 
     Size getWidgetCount() const { return m_childWidgets.size(); }
 
+    void clearWidgets() { m_childWidgets.clear(); }
+
 protected:
     virtual void setFocus(bool value = true) override;
 
