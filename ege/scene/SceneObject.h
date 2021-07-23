@@ -167,7 +167,7 @@ public:
     // Alias for getYaw in 2D coordinates.
     double getRotation() const { return getYaw(); }
 
-    bool moveTo(Vec3d targetPos);
+    virtual bool moveTo(Vec3d targetPos);
     bool flyTo(Vec3d targetPos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
 protected:
