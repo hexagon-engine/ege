@@ -57,7 +57,7 @@ sf::Transform Part::getCustomTransform(sf::RenderTarget&) const
  
     sf::Transform transform;
     transform.translate(sf::Vector2f(position.x, position.y));
-    transform.rotate(m_object.getRotation() + 180);
+    transform.rotate(m_object.getRotation());
     return transform;
 }
 
