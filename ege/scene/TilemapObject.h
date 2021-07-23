@@ -72,10 +72,8 @@ public:
     };
 
     // Function void map(const TileType& tile, EGE::Vector2<MaxInt> tilePos, EGE::Size layer, AtlasInfo& info);
-    typedef std::function<void(const typename TMap::TileType&, Vector2<MaxInt>, Size, AtlasInfo&)> AtlasMapper;
-
     // The function maps tile type (in tilemap) to atlas coords to render (in pixels).
-    void setTileAtlasMapper(AtlasMapper mapper) { m_tileMapper = mapper; }
+    virtual void mapTile(const typename TMap::TileType&, Vector2<MaxInt>, Size, AtlasInfo&) const {}
 
     // Use ensureTile() instead of getTile(). The tilemap will be resized
     // if possible and necessary. DO NOT USE IT WITH FIXED TILEMAPS, otherwise
@@ -133,7 +131,7 @@ public:
                         MaxInt vy = cy * (MaxInt)chunkSize.y + (MaxInt)y;
 
                         AtlasInfo info;
-                        m_tileMapper(tile, {vx, vy}, layer, info);
+                        mapTile(tile, {vx, vy}, layer, info);
 
                         // tex coords
                         Size index2 = index;
@@ -237,8 +235,6 @@ public:
     virtual void render(Renderer& renderer) const override
     {
         // TODO: tilemap render cache (it should go to updateGeometry)
-        ASSERT(m_tileMapper);
-
         Vec2u tileSize = m_tileMap->getTileSize();
         Vec2s chunkSize = m_tileMap->getChunkSize();
 
@@ -289,7 +285,6 @@ private:
     SharedPtr<TMap> m_tileMap;
     SharedPtrVector<Texture> m_atlasses;
     Vector<std::string> m_atlasNames;
-    AtlasMapper m_tileMapper;
     bool m_useEnsure = false;
     EGE::Size m_layerCount = 1;
 };
