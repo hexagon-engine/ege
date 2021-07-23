@@ -49,11 +49,11 @@ namespace EGE
 {
 
 template<class TMap>
-class TilemapRenderer2D : public ObjectRenderer
+class TilemapObject : public SceneObject
 {
 public:
-    TilemapRenderer2D(SceneObject& sceneObject, SharedPtr<TMap> tilemap)
-    : ObjectRenderer(sceneObject), m_tileMap(tilemap) { setLayerCount(1); }
+    TilemapObject(Scene& scene)
+    : SceneObject(scene) { setLayerCount(1); }
 
     void setAtlasTextureName(std::string name, Size layer = 0)
     {
@@ -246,13 +246,13 @@ public:
         ASSERT(tileSize.y != 0);
         ASSERT(chunkSize.x != 0);
         ASSERT(chunkSize.y != 0);
-        auto& scene = m_sceneObject.getOwner();
+        auto& scene = getOwner();
 
         // TODO: allow setting tilemap bounds
         Vec2d beginCoord = scene.getCurrentCamera()->mapToSceneCoords(renderer, {0, 0}).toVec2d();
         auto targetSize = renderer.getTarget().getSize();
         Vec2d endCoord = scene.getCurrentCamera()->mapToSceneCoords(renderer, {static_cast<double>(targetSize.x), static_cast<double>(targetSize.y)}).toVec2d();
-        Vec2d objPos = m_sceneObject.getPosition().toVec2d();
+        Vec2d objPos = getPosition().toVec2d();
 
         Vector2<MaxInt> beginChunk = {
             (MaxInt)((beginCoord.x - objPos.x) / ((MaxInt)tileSize.x * chunkSize.x) - 1),
@@ -269,7 +269,7 @@ public:
 
     virtual void updateGeometry(Renderer&) override
     {
-        auto resourceManager = m_sceneObject.getOwner().getLoop()->getResourceManager();
+        auto resourceManager = getOwner().getLoop()->getResourceManager();
         ASSERT(resourceManager);
 
         for(Size s = 0; s < m_layerCount; s++)

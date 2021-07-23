@@ -49,7 +49,7 @@
 #include <ege/scene/SceneObjectType.h>
 #include <ege/scene/SceneWidget.h>
 #include <ege/scene/TexturedRenderer2D.h>
-#include <ege/scene/TilemapRenderer2D.h>
+#include <ege/scene/TilemapObject.h>
 
 #include <ege/scene/parts/CirclePart.h>
 #include <ege/scene/parts/Part.h>

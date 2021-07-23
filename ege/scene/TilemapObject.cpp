@@ -34,7 +34,7 @@
 *
 */
 
-#include "TilemapRenderer2D.h"
+#include "TilemapObject.h"
 
 namespace EGE
 {
