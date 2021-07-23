@@ -82,6 +82,9 @@ public:
     virtual void updateGeometry(Renderer& renderer) override;
     virtual void render(Renderer& renderer) const override;
 
+    // Wait for underlying loading thread.
+    void wait();
+
     // TODO: events
 
 private:

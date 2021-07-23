@@ -110,5 +110,10 @@ void SplashScreen::render(Renderer& renderer) const
     // TODO: display percentage if possible
 }
 
+void SplashScreen::wait()
+{
+    m_progress->task()->wait();
+}
+
 }
 
