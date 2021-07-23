@@ -41,7 +41,7 @@ macro(ege_executable targetname sources modules)
 	# add SFML
 	if(SFML_FOUND)
 		ege_message("INFO" "Adding SFML as dependency (SFML_INCLUDE_DIR=${SFML_INCLUDE_DIR})")
-		ege_link_sfml("${targetname}")
+		target_link_libraries("${targetname}" PUBLIC sfml-graphics sfml-audio sfml-network)
 		if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 			target_link_libraries("${targetname}" PUBLIC dl)
 			target_link_libraries("${targetname}" PRIVATE GLEW)
