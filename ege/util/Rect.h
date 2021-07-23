@@ -86,7 +86,7 @@ public:
     }
 
     Rect<T> centeredOn(Vec2d vec) const
-        { return Rect<T>(*this).center(vec); }
+        { return Rect<T>(*this).centerOn(vec); }
 
     Rect<T>& centerOn(Vec2d vec)
         { position = -size / T(2) + vec; return *this; }
