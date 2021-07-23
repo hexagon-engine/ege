@@ -48,7 +48,7 @@ public:
     explicit Progress(size_t maxStepCount)
     : m_maxStepCount(maxStepCount) {}
 
-    void setTask(AsyncTask* task) { m_task = task;}
+    void setTask(SharedPtr<AsyncTask> task) { m_task = task;}
     inline void step() { m_stepCount++; }
     inline void setError() { m_error = true; }
 
@@ -60,13 +60,13 @@ public:
 
     constexpr bool error() const { return m_error; }
     constexpr bool finished() const { return m_stepCount == m_maxStepCount; }
-    constexpr AsyncTask* task() { return m_task; }
+    SharedPtr<AsyncTask> task() const { return m_task; }
 
 private:
     size_t m_maxStepCount = 0;
     size_t m_stepCount = 0;
     bool m_error = false;
-    AsyncTask* m_task;
+    SharedPtr<AsyncTask> m_task;
 };
 
 inline std::ostream& operator<<(std::ostream& stream, const Progress& arg)

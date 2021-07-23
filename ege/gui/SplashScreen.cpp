@@ -73,7 +73,7 @@ void SplashScreen::startLoading(Worker worker, std::function<void(AsyncTask::Sta
         callback(state);
         m_state = State::None;
     });
-    m_progress->setTask(task.get());
+    m_progress->setTask(task);
     addAsyncTask(task, "splashScreen");
 }
 
