@@ -245,6 +245,7 @@ public:
         ASSERT(chunkSize.x != 0);
         ASSERT(chunkSize.y != 0);
         auto& scene = getOwner();
+        ASSERT(scene.getCurrentCamera());
 
         // TODO: allow setting tilemap bounds
         Vec2d beginCoord = scene.getCurrentCamera()->mapToSceneCoords(renderer, {0, 0}).toVec2d();
