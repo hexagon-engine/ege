@@ -106,8 +106,30 @@ double SceneObject::getRoll() const
 
 bool SceneObject::moveTo(Vec3d pos)
 {
+    ege_log.info() << "SceneObject::moveTo";
     // TODO: collisions
-    setPosition(pos);
+
+    auto currentPos = getLocalPosition();
+    auto posx = Vec3d{pos.x, getLocalPosition().y, getLocalPosition().z};
+    auto posy = Vec3d{getLocalPosition().x, pos.y, getLocalPosition().z};
+    auto posz = Vec3d{getLocalPosition().x, getLocalPosition().y, pos.z};
+
+    if(!isCollidedIn(posx))
+        currentPos.x = pos.x;
+    else
+        onCollide(Axis::X);
+    
+    if(!isCollidedIn(posy))
+        currentPos.y = pos.y;
+    else
+        onCollide(Axis::Y);
+    
+    if(!isCollidedIn(posz))
+        currentPos.z = pos.z;
+    else
+        onCollide(Axis::Z);
+    
+    setPosition(currentPos);
     return true;
 }
 
@@ -183,7 +205,7 @@ void SceneObject::onUpdate(TickCount)
     // TODO: fps/tps scaling! m_motion should be in pxs/SECOND
     if(m_motion != Vec3d())
     {
-        moveTo(getPosition() + m_motion);
+        moveTo(m_position + m_motion);
         setGeometryNeedUpdate();
     }
 
@@ -218,6 +240,11 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
         // Rotation
         auto rotationVector = Vec3d(VectorOperations::fromPolar(PolVec2d(-getRotation(), 5)));
         renderer.renderPrimitives({Vertex::make(getPosition(), sf::Color::Green), Vertex::make(getPosition() - rotationVector, sf::Color::Green)}, sf::Lines);
+    
+        String data;
+        auto pos = getPosition();
+        data += std::to_string(pos.x) + "," + std::to_string(pos.y);
+        renderer.renderTextWithBackground(pos.x, pos.y, *getOwner().getLoop()->getResourceManager()->getDefaultFont(), data);
     }
 }
 

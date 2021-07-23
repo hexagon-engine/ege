@@ -133,6 +133,7 @@ public:
     virtual bool allowSave() const { return true; }
 
     void setPosition(Vec3d position) { m_position = position; }
+    Vec3d getLocalPosition() const { return m_position; }
     Vec3d getPosition() const;
 
     void setMotion(Vec3d motion) { m_motion = motion; }
@@ -168,6 +169,14 @@ public:
     double getRotation() const { return getYaw(); }
 
     virtual bool moveTo(Vec3d targetPos);
+    virtual bool isCollidedIn(Vec3d) { return false; }
+
+    enum class Axis
+    {
+        X,Y,Z
+    };
+
+    virtual void onCollide(Axis) {}
     bool flyTo(Vec3d targetPos, double time, std::function<double(double)> easing = AnimationEasingFunctions::linear);
 
 protected:
