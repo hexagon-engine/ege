@@ -43,6 +43,9 @@ namespace EGE
 
 bool GUIResourceManager::reload()
 {
+    if(m_loaded)
+        return true;
+    m_loaded = true;
     ege_log.info() << "GUIResourceManager is loading "
         << m_texturesToLoad.size() << " textures, "
         << m_fontsToLoad.size() << " fonts, "

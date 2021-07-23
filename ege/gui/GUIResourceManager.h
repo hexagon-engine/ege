@@ -65,6 +65,7 @@ private:
     std::queue<std::pair<String, Vector<String>>> m_shadersToLoad;
     SharedPtr<SFMLTexture> m_unknownTextureToLoad;
     std::string m_defaultFontToLoad;
+    bool m_loaded = false;
 };
 
 }
