@@ -71,6 +71,8 @@ public:
         int rotation = 0; // 90*x deg
     };
 
+    void setTilemap(SharedPtr<TMap> tilemap) { m_tileMap = tilemap; }
+
     // Function void map(const TileType& tile, EGE::Vector2<MaxInt> tilePos, EGE::Size layer, AtlasInfo& info);
     // The function maps tile type (in tilemap) to atlas coords to render (in pixels).
     virtual void mapTile(const typename TMap::TileType&, Vector2<MaxInt>, Size, AtlasInfo&) const {}
