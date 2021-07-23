@@ -19,8 +19,7 @@ void Renderable::applyStates(Renderer& renderer)
     auto states = renderer.getStates();
     if(isCustomTransformNeeded() || states.sfStates().transform != sf::Transform())
         states.sfStates().transform = getCustomTransform(target);
-    if(m_shader)
-        states.sfStates().shader = m_shader.get();
+    applyFilter(renderer, states);
     renderer.setStates(states);
 }
 
@@ -31,8 +30,17 @@ void Renderable::applyStates(Renderer& renderer, RenderStates& states)
         target.setView(getCustomView(target));
     if(isCustomTransformNeeded())
         states.sfStates().transform = getCustomTransform(target);
-    if(m_shader)
-        states.sfStates().shader = m_shader.get();
+    applyFilter(renderer, states);
+}
+
+void Renderable::applyFilter(Renderer& renderer, RenderStates& states)
+{
+    // Recursive call check
+    if(m_inFilter || !m_filter)
+        return;
+    m_inFilter = true;
+    m_filter->apply(*this, renderer, states);
+    m_inFilter = false;
 }
 
 void Renderable::doRender(Renderer& renderer, const RenderStates& states)
@@ -41,7 +49,9 @@ void Renderable::doRender(Renderer& renderer, const RenderStates& states)
     doUpdateGeometry(renderer);
     sf::View oldView = target.getView();
     auto newStates = states;
+
     applyStates(renderer, newStates);
+
     renderWithStates(renderer, newStates);
     target.setView(oldView);
 }

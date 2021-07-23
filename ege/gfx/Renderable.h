@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include "filters/GfxFilter.h"
 #include "RenderStates.h"
 #include "Renderer.h"
 
@@ -55,8 +56,12 @@ public:
 
     bool geometryNeedUpdate() const { return m_geometryNeedUpdate; }
 
-    // FIXME: allow multiple shaders
-    void setShader(SharedPtr<sf::Shader> shader) { m_shader = shader; }
+    void setFilter(SharedPtr<GfxFilter> filter) { m_filter = filter; }
+
+    template<class T, class... Args>
+    void setNewFilter(Args&&... args) { setFilter(make<T>(args...)); }
+
+    // TODO: Add a way to add multiple filters, maybe RenderTexture chain?
 
 protected:
     virtual void render(Renderer& renderer) const = 0;
@@ -71,13 +76,17 @@ protected:
     virtual bool isCustomTransformNeeded() const { return false; }
     virtual sf::Transform getCustomTransform(sf::RenderTarget&) const { return {}; }
 
-    virtual void applyStates(Renderer& renderer);
-    virtual void applyStates(Renderer& renderer, RenderStates& states);
+    void applyStates(Renderer& renderer);
+    void applyStates(Renderer& renderer, RenderStates& states);
     virtual void doUpdateGeometry(Renderer& renderer);
 
 private:
+    void applyFilter(Renderer& renderer, RenderStates& states);
+
     bool m_geometryNeedUpdate = true;
-    SharedPtr<sf::Shader> m_shader;
+    SharedPtr<GfxFilter> m_filter;
+    size_t m_currentFilter = 0;
+    bool m_inFilter = false;
 };
 
 }

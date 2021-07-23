@@ -34,14 +34,18 @@
 *
 */
 
-#pragma once
+#include "ShaderFilter.h"
 
-#include <ege/gfx/filters/GfxFilter.h>
-#include <ege/gfx/filters/ShaderFilter.h>
-#include <ege/gfx/filters/ShaderFilterWithRenderTexture.h>
-#include <ege/gfx/DefaultThemeRenderer.h>
-#include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
+namespace EGE
+{
 
+void ShaderFilter::apply(Renderable& renderable, Renderer& renderer, RenderStates& states)
+{
+    applyToShader(renderable, renderer, *m_shader);
+    // FIXME: Implement Renderable::getSize() and use it instead of just target size
+    auto size = renderer.getTarget().getSize();
+    m_shader->setUniform("ege_Size", sf::Glsl::Vec2(size.x, size.y));
+    states.sfStates().shader = m_shader.get();
+}
+
+}

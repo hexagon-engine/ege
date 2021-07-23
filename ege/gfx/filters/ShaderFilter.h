@@ -36,62 +36,25 @@
 
 #pragma once
 
-#include <ege/scene/ParticleSystem2D.h>
+#include "GfxFilter.h"
 
 namespace EGE
 {
 
-class PhysicalParticle : public Particle
+// Sets up following uniforms:
+//      'vec2 ege_Size' with Renderable size
+class ShaderFilter : public GfxFilter
 {
 public:
-    Vec3d motion;
-};
+    ShaderFilter(SharedPtr<sf::Shader> shader)
+    : m_shader(shader) {}
 
-class PhysicalParticleSystemImpl
-{
-public:
-    Vec3d realStartMotion() const;
-
-    void setGravity(Vec3d gravity) { m_gravity = gravity; } // px/t^2
-    void setStartMotion(Vec3d motion) { m_startMotion = motion; } // px/t
-    void setStartMotionValueRandom(double value) { m_startMotionValueRnd = value; } // %
-    void setStartMotionAngleRandom(double value) { m_startMotionAngleRnd = value; } // degrees
+    virtual void apply(Renderable&, Renderer&, RenderStates&) override;
 
 protected:
-    Vec3d m_gravity;
-    Vec3d m_startMotion;
-    double m_startMotionValueRnd = 0;
-    double m_startMotionAngleRnd = 0;
+    virtual void applyToShader(Renderable&, Renderer&, sf::Shader&) {}
+
+    SharedPtr<sf::Shader> m_shader;
 };
-
-// PP must be derived from PhysicalParticle
-template<class PP>
-class PhysicalParticleSystem : public ParticleSystem2D<PP>, public PhysicalParticleSystemImpl
-{
-public:
-    EGE_SCENEOBJECT("EGE::PhysicalParticleSystem")
-
-    PhysicalParticleSystem(EGE::Scene& owner)
-    : ParticleSystem2D<PP>(owner) {}
-
-    virtual void onParticleSpawn(PP& particle) const override
-    {
-        particle.motion += realStartMotion();
-    }
-
-    virtual void onParticleUpdate(PP& particle) const override
-    {
-        // TODO: Collisions with other SceneObjects
-        // TODO: Disturbations (wind?)
-        // TODO: Air drag
-        // TODO: Particle interaction (O(n^2)?)
-        particle.motion += m_gravity;
-
-        // Update motion
-        particle.position += particle.motion;
-    }
-};
-
-using DefaultPhysicalParticleSystem = PhysicalParticleSystem<PhysicalParticle>;
 
 }

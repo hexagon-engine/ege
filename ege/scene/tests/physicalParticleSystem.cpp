@@ -1,4 +1,5 @@
 #include <testsuite/Tests.h>
+#include <ege/gfx.h>
 #include <ege/gui.h>
 #include <ege/scene.h>
 #include <ege/util.h>
@@ -38,7 +39,6 @@ public:
             );
             counter++;
         }
-        ASSERT(renderer.getStates().sfStates().shader);
         renderer.getTarget().draw(varr, renderer.getStates().sfStates());
     }
 };
@@ -111,7 +111,7 @@ public:
 
     virtual void onCreate() override
     {
-        m_sceneWidget->setShader(getLoop().getResourceManager()->getShader("filter"));
+        m_sceneWidget->setNewFilter<EGE::ShaderFilterWithRenderTexture>(getLoop().getResourceManager()->getShader("filter"));
     }
 
     void setSceneWidget(EGE::SharedPtr<EGE::SceneWidget> sceneWidget) { m_sceneWidget = sceneWidget; }

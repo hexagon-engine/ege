@@ -1,4 +1,10 @@
 set(SOURCES
+	"filters/GfxFilter.cpp"
+	"filters/GfxFilter.h"
+	"filters/ShaderFilter.cpp"
+	"filters/ShaderFilter.h"
+	"filters/ShaderFilterWithRenderTexture.cpp"
+	"filters/ShaderFilterWithRenderTexture.h"
 	"DefaultThemeRenderer.cpp"
 	"DefaultThemeRenderer.h"
 	"Renderer.cpp"

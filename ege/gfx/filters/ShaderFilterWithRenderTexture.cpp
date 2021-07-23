@@ -34,14 +34,26 @@
 *
 */
 
-#pragma once
+#include "ShaderFilterWithRenderTexture.h"
 
-#include <ege/gfx/filters/GfxFilter.h>
-#include <ege/gfx/filters/ShaderFilter.h>
-#include <ege/gfx/filters/ShaderFilterWithRenderTexture.h>
-#include <ege/gfx/DefaultThemeRenderer.h>
 #include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
 
+namespace EGE
+{
+
+void ShaderFilterWithRenderTexture::apply(Renderable& renderable, Renderer& renderer, RenderStates& states)
+{
+    sf::RenderTexture texture;
+    // TODO: Add and use Renderable::getSize()
+    auto size = renderer.getTarget().getSize();
+    texture.create(size.x, size.y);
+    Renderer rendererOnTexture(texture);
+
+    rendererOnTexture.setStates(states);
+    renderable.doRender(rendererOnTexture, states);
+
+    m_shader->setUniform("ege_Image", texture.getTexture());
+    ShaderFilter::apply(renderable, renderer, states);
+}
+
+}

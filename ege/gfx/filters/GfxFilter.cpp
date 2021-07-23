@@ -34,14 +34,8 @@
 *
 */
 
-#pragma once
+#include "GfxFilter.h"
 
-#include <ege/gfx/filters/GfxFilter.h>
-#include <ege/gfx/filters/ShaderFilter.h>
-#include <ege/gfx/filters/ShaderFilterWithRenderTexture.h>
-#include <ege/gfx/DefaultThemeRenderer.h>
-#include <ege/gfx/Renderable.h>
-#include <ege/gfx/Renderer.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gfx/ThemeRenderer.h>
-
+namespace EGE
+{
+}
