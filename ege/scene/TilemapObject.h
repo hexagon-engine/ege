@@ -139,34 +139,34 @@ public:
                         Size index2 = index;
                         {
                             sf::Vertex& vertex = vertexes[index2++];
-                            vertex.texCoords.x = info.texCoords.x;
-                            vertex.texCoords.y = info.texCoords.y;
+                            vertex.texCoords.x = info.texCoords.x + 1.0/tileSize.x;
+                            vertex.texCoords.y = info.texCoords.y + 1.0/tileSize.y;
                         }
 
                         {
                             sf::Vertex& vertex = vertexes[index2++];
-                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
-                            vertex.texCoords.y = info.texCoords.y;
+                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1.0/tileSize.x;
+                            vertex.texCoords.y = info.texCoords.y + 1.0/tileSize.y;
                         }
 
                         {
                             sf::Vertex& vertex = vertexes[index2++];
-                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1;
-                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                            vertex.texCoords.x = info.texCoords.x + tileSize.x - 1.0/tileSize.x;
+                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1.0/tileSize.y;
                         }
 
                         {
                             sf::Vertex& vertex = vertexes[index2++];
-                            vertex.texCoords.x = info.texCoords.x;
-                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1;
+                            vertex.texCoords.x = info.texCoords.x + 1.0/tileSize.x;
+                            vertex.texCoords.y = info.texCoords.y + tileSize.y - 1.0/tileSize.y;
                         }
 
                         // position & color
                         {
                             realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
                             sf::Vertex& vertex = vertexes[realIndex];
-                            vertex.position.x = vx * tileSize.x + objPos.x;
-                            vertex.position.y = vy * tileSize.y + objPos.y;
+                            vertex.position.x = vx * tileSize.x + objPos.x - 1.0/tileSize.x;
+                            vertex.position.y = vy * tileSize.y + objPos.y - 1.0/tileSize.y;
 
                             // color
                             vertex.color.r = 255;
@@ -180,8 +180,8 @@ public:
                         {
                             realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
                             sf::Vertex& vertex = vertexes[realIndex];
-                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                            vertex.position.y = vy * tileSize.y + objPos.y;
+                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x + 1.0/tileSize.x;
+                            vertex.position.y = vy * tileSize.y + objPos.y - 1.0/tileSize.y;
 
                             // color
                             vertex.color.r = 255;
@@ -195,8 +195,8 @@ public:
                         {
                             realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
                             sf::Vertex& vertex = vertexes[realIndex];
-                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x;
-                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                            vertex.position.x = (vx + 1) * tileSize.x + objPos.x + 1.0/tileSize.x;
+                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y + 1.0/tileSize.y;
 
                             // color
                             vertex.color.r = 255;
@@ -210,8 +210,8 @@ public:
                         {
                             realIndex = (index / 4 * 4) + (index + info.rotation) % 4;
                             sf::Vertex& vertex = vertexes[realIndex];
-                            vertex.position.x = vx * tileSize.x + objPos.x;
-                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y;
+                            vertex.position.x = vx * tileSize.x + objPos.x - 1.0/tileSize.x;
+                            vertex.position.y = (vy + 1) * tileSize.y + objPos.y + 1.0/tileSize.y;
 
                             // color
                             vertex.color.r = 255;
