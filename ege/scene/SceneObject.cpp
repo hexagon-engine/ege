@@ -106,7 +106,6 @@ double SceneObject::getRoll() const
 
 bool SceneObject::moveTo(Vec3d pos)
 {
-    ege_log.info() << "SceneObject::moveTo";
     // TODO: collisions
 
     auto currentPos = getLocalPosition();
