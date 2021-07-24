@@ -74,6 +74,7 @@ public:
         std::string m_id;
     };
 
+    // NOTE: This is very similar to copy constructor.
     explicit Widget(Widget& parent, String id = "Widget");
 
     // for non-parented widgets, e.g. GUIScreen
