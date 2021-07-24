@@ -137,6 +137,7 @@ protected:
     }
 
     void removeObject(LayoutElement* el);
+    void clearObjects() { m_children.clear(); }
 
     Vector<LayoutElement*> m_children;
 
