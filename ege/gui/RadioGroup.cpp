@@ -41,7 +41,7 @@
 namespace EGE
 {
 
-RadioGroup::RadioGroup(Widget& parent, String id)
+RadioGroup::RadioGroup(CompoundWidget& parent, String id)
 : CompoundWidget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Vertical;

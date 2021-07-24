@@ -46,7 +46,9 @@ namespace EGE
 class CompoundWidget : public Widget
 {
 public:
-    explicit CompoundWidget(Widget& parent, String id = "CompoundWidget")
+    CompoundWidget(const CompoundWidget&) = delete;
+
+    explicit CompoundWidget(CompoundWidget& parent, String id = "CompoundWidget")
     : Widget(parent, id) {}
 
     explicit CompoundWidget(Window& window, String id = "CompoundWidget (root)")
@@ -89,7 +91,7 @@ public:
     template<class T, class... Args>
     SharedPtr<T> addNewWidget(Args&&... args)
     {
-        auto widget = make<T>(*this, std::forward<Args>(args)...);
+        auto widget = make<T>((CompoundWidget&)*this, std::forward<Args>(args)...);
         addWidget(widget);
         return widget;
     }

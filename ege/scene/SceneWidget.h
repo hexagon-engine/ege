@@ -47,7 +47,7 @@ namespace EGE
 class SceneWidget : public Widget
 {
 public:
-    explicit SceneWidget(Widget& parent, SharedPtr<Scene> initialScene = nullptr)
+    explicit SceneWidget(CompoundWidget& parent, SharedPtr<Scene> initialScene = nullptr)
     : Widget(parent, "SceneWidget"), m_initialScene(initialScene) {}
 
     virtual void render(Renderer& renderer) const override;

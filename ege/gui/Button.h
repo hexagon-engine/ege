@@ -48,7 +48,7 @@ class Button : public Widget
 public:
     EGE_SIMPLE_EVENT(ClickEvent, "EGE::Button::ClickEvent");
 
-    explicit Button(Widget& parent, String id = "Button")
+    explicit Button(CompoundWidget& parent, String id = "Button")
     : Widget(parent, id) {}
 
     virtual void setLabel(sf::String label) { m_label = label; }

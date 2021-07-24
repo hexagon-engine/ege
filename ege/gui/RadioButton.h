@@ -48,7 +48,7 @@ namespace EGE
 class RadioButton : public CheckBox
 {
 public:
-    explicit RadioButton(Widget& parent, String id = "RadioButton")
+    explicit RadioButton(CompoundWidget& parent, String id = "RadioButton")
     : CheckBox(parent, id), m_radioGroup((RadioGroup&)parent) {}
 
 protected:

@@ -41,7 +41,7 @@
 namespace EGE
 {
 
-ComboBox::ComboBox(Widget& parent, String id)
+ComboBox::ComboBox(CompoundWidget& parent, String id)
 : CompoundWidget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Vertical;

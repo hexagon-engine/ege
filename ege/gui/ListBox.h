@@ -60,7 +60,7 @@ public:
         sf::String value;
     };
 
-    ListBox(Widget& parent, String id = "ListBox");
+    ListBox(CompoundWidget& parent, String id = "ListBox");
 
     virtual void onKeyPress(sf::Event::KeyEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;

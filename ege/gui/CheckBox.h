@@ -47,7 +47,7 @@ namespace EGE
 class CheckBox : public Button
 {
 public:
-    explicit CheckBox(Widget& parent, String id = "CheckBox")
+    explicit CheckBox(CompoundWidget& parent, String id = "CheckBox")
     : Button(parent, id) {}
 
     void setChecked(bool checked = true) { m_checked = checked; }

@@ -53,7 +53,7 @@ public:
         Right
     };
 
-    explicit Label(Widget& parent, sf::String label = "", String id = "Label")
+    explicit Label(CompoundWidget& parent, sf::String label = "", String id = "Label")
     : Widget(parent, id), m_string(label) {}
 
     void setString(sf::String str);

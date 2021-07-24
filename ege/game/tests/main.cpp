@@ -83,7 +83,7 @@ public:
     MyColor* m_color;
     typedef EGE::GameplayObjectRegistry<EGE::String, MyColor> GPORObjc;
 
-    ColorWidget(EGE::Widget& parent, size_t index, MyColor* color)
+    ColorWidget(EGE::CompoundWidget& parent, size_t index, MyColor* color)
     : EGE::CompoundWidget(parent)
     , m_color(color)
     {

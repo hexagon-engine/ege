@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-ListBox::ListBox(Widget& parent, String id)
+ListBox::ListBox(CompoundWidget& parent, String id)
 : CompoundWidget(parent, id)
 {
     setPadding({"2px", "2px"});

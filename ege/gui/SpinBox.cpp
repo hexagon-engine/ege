@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-SpinBox::SpinBox(Widget& parent, String id)
+SpinBox::SpinBox(CompoundWidget& parent, String id)
 : CompoundWidget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Horizontal;

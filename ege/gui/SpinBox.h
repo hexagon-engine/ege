@@ -45,7 +45,7 @@ namespace EGE
 class SpinBox : public CompoundWidget
 {
 public:
-    explicit SpinBox(Widget& parent, String id = "SpinBox");
+    explicit SpinBox(CompoundWidget& parent, String id = "SpinBox");
 
     virtual void render(Renderer& renderer) const override;
 

@@ -60,7 +60,7 @@ public:
 class TextBox : public Widget
 {
 public:
-    explicit TextBox(Widget& parent, String id = "TextBox");
+    explicit TextBox(CompoundWidget& parent, String id = "TextBox");
 
     void setText(sf::String text)
     {

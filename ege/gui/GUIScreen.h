@@ -48,11 +48,13 @@ namespace EGE
 class GUIScreen : public CompoundWidget
 {
 public:
+    GUIScreen(const GUIScreen&) = delete;
+
     explicit GUIScreen(Window& window, String id = "GUIScreen (root)")
     : CompoundWidget(window, id) {}
 
     // for modal dialogs
-    explicit GUIScreen(Widget& parent, String id = "GUIScreen")
+    explicit GUIScreen(GUIScreen& parent, String id = "GUIScreen")
     : CompoundWidget(parent, id) {}
 
     // System Events -- are passed to all child widgets

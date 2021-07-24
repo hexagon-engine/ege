@@ -46,7 +46,7 @@ namespace EGE
 class GroupBox : public CompoundWidget
 {
 public:
-    explicit GroupBox(Widget& parent, String id = "GroupBox")
+    explicit GroupBox(CompoundWidget& parent, String id = "GroupBox")
     : CompoundWidget(parent, id) { setPadding({10.0, 30.0}); }
 
     void setLabel(sf::String label) { m_label = label; }

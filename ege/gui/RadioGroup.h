@@ -56,7 +56,7 @@ public:
 class RadioGroup : public CompoundWidget
 {
 public:
-    RadioGroup(Widget& parent, String id = "RadioGroup");
+    RadioGroup(CompoundWidget& parent, String id = "RadioGroup");
 
     void setCheckedButton(RadioButton& button);
     RadioButton* getCheckedButton() const;

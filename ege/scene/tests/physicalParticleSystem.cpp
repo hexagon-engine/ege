@@ -46,7 +46,7 @@ public:
 class SliderAndValue : public EGE::CompoundWidget
 {
 public:
-    SliderAndValue(EGE::Widget& parent, EGE::String id = "SliderAndValue")
+    SliderAndValue(EGE::CompoundWidget& parent, EGE::String id = "SliderAndValue")
     : EGE::CompoundWidget(parent, id)
     {
         setPadding({"2px", "2px"});
@@ -86,7 +86,7 @@ private:
 class ParticleLabel : public EGE::Label
 {
 public:
-    ParticleLabel(EGE::Widget& parent, MyParticleSystem& particleSystem)
+    ParticleLabel(EGE::CompoundWidget& parent, MyParticleSystem& particleSystem)
     : EGE::Label(parent), m_particleSystem(particleSystem) {}
 
     virtual void onUpdate(long long tickCount) override

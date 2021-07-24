@@ -36,6 +36,7 @@
 
 #include "Widget.h"
 
+#include "CompoundWidget.h"
 #include "GUIGameLoop.h"
 
 #include <ege/debug/Logger.h>
@@ -47,7 +48,7 @@
 namespace EGE
 {
 
-Widget::Widget(Widget& parent, String id)
+Widget::Widget(CompoundWidget& parent, String id)
 : Animatable(&parent, "Widget: " + id)
 , DefaultSystemEventHandler(parent.m_window)
 , LayoutElement(&parent, id)

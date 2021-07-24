@@ -46,7 +46,7 @@ namespace EGE
 class ComboBox : public CompoundWidget
 {
 public:
-    explicit ComboBox(Widget& parent, String id = "ComboBox");
+    explicit ComboBox(CompoundWidget& parent, String id = "ComboBox");
 
     ListBox& entries() { return *m_listBox; }
 

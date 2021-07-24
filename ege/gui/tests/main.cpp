@@ -119,7 +119,7 @@ class AnimationGraphWidget : public EGE::Widget
     std::vector<double> m_vals;
     int m_max = 1;
 public:
-    explicit AnimationGraphWidget(EGE::Widget& parent)
+    explicit AnimationGraphWidget(EGE::CompoundWidget& parent)
     : EGE::Widget(parent) {}
 
     void setMax(int m)

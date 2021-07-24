@@ -53,7 +53,7 @@ public:
         Vertical
     };
 
-    explicit ScrollBar(Widget& parent, String id = "ScrollBar")
+    explicit ScrollBar(CompoundWidget& parent, String id = "ScrollBar")
     : Widget(parent, id) {}
 
     double getValue() const { return m_value; }

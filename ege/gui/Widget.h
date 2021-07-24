@@ -54,6 +54,7 @@ namespace EGE
 
 class GUIGameLoop;
 class Window;
+class CompoundWidget;
 
 class Widget : public Animatable, public DefaultSystemEventHandler, public LayoutElement
 {
@@ -74,8 +75,10 @@ public:
         std::string m_id;
     };
 
+    Widget(const Widget&) = delete;
+
     // NOTE: This is very similar to copy constructor.
-    explicit Widget(Widget& parent, String id = "Widget");
+    explicit Widget(CompoundWidget& parent, String id = "Widget");
 
     // for non-parented widgets, e.g. GUIScreen
     // NOTE: For layouting, they must have fixed (px or A) size set!
@@ -104,7 +107,7 @@ public:
 
     bool hasFocus() const { return m_hasFocus; }
 
-    Widget* getParentWidget() const { return m_parentWidget; }
+    CompoundWidget* getParentWidget() const { return m_parentWidget; }
 
     virtual void setPosition(LVec2d position) override { LayoutElement::setPosition(position); setGeometryNeedUpdate(); }
     virtual void setSize(LVec2d size) override  { LayoutElement::setSize(size); setGeometryNeedUpdate(); }
@@ -126,7 +129,7 @@ protected:
     bool m_mouseOver = false;
     bool m_leftClicked = false;
     Window& m_window;
-    Widget* m_parentWidget;
+    CompoundWidget* m_parentWidget;
     bool m_hide = false;
 
 private:
@@ -137,7 +140,7 @@ private:
 class DummyWidget : public Widget
 {
 public:
-    DummyWidget(Widget& parent)
+    DummyWidget(CompoundWidget& parent)
     : Widget(parent) {}
 };
 
