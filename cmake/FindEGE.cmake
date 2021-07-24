@@ -34,7 +34,7 @@ macro(ege_executable targetname sources modules)
 	
 	# add EGE modules
 	foreach(module ${modules})
-		target_link_libraries("${targetname}" PUBLIC "${EGE_LIB_ROOT}/build/root/modules/lib${module}.a")
+		target_link_libraries("${targetname}" PUBLIC "${EGE_LIB_ROOT}/${EGE_BUILD_DIR}/root/modules/lib${module}.a")
 	endforeach()
 	target_include_directories("${targetname}" PUBLIC "${EGE_LIB_ROOT}")
 	
