@@ -14,3 +14,7 @@ add_subdirectory(scene)
 add_subdirectory(sound)
 add_subdirectory(tilemap)
 add_subdirectory(util)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_subdirectory(ege3d)
+endif()
