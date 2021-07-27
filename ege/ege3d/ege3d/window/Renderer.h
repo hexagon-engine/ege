@@ -24,42 +24,39 @@
 
 #pragma once
 
-#include <ege3d/window/WindowImpl.h>
-#include <GL/glx.h>
-#include <X11/Xlib.h>
+#include <ege3d/window/Window.h>
+#include <ege/util/Rect.h>
 
 namespace EGE3d
 {
 
-namespace Internal
-{
-
-class XWindowImpl final : public WindowImpl
+class Renderer
 {
 public:
-    XWindowImpl(Window* owner)
-    : WindowImpl(owner) {}
+    // TODO: Make some rendertarget stuff
+    Renderer(Window& window)
+    : m_window(window) {}
 
-    virtual WindowHandle create(size_t sx, size_t sy, std::string title, WindowSettings settings) override;
-    virtual void close() override;
-    virtual bool dispatchEvent(bool wait) override;
-    virtual void display() override;
-    virtual void setCurrent() override;
+    Window& target() const { return m_window; }
+
+    // OpenGL Wrappers
+    void setViewport(EGE::RectI rect);
+
+    enum class MatrixMode
+    {
+        Projection,
+        Modelview
+    };
+
+    void setMatrixMode(MatrixMode mode);
+    void setMatrixToIdentity();
+
+    bool isGLError() const;
 
 private:
-    virtual void handleEvent(XEvent& event);
-    Atom getAtom(std::string name);
-    Atom getOrCreateAtom(std::string name);
+    void ensureIsCurrent() const;
 
-    Display* m_display = nullptr;
-    int m_screen = -1;
-    ::Window m_window;
-    GC m_gc;
-    GLXContext m_glxContext;
-    bool m_needRedraw = false;
-    WindowSettings m_settings;
+    Window& m_window;
 };
-
-}
 
 }

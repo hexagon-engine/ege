@@ -51,6 +51,7 @@ public:
     virtual void close() { CRASH(); }
     virtual bool dispatchEvent(bool) { CRASH(); }
     virtual void display() { CRASH(); }
+    virtual void setCurrent() { CRASH(); }
 
     static std::unique_ptr<WindowImpl> make(Window* window);
 

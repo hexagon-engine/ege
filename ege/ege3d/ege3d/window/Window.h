@@ -28,6 +28,7 @@
 #include <ege3d/window/WindowSettings.h>
 #include <ege/util/Optional.h>
 #include <ege/util/Types.h>
+#include <ege/util/Vector.h>
 
 #include <functional>
 #include <memory>
@@ -52,13 +53,16 @@ public:
     Window();
     virtual ~Window();
 
-    bool create(size_t sx, size_t sy, EGE::String title, WindowSettings settings = {});
+    bool create(unsigned sx, unsigned sy, EGE::String title, WindowSettings settings = {});
     void close();
     WindowHandle getSystemHandle();
     EGE::Optional<SystemEvent> nextEvent(bool wait);
     void display();
 
-    bool isOpen();
+    bool isOpen() const;
+    bool isCurrent() const;
+    void setCurrent();
+    EGE::Vec2u getSize() const { return m_size; }
 
 private:
     friend class Internal::WindowImpl;
@@ -67,6 +71,7 @@ private:
     EGE::UniquePtr<Internal::WindowImpl> m_impl;
     WindowHandle m_systemHandle = 0;
     EGE::Vector<SystemEvent> m_pendingEvents;
+    EGE::Vec2u m_size;
 };
 
 }

@@ -294,12 +294,6 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
     XSetWMProtocols(m_display, m_window, &wmDelete, 1);
     XFlush(m_display);
 
-    // if OpenGL, set GLX context to window :)
-    if(settings.getRenderer() == WindowSettings::Renderer::OpenGL)
-    {
-        glXMakeCurrent(m_display, m_window, m_glxContext);
-    }
-
     return m_window;
 }
 
@@ -479,6 +473,15 @@ void XWindowImpl::handleEvent(XEvent& event)
     default:
         std::cout << "Invalid event type " << event.type << std::endl;
         pushEvent(SystemEvent(SystemEventType::EInvalid, *m_owner));
+    }
+}
+
+void XWindowImpl::setCurrent()
+{
+    // if OpenGL, set GLX context to window :)
+    if(m_settings.getRenderer() == WindowSettings::Renderer::OpenGL)
+    {
+        glXMakeCurrent(m_display, m_window, m_glxContext);
     }
 }
 

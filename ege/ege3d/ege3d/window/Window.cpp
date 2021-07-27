@@ -35,6 +35,7 @@ namespace Internal
 
 // It is declared here and should be defined by system-specific implementation.
 std::unique_ptr<WindowImpl> make(Window*);
+Window* currentWindow = nullptr;
 
 }
 
@@ -47,14 +48,18 @@ Window::Window()
 Window::~Window()
 {
     close();
+    if(this == Internal::currentWindow)
+        Internal::currentWindow = nullptr;
 }
 
-bool Window::create(size_t sx, size_t sy, std::string title, WindowSettings settings)
+bool Window::create(unsigned sx, unsigned sy, std::string title, WindowSettings settings)
 {
     WindowHandle handle = m_impl->create(sx, sy, title, settings);
     if(!handle)
         return false;
     m_systemHandle = handle;
+    m_size = {sx, sy};
+    setCurrent();
     return true;
 }
 
@@ -84,7 +89,7 @@ EGE::Optional<SystemEvent> Window::nextEvent(bool wait)
     return event;
 }
 
-bool Window::isOpen()
+bool Window::isOpen() const
 {
     return m_systemHandle != 0;
 }
@@ -93,6 +98,19 @@ void Window::pushEvent(const SystemEvent& event)
 {
     std::cout << "event :)" << std::endl;
     m_pendingEvents.push_back(std::move(event));
+
+    // TODO: Handle resize event to update size
+}
+
+bool Window::isCurrent() const
+{
+    return this == Internal::currentWindow;
+}
+
+void Window::setCurrent()
+{
+    Internal::currentWindow = this;
+    m_impl->setCurrent();
 }
 
 }

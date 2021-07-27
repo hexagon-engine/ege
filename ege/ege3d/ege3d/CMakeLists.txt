@@ -4,6 +4,8 @@ set(SOURCES
     "window/Keyboard.h"
     "window/Mouse.cpp"
     "window/Mouse.h"
+    "window/Renderer.cpp"
+    "window/Renderer.h"
     "window/SystemEvent.cpp"
     "window/SystemEvent.h"
     "window/Window.cpp"

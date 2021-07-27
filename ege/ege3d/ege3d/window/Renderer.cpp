@@ -22,44 +22,49 @@
     SOFTWARE.
 */
 
-#pragma once
+#include "Renderer.h"
 
-#include <ege3d/window/WindowImpl.h>
-#include <GL/glx.h>
-#include <X11/Xlib.h>
+#include <GL/gl.h>
 
 namespace EGE3d
 {
 
-namespace Internal
+void Renderer::setViewport(EGE::RectI rect)
 {
+    ensureIsCurrent();
+    glViewport(rect.position.x, m_window.getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
+}
 
-class XWindowImpl final : public WindowImpl
+void Renderer::setMatrixMode(MatrixMode mode)
 {
-public:
-    XWindowImpl(Window* owner)
-    : WindowImpl(owner) {}
+    ensureIsCurrent();
+    GLenum matrixMode = 0;
+    switch(mode)
+    {
+    case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
+    case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
+    default: CRASH();
+    }
+    glMatrixMode(matrixMode);
+}
 
-    virtual WindowHandle create(size_t sx, size_t sy, std::string title, WindowSettings settings) override;
-    virtual void close() override;
-    virtual bool dispatchEvent(bool wait) override;
-    virtual void display() override;
-    virtual void setCurrent() override;
+void Renderer::setMatrixToIdentity()
+{
+    ensureIsCurrent();
+    glLoadIdentity();
+}
 
-private:
-    virtual void handleEvent(XEvent& event);
-    Atom getAtom(std::string name);
-    Atom getOrCreateAtom(std::string name);
+bool Renderer::isGLError() const
+{
+    ensureIsCurrent();
+    auto error = glGetError();
+    return error != GL_NO_ERROR;
+}
 
-    Display* m_display = nullptr;
-    int m_screen = -1;
-    ::Window m_window;
-    GC m_gc;
-    GLXContext m_glxContext;
-    bool m_needRedraw = false;
-    WindowSettings m_settings;
-};
-
+void Renderer::ensureIsCurrent() const
+{
+    if(!m_window.isCurrent())
+        m_window.setCurrent();
 }
 
 }
