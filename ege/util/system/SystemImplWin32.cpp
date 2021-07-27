@@ -75,9 +75,10 @@ System::ExactTime SystemImplWin32::exactTime()
     return System::ExactTime::fromNanoseconds(nanoseconds);
 }
 
-void SystemImplWin32::sleep(System::ExactTime)
+void SystemImplWin32::sleep(System::ExactTime time)
 {
-    NOT_IMPLEMENTED();
+    // TODO: Better resolution
+    Sleep(time.milliseconds());
 }
 
 // FileSystem
