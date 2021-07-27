@@ -5,7 +5,7 @@
 
 void eventHandler(const EGE3d::SystemEvent& event)
 {
-    if(event.getType() == EGE3d::EventType::EClose)
+    if(event.getEventType() == EGE3d::SystemEventType::EClose)
     {
         event.getWindow().close();
     }
@@ -14,7 +14,6 @@ void eventHandler(const EGE3d::SystemEvent& event)
 int main()
 {
     EGE3d::Window window;
-    window.setEventHandler(eventHandler);
     window.create(300, 300, "EGE3d Test", EGE3d::WindowSettings());
 
     // do some OpenGL stuff
@@ -26,7 +25,13 @@ int main()
 
     while(window.isOpen())
     {
-        window.dispatchAllEvents();
+        while(true)
+        {
+            auto event = window.nextEvent(false);
+            if(!event.hasValue())
+                break;
+            eventHandler(event.value());
+        }
 
         // OPENGL test
         glClear(GL_COLOR_BUFFER_BIT);

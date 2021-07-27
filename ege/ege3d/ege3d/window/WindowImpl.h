@@ -25,18 +25,14 @@
 #pragma once
 
 #include <ege/main/Config.h>
+#include <ege3d/window/SystemEvent.h>
+#include <ege3d/window/Window.h>
 #include <ege3d/window/WindowSettings.h>
 #include <memory>
 #include <string>
 
 namespace EGE3d
 {
-
-#if defined(WIN32)
-    typedef int WindowHandle; //HWND
-#elif defined(__linux__)
-    typedef unsigned long WindowHandle; //X11 Window and others
-#endif // WIN32
 
 class Window;
 
@@ -49,6 +45,8 @@ public:
     WindowImpl(Window* owner)
     : m_owner(owner) {}
 
+    virtual ~WindowImpl() = default;
+
     virtual WindowHandle create(size_t, size_t, std::string, WindowSettings) { CRASH(); }
     virtual void close() { CRASH(); }
     virtual bool dispatchEvent(bool) { CRASH(); }
@@ -57,6 +55,8 @@ public:
     static std::unique_ptr<WindowImpl> make(Window* window);
 
 protected:
+    void pushEvent(const SystemEvent& event) { m_owner->pushEvent(event); }
+
     Window* m_owner;
 };
 

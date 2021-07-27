@@ -1,7 +1,7 @@
 /*
     EGE3d - 3D rendering engine for Hexagon
 
-    Copyright (c) 2020 Hexagon Engine
+    Copyright (c) 2020-2021 Hexagon Engine
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 
 #include <ege3d/window/Keyboard.h>
 #include <ege3d/window/Mouse.h>
+#include <ege/core/Event.h>
 #include <inttypes.h>
 
 namespace EGE3d
@@ -33,7 +34,7 @@ namespace EGE3d
 
 class Window;
 
-enum class EventType
+enum class SystemEventType
 {
     EInvalid,
     EExpose,
@@ -52,17 +53,19 @@ enum class EventType
 };
 
 // SystemEvent
-class SystemEvent
+class SystemEvent : public EGE::Event
 {
 public:
-    SystemEvent(EventType type, Window& window)
+    EGE_EVENT("EGE3d::SystemEvent")
+
+    SystemEvent(SystemEventType type, Window& window)
     : m_type(type), m_window(window) {}
 
     Window& getWindow() const { return m_window; }
-    EventType getType() const { return m_type; }
+    SystemEventType getEventType() const { return m_type; }
 
 private:
-    EventType m_type;
+    SystemEventType m_type;
     Window& m_window;
 };
 
@@ -70,7 +73,7 @@ private:
 class MouseMoveEvent : public SystemEvent
 {
 public:
-    MouseMoveEvent(EventType type, Window& window, int x, int y)
+    MouseMoveEvent(SystemEventType type, Window& window, int x, int y)
     : SystemEvent(type, window), m_x(x), m_y(y) {}
 
     int getX() const { return m_x; }
@@ -85,7 +88,7 @@ private:
 class MouseButtonEvent : public SystemEvent
 {
 public:
-    MouseButtonEvent(EventType type, Window& window, Mouse::Button button)
+    MouseButtonEvent(SystemEventType type, Window& window, Mouse::Button button)
     : SystemEvent(type, window), m_button(button) {}
 
     Mouse::Button getButton() const { return m_button; }
@@ -98,7 +101,7 @@ private:
 class MouseWheelEvent : public SystemEvent
 {
 public:
-    MouseWheelEvent(EventType type, Window& window, int delta)
+    MouseWheelEvent(SystemEventType type, Window& window, int delta)
     : SystemEvent(type, window), m_delta(delta) {}
 
     int getDelta() const { return m_delta; }
@@ -111,7 +114,7 @@ private:
 class KeyEvent : public SystemEvent
 {
 public:
-    KeyEvent(EventType type, Window& window, Keyboard::Key key, bool alt, bool shift, bool ctrl, bool super)
+    KeyEvent(SystemEventType type, Window& window, Keyboard::Key key, bool alt, bool shift, bool ctrl, bool super)
     : SystemEvent(type, window), m_key(key), m_alt(alt), m_shift(shift), m_ctrl(ctrl), m_super(super) {}
 
     Keyboard::Key getKey() const { return m_key; }
@@ -132,13 +135,13 @@ private:
 class TextEvent : public SystemEvent
 {
 public:
-    TextEvent(EventType type, Window& window, uint32_t code)
-    : SystemEvent(type, window), m_code(code) {}
+    TextEvent(SystemEventType type, Window& window, uint32_t code)
+    : SystemEvent(type, window), m_codepoint(code) {}
 
-    uint32_t getCode() const { return m_code; }
+    uint32_t getCodepoint() const { return m_codepoint; }
 
 private:
-    uint32_t m_code;
+    uint32_t m_codepoint;
 };
 
 }

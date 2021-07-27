@@ -234,6 +234,7 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
 
             // create GLX context
             m_glxContext = glXCreateContext(m_display, visualInfo, None, true);
+            XFree(visualInfo);
             if(!m_glxContext)
             {
                 std::cout << "Failed to create context!" << std::endl;
@@ -328,7 +329,8 @@ void XWindowImpl::display()
 
 bool XWindowImpl::dispatchEvent(bool wait)
 {
-    ASSERT(m_owner->isOpen());
+    if(!m_owner->isOpen())
+        return false;
     XEvent event;
 
     if(wait)
@@ -361,7 +363,7 @@ void XWindowImpl::handleEvent(XEvent& event)
     case Expose:
         m_needRedraw = true;
         //std::cout << "onExpose" << std::endl;
-        m_owner->onEvent(SystemEvent(EventType::EExpose, *m_owner));
+        pushEvent(SystemEvent(SystemEventType::EExpose, *m_owner));
         break;
     case ClientMessage:
         {
@@ -373,13 +375,13 @@ void XWindowImpl::handleEvent(XEvent& event)
                 if(event.xclient.format == 32 && event.xclient.data.l[0] == (long)wmDeleteWindow)
                 {
                     //std::cout << "onClose" << std::endl;
-                    m_owner->onEvent(SystemEvent(EventType::EClose, *m_owner));
+                    pushEvent(SystemEvent(SystemEventType::EClose, *m_owner));
                 }
             }
         } break;
     case DestroyNotify:
         //std::cout << "onDestroy" << std::endl;
-        m_owner->onEvent(SystemEvent(EventType::EDestroy, *m_owner));
+        pushEvent(SystemEvent(SystemEventType::EDestroy, *m_owner));
         // TODO: do cleanup
         break;
     case MotionNotify:
@@ -387,7 +389,7 @@ void XWindowImpl::handleEvent(XEvent& event)
             int x = event.xmotion.x;
             int y = event.xmotion.y;
             //std::cout << "onMouseMove x=" << x << " y=" << y << std::endl;
-            m_owner->onEvent(MouseMoveEvent(EventType::EMouseMove, *m_owner, x, y));
+            pushEvent(MouseMoveEvent(SystemEventType::EMouseMove, *m_owner, x, y));
         } break;
     case ButtonPress:
         {
@@ -396,18 +398,18 @@ void XWindowImpl::handleEvent(XEvent& event)
             if(button == 4) // wheel up
             {
                 //std::cout << "onMouseWheel d=" << 1 << std::endl;
-                m_owner->onEvent(MouseWheelEvent(EventType::EMouseWheel, *m_owner, 1));
+                pushEvent(MouseWheelEvent(SystemEventType::EMouseWheel, *m_owner, 1));
             }
             else if(button == 5) // wheel down
             {
                 //std::cout << "onMouseWheel d=" << -1 << std::endl;
-                m_owner->onEvent(MouseWheelEvent(EventType::EMouseWheel, *m_owner, -1));
+                pushEvent(MouseWheelEvent(SystemEventType::EMouseWheel, *m_owner, -1));
             }
             else
             {
                 Mouse::Button egeButton = xButtonToEGE(button);
                 //std::cout << "onMouseButtonPress b=" << (int)egeButton << std::endl;
-                m_owner->onEvent(MouseButtonEvent(EventType::EMouseButtonPress, *m_owner, egeButton));
+                pushEvent(MouseButtonEvent(SystemEventType::EMouseButtonPress, *m_owner, egeButton));
             }
         } break;
     case ButtonRelease:
@@ -421,7 +423,7 @@ void XWindowImpl::handleEvent(XEvent& event)
             {
                 Mouse::Button egeButton = xButtonToEGE(button);
                 //std::cout << "onMouseButtonRelease b=" << (int)egeButton << std::endl;
-                m_owner->onEvent(MouseButtonEvent(EventType::EMouseButtonRelease, *m_owner, egeButton));
+                pushEvent(MouseButtonEvent(SystemEventType::EMouseButtonRelease, *m_owner, egeButton));
             }
         } break;
     case KeyPress:
@@ -440,7 +442,7 @@ void XWindowImpl::handleEvent(XEvent& event)
                     break;
             }
             //std::cout << "onKeyPress k=" << (int)egeKey << " a=" << alt << " s=" << shift << "c=" << control << " u=" << super << std::endl;
-            m_owner->onEvent(KeyEvent(EventType::EKeyPress, *m_owner, egeKey, alt, shift, control, super));
+            pushEvent(KeyEvent(SystemEventType::EKeyPress, *m_owner, egeKey, alt, shift, control, super));
 
             if(!XFilterEvent(&event, None))
             {
@@ -451,7 +453,7 @@ void XWindowImpl::handleEvent(XEvent& event)
                 if(XLookupString(&event.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
                 {
                     //std::cout << "onTextEnter " << "str='" << keyBuffer[0] << "'" << std::endl;
-                    m_owner->onEvent(TextEvent(EventType::ETextEnter, *m_owner, keyBuffer[0]));
+                    pushEvent(TextEvent(SystemEventType::ETextEnter, *m_owner, keyBuffer[0]));
                 }
             }
         } break;
@@ -472,11 +474,11 @@ void XWindowImpl::handleEvent(XEvent& event)
             }
 
             //std::cout << "onKeyRelease k=" << (int)egeKey << " a=" << alt << " c=" << control << " s=" << shift << " u=" << super << std::endl;
-            m_owner->onEvent(KeyEvent(EventType::EKeyRelease, *m_owner, egeKey, alt, shift, control, super));
+            pushEvent(KeyEvent(SystemEventType::EKeyRelease, *m_owner, egeKey, alt, shift, control, super));
         } break;
     default:
         std::cout << "Invalid event type " << event.type << std::endl;
-        m_owner->onEvent(SystemEvent(EventType::EInvalid, *m_owner));
+        pushEvent(SystemEvent(SystemEventType::EInvalid, *m_owner));
     }
 }
 

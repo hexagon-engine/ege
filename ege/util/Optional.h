@@ -6,6 +6,7 @@ Copyright (c) Sppmacd 2020
 #pragma once
 
 #include <ege/main/Config.h>
+#include <ege/util/Types.h>
 
 namespace EGE
 {
@@ -16,18 +17,17 @@ class Optional
 {
 public:
     Optional()
-    : m_hasValue(false) {}
+    : m_value(nullptr) {}
 
-    Optional(T value)
-    : m_value(value) {}
+    Optional(const T& value)
+    : m_value(std::make_unique<T>(value)) {}
 
-    T value() { ASSERT(m_hasValue); return m_value; }
-    T valueOr(T s) { return m_hasValue ? m_value : s; }
-    bool hasValue() { return m_hasValue; }
+    T value() const { ASSERT(m_value); return *m_value; }
+    T valueOr(T&& s) const { return m_value ? *m_value : s; }
+    bool hasValue() const { return !!m_value; }
 
 private:
-    T m_value;
-    bool m_hasValue = true;
+    UniquePtr<T> m_value;
 };
 
 }

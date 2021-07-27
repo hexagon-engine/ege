@@ -81,6 +81,8 @@ macro(ege_add_module targetname)
         target_link_options(${target_name} PUBLIC -fsanitize=undefined -fsanitize=address)
     endif()
 
+    target_include_directories(${target_name} PUBLIC "${CMAKE_SOURCE_DIR}")
+
     # Link mingw_stdthreads + stdlib on mingw
     if(${MINGW})
         target_link_libraries(${target_name} PUBLIC mingw_stdthreads)
@@ -99,8 +101,6 @@ macro(ege_depend_module target dependtarget)
 	#ege_message("INFO", "Adding DEPENDENCY: ${target} >> ${dependtarget}")
 	target_link_libraries(ege-${target} PUBLIC ege-${dependtarget})
 endmacro()
-
-include_directories("${CMAKE_SOURCE_DIR}")
 
 add_subdirectory(ege)
 

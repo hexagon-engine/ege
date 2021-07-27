@@ -72,9 +72,16 @@ void Window::display()
     m_impl->display();
 }
 
-bool Window::dispatchEvent(bool wait)
+EGE::Optional<SystemEvent> Window::nextEvent(bool wait)
 {
-    return m_impl->dispatchEvent(wait);
+    if(m_pendingEvents.empty())
+    {
+        if(!m_impl->dispatchEvent(wait))
+            return {};
+    }
+    auto event = std::move(m_pendingEvents.back());
+    m_pendingEvents.pop_back();
+    return event;
 }
 
 bool Window::isOpen()
@@ -82,17 +89,10 @@ bool Window::isOpen()
     return m_systemHandle != 0;
 }
 
-void Window::dispatchAllEvents(bool wait)
-{
-    while(isOpen() && m_impl->dispatchEvent(wait))
-        ;
-}
-
-void Window::onEvent(const SystemEvent& event)
+void Window::pushEvent(const SystemEvent& event)
 {
     std::cout << "event :)" << std::endl;
-    if(m_eventHandler)
-        m_eventHandler(event);
+    m_pendingEvents.push_back(std::move(event));
 }
 
 }

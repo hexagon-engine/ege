@@ -35,7 +35,7 @@ else()
 endif()
 
 target_link_libraries(ege3d
-    PUBLIC ege-util
+    PUBLIC ege-core
 )
 
 target_include_directories(ege3d PUBLIC ${CMAKE_SOURCE_DIR})

@@ -25,8 +25,9 @@
 #pragma once
 
 #include <ege3d/window/SystemEvent.h>
-#include <ege3d/window/WindowImpl.h>
 #include <ege3d/window/WindowSettings.h>
+#include <ege/util/Optional.h>
+#include <ege/util/Types.h>
 
 #include <functional>
 #include <memory>
@@ -37,30 +38,35 @@
 namespace EGE3d
 {
 
+#if defined(WIN32)
+    typedef int WindowHandle; //HWND
+#elif defined(__linux__)
+    typedef unsigned long WindowHandle; //X11 Window and others
+#endif // WIN32
+
+namespace Internal { class WindowImpl; }
+
 class Window
 {
 public:
     Window();
     virtual ~Window();
 
-    bool create(size_t sx, size_t sy, std::string title, WindowSettings settings = {});
+    bool create(size_t sx, size_t sy, EGE::String title, WindowSettings settings = {});
     void close();
     WindowHandle getSystemHandle();
-    bool dispatchEvent(bool wait = false);
+    EGE::Optional<SystemEvent> nextEvent(bool wait);
     void display();
 
     bool isOpen();
-    void dispatchAllEvents(bool wait = false);
-
-    void setEventHandler(std::function<void(const SystemEvent&)> handler) { m_eventHandler = handler; }
-
-    virtual void onEvent(const SystemEvent& event);
 
 private:
-    std::unique_ptr<Internal::WindowImpl> m_impl;
-    WindowHandle m_systemHandle = 0;
+    friend class Internal::WindowImpl;
+    virtual void pushEvent(const SystemEvent& event);
 
-    std::function<void(const SystemEvent&)> m_eventHandler;
+    EGE::UniquePtr<Internal::WindowImpl> m_impl;
+    WindowHandle m_systemHandle = 0;
+    EGE::Vector<SystemEvent> m_pendingEvents;
 };
 
 }

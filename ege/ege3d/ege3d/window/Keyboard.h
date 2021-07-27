@@ -138,6 +138,6 @@ enum class Key
     __Count
 };
 
-};
+}
 
 }
