@@ -27,16 +27,36 @@ cmake_policy(SET CMP0074 NEW) # suppress SFML_ROOT warning
 # TODO: find_path is buggy?
 find_package(SFML 2.4 COMPONENTS network audio graphics window system REQUIRED)
 
+if(${MINGW})
+	option(MINGW_STDTHREADS_GENERATE_STDHEADERS "" ON)
+	add_subdirectory(${EGE_BUILD_DIR}/mingw-std-threads ${CMAKE_BINARY_DIR}/mingw-std-threads)
+endif()
+
 macro(ege_executable targetname sources modules)
 	ege_message("INFO" "Adding EXECUTABLE: \"${targetname}\" (installed in ${CMAKE_INSTALL_PREFIX})")
 	add_executable("${targetname}" ${sources})
+
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/root")
 	
 	# add EGE modules
 	foreach(module ${modules})
-		target_link_libraries("${targetname}" PUBLIC "${EGE_LIB_ROOT}/${EGE_BUILD_DIR}/root/modules/lib${module}.a")
+		target_link_libraries("${targetname}" PUBLIC "${EGE_BUILD_DIR}/root/modules/lib${module}.a")
 	endforeach()
 	target_include_directories("${targetname}" PUBLIC "${EGE_LIB_ROOT}")
+
+    # Link mingw_stdthreads + stdlib + glew on mingw
+	# NOTE the order: glew32 must be AFTER ege-event!
+    if(${MINGW})
+		ege_message("INFO" "Linking mingw_stdthreads + stdlib + glew")
+        target_link_libraries(${targetname} PUBLIC mingw_stdthreads)
+
+		target_include_directories(${targetname} PUBLIC ${EGE_BUILD_DIR}/glew/include)
+		target_link_directories(${targetname} PUBLIC ${EGE_BUILD_DIR}/glew/lib)
+		target_link_libraries(${targetname} PUBLIC libglew32.a opengl32)
+		target_compile_definitions(${targetname} PUBLIC -DGLEW_STATIC)
+
+        target_link_options(${targetname} PUBLIC -static-libgcc -static-libstdc++)
+    endif()
 	
 	# add SFML
 	if(SFML_FOUND)
@@ -53,6 +73,7 @@ macro(ege_executable targetname sources modules)
 		target_compile_options(${targetname} PUBLIC -fsanitize=undefined,address)
 		target_link_options(${targetname} PUBLIC -fsanitize=undefined,address)
 	endif()
+
 	install(TARGETS "${targetname}" RUNTIME DESTINATION ".")
 endmacro()
 
