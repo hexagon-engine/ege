@@ -57,6 +57,12 @@ void RenderingState::applyOrtho(double left, double right, double bottom, double
     }});
 }
 
+void RenderingState::applyClip(EGE::RectD rect, double near, double far)
+{
+    applyOrtho(rect.position.x, rect.position.x + rect.size.x, rect.position.y + rect.size.y, rect.position.y, near, far);
+    setViewport({rect.position, rect.size});
+}
+
 void RenderingState::applyTranslation(EGE::Vec3d v)
 {
     applyProjectionMatrix(EGE::DoubleMatrix4x4{{

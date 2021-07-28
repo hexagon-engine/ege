@@ -47,11 +47,17 @@ public:
     void applyProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix *= matrix; }
     void applyModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix *= matrix; }
 
-    // Multiply projection matrix by ortho matrix.
+    // Projection matrix
     void applyOrtho(double left, double right, double bottom, double top, double near, double far);
 
-    // Multiply modelview matrix by translation matrix.
+    // Setup viewport to match rect (in pixels) and scaling to be as in window.
+    // See EGE::Widget::getViewport()
+    void applyClip(EGE::RectD rect, double near = 0, double far = 1);
+
+    // Modelview matrix
     void applyTranslation(EGE::Vec3d);
+
+    // General
 
     void flush() const;
 
