@@ -46,27 +46,42 @@ namespace EGE
 namespace Math
 {
 
+// Constants
+template<class T = double>
+inline constexpr T pi() { return 3.141592653589793; }
+
+template<class T = double>
+inline constexpr T e() { return 2.718281828459045; }
+
+template<class T = double>
+inline constexpr T deg_to_rad() { return 180.0 / pi<T>(); } // 57.2957795...
+
 // Angle
 typedef double DegreeAngle;
 typedef double RadianAngle;
 typedef DegreeAngle Angle;
 
 // Radian <-> Degrees
-DegreeAngle rad2deg(RadianAngle angle);
-RadianAngle deg2rad(DegreeAngle angle);
-
-// Constants
-constexpr double pi()
+template<class T>
+T rad2deg(T angle)
 {
-    return 3.141592653589793;
+    return angle * deg_to_rad<T>();
 }
 
-constexpr double e()
+template<class T>
+T deg2rad(T angle)
 {
-    return 2.718281828459045;
+    return angle / deg_to_rad<T>();
 }
 
-double map(double input, double iMin, double iMax, double oMin, double oMax);
+template<class T>
+T map(T input, T iMin, T iMax, T oMin, T oMax)
+{
+    if(iMin > iMax) std::swap(iMin, iMax);
+    if(oMin > oMax) std::swap(oMin, oMax);
+    ASSERT(iMin - iMax != 0);
+    return (input-iMin) / (iMax-iMin) * (oMax-oMin) + oMin;
+}
 
 } // Math
 
