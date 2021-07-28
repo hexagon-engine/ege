@@ -17,6 +17,7 @@ set(SOURCES
 	"JSONConverter.h"
 	"Math.cpp"
 	"Math.h"
+	"Matrix.h"
 	"Object.cpp"
 	"Object.h"
 	"ObjectArray.cpp"

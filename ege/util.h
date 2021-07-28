@@ -45,6 +45,7 @@
 #include <ege/util/GlobalConfig.h>
 #include <ege/util/JSONConverter.h>
 #include <ege/util/Math.h>
+#include <ege/util/Matrix.h>
 #include <ege/util/Object.h>
 #include <ege/util/ObjectArray.h>
 #include <ege/util/ObjectBoolean.h>
