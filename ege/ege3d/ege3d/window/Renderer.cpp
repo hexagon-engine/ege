@@ -25,19 +25,56 @@
 #include "Renderer.h"
 
 #include <GL/gl.h>
+#include <ege/util/Vector.h>
+#include <ege/util/VectorOperations.h>
+#include <ege/util/Types.h>
 
 namespace EGE3d
 {
 
+void Renderer::renderVertexesRaw(Vertex const* array, size_t count, GLenum mode, size_t first)
+{
+    ASSERT(first < count);
+    glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), array);
+    glDrawArrays(mode, first, count);
+}
+
+void Renderer::renderRectangle(EGE::RectF rect, EGE::ColorRGBA const& fillColor)
+{
+    // TODO: Implement proper texturing
+    Vertex vertexes[4] = {
+        {{0.f, 0.f}, fillColor, {}, rect.left_top_point()},
+        {{0.f, 1.f}, fillColor, {}, rect.right_top_point()},
+        {{1.f, 0.f}, fillColor, {}, rect.left_bottom_point()},
+        {{1.f, 1.f}, fillColor, {}, rect.right_bottom_point()},
+    };
+    renderVertexes(vertexes, GL_TRIANGLE_STRIP);
+}
+
+void Renderer::renderCircle(EGE::Vec2f center, float radius, EGE::ColorRGBA const& fillColor, size_t points)
+{
+    EGE::Vector<Vertex> vertexes;
+    vertexes.resize(points + 2);
+
+    // TODO: Implement proper texturing
+    vertexes[0] = {{}, fillColor, {}, center};
+    for(size_t s = 1; s <= points + 1; s++)
+    {
+        float angle = 360 * s / points;
+        EGE::Vec2f position = center + EGE::VectorOperations::fromPolar<float>({angle, radius});
+        vertexes[s] = {position / radius, fillColor, {}, position};
+    }
+
+    renderVertexes(vertexes, GL_TRIANGLE_FAN);
+}
+
 void Renderer::glViewport(EGE::RectI rect)
 {
-    ensureIsCurrent();
     ::glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
 }
 
 void Renderer::glMatrixMode(MatrixMode mode)
 {
-    ensureIsCurrent();
     GLenum matrixMode = 0;
     switch(mode)
     {
@@ -50,13 +87,11 @@ void Renderer::glMatrixMode(MatrixMode mode)
 
 void Renderer::glLoadIdentity()
 {
-    ensureIsCurrent();
     ::glLoadIdentity();
 }
 
 bool Renderer::glIsError() const
 {
-    ensureIsCurrent();
     auto error = glGetError();
     return error != GL_NO_ERROR;
 }

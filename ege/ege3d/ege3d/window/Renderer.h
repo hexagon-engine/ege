@@ -25,20 +25,52 @@
 #pragma once
 
 #include <ege3d/window/Window.h>
+#include <ege/util/Color.h>
 #include <ege/util/Rect.h>
 
 #include "RenderingState.h"
 
+#include <GL/gl.h>
+
 namespace EGE3d
 {
+
+// TODO: Move it to another file
+struct Vertex
+{
+    // Keep it unchanged!
+    // GL_T2F_C4F_N3F_V3F
+    EGE::Vec2f texCoords;
+    EGE::ColorRGBA color;
+    EGE::Vec3f normal;
+    EGE::Vec3f position;
+};
 
 class Renderer
 {
 public:
     // TODO: Make some rendertarget stuff
-    explicit Renderer(RenderingState const& state) : m_state(state) { m_state.flush(); }
+    explicit Renderer(RenderingState const& state) : m_state(state) { ensureIsCurrent(); m_state.flush(); }
 
     Window& target() const { return m_state.target(); }
+
+    void renderVertexesRaw(Vertex const* array, size_t count, GLenum mode, size_t first = 0);
+
+    template<size_t S>
+    void renderVertexes(Vertex const (&array)[S], GLenum mode, size_t first = 0)
+    {
+        renderVertexesRaw(array, S, mode, first);
+    }
+
+    // Container must have data() and size() methods
+    template<class Container>
+    void renderVertexes(Container const& container, GLenum mode)
+    {
+        renderVertexesRaw(container.data(), container.size(), mode);
+    }
+
+    void renderRectangle(EGE::RectF rect, EGE::ColorRGBA const& fillColor);
+    void renderCircle(EGE::Vec2f center, float radius, EGE::ColorRGBA const& fillColor, size_t points = 30);
 
     // OpenGL Wrappers
     void glViewport(EGE::RectI rect);
