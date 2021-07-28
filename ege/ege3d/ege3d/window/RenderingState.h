@@ -1,7 +1,7 @@
 /*
     EGE3d - 3D rendering engine for Hexagon
 
-    Copyright (c) 2020 Hexagon Engine
+    Copyright (c) 2021 Hexagon Engine
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -24,43 +24,44 @@
 
 #pragma once
 
-#include <ege3d/window/Window.h>
+#include <ege/util/Types.h>
+#include <ege/util/Matrix.h>
 #include <ege/util/Rect.h>
-
-#include "RenderingState.h"
 
 namespace EGE3d
 {
 
-class Renderer
+class Window;
+
+class RenderingState
 {
 public:
-    // TODO: Make some rendertarget stuff
-    explicit Renderer(RenderingState const& state) : m_state(state) { m_state.flush(); }
+    // TODO: do some rendertarget stuff
+    RenderingState(Window& target)
+    : m_target(target) {}
 
-    Window& target() const { return m_state.target(); }
+    void setViewport(EGE::RectI const& viewport) { m_viewport = viewport; }
+    void setProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix = matrix; }
+    void setModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix = matrix; }
 
-    // OpenGL Wrappers
-    // TODO: Name them so that user knows they are low-level wrappers
-    void setViewport(EGE::RectI rect);
+    void applyProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix *= matrix; }
+    void applyModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix *= matrix; }
 
-    enum class MatrixMode
-    {
-        Projection,
-        Modelview
-    };
+    // Multiply projection matrix by ortho matrix.
+    void applyOrtho(double left, double right, double bottom, double top, double near, double far);
 
-    void setMatrixMode(MatrixMode mode);
-    void setMatrixToIdentity();
+    // Multiply modelview matrix by translation matrix.
+    void applyTranslation(EGE::Vec3d);
 
-    bool isGLError() const;
+    void flush() const;
 
-    RenderingState& state() { return m_state; }
+    Window& target() const { return m_target; }
 
 private:
-    void ensureIsCurrent() const;
-
-    RenderingState m_state;
+    EGE::RectI m_viewport;
+    EGE::DoubleMatrix4x4 m_projectionMatrix = EGE::DoubleMatrix4x4::identity();
+    EGE::DoubleMatrix4x4 m_modelviewMatrix = EGE::DoubleMatrix4x4::identity();
+    Window& m_target;
 };
 
 }

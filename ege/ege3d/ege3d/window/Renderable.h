@@ -1,7 +1,7 @@
 /*
     EGE3d - 3D rendering engine for Hexagon
 
-    Copyright (c) 2020 Hexagon Engine
+    Copyright (c) 2020-2021 Hexagon Engine
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -22,49 +22,31 @@
     SOFTWARE.
 */
 
-#include "Renderer.h"
+#pragma once
 
-#include <GL/gl.h>
+#include "Renderer.h"
 
 namespace EGE3d
 {
 
-void Renderer::setViewport(EGE::RectI rect)
+class Renderable
 {
-    ensureIsCurrent();
-    glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
-}
+public:
+    virtual ~Renderable() = default;
 
-void Renderer::setMatrixMode(MatrixMode mode)
-{
-    ensureIsCurrent();
-    GLenum matrixMode = 0;
-    switch(mode)
-    {
-    case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
-    case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
-    default: CRASH();
-    }
-    glMatrixMode(matrixMode);
-}
+    void fullRender(RenderingState const& state);
+    void updateGeometryIfNeeded();
 
-void Renderer::setMatrixToIdentity()
-{
-    ensureIsCurrent();
-    glLoadIdentity();
-}
+protected:
+    virtual void render(RenderingState const&) = 0;
 
-bool Renderer::isGLError() const
-{
-    ensureIsCurrent();
-    auto error = glGetError();
-    return error != GL_NO_ERROR;
-}
+    // This can be overridden to notify parents about geometry update.
+    virtual void setGeometryNeedUpdate() { m_geometryNeedsUpdate = true; }
 
-void Renderer::ensureIsCurrent() const
-{
-    if(!target().isCurrent())
-        target().setCurrent();
-}
+private:
+    virtual void updateGeometry() {}
+
+    bool m_geometryNeedsUpdate = true;
+};
 
 }

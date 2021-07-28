@@ -1,7 +1,7 @@
 /*
     EGE3d - 3D rendering engine for Hexagon
 
-    Copyright (c) 2020 Hexagon Engine
+    Copyright (c) 2020-2021 Hexagon Engine
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -22,49 +22,24 @@
     SOFTWARE.
 */
 
-#include "Renderer.h"
-
-#include <GL/gl.h>
+#include "Renderable.h"
 
 namespace EGE3d
 {
 
-void Renderer::setViewport(EGE::RectI rect)
+void Renderable::fullRender(RenderingState const& state)
 {
-    ensureIsCurrent();
-    glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
+    updateGeometryIfNeeded();
+    render(state);
 }
 
-void Renderer::setMatrixMode(MatrixMode mode)
+void Renderable::updateGeometryIfNeeded()
 {
-    ensureIsCurrent();
-    GLenum matrixMode = 0;
-    switch(mode)
+    if(m_geometryNeedsUpdate)
     {
-    case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
-    case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
-    default: CRASH();
+        updateGeometry();
+        m_geometryNeedsUpdate = false;
     }
-    glMatrixMode(matrixMode);
-}
-
-void Renderer::setMatrixToIdentity()
-{
-    ensureIsCurrent();
-    glLoadIdentity();
-}
-
-bool Renderer::isGLError() const
-{
-    ensureIsCurrent();
-    auto error = glGetError();
-    return error != GL_NO_ERROR;
-}
-
-void Renderer::ensureIsCurrent() const
-{
-    if(!target().isCurrent())
-        target().setCurrent();
 }
 
 }

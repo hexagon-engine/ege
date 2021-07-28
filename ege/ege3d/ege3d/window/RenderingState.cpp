@@ -1,7 +1,7 @@
 /*
     EGE3d - 3D rendering engine for Hexagon
 
-    Copyright (c) 2020 Hexagon Engine
+    Copyright (c) 2021 Hexagon Engine
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -22,49 +22,49 @@
     SOFTWARE.
 */
 
-#include "Renderer.h"
+#include "RenderingState.h"
+
+#include "Window.h"
+
+#include <ege/debug/Logger.h>
 
 #include <GL/gl.h>
 
 namespace EGE3d
 {
 
-void Renderer::setViewport(EGE::RectI rect)
+void RenderingState::flush() const
 {
-    ensureIsCurrent();
-    glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
-}
-
-void Renderer::setMatrixMode(MatrixMode mode)
-{
-    ensureIsCurrent();
-    GLenum matrixMode = 0;
-    switch(mode)
-    {
-    case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
-    case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
-    default: CRASH();
-    }
-    glMatrixMode(matrixMode);
-}
-
-void Renderer::setMatrixToIdentity()
-{
-    ensureIsCurrent();
+    glViewport(m_viewport.position.x, m_target.getSize().y - m_viewport.position.y - m_viewport.size.y, m_viewport.size.x, m_viewport.size.y);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    glMultMatrixd(m_projectionMatrix.data());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMultMatrixd(m_modelviewMatrix.data());
 }
 
-bool Renderer::isGLError() const
+void RenderingState::applyOrtho(double left, double right, double bottom, double top, double near, double far)
 {
-    ensureIsCurrent();
-    auto error = glGetError();
-    return error != GL_NO_ERROR;
+    double tx = -(right+left)/(right-left);
+    double ty = -(top+bottom)/(top-bottom);
+    double tz = -(far+near)/(far-near);
+    applyProjectionMatrix(EGE::DoubleMatrix4x4{{
+        2/(right-left), 0.0, 0.0, tx,
+        0.0, 2/(top-bottom), 0.0, ty,
+        0.0, 0.0, -2/(far-near), tz,
+        0.0, 0.0, 0.0, 1.0
+    }});
 }
 
-void Renderer::ensureIsCurrent() const
+void RenderingState::applyTranslation(EGE::Vec3d v)
 {
-    if(!target().isCurrent())
-        target().setCurrent();
+    applyProjectionMatrix(EGE::DoubleMatrix4x4{{
+        1.0, 0.0, 0.0, v.x,
+        0.0, 1.0, 0.0, v.y,
+        0.0, 0.0, 1.0, v.z,
+        0.0, 0.0, 0.0, 1.0
+    }});
 }
 
 }
