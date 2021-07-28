@@ -66,7 +66,7 @@ public:
 
 private:
     friend class Internal::WindowImpl;
-    virtual void pushEvent(const SystemEvent& event);
+    virtual void pushEvent(SystemEvent const& event);
 
     EGE::UniquePtr<Internal::WindowImpl> m_impl;
     WindowHandle m_systemHandle = 0;

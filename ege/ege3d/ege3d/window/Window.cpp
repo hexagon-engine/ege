@@ -23,6 +23,7 @@
 */
 
 #include "Window.h"
+#include "ege3d/window/SystemEvent.h"
 
 #include <ege3d/window/WindowImpl.h>
 #include <iostream>
@@ -94,12 +95,16 @@ bool Window::isOpen() const
     return m_systemHandle != 0;
 }
 
-void Window::pushEvent(const SystemEvent& event)
+void Window::pushEvent(SystemEvent const& event)
 {
     std::cout << "event :)" << std::endl;
     m_pendingEvents.push_back(std::move(event));
 
-    // TODO: Handle resize event to update size
+    if(event.getEventType() == SystemEventType::EResize)
+    {
+        auto& resizeEvent = static_cast<ResizeEvent const&>(event);
+        m_size = resizeEvent.getSize();
+    }
 }
 
 bool Window::isCurrent() const

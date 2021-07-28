@@ -27,6 +27,7 @@
 #include <ege3d/window/Keyboard.h>
 #include <ege3d/window/Mouse.h>
 #include <ege/core/Event.h>
+#include <ege/util/Vector.h>
 #include <inttypes.h>
 
 namespace EGE3d
@@ -47,6 +48,7 @@ enum class SystemEventType
     EKeyPress,
     ETextEnter,
     EKeyRelease,
+    EResize,
 
     // keep last
     __Count
@@ -142,6 +144,19 @@ public:
 
 private:
     uint32_t m_codepoint;
+};
+
+// ResizeEvent
+class ResizeEvent : public SystemEvent
+{
+public:
+    ResizeEvent(SystemEventType type, Window& window, EGE::Vec2u size)
+    : SystemEvent(type, window), m_size(size) {}
+
+    EGE::Vec2u getSize() const { return m_size; }
+
+private:
+    EGE::Vec2u m_size;
 };
 
 }

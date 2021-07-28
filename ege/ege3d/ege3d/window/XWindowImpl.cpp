@@ -470,6 +470,11 @@ void XWindowImpl::handleEvent(XEvent& event)
             //std::cout << "onKeyRelease k=" << (int)egeKey << " a=" << alt << " c=" << control << " s=" << shift << " u=" << super << std::endl;
             pushEvent(KeyEvent(SystemEventType::EKeyRelease, *m_owner, egeKey, alt, shift, control, super));
         } break;
+    case ConfigureNotify:
+        {
+            // TODO: Fix flickering somehow
+            pushEvent(ResizeEvent(SystemEventType::EResize, *m_owner, {static_cast<unsigned>(event.xconfigure.width), static_cast<unsigned>(event.xconfigure.height)}));
+        } break;
     default:
         std::cout << "Invalid event type " << event.type << std::endl;
         pushEvent(SystemEvent(SystemEventType::EInvalid, *m_owner));
