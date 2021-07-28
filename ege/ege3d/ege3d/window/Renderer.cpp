@@ -29,32 +29,32 @@
 namespace EGE3d
 {
 
-void Renderer::setViewport(EGE::RectI rect)
+void Renderer::glViewport(EGE::RectI rect)
 {
     ensureIsCurrent();
-    glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
+    ::glViewport(rect.position.x, target().getSize().y - rect.position.y - rect.size.y, rect.size.x, rect.size.y);
 }
 
-void Renderer::setMatrixMode(MatrixMode mode)
+void Renderer::glMatrixMode(MatrixMode mode)
 {
     ensureIsCurrent();
     GLenum matrixMode = 0;
     switch(mode)
     {
-    case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
-    case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
-    default: CRASH();
+        case MatrixMode::Modelview: matrixMode = GL_MODELVIEW; break;
+        case MatrixMode::Projection: matrixMode = GL_PROJECTION; break;
+        default: CRASH();
     }
-    glMatrixMode(matrixMode);
+    ::glMatrixMode(matrixMode);
 }
 
-void Renderer::setMatrixToIdentity()
+void Renderer::glLoadIdentity()
 {
     ensureIsCurrent();
-    glLoadIdentity();
+    ::glLoadIdentity();
 }
 
-bool Renderer::isGLError() const
+bool Renderer::glIsError() const
 {
     ensureIsCurrent();
     auto error = glGetError();

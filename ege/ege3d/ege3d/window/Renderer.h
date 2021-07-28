@@ -41,8 +41,7 @@ public:
     Window& target() const { return m_state.target(); }
 
     // OpenGL Wrappers
-    // TODO: Name them so that user knows they are low-level wrappers
-    void setViewport(EGE::RectI rect);
+    void glViewport(EGE::RectI rect);
 
     enum class MatrixMode
     {
@@ -50,10 +49,10 @@ public:
         Modelview
     };
 
-    void setMatrixMode(MatrixMode mode);
-    void setMatrixToIdentity();
+    void glMatrixMode(MatrixMode mode);
+    void glLoadIdentity();
 
-    bool isGLError() const;
+    bool glIsError() const;
 
     RenderingState& state() { return m_state; }
 
