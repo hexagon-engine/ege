@@ -41,12 +41,11 @@ void Renderer::renderVertexesRaw(Vertex const* array, size_t count, GLenum mode,
 
 void Renderer::renderRectangle(EGE::RectF rect, EGE::ColorRGBA const& fillColor)
 {
-    // TODO: Implement proper texturing
     Vertex vertexes[4] = {
-        {{0.f, 0.f}, fillColor, {}, rect.left_top_point()},
-        {{0.f, 1.f}, fillColor, {}, rect.right_top_point()},
-        {{1.f, 0.f}, fillColor, {}, rect.left_bottom_point()},
-        {{1.f, 1.f}, fillColor, {}, rect.right_bottom_point()},
+        {{0.f, 0.f}, fillColor, {}, rect.leftTopPoint()},
+        {{0.f, 1.f}, fillColor, {}, rect.rightTopPoint()},
+        {{1.f, 0.f}, fillColor, {}, rect.leftBottomPoint()},
+        {{1.f, 1.f}, fillColor, {}, rect.rightBottomPoint()},
     };
     renderVertexes(vertexes, GL_TRIANGLE_STRIP);
 }

@@ -85,10 +85,10 @@ public:
         return max_x < min_x && max_y < min_y ? Rect<T>({max_x, max_y}, {min_x - max_x, min_y - max_y}) : Rect<T>();
     }
 
-    Vector2<T> left_top_point() const { return position; }
-    Vector2<T> left_bottom_point() const { return {position.x, position.y + size.y}; }
-    Vector2<T> right_top_point() const { return {position.x + size.x, position.y}; }
-    Vector2<T> right_bottom_point() const { return position + size; }
+    Vector2<T> leftTopPoint() const { return position; }
+    Vector2<T> leftBottomPoint() const { return {position.x, position.y + size.y}; }
+    Vector2<T> rightTopPoint() const { return {position.x + size.x, position.y}; }
+    Vector2<T> rightBottomPoint() const { return position + size; }
 
     Rect<T> centeredOn(Vec2d vec) const
         { return Rect<T>(*this).centerOn(vec); }
