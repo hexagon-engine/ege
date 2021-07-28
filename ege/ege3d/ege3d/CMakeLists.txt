@@ -1,5 +1,7 @@
 set(SOURCES
     # Window
+    "window/GLError.cpp"
+    "window/GLError.h"
     "window/Keyboard.cpp"
     "window/Keyboard.h"
     "window/Mouse.cpp"
