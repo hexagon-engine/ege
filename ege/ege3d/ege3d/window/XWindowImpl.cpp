@@ -24,14 +24,18 @@
 
 #include "XWindowImpl.h"
 
+#include <ege3d/window/GLError.h>
 #include <ege3d/window/Keyboard.h>
 #include <ege3d/window/Mouse.h>
 #include <ege3d/window/Window.h>
+
+#include <ege/debug/Logger.h>
 
 #include <GL/glx.h>
 #include <iomanip>
 #include <iostream>
 #include <unistd.h>
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
 
@@ -183,19 +187,26 @@ std::unique_ptr<WindowImpl> WindowImpl::make(Window* window)
 // XWindowImpl
 WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, WindowSettings settings)
 {
+    XSetErrorHandler([](Display* display, XErrorEvent* event)->int{
+        char buf[256];
+        XGetErrorText(display, event->error_code, buf, 256);
+        ege_log.error() << "XWindowImpl: Error handler called: " << buf;
+        return 0;
+    });
+
     m_settings = settings;
 
     char* displayName = getenv("DISPLAY");
     if(!displayName)
     {
-        std::cerr << "DISPLAY environment variable not set!" << std::endl;
+        ege_log.critical() << "XWindowImpl: DISPLAY environment variable not set";
         return 0;
     }
 
     m_display = XOpenDisplay(displayName);
     if(!m_display)
     {
-        std::cerr << "Failed to open display!" << std::endl;
+        ege_log.critical() << "XWindowImpl: Failed to open display";
         return 0;
     }
 
@@ -204,14 +215,13 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
     m_screen = DefaultScreen(m_display);
 
     // setup visual
-    XVisualInfo* visualInfo;
-    Visual* visual;
+    Visual* visual = nullptr;
     int depth;
     switch(settings.getRenderer())
     {
     case WindowSettings::Renderer::DirectX:
         {
-            std::cout << "DirectX not supported!" << std::endl;
+            ege_log.critical() << "XWindowImpl: DirectX not supported";
             return 0;
         } break;
     case WindowSettings::Renderer::NoRenderer:
@@ -221,23 +231,72 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
         } break;
     case WindowSettings::Renderer::OpenGL:
         {
-            // get best visual
-            int attribs[] = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
-            visualInfo = glXChooseVisual(m_display, m_screen, attribs);
-            if(!visualInfo)
+            // TODO: Make check for glXCreateContextAttribsARB support
+            // get best fbconfig
+            int fbconfigCount = 0;
+
+            // TODO: make it configurable through WindowSettings
+            int attribs[] = {
+                GLX_DOUBLEBUFFER, True,
+                GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                GLX_X_RENDERABLE, True,
+                GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+                GLX_RED_SIZE, 8,
+                GLX_GREEN_SIZE, 8,
+                GLX_BLUE_SIZE, 8,
+                GLX_ALPHA_SIZE, 8,
+                GLX_DEPTH_SIZE, 24,
+                None
+            };
+            auto fbconfigs = glXChooseFBConfig(m_display, m_screen, attribs, &fbconfigCount);
+            if(!fbconfigs || fbconfigCount == 0)
             {
-                std::cout << "Failed to find visual with specified attributes!" << std::endl;
+                ege_log.critical() << "XWindowImpl: Failed to find fbconfig with specified attributes";
                 return 0;
             }
+            ege_log.info() << "Found " << fbconfigCount << " fbconfigs";
+            GLXFBConfig* fbconfig = nullptr;
+            int best_samples = 0;
+            for(int i = 0; i < fbconfigCount; i++)
+            {
+                int sample_buffers = 0, samples = 0;
+                glXGetFBConfigAttrib(m_display, fbconfigs[i], GLX_SAMPLE_BUFFERS, &sample_buffers);
+                glXGetFBConfigAttrib(m_display, fbconfigs[i], GLX_SAMPLES       , &samples );
+                ege_log.info() << "  FBConfig " << i << " sample_buffers=" << sample_buffers << ", samples=" << samples;
+                if(sample_buffers > 0 && samples > best_samples)
+                {
+                    best_samples = samples;
+                    fbconfig = &fbconfigs[i];
+                    ege_log.info() << " selecting fbconfig: " << i;
+                }
+            }
+            ASSERT(fbconfig);
+            auto visualInfo = glXGetVisualFromFBConfig(m_display, *fbconfig);
+            ASSERT(visualInfo);
             visual = visualInfo->visual;
             depth = visualInfo->depth;
+            ASSERT(visual);
+            XFree(visualInfo);
 
             // create GLX context
-            m_glxContext = glXCreateContext(m_display, visualInfo, None, true);
-            XFree(visualInfo);
+            static PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
+            
+            int contextAttribs[] = {
+                GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+                GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+                /*
+                GLX_CONTEXT_FLAGS_ARB, GLX_CONTEXT_DEBUG_BIT_ARB,
+                */
+                GLX_CONTEXT_PROFILE_MASK_ARB, GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+                None,
+            };
+    
+            m_glxContext = glXCreateContextAttribsARB(m_display, *fbconfig, 0, true, contextAttribs);
+            XFree(fbconfigs);
             if(!m_glxContext)
             {
-                std::cout << "Failed to create context!" << std::endl;
+                ege_log.critical() << "XWindowImpl: Failed to create context";
                 return 0;
             }
         } break;
@@ -275,7 +334,7 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
 
     if(!m_window)
     {
-        std::cout << "Failed to create window!" << std::endl;
+        ege_log.critical() << "XWindowImpl: Failed to create window!";
         return 0;
     }
 
@@ -293,13 +352,12 @@ WindowHandle XWindowImpl::create(size_t sx, size_t sy, std::string title, Window
     Atom wmDelete = getOrCreateAtom("WM_DELETE_WINDOW");
     XSetWMProtocols(m_display, m_window, &wmDelete, 1);
     XFlush(m_display);
-
     return m_window;
 }
 
 void XWindowImpl::close()
 {
-    std::cout << "TODO: XWindowImpl::close()" << std::endl;
+    ege_log.critical() << "XWindowImpl: TODO: XWindowImpl::close()";
 
     if(m_settings.getRenderer() == WindowSettings::Renderer::OpenGL)
     {
@@ -484,6 +542,7 @@ void XWindowImpl::handleEvent(XEvent& event)
 void XWindowImpl::setCurrent()
 {
     // if OpenGL, set GLX context to window :)
+    ege_log.info() << "setCurrent()";
     if(m_settings.getRenderer() == WindowSettings::Renderer::OpenGL)
     {
         glXMakeCurrent(m_display, m_window, m_glxContext);
