@@ -27,6 +27,7 @@
 #include <ege/util/Types.h>
 #include <ege/util/Matrix.h>
 #include <ege/util/Rect.h>
+#include <ege3d/window/Shader.h>
 
 namespace EGE3d
 {
@@ -43,6 +44,7 @@ public:
     void setViewport(EGE::RectI const& viewport) { m_viewport = viewport; }
     void setProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix = matrix; }
     void setModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix = matrix; }
+    void setShader(Shader* shader) { m_shader = shader; }
 
     void applyProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix *= matrix; }
     void applyModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix *= matrix; }
@@ -67,6 +69,7 @@ private:
     EGE::RectI m_viewport;
     EGE::DoubleMatrix4x4 m_projectionMatrix = EGE::DoubleMatrix4x4::identity();
     EGE::DoubleMatrix4x4 m_modelviewMatrix = EGE::DoubleMatrix4x4::identity();
+    Shader* m_shader;
     Window& m_target;
 };
 

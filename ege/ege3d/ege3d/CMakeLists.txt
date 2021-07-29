@@ -15,6 +15,8 @@ set(SOURCES
     "window/RenderingState.cpp"
     "window/RenderingState.h"
     "window/WindowSettings.h"
+    "window/Shader.cpp"
+    "window/Shader.h"
     "window/SystemEvent.cpp"
     "window/SystemEvent.h"
     "window/Window.cpp"

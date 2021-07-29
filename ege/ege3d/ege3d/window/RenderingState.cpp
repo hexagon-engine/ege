@@ -42,6 +42,7 @@ void RenderingState::flush() const
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMultMatrixd(m_modelviewMatrix.data());
+    Shader::bind(m_shader);
 }
 
 void RenderingState::applyOrtho(double left, double right, double bottom, double top, double near, double far)
