@@ -31,4 +31,4 @@ void printGLError(char const* call);
 
 }
 
-#define EGE3D_GLCHECK(call) do { call; EGE3d::printGLError(#call); } while(0);
+#define EGE3D_GLCHECK(call) do { call; EGE3d::printGLError(#call); } while(0)

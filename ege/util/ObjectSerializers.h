@@ -68,10 +68,12 @@ SharedPtr<Object> object(LongDouble t);
 SharedPtr<Object> object(Int64 t);
 SharedPtr<Object> object(Int32 t);
 SharedPtr<Object> object(Int16 t);
+SharedPtr<Object> object(Int8 t);
 
 SharedPtr<Object> object(Uint64 t);
 SharedPtr<Object> object(Uint32 t);
 SharedPtr<Object> object(Uint16 t);
+SharedPtr<Object> object(Uint8 t);
 
 SharedPtr<Object> object(String t);
 

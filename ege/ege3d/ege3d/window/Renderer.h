@@ -24,11 +24,11 @@
 
 #pragma once
 
+#include <ege3d/window/RenderingState.h>
+#include <ege3d/window/Texture.h>
 #include <ege3d/window/Window.h>
 #include <ege/util/Color.h>
 #include <ege/util/Rect.h>
-
-#include "RenderingState.h"
 
 #include <GL/gl.h>
 
@@ -38,8 +38,7 @@ namespace EGE3d
 // TODO: Move it to another file
 struct Vertex
 {
-    // Keep it unchanged!
-    // GL_T2F_C4F_N3F_V3F
+    // Remember to update renderVertexesRaw when this changes!
     EGE::Vec2f texCoords;
     EGE::ColorRGBA color;
     EGE::Vec3f normal;
@@ -71,6 +70,9 @@ public:
 
     void renderRectangle(EGE::RectF rect, EGE::ColorRGBA const& fillColor);
     void renderCircle(EGE::Vec2f center, float radius, EGE::ColorRGBA const& fillColor, size_t points = 30);
+
+    // textureRect is in pixels
+    void renderTexturedRectangle(EGE::RectF rect, Texture const& texture, EGE::RectF textureRect = {});
 
     // OpenGL Wrappers
     void glViewport(EGE::RectI rect);

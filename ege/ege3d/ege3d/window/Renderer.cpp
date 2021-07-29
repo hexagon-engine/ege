@@ -23,11 +23,17 @@
 */
 
 #include "Renderer.h"
+#include "GLError.h"
 
-#include <GL/gl.h>
+#include <ege/debug/Logger.h>
+#include <ege/util/Color.h>
 #include <ege/util/Vector.h>
 #include <ege/util/VectorOperations.h>
 #include <ege/util/Types.h>
+
+#include <GL/gl.h>
+
+#define RENDERER_DEBUG 0
 
 namespace EGE3d
 {
@@ -35,8 +41,20 @@ namespace EGE3d
 void Renderer::renderVertexesRaw(Vertex const* array, size_t count, GLenum mode, size_t first)
 {
     ASSERT(first < count);
-    glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), array);
-    glDrawArrays(mode, first, count);
+    static bool enabled = false;
+    if(!enabled)
+    {
+        enabled = true;
+        EGE3D_GLCHECK(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+        EGE3D_GLCHECK(glEnableClientState(GL_COLOR_ARRAY));
+        EGE3D_GLCHECK(glEnableClientState(GL_NORMAL_ARRAY));
+        EGE3D_GLCHECK(glEnableClientState(GL_VERTEX_ARRAY));
+    }
+    EGE3D_GLCHECK(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), &array[0].texCoords));
+    EGE3D_GLCHECK(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), &array[0].color));
+    EGE3D_GLCHECK(glNormalPointer(GL_FLOAT, sizeof(Vertex), &array[0].normal));
+    EGE3D_GLCHECK(glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &array[0].position));
+    EGE3D_GLCHECK(glDrawArrays(mode, first, count));
 }
 
 void Renderer::renderRectangle(EGE::RectF rect, EGE::ColorRGBA const& fillColor)
@@ -65,6 +83,20 @@ void Renderer::renderCircle(EGE::Vec2f center, float radius, EGE::ColorRGBA cons
     }
 
     renderVertexes(vertexes, GL_TRIANGLE_FAN);
+}
+
+void Renderer::renderTexturedRectangle(EGE::RectF rect, Texture const& texture, EGE::RectF textureRect)
+{
+    TextureBinder binder(texture);
+    if(textureRect == EGE::RectF())
+        textureRect = {texture.size()};
+    Vertex vertexes[4] = {
+        {textureRect.leftTopPoint() / rect.size.x, EGE::Colors::white, {}, rect.leftTopPoint()},
+        {textureRect.rightTopPoint() / rect.size.y, EGE::Colors::white, {}, rect.rightTopPoint()},
+        {textureRect.leftBottomPoint() / rect.size.x, EGE::Colors::white, {}, rect.leftBottomPoint()},
+        {textureRect.rightBottomPoint() / rect.size.y, EGE::Colors::white, {}, rect.rightBottomPoint()},
+    };
+    renderVertexes(vertexes, GL_TRIANGLE_STRIP);
 }
 
 void Renderer::glViewport(EGE::RectI rect)

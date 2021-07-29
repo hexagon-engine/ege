@@ -311,7 +311,7 @@ TESTCASE(serializers)
     EXPECT_EQUAL(test2->getObject("z").asFloat().value(), 789);
     EXPECT_EQUAL(EGE::Serializers::toVector3(test2), (EGE::Vec3d)vec2);
 
-    auto color1 = EGE::ColorRGBA(0.5, 0.5, 0.75, 0.25);
+    auto color1 = EGE::ColorRGBA::fromFloats(0.5, 0.5, 0.75, 0.25);
     auto test3 = EGE::Serializers::fromColorRGBA(color1);
     EXPECT_EQUAL(test3->getObject("r").asFloat().value(), 0.5);
     EXPECT_EQUAL(test3->getObject("g").asFloat().value(), 0.5);
@@ -449,7 +449,7 @@ TESTCASE(colors)
     EGE::ColorRGBA color2 = EGE::Colors::cyan;
     EXPECT(color2.r == 0 && color2.g == 1 && color2.b == 1 && color2.a == 1);
 
-    EGE::ColorRGBA color3(0.5, 0.5, 0.5, 0.75);
+    EGE::ColorRGBA color3 = EGE::ColorRGBA::fromFloats(0.5, 0.5, 0.5, 0.75);
     EXPECT(color3.r == 0.5 && color3.g == 0.5 && color3.b == 0.5 && color3.a == 0.75);
 
     EGE::ColorRGBA color4 = EGE::ColorRGBA::fromBytes(0, 255, 255, 255);

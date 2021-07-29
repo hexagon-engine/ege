@@ -37,6 +37,7 @@
 #pragma once
 
 #include "Types.h"
+#include <ege/main/Config.h>
 
 namespace EGE
 {
@@ -44,15 +45,13 @@ namespace EGE
 class ColorRGBA
 {
 public:
-    ColorRGBA(float _r, float _g, float _b, float _a = 1)
-    : r(_r), g(_g), b(_b), a(_a) {}
-
     ColorRGBA()
-    : ColorRGBA(0.f, 0.f, 0.f) {}
+    : ColorRGBA({}, {}, {}) {}
 
-    static ColorRGBA fromBytes(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255)
-        { return ColorRGBA(r / 256.0, g / 256.0, b / 256.0, a / 256.0); }
-
+    static ColorRGBA fromBytes(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255) { return ColorRGBA(r, g, b, a); }
+    static ColorRGBA fromFloats(float r, float g, float b, float a = 1) { return fromBytes(r * 255, g * 255, b * 255, a * 255); }
+    
+    // TODO: Move it out of line somehow
     static ColorRGBA fromHTML(String html, Uint8 alpha = 255);
 
     bool operator==(const ColorRGBA& other)
@@ -73,9 +72,13 @@ public:
     ColorRGBA operator/(double d)
         { return ColorRGBA(r*d, g*d, b*d, a*d); }
 
-    float r, g, b, a;
-};
+    Uint8 r, g, b, a;
 
+private:
+
+    ColorRGBA(Uint8 _r, Uint8 _g, Uint8 _b, Uint8 _a = 255)
+    : r(_r), g(_g), b(_b), a(_a) {}
+};
 // TODO: HSV, HSL, LCh, CMYK? ...
 
 namespace Colors
@@ -87,23 +90,23 @@ namespace Colors
 #define __ENUMERATE_COLORS \
     ENUMERATE_COLOR(transparent,   0,    0,    0,    0) \
     \
-    ENUMERATE_COLOR(gray,          0.75, 0.75, 0.75, 1) \
-    ENUMERATE_COLOR(red,           1,    0,    0,    1) \
-    ENUMERATE_COLOR(green,         0,    1,    0,    1) \
-    ENUMERATE_COLOR(blue,          0,    0,    1,    1) \
-    ENUMERATE_COLOR(cyan,          0,    1,    1,    1) \
-    ENUMERATE_COLOR(magenta,       1,    0,    1,    1) \
-    ENUMERATE_COLOR(yellow,        1,    1,    0,    1) \
-    ENUMERATE_COLOR(white,         1,    1,    1,    1) \
+    ENUMERATE_COLOR(gray,          192,  192,  192,  255) \
+    ENUMERATE_COLOR(red,           255,  0,    0,    255) \
+    ENUMERATE_COLOR(green,         0,    255,  0,    255) \
+    ENUMERATE_COLOR(blue,          0,    0,    255,  255) \
+    ENUMERATE_COLOR(cyan,          0,    255,  255,  255) \
+    ENUMERATE_COLOR(magenta,       255,  0,    255,  255) \
+    ENUMERATE_COLOR(yellow,        255,  255,  0,    255) \
+    ENUMERATE_COLOR(white,         255,  255,  255,  255) \
     \
-    ENUMERATE_COLOR(black,         0,    0,    0,    1) \
-    ENUMERATE_COLOR(darkRed,       0.5,  0,    0,    1) \
-    ENUMERATE_COLOR(darkGreen,     0,    0.5,  0,    1) \
-    ENUMERATE_COLOR(darkBlue,      0,    0,    0.5,  1) \
-    ENUMERATE_COLOR(darkCyan,      0,    0.5,  0.5,  1) \
-    ENUMERATE_COLOR(darkMagenta,   0.5,  0,    0.5,  1) \
-    ENUMERATE_COLOR(darkYellow,    0.5,  0.5,  0,    1) \
-    ENUMERATE_COLOR(darkGray,      0.5,  0.5,  0.5,  1) \
+    ENUMERATE_COLOR(black,         0,    0,    0,    255) \
+    ENUMERATE_COLOR(darkRed,       128,  0,    0,    255) \
+    ENUMERATE_COLOR(darkGreen,     0,    128,  0,    255) \
+    ENUMERATE_COLOR(darkBlue,      0,    0,    128,  255) \
+    ENUMERATE_COLOR(darkCyan,      0,    128,  128,  255) \
+    ENUMERATE_COLOR(darkMagenta,   128,  0,    128,  255) \
+    ENUMERATE_COLOR(darkYellow,    128,  128,  0,    255) \
+    ENUMERATE_COLOR(darkGray,      128,  128,  128,  255) \
 
 __ENUMERATE_COLORS
 

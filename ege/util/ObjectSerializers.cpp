@@ -42,17 +42,19 @@ namespace EGE
 namespace Serializers
 {
 
-SharedPtr<Object> object(float t)                { return make<ObjectFloat>(t); }
-SharedPtr<Object> object(double t)               { return make<ObjectFloat>(t); }
-SharedPtr<Object> object(long double t)          { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(float t)       { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(double t)      { return make<ObjectFloat>(t); }
+SharedPtr<Object> object(long double t) { return make<ObjectFloat>(t); }
 
-SharedPtr<Object> object(long long t)            { return make<ObjectInt>(t); }
-SharedPtr<Object> object(int t)                  { return make<ObjectInt>(t, ObjectInt::Type::Int); }
-SharedPtr<Object> object(short t)                { return make<ObjectInt>(t, ObjectInt::Type::Short); }
+SharedPtr<Object> object(Int64 t)  { return make<ObjectInt>(t); }
+SharedPtr<Object> object(Int32 t)  { return make<ObjectInt>(t, ObjectInt::Type::Int); }
+SharedPtr<Object> object(Int16 t)  { return make<ObjectInt>(t, ObjectInt::Type::Short); }
+SharedPtr<Object> object(Int8 t)   { return make<ObjectInt>(t, ObjectInt::Type::Byte); }
 
-SharedPtr<Object> object(unsigned long long t)   { return make<ObjectUnsignedInt>(t); }
-SharedPtr<Object> object(unsigned int t)         { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Int); }
-SharedPtr<Object> object(unsigned short t)       { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Short); }
+SharedPtr<Object> object(Uint64 t) { return make<ObjectUnsignedInt>(t); }
+SharedPtr<Object> object(Uint32 t) { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Int); }
+SharedPtr<Object> object(Uint16 t) { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Short); }
+SharedPtr<Object> object(Uint8 t)  { return make<ObjectUnsignedInt>(t, ObjectUnsignedInt::Type::Byte); }
 
 SharedPtr<Object> object(std::string t)          { return make<ObjectString>(t); }
 
@@ -101,7 +103,7 @@ ColorRGBA toColorRGBA(const ObjectValue& object, ColorRGBA fallback)
         auto g = map.value()->get("g").asFloat().valueOr(0); 
         auto b = map.value()->get("b").asFloat().valueOr(0);
         auto a = map.value()->get("a").asFloat().valueOr(1); 
-        return ColorRGBA(r, g, b, a);
+        return ColorRGBA::fromFloats(r, g, b, a);
     }
 
     auto string = Object::cast<EGE::ObjectString>(object);
