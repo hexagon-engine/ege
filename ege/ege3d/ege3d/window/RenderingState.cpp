@@ -25,6 +25,7 @@
 #include "RenderingState.h"
 
 #include "Window.h"
+#include "ege3d/window/Shader.h"
 
 #include <ege/debug/Logger.h>
 
@@ -42,7 +43,15 @@ void RenderingState::flush() const
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMultMatrixd(m_modelviewMatrix.data());
-    Shader::bind(m_shader);
+
+    if(!m_shader)
+    {
+        // Bind some basic shader.
+        static EGE::SharedPtr<EGE3d::Shader> shader = EGE3d::Shaders::createBasic();
+        Shader::bind(shader.get());
+    }
+    else
+        Shader::bind(m_shader);
 }
 
 void RenderingState::applyOrtho(double left, double right, double bottom, double top, double near, double far)
