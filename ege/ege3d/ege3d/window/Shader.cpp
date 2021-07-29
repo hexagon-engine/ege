@@ -58,6 +58,7 @@ ShaderObject::ShaderObject(EGE::String const& source, Type type)
         case Compute:           shaderType = GL_COMPUTE_SHADER; break;
         default: CRASH();
     }
+    ege_log.info() << "ShaderObject: Compiling shader type=" << shaderType;
     EGE3D_GLCHECK(m_id = glCreateShader(shaderType));
     char const* sources[] = {
         source.c_str()
@@ -96,6 +97,7 @@ EGE::SharedPtr<Shader> Shader::create(EGE::SharedPtrVector<ShaderObject> const& 
 
 Shader::Shader(EGE::SharedPtrVector<ShaderObject> const& shaderObjects)
 {
+    ege_log.info() << "Shader: Linking " << shaderObjects.size() << " shader objects";
     EGE3D_GLCHECK(m_id = glCreateProgram());
     for(auto& shaderObject : shaderObjects)
     {
