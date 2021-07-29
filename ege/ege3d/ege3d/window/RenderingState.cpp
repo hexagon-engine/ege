@@ -24,8 +24,9 @@
 
 #include "RenderingState.h"
 
+#include "GLError.h"
+#include "Shader.h"
 #include "Window.h"
-#include "ege3d/window/Shader.h"
 
 #include <ege/debug/Logger.h>
 
@@ -36,22 +37,29 @@ namespace EGE3d
 
 void RenderingState::flush() const
 {
-    glViewport(m_viewport.position.x, m_target.getSize().y - m_viewport.position.y - m_viewport.size.y, m_viewport.size.x, m_viewport.size.y);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMultMatrixd(m_projectionMatrix.data());
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glMultMatrixd(m_modelviewMatrix.data());
+    EGE3D_GLCHECK(glViewport(m_viewport.position.x, m_target.getSize().y - m_viewport.position.y - m_viewport.size.y, m_viewport.size.x, m_viewport.size.y));
+    EGE3D_GLCHECK(glMatrixMode(GL_PROJECTION));
+    EGE3D_GLCHECK(glLoadIdentity());
+    EGE3D_GLCHECK(glMultMatrixd(m_projectionMatrix.data()));
+    EGE3D_GLCHECK(glMatrixMode(GL_MODELVIEW));
+    EGE3D_GLCHECK(glLoadIdentity());
+    EGE3D_GLCHECK(glMultMatrixd(m_modelviewMatrix.data()));
 
-    if(!m_shader)
+    static EGE::SharedPtr<EGE3d::Shader> basicShader = EGE3d::Shaders::createBasic();
+    m_currentShader = m_shader ? m_shader : basicShader.get();
+    Shader::bind(m_currentShader);
+    flushTexture();
+}
+
+void RenderingState::flushTexture() const
+{
+    Shader::bind(m_currentShader);
+    m_currentShader->setUniform("ege3d_textureSet", !!m_texture);
+    if(m_texture)
     {
-        // Bind some basic shader.
-        static EGE::SharedPtr<EGE3d::Shader> shader = EGE3d::Shaders::createBasic();
-        Shader::bind(shader.get());
+        glBindTexture(GL_TEXTURE_2D, m_texture->id());
+        m_currentShader->setUniformToCurrentTexture("ege3d_texture");
     }
-    else
-        Shader::bind(m_shader);
 }
 
 void RenderingState::applyOrtho(double left, double right, double bottom, double top, double near, double far)

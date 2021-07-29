@@ -26,6 +26,8 @@
 
 #include <ege/util/Types.h>
 
+#include "Texture.h"
+
 namespace EGE3d
 {
 
@@ -71,6 +73,9 @@ public:
     unsigned id() const { return m_id; }
 
     void setUniform(EGE::String const& name, float value);
+    void setUniform(EGE::String const& name, bool value);
+    void setUniform(EGE::String const& name, Texture const& value);
+    void setUniformToCurrentTexture(EGE::String const& name);
 
 private:
     Shader(EGE::SharedPtrVector<ShaderObject> const& shaderObjects);

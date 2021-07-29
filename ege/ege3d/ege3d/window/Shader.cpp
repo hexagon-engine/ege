@@ -132,11 +132,57 @@ Shader::~Shader()
     EGE3D_GLCHECK(glDeleteProgram(m_id));
 }
 
+// TODO: Make this impl a bit less messy
 void Shader::setUniform(EGE::String const& name, float value)
 {
     unsigned location = glGetUniformLocation(m_id, name.c_str());
     EGE3D_GLCHECK();
-    EGE3D_GLCHECK(glProgramUniform1f(m_id, location, value));
+    if(EGE3d::hasGLExtension("ARB_separate_shader_objects"))
+        EGE3D_GLCHECK(glProgramUniform1f(m_id, location, value));
+    else
+    {
+        ShaderBinder binder(*this);
+        EGE3D_GLCHECK(glUniform1f(location, value));
+    }
+}
+
+void Shader::setUniform(EGE::String const& name, bool value)
+{
+    unsigned location = glGetUniformLocation(m_id, name.c_str());
+    EGE3D_GLCHECK();
+    if(EGE3d::hasGLExtension("ARB_separate_shader_objects"))
+        EGE3D_GLCHECK(glProgramUniform1i(m_id, location, value));
+    else
+    {
+        ShaderBinder binder(*this);
+        EGE3D_GLCHECK(glUniform1i(location, value));
+    }
+}
+
+void Shader::setUniform(EGE::String const& name, EGE3d::Texture const& texture)
+{
+    unsigned location = glGetUniformLocation(m_id, name.c_str());
+    EGE3D_GLCHECK();
+    if(EGE3d::hasGLExtension("ARB_separate_shader_objects"))
+        EGE3D_GLCHECK(glProgramUniform1i(m_id, location, texture.id()));
+    else
+    {
+        ShaderBinder binder(*this);
+        EGE3D_GLCHECK(glUniform1i(location, texture.id()));
+    }
+}
+
+void Shader::setUniformToCurrentTexture(EGE::String const& name)
+{
+    unsigned location = glGetUniformLocation(m_id, name.c_str());
+    EGE3D_GLCHECK();
+    if(EGE3d::hasGLExtension("ARB_separate_shader_objects"))
+        EGE3D_GLCHECK(glProgramUniform1i(m_id, location, 0));
+    else
+    {
+        ShaderBinder binder(*this);
+        EGE3D_GLCHECK(glUniform1i(location, 0));
+    }
 }
 
 void Shader::bind(Shader const* shader)
@@ -153,23 +199,31 @@ namespace Shaders
 
 EGE::SharedPtr<Shader> createBasic()
 {
+    // TODO: Bump version to 420 core when attrib locations will be implemented
+    // TODO: Use 420 core for layout(binding=#)
     static char const* VERTEX_SHADER = R"~~~(
-// TODO: Bump version to 330 core when attrib locations will be implemented
 #version 110
 varying vec4 vColor;
+varying vec2 vTexCoord;
+
 void main()
 {
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     vColor = gl_Color;
+    vTexCoord = gl_MultiTexCoord0.st;
 }
 )~~~";
     static char const* FRAGMENT_SHADER = R"~~~(
-// TODO: Bump version to 330 core when attrib locations will be implemented
 #version 110
 varying vec4 vColor;
+varying vec2 vTexCoord;
+
+uniform sampler2D ege3d_texture;
+uniform bool ege3d_textureSet;
+
 void main()
 {
-    gl_FragColor = vColor;
+    gl_FragColor = ege3d_textureSet ? texture2D(ege3d_texture, vTexCoord) : vColor;
 }
 )~~~";
     return Shader::create({

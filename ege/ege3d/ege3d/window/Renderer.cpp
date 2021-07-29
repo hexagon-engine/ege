@@ -87,15 +87,21 @@ void Renderer::renderCircle(EGE::Vec2f center, float radius, EGE::ColorRGBA cons
 
 void Renderer::renderTexturedRectangle(EGE::RectF rect, Texture const& texture, EGE::RectF textureRect)
 {
-    TextureBinder binder(texture);
+    // TODO: Find out a better way to apply texture
+    auto oldTexture = m_state.m_texture;
+    m_state.m_texture = &texture;
+    m_state.flushTexture();
+
     if(textureRect == EGE::RectF())
         textureRect = {texture.size()};
     Vertex vertexes[4] = {
-        {textureRect.leftTopPoint() / rect.size.x, EGE::Colors::white, {}, rect.leftTopPoint()},
-        {textureRect.rightTopPoint() / rect.size.y, EGE::Colors::white, {}, rect.rightTopPoint()},
-        {textureRect.leftBottomPoint() / rect.size.x, EGE::Colors::white, {}, rect.leftBottomPoint()},
-        {textureRect.rightBottomPoint() / rect.size.y, EGE::Colors::white, {}, rect.rightBottomPoint()},
+        {textureRect.leftTopPoint() / static_cast<float>(texture.size().x), EGE::Colors::white, {}, rect.leftTopPoint()},
+        {textureRect.rightTopPoint() / static_cast<float>(texture.size().y), EGE::Colors::white, {}, rect.rightTopPoint()},
+        {textureRect.leftBottomPoint() / static_cast<float>(texture.size().x), EGE::Colors::white, {}, rect.leftBottomPoint()},
+        {textureRect.rightBottomPoint() / static_cast<float>(texture.size().y), EGE::Colors::white, {}, rect.rightBottomPoint()},
     };
+
+    m_state.m_texture = oldTexture;
     renderVertexes(vertexes, GL_TRIANGLE_STRIP);
 }
 

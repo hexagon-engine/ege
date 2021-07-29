@@ -79,6 +79,10 @@ void Texture::update(EGE::Vec2u dstPos, EGE::Vec2u srcSize, EGE::ColorRGBA* arra
     if(dstPos == EGE::Vec2u())
     {
         ege_log.info() << "Texture::update dstPos=[0] srcSize=[" << srcSize.x << "," << srcSize.y << "] <- " << array << " id=" << m_id;
+        // Disable mipmaps for now
+        // FIXME: Code dupe
+        EGE3D_GLCHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+        EGE3D_GLCHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
         EGE3D_GLCHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, array));
         m_initialized = true;
         return;
@@ -87,6 +91,10 @@ void Texture::update(EGE::Vec2u dstPos, EGE::Vec2u srcSize, EGE::ColorRGBA* arra
     {
         if(!m_initialized)
         {
+            // Disable mipmaps for now
+            // FIXME: Code dupe
+            EGE3D_GLCHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+            EGE3D_GLCHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
             EGE3D_GLCHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
             m_initialized = true;
         }

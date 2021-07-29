@@ -19,6 +19,8 @@ set(SOURCES
     "window/Shader.h"
     "window/SystemEvent.cpp"
     "window/SystemEvent.h"
+    "window/Texture.cpp"
+    "window/Texture.h"
     "window/Window.cpp"
     "window/Window.h"
     "window/WindowImpl.cpp"

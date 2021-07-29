@@ -46,6 +46,9 @@ public:
     void setModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix = matrix; }
     void setShader(Shader* shader) { m_shader = shader; }
 
+    // Sets ege3d_texture to texture and ege3d_textureSet to true if texture exists, false otherwise
+    void setTexture(Texture* texture) { m_texture = texture; }
+
     void applyProjectionMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_projectionMatrix *= matrix; }
     void applyModelviewMatrix(EGE::DoubleMatrix4x4 const& matrix) { m_modelviewMatrix *= matrix; }
 
@@ -66,11 +69,18 @@ public:
     Window& target() const { return m_target; }
 
 private:
+    friend class Renderer;
+
+    void flushTexture() const;
+
     EGE::RectI m_viewport;
     EGE::DoubleMatrix4x4 m_projectionMatrix = EGE::DoubleMatrix4x4::identity();
     EGE::DoubleMatrix4x4 m_modelviewMatrix = EGE::DoubleMatrix4x4::identity();
-    Shader* m_shader;
+    Shader* m_shader = nullptr;
+    Texture const* m_texture = nullptr;
     Window& m_target;
+
+    mutable Shader* m_currentShader = nullptr;
 };
 
 }

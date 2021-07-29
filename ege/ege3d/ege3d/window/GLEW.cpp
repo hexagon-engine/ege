@@ -32,9 +32,14 @@ namespace EGE3d
 {
 
 static bool s_glewInitialized = false;
+static bool s_glewTriedToInitialize = false;
 
 static void initGLEWIfNeeded()
 {
+    if(s_glewTriedToInitialize)
+        return;
+
+    s_glewTriedToInitialize = true;
     GLenum rc = glewInit();
     if(rc != GLEW_OK)
     {
