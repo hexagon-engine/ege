@@ -32,12 +32,12 @@
 namespace EGE3d
 {
 
-void printGLError(char const* call)
+void printGLError(char const* call, char const* file, int line)
 {
     auto error = glGetError();
     if(error != GL_NO_ERROR)
     {
-        ege_log.error() << "OpenGL Error when calling '" << call << "': " << gluErrorString(error);
+        ege_log.error() << "OpenGL Error when calling '" << call << "' at " << file << ":" << line << ": " << gluErrorString(error);
     }
 }
 
