@@ -62,7 +62,7 @@ public:
     // TODO: int representations
     virtual String asString() const { return std::to_string(m_number); }
     virtual MaxInt asInt() const;
-    virtual MaxUint asUnsignedInt() { return std::max(0LL, asInt()); }
+    virtual MaxUint asUnsignedInt() const { return std::max(0LL, asInt()); }
     virtual Boolean asBool() const { return m_number; }
     virtual MaxFloat asFloat() const { return (MaxFloat)asInt(); }
 
