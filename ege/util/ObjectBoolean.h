@@ -54,7 +54,7 @@ public:
     // TODO: int representations
     virtual String asString() const { return m_value ? "true" : "false"; }
     virtual MaxInt asInt() const { return m_value; };
-    virtual MaxUint asUnsignedInt() { return m_value; }
+    virtual MaxUint asUnsignedInt() const { return m_value; }
     virtual Boolean asBool() const { return m_value; }
     virtual MaxFloat asFloat() const { return asInt(); }
 
