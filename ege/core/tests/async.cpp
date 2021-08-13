@@ -8,7 +8,7 @@
 
 int myWorker(EGE::AsyncTask&)
 {
-    for(int i = 0; i < 2; i++)
+    for(int i = 0; i < 3; i++)
     {
         // TODO: Add EGE::System::sleep()
         EGE::System::sleep(EGE::System::ExactTime::fromSeconds(i));
