@@ -39,6 +39,7 @@
 #include "Event.h"
 #include "EventResult.h"
 #include "EventCast.h"
+#include "ege/util/Vector.h"
 
 #include <ege/main/Config.h>
 #include <ege/util/PointerUtils.h>
@@ -47,32 +48,47 @@
 namespace EGE
 {
 
-class EventHandler
+class EventHandlerBase
 {
-public:
-    virtual Event::EventType type() const = 0;
-    virtual EventResult handle(Event& event) { (void)event; return EventResult::Failure; }
+    friend class EventLoop;
+
+    virtual EventResult doHandle(Event& event) = 0;
 };
 
-template<class Evt>
-class SimpleEventHandler : public EventHandler
+template<class T>
+class EventHandler : public EventHandlerBase
 {
 public:
-    typedef std::function<EventResult(Evt&)> Handler;
+    using EventType = T;
+
+    virtual Event::EventType type() const { return EventType::type(); }
+    virtual EventResult handle(EventType& event) = 0;
+
+private:
+    virtual EventResult doHandle(Event& event) override
+    {
+        // FIXME: Maybe it's possible to do it when registering handlers to EventLoop?
+        ASSERT(instanceof(&event, EventType));
+        return handle(static_cast<EventType&>(event));
+    }
+};
+
+template<class T>
+class SimpleEventHandler : public EventHandler<T>
+{
+public:
+    typedef std::function<EventResult(T&)> Handler;
 
     explicit SimpleEventHandler(Handler handler)
         : m_handler(handler)
-    {}
-
-    virtual Event::EventType type() const override { return Evt::type(); }
-
-    virtual EventResult handle(Event& event) override
     {
-        auto event2 = dynamic_cast<Evt*>(&event);
-        ASSERT(event2);
-        if(m_handler)
-            return m_handler(*event2);
-        CRASH_WITH_MESSAGE("You need to give a handler or override `handle' function");
+        ASSERT_WITH_MESSAGE(m_handler, "Missing handler in SimpleEventHandler");
+    }
+
+    virtual EventResult handle(T& event) override
+    {
+        ASSERT(m_handler);
+        return m_handler(event);
     }
 
 private:

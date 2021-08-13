@@ -43,13 +43,10 @@
 namespace EGE
 {
 
-class SystemEventHandler : public SimpleEventHandler<SystemEvent>
+class SystemEventHandler : public EventHandler<SystemEvent>
 {
 public:
-    SystemEventHandler()
-    : SimpleEventHandler({}) {}
-
-    virtual EventResult handle(Event& event) override;
+    virtual EventResult handle(SystemEvent& event) override;
 
     virtual void onClose() {}
     virtual void onResize(sf::Event::SizeEvent&) {}

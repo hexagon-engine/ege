@@ -83,7 +83,7 @@ public:
             return addHandler<SimpleEventHandler<Evt>>(handler);
         }
 
-        EventArray<EvtT>& remove(EventHandler& handler)
+        EventArray<EvtT>& remove(EventHandlerBase& handler)
         {
             ASSERT(!m_inEventHandler);
             for(size_t s = 0; s < m_handlers.size(); s++)
@@ -103,7 +103,7 @@ public:
             return addHandler(make<EvtHandler>(args...));
         }
 
-        EventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler)
+        EventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
         {
             m_handlers.push_back(handler);
             return *this;
@@ -122,7 +122,7 @@ public:
             m_inEventHandler = true;
             for(auto& pr: m_handlers)
             {
-                result &= (pr->handle(event) == EventResult::Success);
+                result &= (pr->doHandle(event) == EventResult::Success);
             }
             m_inEventHandler = false;
             return result ? EventResult::Success : EventResult::Failure;
@@ -131,7 +131,7 @@ public:
     private:
         friend class EventLoop;
 
-        SharedPtrVector<EventHandler> m_handlers;
+        SharedPtrVector<EventHandlerBase> m_handlers;
         bool m_inEventHandler = false;
     };
 
@@ -146,14 +146,14 @@ public:
         LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
             { m_array->add(handler); return *this; }
 
-        LockingEventArray<EvtT>& remove(EventHandler& handler)
+        LockingEventArray<EvtT>& remove(EventHandlerBase& handler)
             { m_array->remove(handler); return *this; }
 
         template<class EvtHandler, class... Args>
         LockingEventArray<EvtT>& addHandler(Args&&... args)
             { m_array->template addHandler<EvtHandler>(args...); return *this; }
 
-        LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandler> handler)
+        LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
             { m_array->addHandler(handler); return *this; }
 
         template<class Evt = EvtT, class... Args>
@@ -234,7 +234,7 @@ private:
 
     EventArray<Event>& events(Event::EventType type);
 
-    std::atomic<int> m_ticks = 0;
+    std::atomic<TickCount> m_ticks = 0;
     std::atomic<bool> m_running = true;
     
     std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;

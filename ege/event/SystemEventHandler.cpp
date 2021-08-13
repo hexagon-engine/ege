@@ -42,11 +42,9 @@
 namespace EGE
 {
 
-EventResult SystemEventHandler::handle(Event& event)
+EventResult SystemEventHandler::handle(SystemEvent& event)
 {
-    SystemEvent* sysEvent = EventCast<SystemEvent>(&event);
-    ASSERT(sysEvent);
-    sf::Event sfEvent = sysEvent->getEvent();
+    sf::Event sfEvent = event.getEvent();
     //std::cerr << "SystemEventHandler: " << sfEvent.type << std::endl;
     switch(sfEvent.type)
     {
