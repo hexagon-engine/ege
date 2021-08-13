@@ -12,7 +12,7 @@ using EGE::Timer;
 class MyGameLoop : public EGE::MainLoop
 {
 public:
-    virtual void onUpdate(long long tickCount);
+    virtual void onUpdate() override;
 };
 
 struct TickEvent : public EGE::Event
@@ -26,11 +26,12 @@ struct TickEvent : public EGE::Event
     EGE_EVENT("TickEvent");
 };
 
-void MyGameLoop::onUpdate(long long tickCount)
+void MyGameLoop::onUpdate()
 {
     EGE::EventLoop::onUpdate();
     ege_log.info() << "onTick";
 
+    auto tickCount = getTickCount();
     TickEvent event(tickCount);
     events<TickEvent>().fire(event);
 
@@ -97,26 +98,14 @@ TESTCASE(_eventPerfTest_3Handlers)
     return 0;
 }
 
-class MyGameLoop2 : public MyGameLoop
-{
-public:
-    void onUpdate(long long tickCounter);
-};
-
-void MyGameLoop2::onUpdate(long long tickCounter)
-{
-    //DEBUG_PRINT("onTick :2");
-
-    MyGameLoop::onUpdate(tickCounter);
-}
-
 TESTCASE(time)
 {
-    MyGameLoop2 loop;
+    EGE::MainLoop loop;
     auto callback = [](std::string name, EGE::Timer*) {
-                        std::cerr << name << std::endl;
-                    };
+        std::cerr << name << std::endl;
+    };
 
+    // TODO: Fix deadlock on accessing timers from timer handlers
     loop.addTimer("display-sec-count", make<Timer>(loop, Timer::Mode::Infinite, 1.0, [](std::string, Timer* timer) {
         std::cerr << timer->getIterationCount() << " seconds" << std::endl;
     }));
