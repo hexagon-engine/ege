@@ -111,7 +111,8 @@ public:
 
     virtual void onCreate() override
     {
-        m_sceneWidget->setNewFilter<EGE::ShaderFilterWithRenderTexture>(getLoop().getResourceManager()->getShader("filter"));
+        // TODO: Make this work
+        //m_sceneWidget->setNewFilter<EGE::ShaderFilterWithRenderTexture>(getLoop().getResourceManager()->getShader("filter"));
     }
 
     void setSceneWidget(EGE::SharedPtr<EGE::SceneWidget> sceneWidget) { m_sceneWidget = sceneWidget; }

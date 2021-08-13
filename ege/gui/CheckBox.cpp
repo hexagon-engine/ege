@@ -93,7 +93,7 @@ void CheckBox::render(Renderer& renderer) const
         ASSERT(font);
         sf::Text text(getLabel(), *font, 12);
         text.setPosition(20.f, 0.f);
-        text.setFillColor(sf::Color(m_labelColor.r * 255, m_labelColor.g * 255, m_labelColor.b * 255, m_labelColor.a * 255));
+        text.setFillColor(sf::Color(m_labelColor.r, m_labelColor.g, m_labelColor.b, m_labelColor.a));
         target.draw(text, renderer.getStates().sfStates());
     }
 

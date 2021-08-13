@@ -50,10 +50,10 @@ void Renderer::renderRectangle(double x, double y, double width, double height, 
 {
     sf::RectangleShape rs(sf::Vector2f(width, height));
     rs.setPosition(x, y);
-    rs.setFillColor(sf::Color(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
+    rs.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     if(outlineColor != Colors::transparent)
     {
-        rs.setOutlineColor(sf::Color(outlineColor.r * 255, outlineColor.g * 255, outlineColor.b * 255, outlineColor.a * 255));
+        rs.setOutlineColor(sf::Color(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a));
         rs.setOutlineThickness(1.f);
     }
     getTarget().draw(rs, m_states.sfStates());
@@ -63,7 +63,7 @@ void Renderer::renderText(double x, double y, sf::Font& font, sf::String str, in
 {
     sf::Text text(str, font, size * scale);
     text.setPosition(x, y);
-    text.setFillColor(sf::Color(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
+    text.setFillColor(sf::Color(color.r, color.g, color.b, color.a));
     text.setScale(1.f / scale, 1.f / scale);
     getTarget().draw(text, m_states.sfStates());
 }
@@ -124,10 +124,10 @@ void Renderer::renderCircle(double x, double y, double radius, ColorRGBA fillCol
 {
     sf::CircleShape cs(radius);
     cs.setPosition(x, y);
-    cs.setFillColor(sf::Color(fillColor.r * 255, fillColor.g * 255, fillColor.b * 255, fillColor.a * 255));
+    cs.setFillColor(sf::Color(fillColor.r, fillColor.g, fillColor.b, fillColor.a));
     if(outlineColor != Colors::transparent)
     {
-        cs.setOutlineColor(sf::Color(outlineColor.r * 255, outlineColor.g * 255, outlineColor.b * 255, outlineColor.a * 255));
+        cs.setOutlineColor(sf::Color(outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a));
         cs.setOutlineThickness(1.f);
     }
     cs.setOrigin(radius, radius);

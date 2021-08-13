@@ -79,9 +79,7 @@ void Window::render()
     {
         setActive(true);
         m_profiler->startSection("clear");
-        clear({static_cast<sf::Uint8>(m_backgroundColor.r * 255),
-                              static_cast<sf::Uint8>(m_backgroundColor.g * 255),
-                              static_cast<sf::Uint8>(m_backgroundColor.b * 255)});
+        clear({m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b});
 
         m_profiler->endStartSection("gui");
         if(m_currentGui)
