@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/core/EventLoop.h>
+#include <ege/core/Component.h>
 #include <ege/event/SystemWindow.h>
 #include <ege/gui/GUIScreen.h>
 #include <SFML/Graphics.hpp>
@@ -46,14 +46,16 @@ namespace EGE
 
 class GUIGameLoop;
 
-class Window : public SFMLSystemWindow, public EventLoop
+// NOTE: We are using some dummy ChildType, it won't be accesible from outside anyway.
+// FIXME: Don't need to provide valid Component type as ChildType.
+class Window : public SFMLSystemWindow, public BasicComponent<GUIScreen>
 {
 public:
     Window(GUIGameLoop& owner, String id = "Window");
 
     EGE_ENUM_YES_NO(GUIScreenImmediateInit);
 
-    virtual void onTick(long long) override;
+    virtual void onTick() override;
 
     void setBackgroundColor(ColorRGBA color) { m_backgroundColor = color; }
     ColorRGBA getBackgroundColor() const { return m_backgroundColor; }

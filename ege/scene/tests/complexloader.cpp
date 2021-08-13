@@ -9,7 +9,7 @@ TESTCASE(complexLoader)
     loop.setResourceManager(make<EGE::GUIResourceManager>());
 
     // Load scene
-    auto scene = make<EGE::Scene>(&loop);
+    auto scene = make<EGE::Scene>(loop);
 
     EGE::SceneObjectRegistry& sceneObjects = scene->getRegistry();
     if(!sceneObjects.loadFromFile("objects/complexloader.json"))

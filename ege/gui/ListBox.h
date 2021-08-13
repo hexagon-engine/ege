@@ -36,15 +36,15 @@
 
 #pragma once
 
-#include "CompoundWidget.h"
 #include "ScrollBar.h"
+#include "Widget.h"
 
 #include <ege/util/Types.h>
 
 namespace EGE
 {
 
-class ListBox : public CompoundWidget
+class ListBox : public Widget
 {
 public:
     class SelectEvent : public Event
@@ -60,7 +60,7 @@ public:
         sf::String value;
     };
 
-    ListBox(CompoundWidget& parent, String id = "ListBox");
+    ListBox(Widget& parent, String id = "ListBox");
 
     virtual void onKeyPress(sf::Event::KeyEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
@@ -80,7 +80,7 @@ private:
     void scrollToFocused();
 
     SharedPtr<ScrollBar> m_scrollbar;
-    SharedPtr<CompoundWidget> m_entries;
+    SharedPtr<Widget> m_entries;
     int m_selectedEntry = -1;
 };
 

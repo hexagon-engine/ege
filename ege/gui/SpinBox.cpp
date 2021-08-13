@@ -43,8 +43,8 @@
 namespace EGE
 {
 
-SpinBox::SpinBox(CompoundWidget& parent, String id)
-: CompoundWidget(parent, id)
+SpinBox::SpinBox(Widget& parent, String id)
+: Widget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Horizontal;
 
@@ -66,7 +66,7 @@ SpinBox::SpinBox(CompoundWidget& parent, String id)
         return EventResult::Success;
     });
 
-    auto buttons = addNewWidget<CompoundWidget>("SBoxBtns");
+    auto buttons = addNewWidget<Widget>("SBoxBtns");
     buttons->setSize({"20px", "1N"});
     buttons->setPadding({0, 1});
     buttons->layoutDirection = LayoutElement::Direction::Vertical;

@@ -105,7 +105,7 @@ struct Input
     bool operator!=(const Input& other) const { return !(*this == other); }
 };
 
-class EventLoop;
+class ComponentBase;
 
 class KeybindManager : public SystemEventHandler
 {
@@ -142,7 +142,7 @@ public:
     void setSwitch(String name, Input);
     void setStrength(String name, Input);
 
-    static void hook(SharedPtr<KeybindManager> manager, EventLoop& loop);
+    static void hook(SharedPtr<KeybindManager> manager, ComponentBase& loop);
 
     // TODO: Allow iteration for 'controls' GUI
 

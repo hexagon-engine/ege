@@ -50,7 +50,7 @@
 namespace EGE
 {
 
-TextBox::TextBox(CompoundWidget& parent, String id)
+TextBox::TextBox(Widget& parent, String id)
 : Widget(parent, id)
 {
     m_caretAnimation = make<NumberAnimation>(*this, Time(1.0, Time::Unit::Seconds), Timer::Mode::Infinite);

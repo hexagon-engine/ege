@@ -49,7 +49,7 @@ class InspectorNode
 public:
     InspectorNode(String name = "<BaseNode>");
     InspectorNode(InspectorNode* parent, String name = "<UnknownNode>");
-    ~InspectorNode();
+    virtual ~InspectorNode();
 
     InspectorNode(const InspectorNode& node) = delete;
     InspectorNode(InspectorNode&& node) = delete;

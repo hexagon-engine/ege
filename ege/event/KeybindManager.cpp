@@ -36,7 +36,7 @@
 
 #include "KeybindManager.h"
 
-#include <ege/core/EventLoop.h>
+#include <ege/core/Component.h>
 #include <ege/debug/Logger.h>
 
 namespace EGE
@@ -111,7 +111,7 @@ void KeybindManager::setStrength(String name, Input input)
         ege_log.warning() << "No keybind (strength) in keybind manager: " << name;
 }
 
-void KeybindManager::hook(SharedPtr<KeybindManager> manager, EventLoop& loop)
+void KeybindManager::hook(SharedPtr<KeybindManager> manager, ComponentBase& loop)
 {
     loop.events<SystemEvent>().addHandler(manager);
 }

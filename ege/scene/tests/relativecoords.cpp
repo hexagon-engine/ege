@@ -74,7 +74,7 @@ TESTCASE(basic)
     registry->addType<End::ParticleSystem>();
     registry->addType<End>();
 
-    auto scene = make<EGE::Scene>(&loop, registry);
+    auto scene = make<EGE::Scene>(loop, registry);
     if(!scene->loadFromFile("", "scenes/relativecoords.json"))
         return 1;
 

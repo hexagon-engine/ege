@@ -10,7 +10,7 @@
 *
 *     Framework Library for Hexagon
 *
-*    Copyright (c) Sppmacd 2020 - 2021
+*    Copyright (c) Sppmacd 2021
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a copy
 *    of this software and associated documentation files (the "Software"), to deal
@@ -37,67 +37,69 @@
 #pragma once
 
 #include <ege/core/Event.h>
-#include <ege/gfx/RenderStates.h>
-#include <ege/gui/Widget.h>
-#include <SFML/Graphics.hpp>
+#include <ege/core/EventHandler.h>
+#include <ege/core/EventResult.h>
 
 namespace EGE
 {
 
-// Called when pressing 'enter' and widget is focused.
-class SubmitEvent : public Event
+template<class EvtT = Event>
+class EventArray
 {
 public:
-    EGE_EVENT("EGE::SubmitEvent");
+    EventArray() = default;
+    EventArray(const EventArray&) = delete;
+    EventArray(EventArray&&) = delete;
 
-    SubmitEvent(Widget& _widget, String _value)
-    : widget(_widget), value(_value) {}
+    void clear() { m_handlers.clear(); }
 
-    Widget& widget;
-    String value;
-};
-
-class TextBox : public Widget
-{
-public:
-    explicit TextBox(Widget& parent, String id = "TextBox");
-
-    void setText(sf::String text)
+    template<class Evt = EvtT>
+    EventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
     {
-        m_text = text;
-        setGeometryNeedUpdate();
+        return addHandler<SimpleEventHandler<Evt>>(handler);
     }
 
-    sf::String getText()
+    EventArray<EvtT>& remove(EventHandlerBase& handler)
     {
-        return m_text;
+        ASSERT(!m_inEventHandler);
+        for(size_t s = 0; s < m_handlers.size(); s++)
+        {
+            if(m_handlers[s].get() == &handler)
+            {
+                m_handlers.erase(m_handlers.begin() + s);
+                return *this;
+            }
+        }
+        return *this;
     }
 
-    void setBorder(bool border = true) { m_border = border; }
+    template<class EvtHandler, class... Args>
+    EventArray<EvtT>& addHandler(Args&&... args)
+    {
+        return addHandler(make<EvtHandler>(args...));
+    }
 
-    virtual void onMouseEnter() override;
-    virtual void onMouseLeave() override;
-    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
-    virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
-    virtual void onTextEnter(sf::Event::TextEvent& event) override;
-    virtual void onKeyPress(sf::Event::KeyEvent& event) override;
+    EventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
+    {
+        m_handlers.push_back(handler);
+        return *this;
+    }
 
-protected:
-    virtual void render(Renderer& renderer) const override;
-    virtual void updateGeometry(Renderer& renderer) override;
+    EventResult fire(EvtT& event)
+    {
+        bool result = true;
+        m_inEventHandler = true;
+        for(auto& pr: m_handlers)
+        {
+            result &= (pr->doHandle(event) == EventResult::Success);
+        }
+        m_inEventHandler = false;
+        return result ? EventResult::Success : EventResult::Failure;
+    }
 
 private:
-    virtual void generateText();
-    virtual void clearSelection();
-
-    sf::String m_text;
-    sf::Text m_textDrawable;
-    size_t m_caretPos = 0;
-    size_t m_selectionStart = 0;
-    size_t m_selectionEnd = 0;
-    bool m_caretShown = true;
-    bool m_border = true;
-    SharedPtr<NumberAnimation> m_caretAnimation;
+    SharedPtrVector<EventHandlerBase> m_handlers;
+    bool m_inEventHandler = false;
 };
 
 }

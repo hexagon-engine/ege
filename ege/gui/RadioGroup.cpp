@@ -41,8 +41,8 @@
 namespace EGE
 {
 
-RadioGroup::RadioGroup(CompoundWidget& parent, String id)
-: CompoundWidget(parent, id)
+RadioGroup::RadioGroup(Widget& parent, String id)
+: Widget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Vertical;
 }
@@ -61,20 +61,19 @@ void RadioGroup::didClick(RadioButton& button)
 {
     m_current = &button;
     // TODO: We already save current rb, no need to search for it.
-    for(auto& widget: *this)
-    {
-        auto radiobutton = dynamic_cast<RadioButton*>(widget.get());
+    forEachChildTyped<Widget>([&](auto& widget) {
+        auto radiobutton = dynamic_cast<RadioButton*>(&widget);
         if(!radiobutton)
-            continue;
+            return;
 
-        if(widget.get() == &button)
+        if(&widget == &button)
         {
             fire<RadioGroupChangeEvent>(*radiobutton);
             radiobutton->setChecked(true);
         }
         else
             radiobutton->setChecked(false);
-    }
+    });
 }
 
 }

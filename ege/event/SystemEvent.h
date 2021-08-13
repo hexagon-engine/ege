@@ -50,7 +50,7 @@ public:
     explicit SystemEvent(sf::Event event)
     : m_event(event) {}
 
-    const sf::Event& getEvent() { return m_event; }
+    sf::Event const& getEvent() const { return m_event; }
 
 private:
     sf::Event m_event;

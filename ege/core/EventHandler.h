@@ -50,8 +50,7 @@ namespace EGE
 
 class EventHandlerBase
 {
-    friend class EventLoop;
-
+public:
     virtual EventResult doHandle(Event& event) = 0;
 };
 
@@ -64,10 +63,9 @@ public:
     virtual Event::EventType type() const { return EventType::type(); }
     virtual EventResult handle(EventType& event) = 0;
 
-private:
     virtual EventResult doHandle(Event& event) override
     {
-        // FIXME: Maybe it's possible to do it when registering handlers to EventLoop?
+        // FIXME: Maybe it's possible to do it when registering handlers to Component?
         ASSERT(instanceof(&event, EventType));
         return handle(static_cast<EventType&>(event));
     }

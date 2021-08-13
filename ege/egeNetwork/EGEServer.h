@@ -71,7 +71,7 @@ public:
     virtual bool acceptLoginData(ClientConnection&, SharedPtr<ObjectMap>) { return true; }
     virtual void onLogin(ClientConnection&) {}
 
-    virtual void onTick(TickCount) override;
+    virtual void onTick() override;
 
     void control(SceneObject const& object, String action, SharedPtr<ObjectMap> data);
 };

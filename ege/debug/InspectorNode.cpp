@@ -62,8 +62,6 @@ InspectorNode::InspectorNode(InspectorNode* parent, String name)
 
 InspectorNode::~InspectorNode()
 {
-    ege_log.debug() << "InspectorNode: \e[31mRemoving node\e[0m: " << m_isnName;
-
     if(m_isnParent)
         m_isnParent->m_isnChildren.erase(this);
     m_isnParent = nullptr;

@@ -57,11 +57,10 @@ namespace EGE
 
 class Scene;
 
-class SceneObject : public Animatable, public Renderable, public Serializable
+class SceneObject : public Animatable<SceneObject>, public Renderable, public Serializable
 {
 public:
-    SceneObject(Scene& owner)
-    : Animatable((InspectorNode*)&owner, "SceneObject"), m_owner(owner) {}
+    SceneObject(Scene& owner);
 
     enum Type
     {
@@ -71,7 +70,7 @@ public:
 
     virtual ~SceneObject();
 
-    virtual void onUpdate(long long tickCounter);
+    virtual void onTick() override;
     virtual void doRender(Renderer& renderer, const RenderStates& states = {}) override;
     virtual void render(Renderer&) const override {}
 

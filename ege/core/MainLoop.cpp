@@ -36,11 +36,6 @@
 
 #include "MainLoop.h"
 
-#include <ege/core/Clock.h>
-#include <ege/debug/Inspector.h>
-#include <ege/debug/Logger.h>
-#include <ege/util/system.h>
-
 namespace EGE
 {
 
@@ -50,11 +45,11 @@ int MainLoop::run()
 
     if(result == EventResult::Failure)
     {
-        ege_log.critical() << "EventLoop: onLoad() failed";
+        ege_log.critical() << "MainLoop: onLoad() failed";
         return 0x0001;
     }
 
-    Clock tickClock(this);
+    Clock tickClock(*this);
     while(isRunning())
     {
         Profiler profiler;
@@ -76,16 +71,11 @@ int MainLoop::run()
     }
 
     int exitCode = getExitCode();
-    result = onFinish(exitCode);
-
-    for(auto& subLoop: m_subLoops)
-        subLoop->exit(exitCode);
-
-    updateSubloops();
+    result = onFinishInternal(exitCode);
 
     if(result == EventResult::Failure)
     {
-        ege_log.critical() << "EventLoop: onFinish() failed";
+        ege_log.critical() << "MainLoop: onFinish() failed";
         return 0x0002;
     }
 

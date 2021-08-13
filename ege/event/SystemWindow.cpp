@@ -43,7 +43,7 @@
 namespace EGE
 {
 
-void SFMLSystemWindow::callEvents(EventLoop& loop, SFMLSystemWindow::WaitForEvents wait)
+void SFMLSystemWindow::callEvents(ComponentBase& loop, SFMLSystemWindow::WaitForEvents wait)
 {
     if(wait == SFMLSystemWindow::WaitForEvents::Yes)
     {

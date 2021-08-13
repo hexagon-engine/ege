@@ -45,8 +45,15 @@
 namespace EGE
 {
 
-Scene::Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry)
-: EventLoop(loop, "Scene"), m_registry(registry), m_loop(loop)
+Scene::Scene(SharedPtr<SceneObjectRegistry> registry)
+: Component<SceneObject>("Scene (headless)"), m_registry(registry), m_loop(nullptr)
+{
+    if(!m_registry)
+        m_registry = make<SceneObjectRegistry>();
+}
+
+Scene::Scene(GUIGameLoop& loop, SharedPtr<SceneObjectRegistry> registry)
+: Component<SceneObject>(loop, "Scene"), m_registry(registry), m_loop(&loop)
 {
     if(!m_registry)
         m_registry = make<SceneObjectRegistry>();
@@ -90,18 +97,17 @@ void Scene::render(Renderer& renderer) const
         pr.second->doRender(renderer, renderer.getStates());
 }
 
-void Scene::onUpdate(TickCount tickCounter)
+void Scene::onTick()
 {
     if(!isHeadless()) m_loop->getProfiler()->startSection("eventLoop");
-    EventLoop::onUpdate();
 
-    auto doUpdateForObjectMap = [this, tickCounter](Scene::ObjectMapType& objects, bool allowDead) {
+    // Note that we don't call SceneObject's onTick() here; it's done in Component loop.
+    auto doUpdateForObjectMap = [this](Scene::ObjectMapType& objects, bool allowDead) {
         for(auto it = objects.begin(); it != objects.end();)
         {
             if(!isHeadless()) m_loop->getProfiler()->startSection("update");
             auto object = *it;
             auto oldIt = it++;
-            object.second->onUpdate(tickCounter);
 
             if(allowDead)
             {
@@ -353,6 +359,14 @@ void Scene::rebuildLayers()
 
     for(auto pr: m_objects)
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
+}
+
+void Scene::forEachChild(std::function<void(ChildType&)>&& function)
+{
+    for(auto& object: m_staticObjects)
+        function(*object.second);
+    for(auto& object: m_objects)
+        function(*object.second);
 }
 
 }

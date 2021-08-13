@@ -1,3 +1,4 @@
+#include "ege/util/GlobalConfig.h"
 #include <testsuite/Tests.h>
 #include <ege/debug/Logger.h>
 #include <ege/gui.h>
@@ -19,15 +20,13 @@ TESTCASE(widget)
     auto window = gameLoop.openWindow(sf::VideoMode(300, 300), "EGE GUI Test");
     auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
 
-    auto widget = make<EGE::DummyWidget>(*gui);
+    auto widget = gui->addNewWidget<EGE::DummyWidget>();
     widget->setPosition(EGE::Vec2d(50.f, 50.f));
     widget->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(widget);
 
-    auto widget2 = make<EGE::DummyWidget>(*gui);
+    auto widget2 = gui->addNewWidget<EGE::DummyWidget>();
     widget2->setPosition(EGE::Vec2d(150.f, 50.f));
     widget2->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(widget2);
 
     return gameLoop.run();
 }
@@ -39,27 +38,23 @@ TESTCASE(guiChange)
 
     auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
 
-    auto widget = new EGE::DummyWidget(*gui);
+    auto widget = gui->addNewWidget<EGE::DummyWidget>();
     widget->setPosition(EGE::Vec2d(50.f, 50.f));
     widget->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(EGE::SharedPtr<EGE::Widget>(widget));
 
-    auto widget2 = new EGE::DummyWidget(*gui);
+    auto widget2 = gui->addNewWidget<EGE::DummyWidget>();
     widget2->setPosition(EGE::Vec2d(150.f, 50.f));
     widget2->setSize(EGE::Vec2d(50.f, 50.f));
-    gui->addWidget(EGE::SharedPtr<EGE::Widget>(widget2));
 
     auto gui2 = make<EGE::GUIScreen>(*window);
 
-    auto widget3 = new EGE::DummyWidget(*gui);
+    auto widget3 = gui->addNewWidget<EGE::DummyWidget>();
     widget3->setPosition(EGE::Vec2d(50.f, 150.f));
     widget3->setSize(EGE::Vec2d(50.f, 50.f));
-    gui2->addWidget(EGE::SharedPtr<EGE::Widget>(widget3));
 
-    auto widget4 = new EGE::DummyWidget(*gui);
+    auto widget4 = gui->addNewWidget<EGE::DummyWidget>();
     widget4->setPosition(EGE::Vec2d(150.f, 150.f));
     widget4->setSize(EGE::Vec2d(50.f, 50.f));
-    gui2->addWidget(EGE::SharedPtr<EGE::Widget>(widget4));
 
     window->addTimer("changeGUI", make<EGE::Timer>(gameLoop, EGE::Timer::Mode::Limited, EGE::Time(5.0, EGE::Time::Unit::Seconds), [gui2, window](std::string, EGE::Timer*) {
         window->setGUIScreen(gui2);
@@ -82,10 +77,9 @@ public:
     {
         EGE::GUIScreen::onCreate();
         ege_log.info() << "MyResourceManager onCreate";
-        widget1 = make<EGE::DummyWidget>(*this);
+        widget1 = addNewWidget<EGE::DummyWidget>();
         widget1->setPosition(EGE::Vec2d(50.f, 50.f));
         widget1->setSize(EGE::Vec2d(50.f, 50.f));
-        addWidget(widget1);
         font = getResourceManager()->getFont("font.ttf").get();
         texture = getResourceManager()->getTexture("texture.png").get();
     }
@@ -119,7 +113,7 @@ class AnimationGraphWidget : public EGE::Widget
     std::vector<double> m_vals;
     int m_max = 1;
 public:
-    explicit AnimationGraphWidget(EGE::CompoundWidget& parent)
+    explicit AnimationGraphWidget(EGE::Widget& parent)
     : EGE::Widget(parent) {}
 
     void setMax(int m)
@@ -183,7 +177,7 @@ public:
         labelFPS->setTextAlign(EGE::Label::Align::Center);
         labelFPS->setSize({"1N", "20px"});
 
-        auto widgets = addNewWidget<EGE::CompoundWidget>();
+        auto widgets = addNewWidget<EGE::Widget>();
 
         {
             auto myFrame = widgets->addNewWidget<EGE::GroupBox>();
@@ -199,18 +193,19 @@ public:
                     {
                         ege_log.info() << "clicked";
 
-                        myFrame->addWidget(button2);
+                        button2->hide(false);
                         timerRunning = true;
                         addTimer("TimerHideWidget", make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds), [this, myFrame](std::string, EGE::Timer*) {
-                            myFrame->removeWidget(button2.get());
+                            myFrame->removeWidget(*button2);
                             timerRunning = false;
                         }));
                     }
                     return EGE::EventResult::Success;
                 });
 
-                button2 = make<EGE::Button>(*myFrame);
+                button2 = myFrame->addNewWidget<EGE::Button>();
                 button2->setLabel("T.e.s.t&:2");
+                button2->hide(true);
 
                 auto labelLeft = myFrame->addNewWidget<EGE::Label>();
                 labelLeft->setString("Label Left");
@@ -354,9 +349,8 @@ public:
         //labelFPS->setPosition(EGE::Vec2d(event.width / 2.f, 10.f));
     }
 
-    virtual void onUpdate(long long tickCounter) override
+    virtual void onTick() override
     {
-        EGE::GUIScreen::onUpdate(tickCounter);
         labelFPS->setString("FPS: " + std::to_string(getLoop().getLastTPS()));
     }
 };
@@ -383,6 +377,8 @@ TESTCASE(resourceManager)
 
 TESTCASE(_widgets)
 {
+    EGE::GlobalConfig::enableAllDebug();
+    //ege_log.filterLevel(LogLevel::Debug, false);
     EGE::GUIGameLoop gameLoop;
     auto window = gameLoop.openWindow(sf::VideoMode(500, 500), "EGE GUI Test (widgets)");
     gameLoop.setResourceManager(make<MyResourceManager2>());

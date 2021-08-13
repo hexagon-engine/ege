@@ -61,7 +61,7 @@ public:
     virtual SharedPtr<SceneObject> createEmptyObject(Scene& scene) const { return make<SceneObject>(scene); }
 
     virtual bool deserialize(SharedPtr<ObjectMap> data) override;
-    virtual SharedPtr<ObjectMap> serialize([[maybe_unused]] SharedPtr<ObjectMap> data) const final { return nullptr; }
+    virtual SharedPtr<ObjectMap> serialize() const final override { return nullptr; }
 
     virtual const StringMap<PartStub>& getPartStubs() const { return m_parts; }
     virtual SharedPtr<ObjectMap> getDefaults() const { return m_defaults; }

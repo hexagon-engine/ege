@@ -36,6 +36,8 @@
 
 #pragma once
 
+#include <ege/main/Config.h>
+
 #include <string>
 
 #define EGE_EVENT(_type) \
@@ -60,7 +62,9 @@ public:
     virtual EGE::Event::EventType getType() const = 0;
 
     bool isCanceled() { return m_canceled; }
-    void cancel() { m_canceled = true; }
+    void cancel() { ASSERT(cancelable()); m_canceled = true; }
+
+    virtual bool cancelable() const { return true; }
 
 private:
     bool m_canceled = false;

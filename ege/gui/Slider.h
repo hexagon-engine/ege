@@ -57,7 +57,7 @@ public:
 class Slider : public Widget
 {
 public:
-    Slider(CompoundWidget& parent, String id = "Slider")
+    Slider(Widget& parent, String id = "Slider")
     : Widget(parent, id) {}
 
     void setValue(double);

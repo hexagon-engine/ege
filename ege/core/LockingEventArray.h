@@ -10,7 +10,7 @@
 *
 *     Framework Library for Hexagon
 *
-*    Copyright (c) Sppmacd 2020 - 2021
+*    Copyright (c) Sppmacd 2021
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a copy
 *    of this software and associated documentation files (the "Software"), to deal
@@ -36,26 +36,48 @@
 
 #pragma once
 
-#include <ege/main/Config.h>
+#include <ege/core/EventArray.h>
 
-#include "InspectorNode.h"
-#include "Logger.h"
+#include <mutex>
 
 namespace EGE
 {
 
-class Inspector
+template<class EvtT>
+class LockingEventArray
 {
-    Inspector() = default;
-
 public:
-    EGE_SINGLETON(Inspector)
+    explicit LockingEventArray(std::mutex& mutex, EventArray<EvtT>& array)
+    : m_lock(mutex), m_array(array) {}
 
-    void display(Logger& logger) const;
-    InspectorNode& rootNode() { return m_rootNode; }
+    LockingEventArray(const LockingEventArray&) = delete;
+    LockingEventArray(LockingEventArray&&) = default;
+
+    template<class Evt = EvtT>
+    LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
+        { m_array.add(handler); return *this; }
+
+    LockingEventArray<EvtT>& remove(EventHandlerBase& handler)
+        { m_array.remove(handler); return *this; }
+
+    template<class EvtHandler, class... Args>
+    LockingEventArray<EvtT>& addHandler(Args&&... args)
+        { m_array.template addHandler<EvtHandler>(args...); return *this; }
+
+    LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
+        { m_array.addHandler(handler); return *this; }
+
+    template<class Evt = EvtT, class... Args>
+    EventResult fire(Args&&... args)
+        { return m_array.template fire<Evt>(args...); }
+
+    EventResult fire(EvtT& event)
+        { return m_array.fire(event); }
 
 private:
-    InspectorNode m_rootNode { nullptr, "Root" };
+    std::unique_lock<std::mutex> m_lock;
+    EventArray<EvtT>& m_array;
 };
 
 }
+

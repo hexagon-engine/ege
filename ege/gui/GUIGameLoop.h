@@ -56,7 +56,7 @@ public:
     GUIGameLoop(String id = "GUIGameLoop")
     : MainLoop(id) {}
 
-    virtual void onTick(long long tickCount) override;
+    virtual void onTick() override;
 
     virtual EventResult onFinish(int) override
     {
@@ -85,7 +85,6 @@ protected:
 private:
     virtual EventResult onLoad() override;
 
-    SharedPtrVector<Window> m_windows;
     SharedPtr<ResourceManager> m_resourceManager;
     sf::Clock m_fpsClock;
     sf::Time m_frameTime;

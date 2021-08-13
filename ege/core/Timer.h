@@ -47,7 +47,7 @@
 namespace EGE
 {
 
-class EventLoop;
+class ComponentBase;
 
 class Timer
 {
@@ -61,10 +61,10 @@ public:
 
     typedef std::function<void(std::string,Timer*)> Callback;
 
-    Timer(EventLoop& loop, Mode mode, Time interval, Callback callback = Callback())
+    Timer(ComponentBase& component, Mode mode, Time interval, Callback callback = Callback())
     : m_interval(interval)
     , m_mode(mode)
-    , m_loop(loop)
+    , m_component(component)
     , m_callback(callback) {}
 
     virtual void start();
@@ -105,7 +105,7 @@ public:
 
     Time getElapsedTime();
 
-    EventLoop& getLoop() { return m_loop; }
+    ComponentBase& getLoop() { return m_component; }
     Callback getCallback() { return m_callback; }
     Callback getUpdateCallback() { return m_updateCallback; }
 
@@ -116,7 +116,7 @@ protected:
     double m_startTime = 0.f;
     Time m_interval;
     Mode m_mode;
-    EventLoop& m_loop;
+    ComponentBase& m_component;
     Callback m_callback = nullptr;
     Callback m_updateCallback = nullptr;
     std::string m_name;

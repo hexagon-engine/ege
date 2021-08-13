@@ -36,16 +36,16 @@
 
 #pragma once
 
-#include "CompoundWidget.h"
 #include "TextBox.h"
+#include "Widget.h"
 
 namespace EGE
 {
 
-class SpinBox : public CompoundWidget
+class SpinBox : public Widget
 {
 public:
-    explicit SpinBox(CompoundWidget& parent, String id = "SpinBox");
+    explicit SpinBox(Widget& parent, String id = "SpinBox");
 
     virtual void render(Renderer& renderer) const override;
 

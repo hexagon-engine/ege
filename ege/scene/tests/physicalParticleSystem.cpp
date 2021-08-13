@@ -43,11 +43,11 @@ public:
     }
 };
 
-class SliderAndValue : public EGE::CompoundWidget
+class SliderAndValue : public EGE::Widget
 {
 public:
-    SliderAndValue(EGE::CompoundWidget& parent, EGE::String id = "SliderAndValue")
-    : EGE::CompoundWidget(parent, id)
+    SliderAndValue(EGE::Widget& parent, EGE::String id = "SliderAndValue")
+    : EGE::Widget(parent, id)
     {
         setPadding({"2px", "2px"});
         setSize({"1N", "40px"});
@@ -56,13 +56,13 @@ public:
         m_nameLabel = addNewWidget<EGE::Label>();
         m_nameLabel->setColor(sf::Color::White);
 
-        auto sliderContainer = addNewWidget<EGE::CompoundWidget>();
+        auto sliderContainer = addNewWidget<EGE::Widget>();
         {
             sliderContainer->setSize({"1N", "20px"});
             m_slider = sliderContainer->addNewWidget<EGE::Slider>();
 
             // TODO: Add margins to make this not needed
-            auto labelContainer = sliderContainer->addNewWidget<EGE::CompoundWidget>();
+            auto labelContainer = sliderContainer->addNewWidget<EGE::Widget>();
             labelContainer->setPadding({"4px", "0px"});
             labelContainer->setSize({"90px", "1N"});
             {
@@ -86,12 +86,11 @@ private:
 class ParticleLabel : public EGE::Label
 {
 public:
-    ParticleLabel(EGE::CompoundWidget& parent, MyParticleSystem& particleSystem)
+    ParticleLabel(EGE::Widget& parent, MyParticleSystem& particleSystem)
     : EGE::Label(parent), m_particleSystem(particleSystem) {}
 
-    virtual void onUpdate(long long tickCount) override
+    virtual void onTick() override
     {
-        EGE::Label::onUpdate(tickCount);
         EGE::String info;
         info += "Particle count: " + std::to_string(m_particleSystem.getParticleCount());
         info += " FPS: " + std::to_string(getLoop().getLastTPS());
@@ -132,7 +131,7 @@ TESTCASE(basic)
     resourceManager->registerShader("filter", {"filter.vert", "filter.frag"});
     loop.setResourceManager(resourceManager);
 
-    auto scene = make<EGE::Scene>(&loop);
+    auto scene = make<EGE::Scene>(loop);
     auto& registry = scene->getRegistry();
     registry.addType<MyParticleSystem>();
 

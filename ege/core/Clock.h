@@ -47,22 +47,22 @@
 namespace EGE
 {
 
-class EventLoop;
+class ComponentBase;
 
 class Clock
 {
 public:
     EGE_ENUM_YES_NO(Finished);
 
-    Clock(EventLoop* loop, Time::Unit unit = Time::Unit::Seconds)
-    : m_loop(loop), m_startTime(0, unit) { restart(); }
+    Clock(ComponentBase& component, Time::Unit unit = Time::Unit::Seconds)
+    : m_component(component), m_startTime(0, unit) { restart(); }
 
     // returns elapsed time
     MaxFloat restart();
     MaxFloat getElapsedTime();
 
 protected:
-    EventLoop* m_loop;
+    ComponentBase& m_component;
     Time m_startTime {};
 };
 

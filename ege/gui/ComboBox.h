@@ -36,17 +36,17 @@
 
 #pragma once
 
-#include "CompoundWidget.h"
 #include "Label.h"
 #include "ListBox.h"
+#include "Widget.h"
 
 namespace EGE
 {
 
-class ComboBox : public CompoundWidget
+class ComboBox : public Widget
 {
 public:
-    explicit ComboBox(CompoundWidget& parent, String id = "ComboBox");
+    explicit ComboBox(Widget& parent, String id = "ComboBox");
 
     ListBox& entries() { return *m_listBox; }
 

@@ -37,17 +37,20 @@
 #pragma once
 
 #include <ege/gfx/RenderStates.h>
-#include <ege/gui/CompoundWidget.h>
+#include <ege/gfx/Renderer.h>
+#include <ege/gui/Widget.h>
+#include <ege/util/Color.h>
+
 #include <SFML/Graphics.hpp>
 
 namespace EGE
 {
 
-class GroupBox : public CompoundWidget
+class GroupBox : public Widget
 {
 public:
-    explicit GroupBox(CompoundWidget& parent, String id = "GroupBox")
-    : CompoundWidget(parent, id) { setPadding({10.0, 30.0}); }
+    explicit GroupBox(Widget& parent, String id = "GroupBox")
+    : Widget(parent, id) { setPadding({10.0, 30.0}); }
 
     void setLabel(sf::String label) { m_label = label; }
 

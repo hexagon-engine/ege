@@ -1,7 +1,8 @@
 ## Full module/feature list
 * **controller** - API used for synchronizing scenes over the network
-* **core** - Event Loop and basic utilities
-    * EventLoop - event system
+* **core** - Component and basic utilities
+    * Hierarchy system based on Components
+    * Event loop
     * Timers & clocks
     * Async tasks + `Progress` class for splash screens
     * Data Manager for managing game settings
@@ -16,7 +17,7 @@
     * Login system (not encrypted for now)
     * API for controlling any object
 * **event** - System (window) event handlers
-    * SFML system window wrapper with EventLoop compatible API
+    * SFML system window wrapper with Component compatible API
     * Default system event handling (e.g close app on Close)
     * Keybind Manager, which allows easier management of controls
 * **game** - Game class with Gameplay Object Manager and Game Loop included

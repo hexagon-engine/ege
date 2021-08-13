@@ -34,10 +34,11 @@
 *
 */
 
-#include "EventLoop.h"
+#include "Component.h"
 
 #include "TimerEvent.h"
 
+#include <ege/core/TickEvent.h>
 #include <ege/debug/Inspector.h>
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
@@ -53,11 +54,11 @@
 namespace EGE
 {
 
-void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventLoop::TimerImmediateStart immediateStart)
+void ComponentBase::addTimer(const std::string& name, SharedPtr<Timer> timer, TimerImmediateStart immediateStart)
 {
     ASSERT(timer);
     timer->setName(name);
-    if(immediateStart == EventLoop::TimerImmediateStart::Yes)
+    if(immediateStart == TimerImmediateStart::Yes)
     {
         TimerStartEvent event(*timer);
         events<TimerStartEvent>().fire(event);
@@ -75,7 +76,6 @@ void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventL
 
             if(event.isCanceled())
                 return;
-            this->onTimerTick(_timer);
        });
     }
     // deferredInvoke to prevent deadlocks when adding timers from timer callback
@@ -85,7 +85,7 @@ void EventLoop::addTimer(const std::string& name, SharedPtr<Timer> timer, EventL
     });
 }
 
-std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
+std::vector<std::weak_ptr<Timer>> ComponentBase::getTimers(const std::string& timer)
 {
     std::vector<std::weak_ptr<Timer>> timers;
     decltype(m_timers)::iterator it;
@@ -96,7 +96,7 @@ std::vector<std::weak_ptr<Timer>> EventLoop::getTimers(const std::string& timer)
     }
     return timers;
 }
-void EventLoop::removeTimer(const std::string& timer)
+void ComponentBase::removeTimer(const std::string& timer)
 {
     decltype(m_timers)::iterator it;
     std::lock_guard<std::mutex> lock(m_timersMutex);
@@ -106,50 +106,7 @@ void EventLoop::removeTimer(const std::string& timer)
     }
 }
 
-void EventLoop::onUpdate()
-{
-    if(m_profiler) m_profiler->startSection("onTick");
-    onTick(m_ticks.fetch_add(1) + 1);
-    if(m_profiler) m_profiler->endStartSection("updateSubloops");
-    updateSubloops();
-    if(m_profiler) m_profiler->endStartSection("updateTimers");
-    updateTimers();
-    if(m_profiler) m_profiler->endStartSection("callDeferredInvokes");
-    callDeferredInvokes();
-    if(m_profiler) m_profiler->endStartSection("updateAsyncTasks");
-    updateAsyncTasks();
-    if(m_profiler) m_profiler->endSection();
-}
-
-void EventLoop::updateSubloops()
-{
-    // Update all subloops
-    {
-        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-        for(auto& subLoop: m_subLoops)
-            subLoop->onUpdate();
-    }
-
-    // Remove subloops that exited.
-    {
-        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-        std::for_each(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop>& loop) {
-            if(!loop->isRunning())
-                loop->onFinish(loop->m_exitCode.load());
-        });
-        auto it = std::remove_if(m_subLoops.begin(), m_subLoops.end(), [&](SharedPtr<EventLoop> otherLoop) {
-            return !otherLoop->isRunning();
-        });
-
-        if(it != m_subLoops.end())
-        {
-            ege_log.verbose() << "EventLoop: Cleaning up exited subloops";
-            m_subLoops.erase(it);
-        }
-    }
-}
-
-void EventLoop::updateTimers()
+void ComponentBase::updateTimers()
 {
     std::lock_guard<std::mutex> lock(m_timersMutex);
     for(auto it = m_timers.begin(); it != m_timers.end(); it++)
@@ -162,7 +119,6 @@ void EventLoop::updateTimers()
             if(event.isCanceled())
                 continue;
 
-            onTimerFinish(timer.second.get());
             m_timers.erase(it);
 
             if(m_timers.empty())
@@ -173,13 +129,13 @@ void EventLoop::updateTimers()
     }
 }
 
-void EventLoop::deferredInvoke(std::function<void()> func)
+void ComponentBase::deferredInvoke(std::function<void()> func)
 {
     std::lock_guard<std::recursive_mutex> lock(m_deferredInvokesMutex);
     m_deferredInvokes.push(func);
 }
 
-void EventLoop::callDeferredInvokes()
+void ComponentBase::callDeferredInvokes()
 {
     std::lock_guard<std::recursive_mutex> lock(m_deferredInvokesMutex);
     while(!m_deferredInvokes.empty())
@@ -189,7 +145,7 @@ void EventLoop::callDeferredInvokes()
     }
 }
 
-double EventLoop::time(Time::Unit unit)
+double ComponentBase::time(Time::Unit unit)
 {
     if(unit == Time::Unit::Ticks)
         return m_ticks.load();
@@ -198,44 +154,13 @@ double EventLoop::time(Time::Unit unit)
     CRASH();
 }
 
-void EventLoop::exit(int exitCode)
+void ComponentBase::exit(int exitCode)
 {
     m_exitCode.store(exitCode);
     m_running.store(false);
-
-    // Deferred invoke to prevent deadlocks when exiting main loop from subloop event handler
-    deferredInvoke([&] {
-        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-        for(auto& subLoop: m_subLoops)
-        {
-            subLoop->exit(exitCode);
-        }
-    });
 }
 
-bool EventLoop::addSubLoop(SharedPtr<EventLoop> loop)
-{
-    ASSERT(loop);
-
-    if(loop->onLoad() == EventResult::Failure)
-        return false;
-
-    loop->isnSetParent(this);
-    loop->m_parentLoop = this;
-    {
-        std::lock_guard<std::mutex> lock(m_subLoopsMutex);
-        m_subLoops.push_back(loop);
-    }
-
-    return true;
-}
-
-void EventLoop::removeSubLoop(EventLoop& loop)
-{
-    loop.exit(0);
-}
-
-void EventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
+void ComponentBase::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
 {
     task->setName(name);
     task->start();
@@ -243,7 +168,7 @@ void EventLoop::addAsyncTask(SharedPtr<AsyncTask> task, std::string name)
     m_asyncTasks.insert(std::make_pair(name, task));
 }
 
-std::vector<std::weak_ptr<AsyncTask>> EventLoop::getAsyncTasks(std::string name)
+std::vector<std::weak_ptr<AsyncTask>> ComponentBase::getAsyncTasks(std::string name)
 {
     std::vector<std::weak_ptr<AsyncTask>> tasks;
     decltype(m_asyncTasks)::iterator it;
@@ -257,7 +182,7 @@ std::vector<std::weak_ptr<AsyncTask>> EventLoop::getAsyncTasks(std::string name)
     return tasks;
 }
 
-void EventLoop::removeAsyncTasks(std::string name)
+void ComponentBase::removeAsyncTasks(std::string name)
 {
     decltype(m_asyncTasks)::iterator it;
     std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
@@ -267,7 +192,12 @@ void EventLoop::removeAsyncTasks(std::string name)
     }
 }
 
-void EventLoop::updateAsyncTasks()
+EventArray<Event>& ComponentBase::events(Event::EventType type)
+{
+    return m_eventHandlers[type];
+}
+
+void ComponentBase::updateAsyncTasks()
 {
     std::lock_guard<std::mutex> lock(m_asyncTasksMutex);
     for(auto it = m_asyncTasks.begin(); it != m_asyncTasks.end(); it++)
@@ -277,7 +207,7 @@ void EventLoop::updateAsyncTasks()
         if(state.finished)
         {
             if(state.returnCode != 0)
-                ege_log.error() << "EventLoop: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
+                ege_log.error() << "Component: AsyncTask[" << task.first << "] worker finished with non-zero (" << state.returnCode << ") status!";
 
             m_asyncTasks.erase(it);
             if(m_asyncTasks.empty())
@@ -286,6 +216,20 @@ void EventLoop::updateAsyncTasks()
             it = m_asyncTasks.find(task.first);
         }
     }
+}
+
+void ComponentBase::onUpdate()
+{
+    if(m_profiler) m_profiler->startSection("onTick");
+    fire<TickEvent>(m_ticks.fetch_add(1));
+    onTick();
+    if(m_profiler) m_profiler->endStartSection("updateTimers");
+    updateTimers();
+    if(m_profiler) m_profiler->endStartSection("callDeferredInvokes");
+    callDeferredInvokes();
+    if(m_profiler) m_profiler->endStartSection("updateAsyncTasks");
+    updateAsyncTasks();
+    if(m_profiler) m_profiler->endSection();
 }
 
 }

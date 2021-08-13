@@ -36,14 +36,14 @@
 
 #include "Clock.h"
 
-#include "EventLoop.h"
+#include "Component.h"
 
 namespace EGE
 {
 
 MaxFloat Clock::restart()
 {
-    MaxFloat time = m_loop->time(m_startTime.getUnit());
+    MaxFloat time = m_component.time(m_startTime.getUnit());
     MaxFloat elapsed = time - m_startTime.getValue();
     m_startTime = { time, m_startTime.getUnit() };
     return elapsed;
@@ -51,7 +51,7 @@ MaxFloat Clock::restart()
 
 MaxFloat Clock::getElapsedTime()
 {
-    MaxFloat time = m_loop->time(m_startTime.getUnit());
+    MaxFloat time = m_component.time(m_startTime.getUnit());
     return time - m_startTime.getValue();
 }
 

@@ -144,7 +144,7 @@ TESTCASE(serializer)
     auto gui = window->setNewGUIScreen<EGE::GUIScreen>();
 
     // create scene
-    auto scene = make<EGE::Scene>(&gameLoop);
+    auto scene = make<EGE::Scene>(gameLoop);
 
     // add object types
     auto& registry = scene->getRegistry();
@@ -165,7 +165,7 @@ TESTCASE(serializer)
     myObject2->setPosition(EGE::Vec2d(-100.f, -100.f));
 
     // assign scene to GUI
-    gui->addWidget(make<EGE::SceneWidget>(*gui, scene));
+    gui->addNewWidget<EGE::SceneWidget>(scene);
 
     // assign an instance of MyResourceManager to game loop
     gameLoop.setResourceManager(make<MyResourceManager>());
@@ -183,16 +183,16 @@ struct MyParticle : public EGE::Particle
 class MyScene : public EGE::Scene
 {
 public:
-    explicit MyScene(EGE::GUIGameLoop* loop)
+    explicit MyScene(EGE::GUIGameLoop& loop)
     : EGE::Scene(loop) {}
 
-    virtual void onUpdate(long long tickCounter)
+    virtual void onTick()
     {
         // Update another objects
-        EGE::Scene::onUpdate(tickCounter);
+        EGE::Scene::onTick();
 
         // Update wind
-        wind = std::sin((tickCounter + rand() % 100 / 100.f) / 100.f) * 100.f;
+        wind = std::sin((getTickCount() + rand() % 100 / 100.f) / 100.f) * 100.f;
     }
 
     float wind = 0.f;
@@ -264,7 +264,7 @@ TESTCASE(particleSystem)
     loop.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds));
 
     // create scene
-    EGE::SharedPtr<MyScene> scene = make<MyScene>(&loop);
+    EGE::SharedPtr<MyScene> scene = make<MyScene>(loop);
     auto& registry = scene->getRegistry();
     registry.addType<MyParticleSystem>();
 
@@ -307,7 +307,7 @@ TESTCASE(sceneLoader)
     EGE::GUIGameLoop loop;
 
     // Load some scene
-    auto scene = make<EGE::Scene>(&loop);
+    auto scene = make<EGE::Scene>(loop);
 
     EGE::SceneObjectRegistry& registry = scene->getRegistry();
     registry.addType<MyObject>();
@@ -381,9 +381,9 @@ public:
         renderer.getTarget().draw(rs);
     }
 
-    virtual void onUpdate(long long tickCounter)
+    virtual void onTick()
     {
-        EGE::SceneObject::onUpdate(tickCounter);
+        EGE::SceneObject::onTick();
         if(!m_parent)
             setRotation(getRotation() + 0.01);
     }
@@ -395,7 +395,7 @@ TESTCASE(parenting)
 {
     // Setup loop and load scene
     EGE::GUIGameLoop loop;
-    auto scene = make<EGE::Scene>(&loop);
+    auto scene = make<EGE::Scene>(loop);
 
     // Load other objects
     EGE::SceneObjectRegistry& registry = scene->getRegistry();

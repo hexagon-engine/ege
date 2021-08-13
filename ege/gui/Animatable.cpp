@@ -36,17 +36,6 @@
 
 #include "Animatable.h"
 
-#include <ege/core/Timer.h>
-
 namespace EGE
 {
-/*
-void Animatable::addAnimation(SharedPtr<Animation> animation, std::function<void(Animation*, double)> callback, std::string name)
-*/
-void Animatable::removeAnimations(std::string name)
-{
-    removeTimer("EGE::Animatable Delay: " + name);
-    removeTimer("EGE::Animatable: " + name);
-}
-
 }

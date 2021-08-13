@@ -270,7 +270,7 @@ void EGEServer::onReceive(ClientConnection& client, Packet const& packet)
     }
 }
 
-void EGEServer::onTick(TickCount)
+void EGEServer::onTick()
 {
     // Check if clients are alive.
     for(auto& client: clients())
@@ -316,15 +316,13 @@ void EGEServer::onTick(TickCount)
             client->setLastRecvTime(EGE::Time(time(Time::Unit::Seconds), Time::Unit::Seconds));
         }
     }
-
-    // Update scene, because it's not done in GameLoop.
-    if(getScene())
-        getScene()->onUpdate(getTickCount());
-
-    // Send object updates to Client.
-    // TODO: It will be better to not check every object!
     if(getScene())
     {
+        // Update scene, because it's not done in GameLoop.
+        getScene()->onUpdate();
+
+        // Send object updates to Client.
+        // TODO: It will be better to not check every object!
         for(auto object: *getScene())
         {
             auto sceneObject = object.second;

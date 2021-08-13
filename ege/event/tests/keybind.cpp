@@ -3,6 +3,9 @@
 #include <ege/debug.h>
 #include <ege/event.h>
 
+// NOTE: This test won't render anything and will appear to be
+// hanged, but it's okay.
+
 // reimplement that because we don't have GUIGameLoop here yet
 class MyWndLoop : public EGE::MainLoop
 {
@@ -13,7 +16,7 @@ public:
         return EGE::EventResult::Success;
     }
 
-    virtual void onTick(EGE::TickCount) override
+    virtual void onTick() override
     {
         m_window.callEvents(*this);
     }

@@ -4,7 +4,7 @@
 class TestWidget : public EGE::Widget
 {
 public:
-    TestWidget(EGE::CompoundWidget& parent)
+    TestWidget(EGE::Widget& parent)
     : EGE::Widget(parent) {}
 
     virtual void updateGeometry(EGE::Renderer&) override

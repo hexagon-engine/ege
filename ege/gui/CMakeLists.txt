@@ -11,8 +11,6 @@ set(SOURCES
 	"CheckBox.h"
 	"ComboBox.cpp"
 	"ComboBox.h"
-	"CompoundWidget.cpp"
-	"CompoundWidget.h"
 	"GroupBox.cpp"
 	"GroupBox.h"
 	"GUIGameLoop.cpp"

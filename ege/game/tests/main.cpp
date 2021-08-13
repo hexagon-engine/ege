@@ -77,20 +77,19 @@ public:
 
 MyGameplayObjectManager* MyGameplayObjectManager::instance;
 
-class ColorWidget : public EGE::CompoundWidget
+class ColorWidget : public EGE::Widget
 {
 public:
     MyColor* m_color;
     typedef EGE::GameplayObjectRegistry<EGE::String, MyColor> GPORObjc;
 
-    ColorWidget(EGE::CompoundWidget& parent, size_t index, MyColor* color)
-    : EGE::CompoundWidget(parent)
+    ColorWidget(EGE::Widget& parent, size_t index, MyColor* color)
+    : EGE::Widget(parent)
     , m_color(color)
     {
-        auto label = make<EGE::Label>(*this);
+        auto label = addNewWidget<EGE::Label>();
         label->setString(std::to_string(index) + ": " + color->getId());
         label->setFontSize(15);
-        addWidget(label);
     }
 
     void render(EGE::Renderer& renderer) const override
@@ -122,10 +121,9 @@ public:
         size_t s = 1;
         for(auto& color: MyGameplayObjectManager::instance->colors)
         {
-            auto widget = make<ColorWidget>(*this, s, color.get());
+            auto widget = addNewWidget<ColorWidget>(s, color.get());
             widget->setSize({"0N", "0N"});
             m_widgets.push_back(widget);
-            addWidget(widget);
             s++;
         }
     }

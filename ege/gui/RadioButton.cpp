@@ -89,7 +89,7 @@ void RadioButton::render(Renderer& renderer) const
     // label
     if(!getLabel().isEmpty())
     {
-        auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
+        auto font = getParent<Widget>()->getLoop().getResourceManager()->getDefaultFont();
         ASSERT(font);
         sf::Text text(getLabel(), *font, 12);
         text.setPosition(20.f, 0.f);

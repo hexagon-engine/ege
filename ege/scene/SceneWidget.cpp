@@ -35,6 +35,7 @@
 */
 
 #include "SceneWidget.h"
+#include "ege/core/BasicComponent.h"
 
 #include <algorithm>
 #include <ege/gui/GUIGameLoop.h>
@@ -58,19 +59,24 @@ void SceneWidget::render(Renderer& renderer) const
     }
 }
 
-void SceneWidget::onUpdate(long long tickCounter)
+void SceneWidget::setScene(SharedPtr<Scene> scene)
 {
-    Widget::onUpdate(tickCounter);
+    ASSERT(scene);    
+    m_scene = scene;
+    runLayoutUpdate();
+    m_scene->setSize(getSize());
+}
+
+void SceneWidget::onTick()
+{
+    Widget::onTick();
 
     if(!m_scene && m_initialScene)
         setScene(m_initialScene);
 
+    // FIXME: This should be done by Component system somehow!
     if(m_scene)
-    {
-        if(getLoop().getProfiler()) getLoop().getProfiler()->startSection("sceneUpdate");
-        m_scene->onUpdate(tickCounter);
-        if(getLoop().getProfiler()) getLoop().getProfiler()->endSection();
-    }
+        m_scene->onUpdate();
 }
 
 void SceneWidget::updateGeometry(Renderer&)
@@ -87,6 +93,17 @@ Vec2d SceneWidget::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
 Vec3d SceneWidget::mapToSceneCoords(Renderer& renderer, Vec2d screen) const
 {
     return m_cameraObject.expired() ? m_cameraObject.lock()->mapToSceneCoords(renderer, screen) : screen;
+}
+
+EventResult SceneWidget::fireEvent(Event& event)
+{
+    Widget::fireEvent(event);
+    // FIXME: This should be done by Component system somehow!
+    if(m_scene)
+        m_scene->fireEvent(event);
+
+    // TODO: Care about errors
+    return EventResult::Success;
 }
 
 }

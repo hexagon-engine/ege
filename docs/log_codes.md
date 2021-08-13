@@ -36,7 +36,7 @@
 ### 0019 EGE/network: Client: Connection failed to (%s:%s)
 ### 001A EGE/network: Disconnecting network endpoint (%d)
 ### 001B EGE/network: Kicking client (%s:%d)
-### 001C EventLoop: AsyncTask[%s] worker finished with non-zero (%d) status!
+### 001C Component: AsyncTask[%s] worker finished with non-zero (%d) status!
 ### 001D EGE/egeNetwork: Packet parsing error: %s
 ### 001E EGE/egeNetwork: Starting server
 ### 001F EGE/egeNetwork: Closing server

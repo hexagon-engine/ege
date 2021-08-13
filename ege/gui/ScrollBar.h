@@ -53,7 +53,7 @@ public:
         Vertical
     };
 
-    explicit ScrollBar(CompoundWidget& parent, String id = "ScrollBar")
+    explicit ScrollBar(Widget& parent, String id = "ScrollBar")
     : Widget(parent, id) {}
 
     double getValue() const { return m_value; }
@@ -82,9 +82,9 @@ public:
         setGeometryNeedUpdate();
     }
 
-    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event);
-    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event);
-    virtual void onMouseMove(sf::Event::MouseMoveEvent& event);
+    virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
+    virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
+    virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
 
     void setUpdateCallback(std::function<void(double)> func)
     {

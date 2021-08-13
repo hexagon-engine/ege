@@ -36,8 +36,8 @@
 
 #include "Widget.h"
 
-#include "CompoundWidget.h"
 #include "GUIGameLoop.h"
+#include "ege/core/BasicComponent.h"
 
 #include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
@@ -48,21 +48,19 @@
 namespace EGE
 {
 
-Widget::Widget(CompoundWidget& parent, String id)
-: Animatable(&parent, "Widget: " + id)
+Widget::Widget(Widget& parent, String id)
+: Animatable(parent, "Widget: " + id)
 , DefaultSystemEventHandler(parent.m_window)
 , LayoutElement(&parent, id)
-, m_window(parent.m_window)
-, m_parentWidget(&parent) {}
+, m_window(parent.m_window) {}
 
 Widget::Widget(Window& window, String id)
-: Animatable(&window, id)
+: Animatable(window, id)
 , DefaultSystemEventHandler(window)
 , LayoutElement(nullptr, id)
-, m_window(window)
-, m_parentWidget(nullptr) {}
+, m_window(window) {}
 
-sf::FloatRect Widget::getBoundingBox()
+sf::FloatRect Widget::getBoundingBox() const
 {
     return sf::FloatRect(getAbsolutePosition().x, getAbsolutePosition().y, getSize().x, getSize().y);
 }
@@ -76,10 +74,11 @@ sf::FloatRect Widget::getViewport(sf::RenderTarget& target) const
     sf::FloatRect currentRect(widgetPosition.x / windowSize.x, widgetPosition.y / windowSize.y,
                   getSize().x / windowSize.x, getSize().y / windowSize.y);
 
-    if(getParentWidget())
+    auto parent = tryGetParent<Widget>();
+    if(parent)
     {
         sf::FloatRect intersection;
-        currentRect.intersects((sf::FloatRect)getParentWidget()->getViewport(target), intersection);
+        currentRect.intersects((sf::FloatRect)parent->getViewport(target), intersection);
         return intersection;
     }
     else
@@ -147,15 +146,47 @@ void Widget::onMouseMove(sf::Event::MouseMoveEvent& event)
             onMouseLeave();
     }
     m_mouseOver = mouseOver;
-}
 
+    Vec2d position = Vec2d(event.x, event.y);
+    forEachChildTyped<Widget>([&](auto& widget) {
+        sf::Event event2;
+        event2.type = sf::Event::MouseMoved;
+        event2.mouseMove = { (int)position.x, (int)position.y };
+        widget.template fire<SystemEvent>(event2);
+    });
+}
 
 void Widget::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
+    ege_log.debug() << "Widget::onMouseButtonPress for " << isnName();
+    auto position = Vec2i(event.x, event.y);
     if(event.button == sf::Mouse::Left)
     {
+        ege_log.debug() << "!! leftClicked " << isnName();
         m_leftClicked = true;
     }
+
+    forEachChildTyped<Widget>([&](auto& widget) {
+        ege_log.debug() << "  Widget " << isnName() << " pos(" << widget.getAbsolutePosition().x << "," << widget.getAbsolutePosition().y << ")"
+        << " size(" << widget.getSize().x << "," << widget.getSize().y << ")";
+        ege_log.debug() << "mousepos: " << position.x << "," << position.y;
+        if(widget.isMouseOver(position) && event.button == sf::Mouse::Left)
+        {
+            ege_log.debug() << "- isMouseOver!";
+            // Change focused widget.
+            setFocus(widget);
+
+            sf::Event event2;
+            event2.type = sf::Event::MouseButtonPressed;
+            event2.mouseButton = { event.button, position.x, position.y };
+
+            // Handle self
+            widget.onMouseButtonPress(event);
+
+            // Pass down to children
+            widget.template fire<SystemEvent>(event2);
+        }
+    });
 }
 
 void Widget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
@@ -166,7 +197,15 @@ void Widget::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
     }
 }
 
-bool Widget::isMouseOver(EGE::Vec2d position)
+EventResult Widget::fireEvent(Event& event)
+{
+    auto result = Animatable::fireEvent(event);
+    if(dynamic_cast<SystemEvent*>(&event))
+        return EventResult((bool)handle(static_cast<SystemEvent&>(event)) || (bool)result);
+    return result;
+}
+
+bool Widget::isMouseOver(EGE::Vec2d position) const
 {
     return getBoundingBox().contains(sf::Vector2f(position.x, position.y));
 }
@@ -187,14 +226,131 @@ sf::View Widget::getCustomView(sf::RenderTarget& target) const
     return view;
 }
 
-void Widget::onUpdate(long long tickCounter)
+void Widget::doRender(Renderer& renderer, const RenderStates& states)
 {
-    (void)tickCounter;
-    EventLoop::onUpdate();
+    //if constexpr(WIDGET_DEBUG) ege_log.info() << "Widget::doRender(" << renderer.getTarget().getSize().x << "," << renderer.getTarget().getSize().y << ")";
+    // TODO: draw only visible widgets
+
+    auto newStates = states;
+    applyStates(renderer, newStates);
+    Renderable::doRender(renderer, newStates);
+
+    // Render child widgets
+    forEachChildTyped<Widget>([&](auto& widget) {
+        if(widget.isHidden())
+            return;
+
+        applyStates(renderer);
+        /*if constexpr(WIDGET_DEBUG) ege_log.info() << "-- View: (" << renderer.getTarget().getView().getSize().x << ","
+                                                  << renderer.getTarget().getView().getSize().y << ")";*/
+        widget.doRender(renderer, newStates);
+    });
+
+    // Render self (overlay)
+    applyStates(renderer);
+    renderOverlay(renderer);
+}
+
+void Widget::addChild(SharedPtr<Widget> widget)
+{
+    BasicComponent::addChild(widget);
+    DUMP(GUI_DEBUG, "addWidget");
+    DUMP(GUI_DEBUG, widget.get());
+    ASSERT(widget);
+    widget->onCreate();
+
+    // allow widgets know about window's size when creating
+    sf::Vector2u wndSize = getWindow().getSize();
+    sf::Event::SizeEvent event{wndSize.x, wndSize.y};
+    widget->onResize(event);
+
+    setGeometryNeedUpdate();
+}
+
+void Widget::removeWidget(Widget& widget)
+{
+    if(widget.hasFocus())
+        clearFocus();
+    removeChild(widget);
+    setGeometryNeedUpdate();
 }
 
 void Widget::updateLayout()
 {
+    forEachChild([](auto& widget)->void {
+        if(widget.geometryNeedUpdate())
+            widget.updateLayout();
+    });
+}
+
+void Widget::setFocusIndex(size_t index)
+{
+    ASSERT(index < childrenCount());
+    clearFocus();
+
+    m_focusedWidget = index;
+    auto widget = getFocusedWidget();
+    ASSERT(widget);
+    widget->setFocus();
+    widget->onGainFocus();
+}
+
+void Widget::clearFocus()
+{
+    if(m_focusedWidget != -1)
+    {
+        auto widget = getFocusedWidget();
+        ASSERT(widget);
+        widget->setFocus(false);
+        widget->onLossFocus();
+        m_focusedWidget = -1;
+    }
+}
+
+void Widget::setFocus(Widget& widget)
+{
+    clearFocus();
+
+    size_t index = 0;
+    forEachChild([&](auto& other) {
+        if(&other == &widget)
+        {
+            widget.setFocus(true);
+            m_focusedWidget = index;
+            return;
+        }
+        index++;
+    });
+}
+
+void Widget::setFocus(bool value)
+{
+    m_hasFocus = value;
+    if(!value)
+    {
+        forEachChild([&](auto& widget) {
+            widget.setFocus(value);
+        });
+    }
+}
+
+bool Widget::shouldFireEventForChild(Widget const& widget, Event const& event) const
+{
+    if(widget.isHidden())
+        return false;
+
+    auto systemEvent = dynamic_cast<SystemEvent const*>(&event);
+    if(systemEvent)
+    {
+        auto type = systemEvent->getEvent().type;
+        if(type == sf::Event::MouseMoved || type == sf::Event::MouseButtonPressed)
+        {
+            // These are handled separately
+            // TODO: Add mouse scroll to this list
+            return false;
+        }
+    }
+    return true;
 }
 
 }

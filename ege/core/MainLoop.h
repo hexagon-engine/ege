@@ -36,16 +36,23 @@
 
 #pragma once
 
-#include "EventLoop.h"
+#include "BasicComponent.h"
+
+#include <ege/core/Clock.h>
+#include <ege/debug/Inspector.h>
+#include <ege/debug/Logger.h>
+#include <ege/util/system.h>
+
+#include <atomic>
 
 namespace EGE
 {
 
-class MainLoop : public EventLoop
+class MainLoop : public BasicComponent<ComponentBase>
 {
 public:
     MainLoop(String id = "MainLoop")
-    : EventLoop(id) {}
+    : BasicComponent<ComponentBase>(id) {}
 
     int run();
 

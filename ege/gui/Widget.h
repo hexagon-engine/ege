@@ -47,16 +47,15 @@
 #include <ege/resources/ResourceManager.h>
 #include <ege/util/Vector.h>
 
-#define WIDGET_DEBUG 0
+#define WIDGET_DEBUG 1
 
 namespace EGE
 {
 
 class GUIGameLoop;
 class Window;
-class CompoundWidget;
 
-class Widget : public Animatable, public DefaultSystemEventHandler, public LayoutElement
+class Widget : public Animatable<Widget>, public DefaultSystemEventHandler, public LayoutElement
 {
 public:
     class Command
@@ -78,7 +77,7 @@ public:
     Widget(const Widget&) = delete;
 
     // NOTE: This is very similar to copy constructor.
-    explicit Widget(CompoundWidget& parent, String id = "Widget");
+    explicit Widget(Widget& parent, String id = "Widget");
 
     // for non-parented widgets, e.g. GUIScreen
     // NOTE: For layouting, they must have fixed (px or A) size set!
@@ -88,26 +87,21 @@ public:
     Window& getWindow() const { return m_window; }
     SharedPtr<ResourceManager> getResourceManager() const;
 
-    virtual sf::FloatRect getBoundingBox();
+    virtual sf::FloatRect getBoundingBox() const;
     virtual sf::FloatRect getViewport(sf::RenderTarget& target) const;
 
-    virtual void onUpdate(long long tickCounter);
-
     virtual void onCreate() {}
-    virtual void onCommand(const Command&) {}
 
     virtual void onResize(sf::Event::SizeEvent& event) override;
     virtual void onMouseMove(sf::Event::MouseMoveEvent& event) override;
     virtual void onMouseButtonPress(sf::Event::MouseButtonEvent& event) override;
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
 
-    virtual bool isMouseOver(Vec2d position);
+    virtual bool isMouseOver(Vec2d position) const;
     virtual sf::View getCustomView(sf::RenderTarget& target) const override;
     virtual bool isCustomViewNeeded() const override { return true; }
 
     bool hasFocus() const { return m_hasFocus; }
-
-    CompoundWidget* getParentWidget() const { return m_parentWidget; }
 
     virtual void setPosition(LVec2d position) override { LayoutElement::setPosition(position); setGeometryNeedUpdate(); }
     virtual void setSize(LVec2d size) override  { LayoutElement::setSize(size); setGeometryNeedUpdate(); }
@@ -118,10 +112,45 @@ public:
     // all data needed to calculate layout (e.g set content
     // size).
     virtual void updateLayout();
-    virtual void setFocus(bool value = true) { m_hasFocus = value; }
+    virtual void setFocus(bool value = true);
 
     void hide(bool hide = true) { m_hide = hide; setGeometryNeedUpdate(); m_mouseOver = false; m_leftClicked = false; }
     bool isHidden() const { return m_hide; }
+
+    // GUI-specific Events
+    virtual void onCommand(Command const& command)
+    {
+        auto parent = getParent<Widget>();
+        if(parent)
+            parent->onCommand(command);
+    }
+
+    // Widget Events
+    virtual void doRender(Renderer& renderer, RenderStates const& states = {}) override;
+
+    template<class T, class... Args>
+    SharedPtr<T> addNewWidget(Args&&... args)
+    {
+        return addNewChild<T>(*this, std::forward<Args>(args)...);
+    }
+
+    virtual void addChild(SharedPtr<Widget> widget) override;
+    void removeWidget(Widget& widget);
+    virtual EventResult fireEvent(Event& event) override;
+
+    virtual void renderOverlay(Renderer&) const {}
+
+    SharedPtr<Widget> getWidget(Size index) const { return getChild(index); }
+    void setFocusIndex(Size index);
+    void clearFocus();
+
+    // slow
+    void setFocus(Widget& widget);
+
+    int getFocusedWidgetIndex() const { return m_focusedWidget; }
+    Widget* getFocusedWidget() const { return m_focusedWidget >= 0 ? getChild(m_focusedWidget).get() : nullptr; }
+
+    virtual bool shouldFireEventForChild(ChildType const&, Event const&) const override;
 
 protected:
     virtual void render(Renderer& renderer) const override;
@@ -129,18 +158,20 @@ protected:
     bool m_mouseOver = false;
     bool m_leftClicked = false;
     Window& m_window;
-    CompoundWidget* m_parentWidget;
     bool m_hide = false;
 
 private:
+    int m_focusedWidget = -1;
     bool m_hasFocus = false;
 };
 
 // TODO: move it to another file
+// TODO: or maybe remove it, it's not used everywhere
+// and probably ever won't.
 class DummyWidget : public Widget
 {
 public:
-    DummyWidget(CompoundWidget& parent)
+    explicit DummyWidget(Widget& parent)
     : Widget(parent) {}
 };
 

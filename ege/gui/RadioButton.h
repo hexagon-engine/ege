@@ -48,7 +48,7 @@ namespace EGE
 class RadioButton : public CheckBox
 {
 public:
-    explicit RadioButton(CompoundWidget& parent, String id = "RadioButton")
+    explicit RadioButton(Widget& parent, String id = "RadioButton")
     : CheckBox(parent, id), m_radioGroup((RadioGroup&)parent) {}
 
 protected:
@@ -56,7 +56,7 @@ protected:
     virtual void updateLayout() override;
 
 private:
-    virtual void onClick(EGE::Vec2d);
+    virtual void onClick(EGE::Vec2d) override;
 
     RadioGroup& m_radioGroup;
 };

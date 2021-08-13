@@ -38,18 +38,20 @@
 
 #include "Sound.h"
 
-#include <ege/core/EventLoop.h>
+#include <ege/core/Component.h>
 
 namespace EGE
 {
 
-class SoundManager : public EventLoop
+// FIXME: Port this to BasicComponent for passing events
+// to sounds (will it be used anywhere?)
+class SoundManager : public ComponentBase
 {
 public:
     EGE_ENUM_YES_NO(ChangeVolumeForAllSounds);
 
     SoundManager(String id = "SoundManager")
-    : EventLoop(id) {}
+    : ComponentBase(id) {}
 
     // TODO: Support loading from memory etc.
 
@@ -63,7 +65,7 @@ public:
     // volume is in range 0-1
     void setVolume(float volume, ChangeVolumeForAllSounds updateVolume = ChangeVolumeForAllSounds::Yes);
 
-    virtual void onUpdate() override;
+    virtual void onTick() override;
 
 private:
     float m_volume = 1.f;

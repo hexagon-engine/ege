@@ -47,26 +47,21 @@ namespace EGE
 class SceneWidget : public Widget
 {
 public:
-    explicit SceneWidget(CompoundWidget& parent, SharedPtr<Scene> initialScene = nullptr)
+    explicit SceneWidget(Widget& parent, SharedPtr<Scene> initialScene = nullptr)
     : Widget(parent, "SceneWidget"), m_initialScene(initialScene) {}
 
     virtual void render(Renderer& renderer) const override;
-    virtual void onUpdate(long long tickCounter) override;
+    virtual void onTick() override;
 
-    void setScene(SharedPtr<Scene> scene)
-    {
-        ASSERT(scene);
-        m_scene = scene;
-        runLayoutUpdate();
-        m_scene->setSize(getSize());
-    }
-
+    void setScene(SharedPtr<Scene> scene);
     SharedPtr<Scene> getScene() { return m_scene; }
 
     void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
 
     Vec2d mapToScreenCoords(Renderer& renderer, Vec3d scene) const;
     Vec3d mapToSceneCoords(Renderer& renderer, Vec2d screen) const;
+
+    virtual EventResult fireEvent(Event& event) override;
 
 protected:
     virtual void updateGeometry(Renderer&) override;

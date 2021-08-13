@@ -23,7 +23,7 @@ TESTCASE(basic)
             soundManager->exit(0);
     }));
 
-    loop.addSubLoop(soundManager);
+    loop.addAndLoadChild(soundManager);
     return loop.run();
 }
 

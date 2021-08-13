@@ -37,6 +37,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/GUIGameLoop.h>
 #include <ege/scene/SceneLoader.h>
@@ -82,10 +83,11 @@ public:
 };
 
 
-class Scene : public EventLoop, public Renderable
+class Scene : public Component<SceneObject>, public Renderable
 {
 public:
-    Scene(GUIGameLoop* loop, SharedPtr<SceneObjectRegistry> registry = nullptr);
+    Scene(SharedPtr<SceneObjectRegistry> registry = nullptr);
+    Scene(GUIGameLoop& loop, SharedPtr<SceneObjectRegistry> registry = nullptr);
     virtual ~Scene();
 
     typedef IdMap<SharedPtr<SceneObject>> ObjectMapType;
@@ -97,7 +99,7 @@ public:
     // TODO: Make this const !
     bool saveToFile(String saveFile, const IOStreamConverter& converter = JSONConverter());
 
-    virtual void onUpdate(TickCount tickCounter);
+    virtual void onTick() override;
 
     // %overwrite - overwrite object instead of skipping when name conflict arises
     UidType addObject(SharedPtr<SceneObject> object);
@@ -166,6 +168,8 @@ public:
 
     // Get camera that is currently used for rendering. Returns nullptr if not rendering.
     Camera const* getCurrentCamera() const { return m_currentCamera; }
+
+    virtual void forEachChild(std::function<void(ChildType&)>&&) override;
 
 protected:
     friend class SceneLoader;

@@ -119,7 +119,7 @@ void Button::render(Renderer& renderer) const
     // label
     if(!m_label.isEmpty())
     {
-        auto font = getParentWidget()->getLoop().getResourceManager()->getDefaultFont();
+        auto font = getParent<Widget>()->getLoop().getResourceManager()->getDefaultFont();
         ASSERT(font);
         sf::Text text(m_label, *font, 12);
         text.setPosition((int)size.x / 2, (int)size.y / 2);

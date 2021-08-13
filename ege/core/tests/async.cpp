@@ -1,6 +1,7 @@
 #include <testsuite/Tests.h>
 
 #include <ege/core/MainLoop.h>
+#include <ege/core/TickEvent.h>
 #include <ege/core/Timer.h>
 #include <ege/util/system.h>
 #include <ege/util/PointerUtils.h>
@@ -26,25 +27,20 @@ TESTCASE(asyncTask)
     EGE::MainLoop loop;
     auto myTask = make<EGE::AsyncTask>(myWorker, myCallback);
     loop.addAsyncTask(myTask, "myTask");
-
-    bool running = true;
-
-    while(running)
-    {
-        loop.onUpdate();
-        EGE::System::sleep(EGE::System::ExactTime::fromSeconds(0.25));
+    loop.setMinimalTickTime(EGE::Time(0.25));
+    loop.events<EGE::TickEvent>().add([&loop, myTask](auto&)->EGE::EventResult {
         std::cerr << "main thread" << std::endl;
 
         if(myTask->finished())
         {
-            auto timer = make<EGE::Timer>(loop, EGE::Timer::Mode::Limited, 1.0, [&running](std::string, EGE::Timer*) {
-                running = false;
+            auto timer = make<EGE::Timer>(loop, EGE::Timer::Mode::Limited, 1.0, [&loop](std::string, EGE::Timer*) {
+                loop.exit();
             });
             loop.addTimer("exit", timer);
         }
-    }
-
-    return 0;
+        return EGE::EventResult::Success;
+    });
+    return loop.run();
 }
 
 TESTCASE(eventLoopIsThreadSafe)

@@ -43,8 +43,8 @@
 namespace EGE
 {
 
-ListBox::ListBox(CompoundWidget& parent, String id)
-: CompoundWidget(parent, id)
+ListBox::ListBox(Widget& parent, String id)
+: Widget(parent, id)
 {
     setPadding({"2px", "2px"});
 
@@ -63,14 +63,14 @@ ListBox::ListBox(CompoundWidget& parent, String id)
         setGeometryNeedUpdate();
     });
 
-    m_entries = addNewWidget<CompoundWidget>("ListBoxList");
+    m_entries = addNewWidget<Widget>("ListBoxList");
     m_entries->layoutDirection = LayoutElement::Direction::Vertical;
     m_entries->setSize({"0N", "0a"});
 }
 
 void ListBox::onKeyPress(sf::Event::KeyEvent& event)
 {
-    CompoundWidget::onKeyPress(event);
+    Widget::onKeyPress(event);
     if(!hasFocus() || m_entries->getFocusedWidgetIndex() == -1)
         return;
 
@@ -89,7 +89,7 @@ void ListBox::scrollBy(int direction, bool changeFocus)
 
     if(direction == 1)
     {
-        if(changeFocus && m_entries->getFocusedWidgetIndex() < (int)m_entries->getWidgetCount() - 1)
+        if(changeFocus && m_entries->getFocusedWidgetIndex() < (int)m_entries->childrenCount() - 1)
         {
             m_entries->setFocusIndex(m_entries->getFocusedWidgetIndex() + 1);
 
@@ -128,7 +128,7 @@ void ListBox::scrollBy(int direction, bool changeFocus)
 void ListBox::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 {
     // Call upper to set focus
-    CompoundWidget::onMouseButtonRelease(event);
+    Widget::onMouseButtonRelease(event);
 
     // Fire event if any entry is focused.
     if(m_mouseOver)
@@ -151,7 +151,7 @@ void ListBox::addEntry(String value)
 
 void ListBox::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 {
-    CompoundWidget::onMouseWheelScroll(event);
+    Widget::onMouseWheelScroll(event);
     if(event.delta > 0)
         scrollBy(-1, false);
     else

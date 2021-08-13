@@ -165,7 +165,7 @@ public:
 
     virtual EGE::EventResult onFinish(int exitCode) override
     {
-        getParentLoop()->exit(exitCode);
+        getParent<ComponentBase>()->exit(exitCode);
         return EGE::EventResult::Success;
     }
 
@@ -181,7 +181,7 @@ TESTCASE(server)
 
     server.setMinimalTickTime(EGE::Time(1 / 60.0, EGE::Time::Unit::Seconds)); //60 tps
 
-    auto scene = make<EGE::Scene>(nullptr);
+    auto scene = make<EGE::Scene>();
 
     auto timer = make<EGE::Timer>(server, EGE::Timer::Mode::Infinite, EGE::Time(2.0, EGE::Time::Unit::Seconds), [scene](std::string, EGE::Timer*) {
         auto object = scene->addNewObject<MyObject>();
@@ -264,7 +264,7 @@ public:
         m_client = make<MyClient>();
 
         // Create scene and assign it to client.
-        auto scene = make<EGE::Scene>(this);
+        auto scene = make<EGE::Scene>(*this);
         m_client->setScene(scene);
 
         // Register SceneObject types for Client.
@@ -283,7 +283,7 @@ public:
         sceneWidget->setCamera(m_camera);
 
         // Add as subloop to handle events.
-        addSubLoop(m_client);
+        addAndLoadChild(m_client);
 
         // Connect to server.
         // TODO: This should automatically add as subloop if required!

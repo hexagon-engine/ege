@@ -42,12 +42,12 @@
 namespace EGE
 {
 
-void ParticleSystemImpl::onUpdate(TickCount tickCounter)
+void ParticleSystemImpl::onTick()
 {
     if(!getOwner().isHeadless())
         getOwner().getLoop()->getProfiler()->startSection("particleSystem");
 
-    SceneObject::onUpdate(tickCounter);
+    SceneObject::onTick();
 
     // update existing particles
     if(!getOwner().isHeadless())

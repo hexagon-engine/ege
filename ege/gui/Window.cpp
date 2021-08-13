@@ -6,7 +6,7 @@ namespace EGE
 {
 
 Window::Window(GUIGameLoop& owner, String id)
-: EventLoop(&owner, id), m_renderer(*this), m_loop(owner) {}
+: SFMLSystemWindow(), BasicComponent<GUIScreen>(owner, id), m_renderer(*this), m_loop(owner) {}
 
 void Window::setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit init)
 {
@@ -34,7 +34,7 @@ void Window::setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit in
         m_pendingGui = screen;
 }
 
-void Window::onTick(long long)
+void Window::onTick()
 {
     m_profiler = getGUILoop().getProfiler();
 
@@ -46,10 +46,12 @@ void Window::onTick(long long)
         if(m_currentGui)
         {
             events<SystemEvent>().remove(*m_currentGui);
+            removeChild(*m_currentGui);
             // it's 'delete'd by eventhandler
             m_currentGui->onUnload();
         }
         m_currentGui = m_pendingGui;
+        addChild(m_currentGui);
         m_currentGui->onCreate();
 
         // allow GUI screens know about window's size when creating
@@ -64,17 +66,16 @@ void Window::onTick(long long)
     // Call system event handlers
     if(isOpen())
     {
-        m_profiler->endStartSection("systemEvents");
+        //m_profiler->endStartSection("systemEvents");
         callEvents(*this, SystemWindow::WaitForEvents::No);
     }
 
     m_profiler->endStartSection("guiUpdate");
-    if(m_currentGui)
-        m_currentGui->onUpdate(getTickCount());
 }
 
 void Window::render()
 {
+    m_profiler = getGUILoop().getProfiler();
     if(isOpen())
     {
         setActive(true);

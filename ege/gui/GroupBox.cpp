@@ -93,7 +93,7 @@ void GroupBox::render(Renderer& renderer) const
     // Label (draw)
     target.draw(text, renderer.getStates().sfStates());
 
-    CompoundWidget::render(renderer);
+    Widget::render(renderer);
 }
 
 }

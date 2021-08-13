@@ -45,7 +45,7 @@ namespace EGE
 class ProgressBar : public Widget
 {
 public:
-    ProgressBar(CompoundWidget& parent, SharedPtr<Progress> progress)
+    ProgressBar(Widget& parent, SharedPtr<Progress> progress)
     : Widget(parent), m_progress(progress) {}
 
     void step();

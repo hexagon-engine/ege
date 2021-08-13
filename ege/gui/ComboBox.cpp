@@ -41,11 +41,11 @@
 namespace EGE
 {
 
-ComboBox::ComboBox(CompoundWidget& parent, String id)
-: CompoundWidget(parent, id)
+ComboBox::ComboBox(Widget& parent, String id)
+: Widget(parent, id)
 {
     layoutDirection = LayoutElement::Direction::Vertical;
-    auto layout = addNewWidget<CompoundWidget>("CBSel");
+    auto layout = addNewWidget<Widget>("CBSel");
     layout->setSize({"1N", "24px"});
     layout->setPadding({1, 1});
     {
@@ -67,7 +67,7 @@ ComboBox::ComboBox(CompoundWidget& parent, String id)
         m_cbSel->setString(m_listBox->selection());
 
         // Pass the event.
-        fire(event);
+        fireEvent(event);
 
         return EventResult::Success;
     });

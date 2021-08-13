@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <ege/core/EventLoop.h>
+#include <ege/core/Component.h>
 #include <ege/core/Timer.h>
 #include <ege/util/Color.h>
 #include <ege/util/Vector.h>
@@ -63,7 +63,7 @@ class Animation : public Timer
 public:
     typedef T Type;
 
-    Animation(EventLoop& loop, Time duration, Timer::Mode mode = Timer::Mode::Limited)
+    Animation(ComponentBase& loop, Time duration, Timer::Mode mode = Timer::Mode::Limited)
     : Timer(loop, mode, duration) {}
 
     // time is value from 0 (start()) to 1 (start() + duration)

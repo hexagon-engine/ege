@@ -48,10 +48,10 @@ class Button : public Widget
 public:
     EGE_SIMPLE_EVENT(ClickEvent, "EGE::Button::ClickEvent");
 
-    explicit Button(CompoundWidget& parent, String id = "Button")
+    explicit Button(Widget& parent, String id = "Button")
     : Widget(parent, id) {}
 
-    virtual void setLabel(sf::String label) { m_label = label; }
+    virtual void setLabel(sf::String label) { m_label = label; setGeometryNeedUpdate(); }
     sf::String getLabel() const { return m_label; }
     void setLabelColor(EGE::ColorRGBA color) { m_labelColor = color; }
 

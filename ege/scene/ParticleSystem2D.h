@@ -62,7 +62,7 @@ public:
     ParticleSystemImpl(Scene& owner)
     : SceneObject(owner) {}
 
-    virtual void onUpdate(TickCount) override;
+    virtual void onTick() override;
 
     // Chance that the particle will be spawned in current onUpdate call.
     // If val == 1, particle will be spawned every tick.

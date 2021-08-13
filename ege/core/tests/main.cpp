@@ -12,7 +12,7 @@ using EGE::Timer;
 class MyGameLoop : public EGE::MainLoop
 {
 public:
-    virtual void onUpdate() override;
+    virtual void onTick() override;
 };
 
 struct TickEvent : public EGE::Event
@@ -26,9 +26,8 @@ struct TickEvent : public EGE::Event
     EGE_EVENT("TickEvent");
 };
 
-void MyGameLoop::onUpdate()
+void MyGameLoop::onTick()
 {
-    EGE::EventLoop::onUpdate();
     ege_log.info() << "onTick";
 
     auto tickCount = getTickCount();
@@ -66,7 +65,7 @@ TESTCASE(gameLoop)
 
 TESTCASE(_eventPerfTest)
 {
-    EGE::EventLoop loop;
+    EGE::ComponentBase loop;
     for(size_t s = 0; s < 1024000; s++)
     {
         loop.fire<TickEvent>(s);
@@ -76,7 +75,7 @@ TESTCASE(_eventPerfTest)
 
 TESTCASE(_eventPerfTest_Handler)
 {
-    EGE::EventLoop loop;
+    EGE::ComponentBase loop;
     loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });
     for(size_t s = 0; s < 1024000; s++)
     {
@@ -87,7 +86,7 @@ TESTCASE(_eventPerfTest_Handler)
 
 TESTCASE(_eventPerfTest_3Handlers)
 {
-    EGE::EventLoop loop;
+    EGE::ComponentBase loop;
     loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });
     loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Failure; });
     loop.events<TickEvent>().add([](TickEvent&){ return EGE::EventResult::Success; });

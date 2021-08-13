@@ -47,11 +47,13 @@
 namespace EGE
 {
 
+SceneObject::SceneObject(Scene& owner)
+: Animatable(owner, "SceneObject"), m_owner(owner) {}
+
 SceneObject::~SceneObject()
 {
     ege_log.debug() << "SceneObject::~SceneObject() " << this;
 }
-
 
 Vec3d SceneObject::getPosition() const
 {
@@ -189,7 +191,7 @@ bool SceneObject::deserializeMain(SharedPtr<ObjectMap> object)
     return true;
 }
 
-void SceneObject::onUpdate(TickCount)
+void SceneObject::onTick()
 {
     if(!m_parentId.empty() && !m_parent)
     {
@@ -207,8 +209,6 @@ void SceneObject::onUpdate(TickCount)
         moveTo(m_position + m_motion);
         setGeometryNeedUpdate();
     }
-
-    Animatable::onUpdate();
 }
 
 void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
@@ -240,10 +240,14 @@ void SceneObject::doRender(Renderer& renderer, const RenderStates& states)
         auto rotationVector = Vec3d(VectorOperations::fromPolar(PolVec2d(-getRotation(), 5)));
         renderer.renderPrimitives({Vertex::make(getPosition(), sf::Color::Green), Vertex::make(getPosition() - rotationVector, sf::Color::Green)}, sf::Lines);
     
-        String data;
-        auto pos = getPosition();
-        data += std::to_string(pos.x) + "," + std::to_string(pos.y);
-        renderer.renderTextWithBackground(pos.x, pos.y, *getOwner().getLoop()->getResourceManager()->getDefaultFont(), data);
+        auto font = getOwner().getLoop()->getResourceManager()->getDefaultFont();
+        if(font)
+        {
+            String data;
+            auto pos = getPosition();
+            data += std::to_string(pos.x) + "," + std::to_string(pos.y);
+            renderer.renderTextWithBackground(pos.x, pos.y, *font, data);
+        }
     }
 }
 

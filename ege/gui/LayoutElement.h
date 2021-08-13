@@ -120,7 +120,7 @@ public:
     virtual void setSize(LVec2d size) { m_size = size; setGeometryNeedUpdate(); }
     virtual void setPadding(LVec2d size) { m_padding = size; setGeometryNeedUpdate(); }
 
-    LayoutElement* getParent() const { return m_parent; }
+    LayoutElement* getLayoutParent() const { return m_parent; }
 
     String getId() const { return m_id; }
 

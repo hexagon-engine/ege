@@ -38,10 +38,10 @@
 
 #include <ege/core/AsyncTask.h>
 #include <ege/core/Clock.h>
+#include <ege/core/Component.h>
 #include <ege/core/EventCast.h>
 #include <ege/core/Event.h>
 #include <ege/core/EventHandler.h>
-#include <ege/core/EventLoop.h>
 #include <ege/core/EventResult.h>
 #include <ege/core/MainLoop.h>
 #include <ege/core/TimerEvent.h>

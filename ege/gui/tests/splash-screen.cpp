@@ -16,7 +16,7 @@ TESTCASE(loading)
     auto splashScreen = window->setNewGUIScreen<EGE::SplashScreen>();
     splashScreen->setImage("splash.png");
 
-    auto wrapper = splashScreen->addNewWidget<EGE::CompoundWidget>();
+    auto wrapper = splashScreen->addNewWidget<EGE::Widget>();
     wrapper->layoutDirection = EGE::LayoutElement::Direction::Horizontal;
     wrapper->setSize({"1N", "50px"});
     wrapper->setPadding({"5px", "5px"});

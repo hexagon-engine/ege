@@ -87,10 +87,8 @@ void SoundManager::setVolume(float volume, ChangeVolumeForAllSounds updateVolume
     }
 }
 
-void SoundManager::onUpdate()
+void SoundManager::onTick()
 {
-    EventLoop::onUpdate();
-
     // Erase finished sounds.
     auto it = std::remove_if(m_playedSounds.begin(), m_playedSounds.end(), [](SharedPtr<SoundInstance> inst) {
         return inst->finished();

@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include "CompoundWidget.h"
+#include "Widget.h"
 
 namespace EGE
 {
@@ -53,10 +53,10 @@ public:
     RadioButton& button;
 };
 
-class RadioGroup : public CompoundWidget
+class RadioGroup : public Widget
 {
 public:
-    RadioGroup(CompoundWidget& parent, String id = "RadioGroup");
+    RadioGroup(Widget& parent, String id = "RadioGroup");
 
     void setCheckedButton(RadioButton& button);
     RadioButton* getCheckedButton() const;

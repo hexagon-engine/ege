@@ -72,22 +72,21 @@ EventResult GUIGameLoop::onLoad()
     m_fpsClock.restart();
 }
 
-void GUIGameLoop::onTick(long long tickCount)
+void GUIGameLoop::onTick()
 {
     m_profiler->startSection("guiTick");
 
     bool isAtLeastOneWindowOpen = false;
-    for(auto& window: m_windows)
-    {
-        window->onTick(tickCount);
-        if(window->isOpen())
-            isAtLeastOneWindowOpen |= true;
-    }
+    forEachChildOfType<Window>([&](auto& window)->void {
+        if(window.isOpen())
+            isAtLeastOneWindowOpen = true;
+    });
+
     if(!isAtLeastOneWindowOpen && m_exitOnCloseAllWindows)
         exit();
 
     m_profiler->endStartSection("logic");
-    logicTick(tickCount);
+    logicTick(getTickCount());
 
     m_profiler->endStartSection("render");
     render();
@@ -102,19 +101,15 @@ void GUIGameLoop::onTick(long long tickCount)
 
 SharedPtr<Window> GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
 {
-    // FIXME: Handle code dupe in openWindow
-    auto window = make<Window>(*this, "Window: " + label.toAnsiString());
+    auto window = addNewChild<Window>(*this, "Window: " + label.toAnsiString());
     window->create(mode, label, style, settings);
-    m_windows.push_back(window);
     return window;
 }
 
 SharedPtr<Window> GUIGameLoop::openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings)
 {
-    // FIXME: Handle code dupe in openWindow
-    auto window = make<Window>(*this);
+    auto window = addNewChild<Window>(*this, "Window (external)");
     window->create(handle, settings);
-    m_windows.push_back(window);
     return window;
 }
 
@@ -130,8 +125,9 @@ void GUIGameLoop::setResourceManager(SharedPtr<ResourceManager> manager)
 
 void GUIGameLoop::render()
 {
-    for(auto& window: m_windows)
-        window->render();
+    forEachChildOfType<Window>([&](auto& window)->void {
+        window.render();
+    });
 }
 
 }

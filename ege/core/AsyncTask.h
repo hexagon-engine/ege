@@ -59,8 +59,8 @@ public:
     inline static constexpr State UnfinishedState = { 0, false };
 
     // WORKER runs in OTHER thread
-    // CALLBACK runs in MAIN thread (The same as EventLoop)
-    // So if you want callback to be called, you must update EventLoop!
+    // CALLBACK runs in MAIN thread (The same as Component)
+    // So if you want callback to be called, you must update Component!
     AsyncTask(std::function<int(AsyncTask& task)> worker, std::function<void(State)> callback);
 
     virtual ~AsyncTask();
