@@ -77,8 +77,7 @@ public:
     template<class T, class... Args>
     void addNewBehaviour(Args&&... args)
     {
-        ASSERT(instanceof(this, T));
-        addBehaviour(std::make_unique<T>(static_cast<typename T::ComponentType&>(*this), std::forward<Args>(args)...));
+        ASSERT(instanceof(this, typename T::ComponentType));
     }
 
     // get in-loop time in ticks or ms
