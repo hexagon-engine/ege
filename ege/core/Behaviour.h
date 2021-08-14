@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include "ege/util/Time.h"
 #include <functional>
 
 #include <ege/main/Config.h>
@@ -45,18 +46,21 @@ namespace EGE
 
 class ComponentBase;
 
-class Behaviour
+namespace Internal
+{
+
+class _BehaviourBase
 {
 public:
-    Behaviour(ComponentBase& component)
+    _BehaviourBase(ComponentBase& component)
     : m_component(component) {}
 
-    virtual ~Behaviour() = default;
+    _BehaviourBase(_BehaviourBase const&) = delete;
+    _BehaviourBase(_BehaviourBase&&) = delete;
+    _BehaviourBase& operator=(_BehaviourBase const&) = delete;
+    _BehaviourBase& operator=(_BehaviourBase&&) = delete;
 
-    Behaviour(Behaviour const&) = delete;
-    Behaviour(Behaviour&&) = delete;
-    Behaviour& operator=(Behaviour const&) = delete;
-    Behaviour& operator=(Behaviour&&) = delete;
+    virtual ~_BehaviourBase() = default;
 
     virtual void onUpdate() = 0;
 
@@ -64,20 +68,32 @@ protected:
     ComponentBase& m_component;
 };
 
-class SimpleBehaviour : public Behaviour
+}
+
+template<class T>
+class Behaviour : public Internal::_BehaviourBase
 {
 public:
-    // TODO: Don't allow creating this from any objects!!
-    SimpleBehaviour(ComponentBase& component, std::function<void(ComponentBase&)> onupdate)
-    : Behaviour(component), m_onUpdate(onupdate) { ASSERT(m_onUpdate); }
+    using ComponentType = T;
+
+    Behaviour(T& component)
+    : Internal::_BehaviourBase(component) {}
+};
+
+template<class T>
+class SimpleBehaviour : public Behaviour<T>
+{
+public:
+    SimpleBehaviour(T& component, std::function<void(T&)> onupdate)
+    : Behaviour<T>(component), m_onUpdate(onupdate) { ASSERT(m_onUpdate); }
 
     virtual void onUpdate() override
     {
-        m_onUpdate(m_component);
+        m_onUpdate(static_cast<T&>(Behaviour<T>::m_component));
     }
 
 private:
-    std::function<void(ComponentBase&)> m_onUpdate;
+    std::function<void(T&)> m_onUpdate;
 };
 
 }

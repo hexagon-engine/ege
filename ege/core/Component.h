@@ -58,8 +58,6 @@
 namespace EGE
 {
 
-class Behaviour;
-
 // TODO: Merge this with InspectorNode
 class ComponentBase : public InspectorNode
 {
@@ -91,9 +89,9 @@ public:
     template<class T, class... Args>
     void addNewBehaviour(Args&&... args)
     {
-        addBehaviour(std::make_unique<T>(*this, std::forward<Args>(args)...));
+        ASSERT(instanceof(this, T));
+        addBehaviour(std::make_unique<T>(static_cast<typename T::ComponentType&>(*this), std::forward<Args>(args)...));
     }
-    void addBehaviour(UniquePtr<Behaviour>);
 
     // get in-loop time in ticks or ms
     // it should be used ONLY for comparisions
@@ -123,6 +121,7 @@ public:
     U* tryGetParent() const { return dynamic_cast<U*>(isnParent()); }
 
 protected:
+    void addBehaviour(UniquePtr<Internal::_BehaviourBase>);
     virtual void onProfilerResults(Profiler const&) {}
 
     virtual void onExitInternal() {}
@@ -152,7 +151,7 @@ private:
     std::queue<std::function<void()>> m_deferredInvokes;
     std::recursive_mutex m_deferredInvokesMutex;
 
-    Vector<UniquePtr<Behaviour>> m_behaviours;
+    Vector<UniquePtr<Internal::_BehaviourBase>> m_behaviours;
     std::mutex m_behaviourMutex;
 };
 

@@ -15,7 +15,7 @@ private:
 TESTCASE(basic)
 {
     TestMainLoop loop;
-    loop.addNewBehaviour<EGE::SimpleBehaviour>([&loop](auto&) {
+    loop.addNewBehaviour<EGE::SimpleBehaviour<TestMainLoop>>([&loop](auto&) {
         ege_log.info() << "behaviour called! yay";
         loop.increment();
     });

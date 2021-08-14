@@ -130,7 +130,7 @@ void ComponentBase::updateTimers()
     }
 }
 
-void ComponentBase::addBehaviour(UniquePtr<Behaviour> behaviour)
+void ComponentBase::addBehaviour(UniquePtr<Internal::_BehaviourBase> behaviour)
 {
     std::lock_guard<std::mutex> lock(m_behaviourMutex);
     m_behaviours.push_back(std::move(behaviour));
