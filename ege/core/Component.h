@@ -37,10 +37,9 @@
 #pragma once
 
 #include "AsyncTask.h"
+#include "EventResult.h"
+#include "EventTarget.h"
 #include "Behaviour.h"
-#include "EventArray.h"
-#include "EventHandler.h"
-#include "LockingEventArray.h"
 #include "Timer.h"
 
 #include <ege/debug/InspectorNode.h>
@@ -59,7 +58,7 @@ namespace EGE
 {
 
 // TODO: Merge this with InspectorNode
-class ComponentBase : public InspectorNode
+class ComponentBase : public InspectorNode, public EventTarget
 {
 public:
     explicit ComponentBase(ComponentBase& parent, String id = "ComponentBase")
@@ -69,17 +68,6 @@ public:
     : InspectorNode(id) {}
 
     EGE_ENUM_YES_NO(TimerImmediateStart);
-
-    template<class Evt>
-    LockingEventArray<Evt> events()
-    {
-        return LockingEventArray<Evt>(m_eventHandlersMutex, (EventArray<Evt>&)m_eventHandlers[Evt::type()]);
-    }
-
-    template<class Evt, class... Args>
-    EventResult fire(Args&&... args) { Evt event(std::forward<Args>(args)...); return fireEvent(event); }
-
-    virtual EventResult fireEvent(Event& event) { return events(event.getType()).fire(event); }
 
     void addTimer(std::string const& name, SharedPtr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
     std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
@@ -127,8 +115,6 @@ protected:
     virtual void onExitInternal() {}
     virtual EventResult onFinishInternal(int exitCode) { return onFinish(exitCode); }
 
-    EventArray<Event>& events(Event::EventType type);
-
 private:
     std::atomic<TickCount> m_ticks = 0;
     std::atomic<int> m_exitCode = 0;
@@ -144,9 +130,6 @@ private:
 
     std::multimap<std::string, SharedPtr<Timer>> m_timers;
     std::mutex m_timersMutex;
-
-    Map<Event::EventType, EventArray<Event>> m_eventHandlers;
-    std::mutex m_eventHandlersMutex;
 
     std::queue<std::function<void()>> m_deferredInvokes;
     std::recursive_mutex m_deferredInvokesMutex;

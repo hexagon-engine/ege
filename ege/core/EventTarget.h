@@ -36,17 +36,32 @@
 
 #pragma once
 
-#include <ege/core/AsyncTask.h>
-#include <ege/core/Behaviour.h>
-#include <ege/core/Clock.h>
-#include <ege/core/Component.h>
-#include <ege/core/EventCast.h>
-#include <ege/core/Event.h>
+#include <ege/core/EventArray.h>
 #include <ege/core/EventHandler.h>
-#include <ege/core/EventResult.h>
-#include <ege/core/EventTarget.h>
-#include <ege/core/MainLoop.h>
-#include <ege/core/TickEvent.h>
-#include <ege/core/TimerEvent.h>
-#include <ege/core/Timer.h>
+#include <ege/core/LockingEventArray.h>
 
+namespace EGE
+{
+
+class EventTarget
+{
+public:
+    template<class Evt>
+    LockingEventArray<Evt> events()
+    {
+        return LockingEventArray<Evt>(m_eventHandlersMutex, (EventArray<Evt>&)m_eventHandlers[Evt::type()]);
+    }
+
+    template<class Evt, class... Args>
+    EventResult fire(Args&&... args) { Evt event(std::forward<Args>(args)...); return fireEvent(event); }
+
+    virtual EventResult fireEvent(Event& event) { return events(event.getType()).fire(event); }
+
+private:
+    EventArray<Event>& events(Event::EventType type);
+
+    Map<Event::EventType, EventArray<Event>> m_eventHandlers;
+    std::mutex m_eventHandlersMutex;
+};
+
+}

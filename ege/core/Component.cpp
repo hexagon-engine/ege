@@ -206,11 +206,6 @@ void ComponentBase::removeAsyncTasks(std::string name)
     }
 }
 
-EventArray<Event>& ComponentBase::events(Event::EventType type)
-{
-    return m_eventHandlers[type];
-}
-
 void ComponentBase::updateAsyncTasks()
 {
     std::lock_guard<std::mutex> lock(m_asyncTasksMutex);

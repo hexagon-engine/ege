@@ -34,19 +34,14 @@
 *
 */
 
-#pragma once
-
-#include <ege/core/AsyncTask.h>
-#include <ege/core/Behaviour.h>
-#include <ege/core/Clock.h>
-#include <ege/core/Component.h>
-#include <ege/core/EventCast.h>
-#include <ege/core/Event.h>
-#include <ege/core/EventHandler.h>
-#include <ege/core/EventResult.h>
 #include <ege/core/EventTarget.h>
-#include <ege/core/MainLoop.h>
-#include <ege/core/TickEvent.h>
-#include <ege/core/TimerEvent.h>
-#include <ege/core/Timer.h>
 
+namespace EGE
+{
+
+EventArray<Event>& EventTarget::events(Event::EventType type)
+{
+    return m_eventHandlers[type];
+}
+
+}
