@@ -75,9 +75,13 @@ public:
     void deferredInvoke(std::function<void()> func);
 
     template<class T, class... Args>
-    void addNewBehaviour(Args&&... args)
+    T& addNewBehaviour(Args&&... args)
     {
         ASSERT(instanceof(this, typename T::ComponentType));
+        auto behaviour = std::make_unique<T>(static_cast<typename T::ComponentType&>(*this), std::forward<Args>(args)...);
+        auto behaviourRawPtr = behaviour.get();
+        addBehaviour(std::move(behaviour));
+        return *behaviourRawPtr;
     }
 
     // get in-loop time in ticks or ms
