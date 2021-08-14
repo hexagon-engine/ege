@@ -74,9 +74,9 @@ private:
 
     struct Section : public Serializable
     {
-        std::map<std::string, SharedPtr<Section>> m_subSections;
+        StringMap<UniquePtr<Section>> m_subSections;
         long long m_time; //in ns
-        std::string m_name;
+        String m_name;
         bool m_started = false;
         long long m_startTime;
         int m_depth = 0;

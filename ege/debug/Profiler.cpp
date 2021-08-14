@@ -122,18 +122,19 @@ void Profiler::startSectionLL(std::string const& name)
 
     if(section == nullptr)
     {
-        section = new Section;
+        auto newSection = std::make_unique<Section>();
+        section = newSection.get();
         section->m_name = name;
         section->m_time = 0LL;
         section->m_depth = m_startedSections.size() + 1;
 
         if(m_startedSections.empty())
         {
-            m_root.m_subSections[name] = SharedPtr<Section>(section);
+            m_root.m_subSections[name] = std::move(newSection);
         }
         else
         {
-            m_startedSections.top()->m_subSections[name] = SharedPtr<Section>(section);
+            m_startedSections.top()->m_subSections[name] = std::move(newSection);
         }
     }
     section->m_startTime = getTime();
@@ -210,7 +211,7 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
     std::vector<Profiler::Section*> sections;
 
     // subsections
-    for(auto it: m_subSections)
+    for(auto& it: m_subSections)
         sections.push_back(it.second.get());
 
     std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
@@ -228,13 +229,15 @@ SharedPtr<ObjectMap> Profiler::Section::serialize() const
 
     // sub sections
     std::vector<Profiler::Section*> sections;
-    for(auto it: m_subSections)
+    for(auto& it: m_subSections)
         sections.push_back(it.second.get());
 
+    // FIXME: There is no point to sort here since ObjectMap does not
+    // store information about element order
     std::sort(sections.begin(), sections.end(), [](Profiler::Section* _1, Profiler::Section* _2) { return _1->m_time > _2->m_time; } );
     SharedPtr<ObjectMap> sectionMap = make<ObjectMap>();
 
-    for(auto section: sections)
+    for(auto& section: sections)
     {
         sectionMap->addObject(section->m_name, section->serialize());
     }
