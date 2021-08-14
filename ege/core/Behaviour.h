@@ -79,6 +79,9 @@ public:
 
     Behaviour(T& component)
     : Internal::_BehaviourBase(component) {}
+
+protected:
+    T& component() { return static_cast<T>(m_component); }
 };
 
 template<class T>
@@ -90,7 +93,7 @@ public:
 
     virtual void onUpdate() override
     {
-        m_onUpdate(static_cast<T&>(Behaviour<T>::m_component));
+        m_onUpdate(static_cast<T&>(this->m_component));
     }
 
 private:
