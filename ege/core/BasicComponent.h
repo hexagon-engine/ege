@@ -39,6 +39,12 @@ public:
         return true;
     }
 
+    template<class U, class... Args>
+    bool addAndLoadNewChild(Args&&... args)
+    {
+        return addAndLoadChild(make<U>(*this, std::forward<Args>(args)...));
+    }
+
 protected:
     template<class Type, class... Args>
     SharedPtr<Type> addNewChild(Args&&... args)
