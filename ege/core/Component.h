@@ -37,6 +37,7 @@
 #pragma once
 
 #include "AsyncTask.h"
+#include "Behaviour.h"
 #include "EventArray.h"
 #include "EventHandler.h"
 #include "LockingEventArray.h"
@@ -57,14 +58,16 @@
 namespace EGE
 {
 
+class Behaviour;
+
 // TODO: Merge this with InspectorNode
 class ComponentBase : public InspectorNode
 {
 public:
-    ComponentBase(ComponentBase& parent, String id = "ComponentBase")
+    explicit ComponentBase(ComponentBase& parent, String id = "ComponentBase")
     : InspectorNode(&parent, id) {}
 
-    ComponentBase(String id = "ComponentBase")
+    explicit ComponentBase(String id = "ComponentBase")
     : InspectorNode(id) {}
 
     EGE_ENUM_YES_NO(TimerImmediateStart);
@@ -84,6 +87,13 @@ public:
     std::vector<std::weak_ptr<Timer>> getTimers(const std::string& timer);
     void removeTimer(std::string const& timer);
     void deferredInvoke(std::function<void()> func);
+
+    template<class T, class... Args>
+    void addNewBehaviour(Args&&... args)
+    {
+        addBehaviour(std::make_unique<T>(*this, std::forward<Args>(args)...));
+    }
+    void addBehaviour(UniquePtr<Behaviour>);
 
     // get in-loop time in ticks or ms
     // it should be used ONLY for comparisions
@@ -128,6 +138,7 @@ private:
     virtual void updateTimers();
     virtual void updateAsyncTasks();
     virtual void callDeferredInvokes();
+    virtual void updateBehaviours();
 
     std::multimap<std::string, SharedPtr<AsyncTask>> m_asyncTasks;
     std::mutex m_asyncTasksMutex;
@@ -141,7 +152,8 @@ private:
     std::queue<std::function<void()>> m_deferredInvokes;
     std::recursive_mutex m_deferredInvokesMutex;
 
-    std::mutex m_subLoopsMutex;
+    Vector<UniquePtr<Behaviour>> m_behaviours;
+    std::mutex m_behaviourMutex;
 };
 
 template<class T, class K = Size>
@@ -151,10 +163,10 @@ public:
     using ChildType = T;
     using KeyType = K;
 
-    Component(ComponentBase& parent, String id = "Component")
+    explicit Component(ComponentBase& parent, String id = "Component")
     : ComponentBase(parent, id) {}
 
-    Component(String id = "Component")
+    explicit Component(String id = "Component")
     : ComponentBase(id) {}
 
     virtual ~Component() = default;

@@ -20,9 +20,10 @@ public:
     BasicComponent(String id = "BasicComponent")
     : Component<T>(id) {}
 
-    SharedPtr<ChildType> getChild(KeyType index) const
+    template<class U = ChildType>
+    SharedPtr<U> getChild(KeyType index) const
     {
-        return m_children[index];
+        return std::static_pointer_cast<U>(m_children[index]);
     }
 
     size_t childrenCount() const

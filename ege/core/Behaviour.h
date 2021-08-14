@@ -36,16 +36,48 @@
 
 #pragma once
 
-#include <ege/core/AsyncTask.h>
-#include <ege/core/Behaviour.h>
-#include <ege/core/Clock.h>
-#include <ege/core/Component.h>
-#include <ege/core/EventCast.h>
-#include <ege/core/Event.h>
-#include <ege/core/EventHandler.h>
-#include <ege/core/EventResult.h>
-#include <ege/core/MainLoop.h>
-#include <ege/core/TickEvent.h>
-#include <ege/core/TimerEvent.h>
-#include <ege/core/Timer.h>
+#include <functional>
 
+#include <ege/main/Config.h>
+
+namespace EGE
+{
+
+class ComponentBase;
+
+class Behaviour
+{
+public:
+    Behaviour(ComponentBase& component)
+    : m_component(component) {}
+
+    virtual ~Behaviour() = default;
+
+    Behaviour(Behaviour const&) = delete;
+    Behaviour(Behaviour&&) = delete;
+    Behaviour& operator=(Behaviour const&) = delete;
+    Behaviour& operator=(Behaviour&&) = delete;
+
+    virtual void onUpdate() = 0;
+
+protected:
+    ComponentBase& m_component;
+};
+
+class SimpleBehaviour : public Behaviour
+{
+public:
+    // TODO: Don't allow creating this from any objects!!
+    SimpleBehaviour(ComponentBase& component, std::function<void(ComponentBase&)> onupdate)
+    : Behaviour(component), m_onUpdate(onupdate) { ASSERT(m_onUpdate); }
+
+    virtual void onUpdate() override
+    {
+        m_onUpdate(m_component);
+    }
+
+private:
+    std::function<void(ComponentBase&)> m_onUpdate;
+};
+
+}

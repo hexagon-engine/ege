@@ -38,6 +38,7 @@
 
 #include "TimerEvent.h"
 
+#include <ege/core/Behaviour.h>
 #include <ege/core/TickEvent.h>
 #include <ege/debug/Inspector.h>
 #include <ege/debug/Logger.h>
@@ -127,6 +128,19 @@ void ComponentBase::updateTimers()
             it = m_timers.find(timer.first);
         }
     }
+}
+
+void ComponentBase::addBehaviour(UniquePtr<Behaviour> behaviour)
+{
+    std::lock_guard<std::mutex> lock(m_behaviourMutex);
+    m_behaviours.push_back(std::move(behaviour));
+}
+
+void ComponentBase::updateBehaviours()
+{
+    std::lock_guard<std::mutex> lock(m_behaviourMutex);
+    for(auto& behaviour: m_behaviours)
+        behaviour->onUpdate();
 }
 
 void ComponentBase::deferredInvoke(std::function<void()> func)
@@ -225,6 +239,9 @@ void ComponentBase::onUpdate()
     ProfilerSectionStarter starter(*profiler, "onTick");
     fire<TickEvent>(m_ticks.fetch_add(1));
     onTick();
+
+    starter.switchSection("updateBehaviours");
+    updateBehaviours();
 
     starter.switchSection("updateTimers");
     updateTimers();
