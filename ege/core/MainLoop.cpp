@@ -64,8 +64,10 @@ int MainLoop::run()
 
             // Limit tick time / frame rate
             starter.switchSection("MainLoop/tickLimit");
-            if(m_minTickTime.getValue() > 0.0)
+            if(m_minTickTime.getValue() > 0.0 && m_minTickTime.getValue() > tickClock.getElapsedTime())
+            {
                 EGE::System::sleep(EGE::System::ExactTime::fromSeconds(m_minTickTime.getValue() - tickClock.getElapsedTime()));
+            }
         }
         profiler->end();
         onProfilerResults(*profiler);

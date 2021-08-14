@@ -103,4 +103,5 @@ macro(ege_depend_module target dependtarget)
 endmacro()
 
 add_subdirectory(ege)
+add_subdirectory(examples)
 

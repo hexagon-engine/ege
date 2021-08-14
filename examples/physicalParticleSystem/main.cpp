@@ -1,4 +1,3 @@
-#include <testsuite/Tests.h>
 #include <ege/gfx.h>
 #include <ege/gui.h>
 #include <ege/scene.h>
@@ -137,7 +136,7 @@ protected:
 };
 
 
-TESTCASE(basic)
+int main()
 {
     EGE::GlobalConfig::set(EGE::GlobalConfig::Option::Profiler_Enable);
     GameLoop loop;
@@ -314,5 +313,3 @@ TESTCASE(basic)
 
     return loop.run();
 }
-
-RUN_TESTS(physicalParticleSystem)
