@@ -43,8 +43,6 @@
 
 #include <ege/util/Serializable.h>
 
-#define PROFILER_DEBUG 0
-
 namespace EGE
 {
 
@@ -54,21 +52,25 @@ public:
     Profiler();
     virtual ~Profiler();
 
+    void start();
+    void end();
+    std::string toString() const;
+
+    // NOTE: RAII wrapper (ProfilerSectionStarter) is recommended for this!
     // empty name for root section
     void startSection(std::string const& name = "");
     void endSection();
     void endStartSection(std::string const&  name);
-    void start();
-    void end();
-    std::string toString();
 
     virtual SharedPtr<ObjectMap> serialize() const;
     virtual bool deserialize(SharedPtr<ObjectMap>);
 
 private:
+    friend class ProfilerSectionStarter;
+
     void startSectionLL(std::string const& name);
     void endSectionLL();
-    long long getTime();
+    long long getTime() const;
 
     struct Section : public Serializable
     {
@@ -80,7 +82,7 @@ private:
         int m_depth = 0;
 
         Section* findSubSection(std::string const& name);
-        void addSectionInfo(std::string& info, long long parentTime, long long rootTime);
+        void addSectionInfo(std::string& info, long long parentTime, long long rootTime) const;
 
         virtual SharedPtr<ObjectMap> serialize() const;
         virtual bool deserialize(SharedPtr<ObjectMap>);

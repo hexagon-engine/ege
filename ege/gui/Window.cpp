@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <ege/debug/ProfilerSectionStarter.h>
 #include <ege/gui/GUIGameLoop.h>
 
 namespace EGE
@@ -36,10 +37,10 @@ void Window::setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit in
 
 void Window::onTick()
 {
-    m_profiler = getGUILoop().getProfiler();
+    auto profiler = getProfiler();
 
     // Initialize pending GUI
-    m_profiler->startSection("initPendingGUI");
+    ProfilerSectionStarter starter(*profiler, "Window/initPendingGUI");
     if(m_pendingGui)
     {
         // FIXME: Handle code dupe with immediate-init path of setGUIScreen()
@@ -64,31 +65,29 @@ void Window::onTick()
     }
 
     // Call system event handlers
+    starter.switchSection("Window/systemEvents");
     if(isOpen())
     {
         //m_profiler->endStartSection("systemEvents");
         callEvents(*this, SystemWindow::WaitForEvents::No);
     }
-
-    m_profiler->endStartSection("guiUpdate");
 }
 
 void Window::render()
 {
-    m_profiler = getGUILoop().getProfiler();
+    auto profiler = getProfiler();
     if(isOpen())
     {
         setActive(true);
-        m_profiler->startSection("clear");
+        ProfilerSectionStarter starter(*profiler, "Window/render/clear");
         clear({m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b});
 
-        m_profiler->endStartSection("gui");
+        starter.switchSection("Window/render/gui");
         if(m_currentGui)
             m_currentGui->doRender(m_renderer);
 
-        m_profiler->endStartSection("display");
+        starter.switchSection("Window/render/display");
         display();
-        m_profiler->endSection();
     }
 }
 

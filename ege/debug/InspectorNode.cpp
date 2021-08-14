@@ -149,5 +149,29 @@ String InspectorNode::isnDisplay() const
     return _isnDisplayImpl(*this, {}, true);
 }
 
+Profiler* InspectorNode::getProfiler() const
+{
+    if(m_profiler)
+        return m_profiler.get();
+    
+    auto parent = isnParent();
+    if(parent)
+        return parent->getProfiler();
+
+    return nullptr;
+}
+
+void InspectorNode::createProfiler()
+{
+    ASSERT_WITH_MESSAGE(!getProfiler(), "Profiler can be created if there is no profiler from parent");
+    m_profiler = std::make_unique<Profiler>();
+}
+
+void InspectorNode::destroyProfiler()
+{
+    ASSERT_WITH_MESSAGE(m_profiler, "Profiler can be destroyed if there if no profiler from parent");
+    m_profiler.reset();
+}
+
 }
 

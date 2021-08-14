@@ -120,10 +120,27 @@ private:
     EGE::SharedPtr<EGE::SceneWidget> m_sceneWidget;
 };
 
+class GameLoop : public EGE::GUIGameLoop
+{
+public:
+    bool dumpProfiler = false;
+
+protected:
+    virtual void onProfilerResults(EGE::Profiler const& profiler) override
+    {
+        if(dumpProfiler)
+        {
+            ege_log.info() << "Profiler dump: " << profiler.toString();
+            dumpProfiler = false;
+        }
+    }
+};
+
 
 TESTCASE(basic)
 {
-    EGE::GUIGameLoop loop;
+    EGE::GlobalConfig::set(EGE::GlobalConfig::Option::Profiler_Enable);
+    GameLoop loop;
     loop.setMaxTicksPerSecond(60);
 
     auto resourceManager = make<EGE::GUIResourceManager>();
@@ -167,6 +184,14 @@ TESTCASE(basic)
             });
             killAllParticles->setLabel("Kill all particles");
             killAllParticles->setSize({"1N", "25px"});
+
+            auto dumpProfiler = controlsWidget->addNewWidget<EGE::Button>();
+            dumpProfiler->events<EGE::Button::ClickEvent>().add([&](EGE::Button::ClickEvent&) {
+                loop.dumpProfiler = true;
+                return EGE::EventResult::Success;
+            });
+            dumpProfiler->setLabel("Dump profiler");
+            dumpProfiler->setSize({"1N", "25px"});
 
             auto showOverlayCheckbox = controlsWidget->addNewWidget<EGE::CheckBox>();
             showOverlayCheckbox->events<EGE::Button::ClickEvent>().add([showOverlayCheckbox](EGE::Button::ClickEvent&) {

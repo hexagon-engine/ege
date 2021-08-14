@@ -45,6 +45,7 @@
 #include <ege/debug/InspectorNode.h>
 #include <ege/debug/Logger.h>
 #include <ege/debug/Profiler.h>
+#include <ege/debug/ProfilerSectionStarter.h>
 
 #include <map>
 #include <memory>
@@ -56,6 +57,7 @@
 namespace EGE
 {
 
+// TODO: Merge this with InspectorNode
 class ComponentBase : public InspectorNode
 {
 public:
@@ -95,8 +97,6 @@ public:
     void removeAsyncTasks(std::string name = "");
     std::vector<std::weak_ptr<AsyncTask>> getAsyncTasks(std::string name = "");
 
-    Profiler* getProfiler() { return m_profiler; }
-
     virtual EventResult onLoad() { return EventResult::Success; }
     virtual void onTick() {}
     virtual EventResult onFinish(int /*exitCode*/) { return EventResult::Success; }
@@ -113,7 +113,6 @@ public:
     U* tryGetParent() const { return dynamic_cast<U*>(isnParent()); }
 
 protected:
-    Profiler* m_profiler = nullptr;
     virtual void onProfilerResults(Profiler const&) {}
 
     virtual void onExitInternal() {}
@@ -192,7 +191,8 @@ public:
     virtual void onUpdate() final override
     {
         ComponentBase::onUpdate();
-        forEachChild([](auto& child)->void {
+        forEachChild([this](auto& child)->void {
+            ProfilerSectionStarter starter(*getProfiler(), "Component<" + child.isnName() + ">/onUpdate");
             child.onUpdate();
         });
     }

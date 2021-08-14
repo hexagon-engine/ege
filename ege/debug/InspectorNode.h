@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include <ege/debug/Profiler.h>
 #include <ege/util/Types.h>
 
 namespace EGE
@@ -64,10 +65,17 @@ public:
     virtual String isnInfo() const { return ""; }
     Set<InspectorNode*> const& isnChildren() const { return m_isnChildren; }
 
+    Profiler* getProfiler() const;
+
+protected:
+    void createProfiler();
+    void destroyProfiler();
+
 private:
     InspectorNode* m_isnParent = nullptr;
     String m_isnName;
     Set<InspectorNode*> m_isnChildren;
+    UniquePtr<Profiler> m_profiler;
 };
 
 }

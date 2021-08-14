@@ -37,6 +37,7 @@
 #include "Scene.h"
 
 #include "SceneLoader.h"
+#include "ege/debug/ProfilerSectionStarter.h"
 
 #include <algorithm>
 #include <ege/debug/Dump.h>
@@ -99,19 +100,19 @@ void Scene::render(Renderer& renderer) const
 
 void Scene::onTick()
 {
-    if(!isHeadless()) m_loop->getProfiler()->startSection("eventLoop");
+    ProfilerSectionStarter starter(*getProfiler(), "eventLoop");
 
     // Note that we don't call SceneObject's onTick() here; it's done in Component loop.
-    auto doUpdateForObjectMap = [this](Scene::ObjectMapType& objects, bool allowDead) {
+    auto doUpdateForObjectMap = [this, &starter](Scene::ObjectMapType& objects, bool allowDead) {
         for(auto it = objects.begin(); it != objects.end();)
         {
-            if(!isHeadless()) m_loop->getProfiler()->startSection("update");
+            starter.switchSection("update");
             auto object = *it;
             auto oldIt = it++;
 
             if(allowDead)
             {
-                if(!isHeadless()) m_loop->getProfiler()->endStartSection("deadCheck");
+                starter.switchSection("deadCheck");
                 if(object.second->isDead())
                 {
                     ege_log.debug() << "SceneObject is dead: " << object.second->getObjectId() << " @" << object.second;
@@ -136,20 +137,16 @@ void Scene::onTick()
                     rebuildLayers();
                 }
             }
-            if(!isHeadless()) m_loop->getProfiler()->endSection();
         }
     };
 
-    if(!isHeadless()) m_loop->getProfiler()->endStartSection("objectUpdate");
-    {
-        std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
-        doUpdateForObjectMap(m_objects, true);
+    // FIXME: Separate mutex for objects / staticObjects
+    std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
+    starter.switchSection("objectUpdate");
+    doUpdateForObjectMap(m_objects, true);
 
-        if(!isHeadless()) m_loop->getProfiler()->endStartSection("staticObjectUpdate");
-        doUpdateForObjectMap(m_staticObjects, false);
-    }
-
-    if(!isHeadless()) m_loop->getProfiler()->endSection();
+    starter.switchSection("staticObjectUpdate");
+    doUpdateForObjectMap(m_staticObjects, false);
 }
 
 UidType Scene::addObject(SharedPtr<SceneObject> object)

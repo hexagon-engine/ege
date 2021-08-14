@@ -36,6 +36,8 @@
 
 #include "MainLoop.h"
 
+#include <ege/debug/ProfilerSectionStarter.h>
+
 namespace EGE
 {
 
@@ -52,22 +54,22 @@ int MainLoop::run()
     Clock tickClock(*this);
     while(isRunning())
     {
-        Profiler profiler;
-        m_profiler = &profiler;
-        profiler.start();
-
+        createProfiler();
+        auto profiler = getProfiler();
+        profiler->start();
         tickClock.restart();
-        profiler.startSection("update");
-        onUpdate();
+        {
+            ProfilerSectionStarter starter(*profiler, "MainLoop/update");
+            onUpdate();
 
-        // Limit tick time / frame rate
-        profiler.endStartSection("tickLimit");
-        if(m_minTickTime.getValue() > 0.0)
-            EGE::System::sleep(EGE::System::ExactTime::fromSeconds(m_minTickTime.getValue() - tickClock.getElapsedTime()));
-
-        profiler.end();
-        onProfilerResults(profiler);
-        m_profiler = nullptr;
+            // Limit tick time / frame rate
+            starter.switchSection("MainLoop/tickLimit");
+            if(m_minTickTime.getValue() > 0.0)
+                EGE::System::sleep(EGE::System::ExactTime::fromSeconds(m_minTickTime.getValue() - tickClock.getElapsedTime()));
+        }
+        profiler->end();
+        onProfilerResults(*profiler);
+        destroyProfiler();
     }
 
     int exitCode = getExitCode();

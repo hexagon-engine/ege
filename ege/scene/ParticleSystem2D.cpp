@@ -37,6 +37,8 @@
 #include "ParticleSystem2D.h"
 #include "Scene.h"
 
+#include <ege/debug/ProfilerSectionStarter.h>
+
 #include <cstdlib>
 
 namespace EGE
@@ -44,22 +46,17 @@ namespace EGE
 
 void ParticleSystemImpl::onTick()
 {
-    if(!getOwner().isHeadless())
-        getOwner().getLoop()->getProfiler()->startSection("particleSystem");
-
+    ProfilerSectionStarter starter(*getProfiler(), "ParticleSystem/super");
     SceneObject::onTick();
 
     // update existing particles
-    if(!getOwner().isHeadless())
-        getOwner().getLoop()->getProfiler()->startSection("update");
-
+    starter.switchSection("ParticleSystem/update");
     updateParticles();
 
     // spawn new particles
     if(m_enabled)
     {
-        if(!getOwner().isHeadless())
-            getOwner().getLoop()->getProfiler()->endStartSection("spawn");
+        starter.switchSection("ParticleSystem/spawn");
 
         auto position = getPosition();
         if(m_spawnChance == 1)
@@ -76,11 +73,6 @@ void ParticleSystemImpl::onTick()
                 spawnParticle(position);
         }
     }
-    if(!getOwner().isHeadless())
-        getOwner().getLoop()->getProfiler()->endSection();
-
-    if(!getOwner().isHeadless())
-        getOwner().getLoop()->getProfiler()->endSection();
 }
 
 void ParticleSystemImpl::spawnParticles(size_t count)

@@ -74,7 +74,8 @@ EventResult GUIGameLoop::onLoad()
 
 void GUIGameLoop::onTick()
 {
-    m_profiler->startSection("guiTick");
+    auto profiler = getProfiler();
+    ProfilerSectionStarter starter(*profiler, "GUIGameLoop/exitOnCloseAllWindowsCheck");
 
     bool isAtLeastOneWindowOpen = false;
     forEachChildOfType<Window>([&](auto& window)->void {
@@ -85,18 +86,15 @@ void GUIGameLoop::onTick()
     if(!isAtLeastOneWindowOpen && m_exitOnCloseAllWindows)
         exit();
 
-    m_profiler->endStartSection("logic");
+    starter.switchSection("GUIGameLoop/logic");
     logicTick(getTickCount());
 
-    m_profiler->endStartSection("render");
+    starter.switchSection("GUIGameLoop/render");
     render();
-    m_profiler->endSection();
 
     // TODO: tick rate limit?
     //log() << m_frameTime.asMicroseconds();
     m_frameTime = m_fpsClock.restart();
-
-    m_profiler->endSection();
 }
 
 SharedPtr<Window> GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
@@ -125,8 +123,11 @@ void GUIGameLoop::setResourceManager(SharedPtr<ResourceManager> manager)
 
 void GUIGameLoop::render()
 {
+    size_t counter = 0;
     forEachChildOfType<Window>([&](auto& window)->void {
+        ProfilerSectionStarter starter(*getProfiler(), "GUIGameLoop/render/" + std::to_string(counter));
         window.render();
+        counter++;
     });
 }
 

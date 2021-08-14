@@ -45,19 +45,26 @@ class ProfilerSectionStarter
 {
     Profiler& m_profiler;
 public:
-    ProfilerSectionStarter(Profiler& profiler, std::string sectionName)
+    ProfilerSectionStarter(Profiler& profiler, std::string const& sectionName)
     : m_profiler(profiler)
     {
         m_profiler.startSection(sectionName);
     }
+
     ~ProfilerSectionStarter()
     {
         m_profiler.endSection();
     }
 
-private:
-    ProfilerSectionStarter& operator=(const ProfilerSectionStarter&) = delete;
-    ProfilerSectionStarter(const ProfilerSectionStarter&) = delete;
+    ProfilerSectionStarter& operator=(ProfilerSectionStarter const&) = delete;
+    ProfilerSectionStarter(ProfilerSectionStarter const&) = delete;
+    ProfilerSectionStarter& operator=(ProfilerSectionStarter&&) = delete;
+    ProfilerSectionStarter(ProfilerSectionStarter&&) = delete;
+
+    void switchSection(std::string const& name)
+    {
+        m_profiler.endStartSection(name);
+    }
 };
 
 }

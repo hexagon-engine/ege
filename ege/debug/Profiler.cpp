@@ -37,6 +37,7 @@
 #include "Profiler.h"
 
 #include <algorithm>
+#include <ege/debug/Logger.h>
 #include <ege/main/Config.h>
 #include <ege/util/GlobalConfig.h>
 #include <ege/util/ObjectInt.h>
@@ -44,6 +45,8 @@
 #include <ege/util/PointerUtils.h>
 #include <ege/util/system.h>
 #include <vector>
+
+#define PROFILER_DEBUG 0
 
 namespace EGE
 {
@@ -57,27 +60,51 @@ Profiler::Profiler()
 
 Profiler::~Profiler() {}
 
+void Profiler::start()
+{
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
+    if(m_root.m_started) return;
+    DBG(PROFILER_DEBUG, "--- START ---");
+    m_root.m_started = true;
+    m_root.m_startTime = getTime();
+}
+
+void Profiler::end()
+{
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
+    if(!m_root.m_started) return;
+    DBG(PROFILER_DEBUG, "--- END ---");
+    m_root.m_started = false;
+    m_root.m_time += getTime() - m_root.m_startTime;
+    while(!m_startedSections.empty()) m_startedSections.pop();
+}
+
 void Profiler::startSection(std::string const& name)
 {
     if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
-    DBG(PROFILER_DEBUG, "--- START SECTION ---");
-    endSectionLL(); //unspecified
+    //DBG(PROFILER_DEBUG, "--- START SECTION ---");
     startSectionLL(name);
-    startSectionLL("<unspecified>");
 }
 
 void Profiler::endSection()
 {
     if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
-    DBG(PROFILER_DEBUG, "--- END SECTION ---");
-    endSectionLL(); //unspecified
+    //DBG(PROFILER_DEBUG, "--- END SECTION ---");
     endSectionLL(); //current
-    startSectionLL("<unspecified>");
+}
+
+void Profiler::endStartSection(std::string const& name)
+{
+    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
+    //DBG(PROFILER_DEBUG, "--- END START SECTION ---");
+    endSectionLL(); //current
+    startSectionLL(name);
 }
 
 void Profiler::startSectionLL(std::string const& name)
 {
     if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
+    if constexpr(PROFILER_DEBUG) ege_log.info() << "Profiler::startSectionLL " << name << " depth=" << m_startedSections.size();
     ASSERT(m_root.m_started);
 
     Section* section = nullptr;
@@ -113,61 +140,25 @@ void Profiler::startSectionLL(std::string const& name)
     section->m_started = true;
 
     m_startedSections.push(section);
-    DBG(PROFILER_DEBUG, "startSection " + name);
 }
+
 void Profiler::endSectionLL()
 {
     if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
+    if constexpr(PROFILER_DEBUG) ege_log.info() << "Profiler::endSectionLL depth=" << m_startedSections.size();
     ASSERT(m_root.m_started);
-    if(m_startedSections.empty())
-    {
-        end();
-    }
-    else
-    {
-        Section* section = m_startedSections.top();
-        ASSERT(section);
+    ASSERT(!m_startedSections.empty());
 
-        section->m_started = false;
-        section->m_time += getTime() - section->m_startTime;
+    Section* section = m_startedSections.top();
+    ASSERT(section);
 
-        m_startedSections.pop();
-        DBG(PROFILER_DEBUG, "endSection " + section->m_name);
-    }
+    section->m_started = false;
+    section->m_time += getTime() - section->m_startTime;
+
+    m_startedSections.pop();
 }
 
-void Profiler::endStartSection(std::string const& name)
-{
-    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
-    DBG(PROFILER_DEBUG, "--- END START SECTION ---");
-    endSectionLL(); //unspecified
-    endSectionLL(); //current
-
-    startSectionLL(name);
-    startSectionLL("<unspecified>");
-}
-
-void Profiler::start()
-{
-    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
-    if(m_root.m_started) return;
-    DBG(PROFILER_DEBUG, "--- START ---");
-    m_root.m_started = true;
-    m_root.m_startTime = getTime();
-    startSectionLL("<unspecified>");
-}
-
-void Profiler::end()
-{
-    if(!EGE_GCONFIG_IS_SET(Profiler_Enable)) return;
-    if(!m_root.m_started) return;
-    DBG(PROFILER_DEBUG, "--- END ---");
-    m_root.m_started = false;
-    m_root.m_time += getTime() - m_root.m_startTime;
-    while(!m_startedSections.empty()) m_startedSections.pop();
-}
-
-std::string Profiler::toString()
+std::string Profiler::toString() const
 {
     std::string str = "---- \e[1;33mEGE::Profiler results\e[0m ----\n\n";
     if(m_root.m_started || m_root.m_time > 0)
@@ -181,7 +172,7 @@ std::string Profiler::toString()
     return str;
 }
 
-long long Profiler::getTime()
+long long Profiler::getTime() const
 {
     return System::exactTime().nanoseconds();
 }
@@ -194,7 +185,7 @@ Profiler::Section* Profiler::Section::findSubSection(std::string const& name)
     return it->second.get();
 }
 
-void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, long long rootTime)
+void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, long long rootTime) const
 {
     // this section
     for(int s = 0; s < m_depth; s++)
@@ -206,14 +197,13 @@ void Profiler::Section::addSectionInfo(std::string& info, long long parentTime, 
     }
     if(parentTime != 0)
     {
-        info += "\e[33m" + std::to_string(float(m_time) * 100 / parentTime) + "%: \e[0m";
+        info += "\e[33m" + std::to_string(float(m_time) * 100 / rootTime) + "% (" + std::to_string(float(m_time) * 100 / parentTime) + "%) \e[0m";
     }
     info += "\e[1;32m" + m_name + "\e[0m";
     if(parentTime != 0)
     {
         info += " (\e[37;1m";
-        info += std::to_string(m_time) + "\e[0m ns, ";
-        info += "\e[37;1m" + std::to_string(float(m_time) * 100 / rootTime) + "%\e[0m of root)";
+        info += std::to_string(m_time) + "\e[0m ns)";
     }
     info += '\n';
 

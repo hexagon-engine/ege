@@ -220,16 +220,20 @@ void ComponentBase::updateAsyncTasks()
 
 void ComponentBase::onUpdate()
 {
-    if(m_profiler) m_profiler->startSection("onTick");
+    auto profiler = getProfiler();
+
+    ProfilerSectionStarter starter(*profiler, "onTick");
     fire<TickEvent>(m_ticks.fetch_add(1));
     onTick();
-    if(m_profiler) m_profiler->endStartSection("updateTimers");
+
+    starter.switchSection("updateTimers");
     updateTimers();
-    if(m_profiler) m_profiler->endStartSection("callDeferredInvokes");
+
+    starter.switchSection("callDeferredInvokes");
     callDeferredInvokes();
-    if(m_profiler) m_profiler->endStartSection("updateAsyncTasks");
+
+    starter.switchSection("updateAsyncTasks");
     updateAsyncTasks();
-    if(m_profiler) m_profiler->endSection();
 }
 
 }
