@@ -162,9 +162,12 @@ public:
 
 // FIXME:
 // protected:
-    virtual void forEachChild(std::function<void(ChildType&)>&&) = 0;
-
-    virtual bool shouldFireEventForChild(ChildType const&, Event const&) const { return true; }
+    template<class Callback>
+    void forEachChild(Callback&& function)
+    {
+        _ForEachChildCallback<Callback> callback(std::move(function));
+        forEachChildImpl(callback);
+    }
 
     template<class U, class Callback>
     void forEachChildTyped(Callback&& function)
@@ -210,6 +213,30 @@ public:
     }
 
 protected:
+    class _ForEachChildCallbackBase
+    {
+    public:
+        virtual void operator()(ChildType&) = 0;
+    };
+
+    template<class U>
+    class _ForEachChildCallback : public _ForEachChildCallbackBase
+    {
+    public:
+        _ForEachChildCallback(U&& callback)
+        : m_callback(std::move(callback)) {}
+
+        virtual void operator()(ChildType& child) override
+        {
+            m_callback(child);
+        }
+
+    private:
+        U m_callback;
+    };
+
+    virtual void forEachChildImpl(_ForEachChildCallbackBase&) = 0;
+
     virtual void onExitInternal() final override
     {
         forEachChild([&](auto& child)->void {
@@ -225,6 +252,8 @@ protected:
         });
         return EventResult(failure);
     }
+
+    virtual bool shouldFireEventForChild(ChildType const&, Event const&) const { return true; }
 };
 
 }

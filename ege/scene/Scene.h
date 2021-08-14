@@ -169,14 +169,14 @@ public:
     // Get camera that is currently used for rendering. Returns nullptr if not rendering.
     Camera const* getCurrentCamera() const { return m_currentCamera; }
 
-    virtual void forEachChild(std::function<void(ChildType&)>&&) override;
-
 protected:
     friend class SceneLoader;
     friend class SceneWidget;
 
     virtual void render(Renderer& renderer) const override;
     virtual void rebuildLayers();
+
+    virtual void forEachChildImpl(_ForEachChildCallbackBase&) override;
 
     ObjectMapType m_objects;
     ObjectMapType m_staticObjects;

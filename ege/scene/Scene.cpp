@@ -361,7 +361,7 @@ void Scene::rebuildLayers()
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
 }
 
-void Scene::forEachChild(std::function<void(ChildType&)>&& function)
+void Scene::forEachChildImpl(_ForEachChildCallbackBase& function)
 {
     for(auto& object: m_staticObjects)
         function(*object.second);

@@ -9,8 +9,10 @@ template<class T>
 class BasicComponent : public Component<T>
 {
 public:
+    // FIXME: This should NOT be required
     using ChildType = typename Component<T>::ChildType;
     using KeyType = typename Component<T>::KeyType;
+    using _ForEachChildCallbackBase = typename Component<T>::_ForEachChildCallbackBase;
 
     BasicComponent(ComponentBase& parent, String id = "BasicComponent")
     : Component<T>(parent, id) {}
@@ -63,7 +65,7 @@ protected:
         }
     }
 
-    virtual void forEachChild(std::function<void(ChildType&)>&& function) final override
+    virtual void forEachChildImpl(_ForEachChildCallbackBase& function) final override
     {
         for(auto& it: m_children)
         {
