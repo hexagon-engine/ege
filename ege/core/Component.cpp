@@ -143,6 +143,17 @@ void ComponentBase::updateBehaviours()
         behaviour->onUpdate();
 }
 
+EventResult ComponentBase::fireEventOnBehaviours(Event& event)
+{
+    bool failure = false;
+    {
+        std::lock_guard<std::mutex> lock(m_behaviourMutex);
+        for(auto& behaviour: m_behaviours)
+            failure |= (behaviour->fireEvent(event) == EventResult::Failure);
+    }
+    return EventResult(failure);
+}
+
 void ComponentBase::deferredInvoke(std::function<void()> func)
 {
     std::lock_guard<std::recursive_mutex> lock(m_deferredInvokesMutex);

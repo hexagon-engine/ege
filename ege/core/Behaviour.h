@@ -36,10 +36,11 @@
 
 #pragma once
 
-#include "ege/util/Time.h"
-#include <functional>
-
+#include <ege/core/EventTarget.h>
 #include <ege/main/Config.h>
+#include <ege/util/Time.h>
+
+#include <functional>
 
 namespace EGE
 {
@@ -49,7 +50,7 @@ class ComponentBase;
 namespace Internal
 {
 
-class _BehaviourBase
+class _BehaviourBase : public EventTarget
 {
 public:
     _BehaviourBase(ComponentBase& component)

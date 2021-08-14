@@ -118,6 +118,8 @@ protected:
     virtual void onExitInternal() {}
     virtual EventResult onFinishInternal(int exitCode) { return onFinish(exitCode); }
 
+    virtual EventResult fireEventOnBehaviours(Event&);
+
 private:
     std::atomic<TickCount> m_ticks = 0;
     std::atomic<int> m_exitCode = 0;
@@ -202,6 +204,7 @@ public:
                 return;
             failure |= (child.fireEvent(event) == EventResult::Failure);
         });
+        failure |= (fireEventOnBehaviours(event) == EventResult::Failure);
         if(!event.isCanceled())
         {
             failure |= (ComponentBase::fireEvent(event) == EventResult::Failure);
