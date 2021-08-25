@@ -9,7 +9,6 @@ before_install:
 - sudo apt-get install g++-10 ninja-build cmake git libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libflac-dev libogg-dev libvorbis-dev libopenal-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libglew-dev
 - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 --slave /usr/bin/g++ g++ /usr/bin/g++-10
 script:
-- export EGE_ROOT="$PWD"
 - bash scripts/configure.sh
 - cd build
 - ninja install -j$(nproc)
