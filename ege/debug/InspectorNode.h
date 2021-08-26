@@ -70,6 +70,7 @@ public:
 protected:
     void createProfiler();
     void destroyProfiler();
+    void destroyProfilerIfNeeded();
 
 private:
     InspectorNode* m_isnParent = nullptr;

@@ -167,6 +167,12 @@ void InspectorNode::createProfiler()
     m_profiler = std::make_unique<Profiler>();
 }
 
+void InspectorNode::destroyProfilerIfNeeded()
+{
+    if(m_profiler)
+        m_profiler.reset();
+}
+
 void InspectorNode::destroyProfiler()
 {
     ASSERT_WITH_MESSAGE(m_profiler, "Profiler can be destroyed if there if no profiler from parent");

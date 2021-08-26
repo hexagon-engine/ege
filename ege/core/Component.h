@@ -202,11 +202,23 @@ public:
 
     virtual void onUpdate() final override
     {
+        if(!getProfiler())
+        {
+            createProfiler();
+            m_profilerCreated = true;
+        }
+
         ComponentBase::onUpdate();
         forEachChild([this](auto& child)->void {
             ProfilerSectionStarter starter(*getProfiler(), "Component<" + child.isnName() + ">/onUpdate");
             child.onUpdate();
         });
+
+        if(m_profilerCreated)
+        {
+            destroyProfilerIfNeeded();
+            m_profilerCreated = false;
+        }
     }
 
     virtual EventResult fireEvent(Event& event) override
@@ -267,6 +279,9 @@ protected:
     }
 
     virtual bool shouldFireEventForChild(ChildType const&, Event const&) const { return true; }
+
+private:
+    bool m_profilerCreated = false;
 };
 
 }

@@ -90,9 +90,7 @@ void Scene::doRender(Renderer& renderer, const RenderStates& states)
 
 void Scene::render(Renderer& renderer) const
 {
-    // The loop should NOT be specified for server-side
-    // since it's NOT necessary (Scene itself is an EventLoop)
-    ASSERT_WITH_MESSAGE(m_loop, "Cannot render on server-side");
+    ASSERT_WITH_MESSAGE(m_loop, "Cannot render headless scenes");
     
     for(auto& pr: m_objectsByLayer)
         pr.second->doRender(renderer, renderer.getStates());
