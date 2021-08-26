@@ -161,6 +161,7 @@ void Profiler::endSectionLL()
 
 std::string Profiler::toString() const
 {
+    // TODO: Switch to printTree()
     std::string str = "---- \e[1;33mEGE::Profiler results\e[0m ----\n\n";
     if(m_root.m_started || m_root.m_time > 0)
     {

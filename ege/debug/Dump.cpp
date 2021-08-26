@@ -82,193 +82,115 @@ void hexDump(const void* data, size_t size, HexDumpSettings settings)
     }
 }
 
-namespace PrintObject
+namespace Internal
 {
 
-enum class IndentMode
+String _indent(::std::vector<_IndentMode> modes)
 {
-    None,
-    Normal,
-    Object,
-    LastObject
-};
-
-static void _indent(std::vector<IndentMode> modes)
-{
-    for(IndentMode mode: modes)
+    String out;
+    for(_IndentMode mode: modes)
     {
         switch(mode)
         {
-            case IndentMode::None:
-                std::cerr << "   "; // "   "
+            case _IndentMode::None:
+                out += "   "; // "   "
                 break;
-            case IndentMode::Normal:
-                std::cerr << "\u2502  "; // "|  "
+            case _IndentMode::Normal:
+                out += "\u2502  "; // "|  "
                 break;
-            case IndentMode::Object:
-                std::cerr << "\u251c\u2500 "; // "|--"
+            case _IndentMode::Object:
+                out += "\u251c\u2500 "; // "|--"
                 break;
-            case IndentMode::LastObject:
-                std::cerr << "\u2514\u2500 "; // "L--"
+            case _IndentMode::LastObject:
+                out += "\u2514\u2500 "; // "L--"
                 break;
         }
     }
-}
-
-static void _printPair(std::string name, SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast);
-
-static void _printName(std::string name)
-{
-    std::cerr << "\e[1;32m" << name << "\e[m = ";
-}
-
-static void _printValue(SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast)
-{
-    if(depth.size() > 10)
-    {
-        std::cerr << "\e[31m...\e[m " << std::endl;
-        return;
-    }
-
-    if(!object)
-    {
-        std::cerr << "\e[31mnull\e[m " << std::endl;
-        return;
-    }
-
-    if(object->isInt())
-    {
-        std::cerr << "\e[35m" << object->asInt() << "\e[m" << std::endl;
-    }
-    else if(object->isFloat())
-    {
-        std::cerr << "\e[95m" << object->asFloat() << "\e[m" << std::endl;
-    }
-    else if(object->isString())
-    {
-        std::cerr << "\e[33m" << object->toString() << "\e[m" << std::endl;
-    }
-    else if(object->isList())
-    {
-        auto _vector = object->asList();
-        if(!_vector.empty())
-        {
-            std::cerr << "\e[94m<List: " << _vector.size() << " entries>\e[m" << std::endl;
-            size_t counter = 0;
-            for(auto pr: _vector)
-            {
-                std::vector<IndentMode> depth2 = depth;
-
-                if(counter == _vector.size() - 1 || counter >= 10)
-                {
-                    if(!depth2.empty())
-                    {
-                        if(isLast)
-                            depth2.back() = IndentMode::None;
-                        else
-                            depth2.back() = IndentMode::Normal;
-                    }
-                    depth2.push_back(IndentMode::LastObject);
-                    if(counter >= 10)
-                    {
-                        _indent(depth2);
-                        std::cerr << "\e[31m...\e[m (" << _vector.size() - 10 << " remaining)" << std::endl;
-                        break;
-                    }
-                }
-                else
-                {
-                    if(!depth2.empty())
-                    {
-                        if(isLast)
-                            depth2.back() = IndentMode::None;
-                        else
-                            depth2.back() = IndentMode::Normal;
-                    }
-                    depth2.push_back(IndentMode::Object);
-                }
-
-                _indent(depth2);
-                _printValue(pr, depth2, counter == _vector.size() - 1);
-                counter++;
-            }
-        }
-        else
-        {
-            std::cerr << "\e[91m<Empty List>\e[m" << std::endl;
-        }
-    }
-    else if(object->isMap())
-    {
-        auto _map = object->asMap();
-        if(!_map.empty())
-        {
-            std::cerr << "\e[94m<Map: " << _map.size() << " entries>\e[m" << std::endl;
-            size_t counter = 0;
-            for(auto pr: _map)
-            {
-                std::vector<IndentMode> depth2 = depth;
-
-                if(counter == _map.size() - 1 || counter > 10)
-                {
-                    if(!depth2.empty())
-                    {
-                        if(isLast)
-                            depth2.back() = IndentMode::None;
-                        else
-                            depth2.back() = IndentMode::Normal;
-                    }
-                    depth2.push_back(IndentMode::LastObject);
-                    if(counter > 10)
-                    {
-                        _indent(depth2);
-                        std::cerr << "\e[31m...\e[m (" << _map.size() - 10 << " remaining)" << std::endl;
-                        break;
-                    }
-                }
-                else
-                {
-                    if(!depth2.empty())
-                    {
-                        if(isLast)
-                            depth2.back() = IndentMode::None;
-                        else
-                            depth2.back() = IndentMode::Normal;
-                    }
-                    depth2.push_back(IndentMode::Object);
-                }
-
-                _printPair(pr.first, pr.second, depth2, counter == _map.size() - 1);
-                counter++;
-            }
-        }
-        else
-        {
-            std::cerr << "\e[91m<Empty Map>\e[m" << std::endl;
-        }
-    }
-    else if(object->isBool())
-    {
-        std::cerr << "\e[36m" << object->toString() << "\e[m" << std::endl;
-    }
-    else
-    {
-        std::cerr << "\e[31m???\e[m" << std::endl;
-    }
-}
-
-static void _printPair(std::string name, SharedPtr<Object> object, std::vector<IndentMode> depth, bool isLast)
-{
-    _indent(depth);
-    _printName(name);
-    _printValue(object, depth, isLast);
+    return out;
 }
 
 }
 
 void printObject(SharedPtr<Object> object)
 {
-    PrintObject::_printPair("root", object, {}, true);
+    // FIXME: This probably can be simpler.
+    if(!object)
+        return;
+
+    using Type = std::pair<String, SharedPtr<Object>>;
+
+    struct ListOrMapIterator
+    {
+    public:
+        ListOrMapIterator(ObjectList::ValueType::const_iterator it)
+        : m_listIt(it), m_isList(true) {}
+
+        ListOrMapIterator(ObjectMap::ValueType::const_iterator it)
+        : m_mapIt(it), m_isList(false) {}
+
+        ListOrMapIterator(std::nullptr_t)
+        : m_isEmpty(true) {}
+
+        bool operator==(ListOrMapIterator const& it) const
+        {
+            return (m_isEmpty && it.m_isEmpty) || (m_isList == it.m_isList && (m_isList ? m_listIt == it.m_listIt : m_mapIt == it.m_mapIt));
+        }
+        bool operator!=(ListOrMapIterator const& it) const
+        {
+            return !(*this == it);
+        }
+
+        ListOrMapIterator operator++(int)
+        {
+            auto tmp = *this;
+            if(m_isList)
+                m_listIt++;
+            else
+                m_mapIt++;
+            return tmp;
+        }
+
+        Type operator*() const
+        {
+            if(m_isList)
+                return std::make_pair("", *m_listIt);
+            return *m_mapIt;
+        }
+
+    private:
+        ObjectList::ValueType::const_iterator m_listIt;
+        ObjectMap::ValueType::const_iterator m_mapIt;
+        bool m_isList = false;
+        bool m_isEmpty = false;
+    };
+
+    printTree<Type, ListOrMapIterator>(std::cout, Type("Root", object), [](Type const& object)->String {
+        String out = "\e[1m" + object.first + (object.first.empty() ? "\e[0m" : "\e[0m: ");
+        if(object.second->isMap())
+        {
+            auto objectPtrMap = Object::unsafeCast<ObjectMap>(object.second);
+            return out + "Map <" + std::to_string(objectPtrMap->size()) + " entries>";
+        }
+        if(object.second->isList())
+        {
+            auto objectPtrList = Object::unsafeCast<ObjectList>(object.second);
+            return out + "List <" + std::to_string(objectPtrList->size()) + " entries>";
+        }
+        return out + object.second->toString();
+    }, [](Type const& object)->ContainerWrapper<ListOrMapIterator> {
+        auto objectPtr = object.second;
+        if(objectPtr->isList())
+        {
+            auto objectPtrList = Object::unsafeCast<ObjectList>(objectPtr);
+            return {ListOrMapIterator(objectPtrList->begin()), ListOrMapIterator(objectPtrList->end()), objectPtrList->size()};
+        }
+        else if(objectPtr->isMap())
+        {
+            auto objectPtrMap = Object::unsafeCast<ObjectMap>(objectPtr);
+            return {ListOrMapIterator(objectPtrMap->begin()), ListOrMapIterator(objectPtrMap->end()), objectPtrMap->size()};
+        }
+        return {nullptr, nullptr, 0};
+    });
 }
 
 }
