@@ -95,7 +95,7 @@ void Label::updateGeometry(Renderer& renderer)
     }
 
     m_text.setPosition(position.x, position.y);
-    m_text.setFillColor(m_color);
+    m_text.setFillColor({m_color.r, m_color.g, m_color.b, m_color.a});
 }
 
 void Label::updateLayout()

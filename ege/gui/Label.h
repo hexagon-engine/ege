@@ -59,7 +59,7 @@ public:
     void setString(sf::String str);
     void setTextAlign(Align align);
     void setFontSize(int size);
-    void setColor(sf::Color color) { m_color = color; setGeometryNeedUpdate(); }
+    void setColor(ColorRGBA const& color) { m_color = color; setGeometryNeedUpdate(); }
 
     sf::String getString() const { return m_string; }
 
@@ -71,7 +71,7 @@ protected:
     sf::String m_string;
     Align m_align = Align::Left;
     int m_fontSize = 12;
-    sf::Color m_color = sf::Color::Black;
+    ColorRGBA m_color { Colors::black };
     sf::Text m_text;
     SharedPtr<sf::Font> m_font;
 };

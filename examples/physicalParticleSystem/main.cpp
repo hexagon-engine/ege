@@ -53,7 +53,7 @@ public:
         layoutDirection = EGE::LayoutElement::Direction::Vertical;
 
         m_nameLabel = addNewWidget<EGE::Label>();
-        m_nameLabel->setColor(sf::Color::White);
+        m_nameLabel->setColor(EGE::Colors::white);
 
         auto sliderContainer = addNewWidget<EGE::Widget>();
         {
@@ -66,7 +66,7 @@ public:
             labelContainer->setSize({"90px", "1N"});
             {
                 m_valueLabel = labelContainer->addNewWidget<EGE::Label>();
-                m_valueLabel->setColor(sf::Color::White);
+                m_valueLabel->setColor(EGE::Colors::white);
             }
         }
         m_slider->events<EGE::SliderSlideEvent>().add([&](EGE::SliderSlideEvent& event) { m_valueLabel->setString(std::to_string(event.value)); return EGE::EventResult::Success; });
@@ -168,7 +168,7 @@ int main()
         infoLabel->setPosition({"0px", "0px"});
         infoLabel->setSize({"100%", "20px"});
         infoLabel->setTextAlign(EGE::Label::Align::Right);
-        infoLabel->setColor(sf::Color::White);
+        infoLabel->setColor(EGE::Colors::white);
 
         auto controlsWidget = guiScreen->addNewWidget<EGE::GroupBox>();
         controlsWidget->setLabel("Controls");
