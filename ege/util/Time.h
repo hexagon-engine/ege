@@ -38,6 +38,8 @@
 
 #include "Types.h"
 
+#include <ege/main/Config.h>
+
 namespace EGE
 {
 
@@ -59,6 +61,30 @@ public:
 
     Time operator+(MaxFloat _2);
     Time& operator+=(MaxFloat _2);
+
+    bool operator<(Time const& other) const
+    {
+        ASSERT(other.m_unit == m_unit);
+        return m_value < other.m_value;
+    }
+
+    bool operator>(Time const& other) const
+    {
+        ASSERT(other.m_unit == m_unit);
+        return m_value > other.m_value;
+    }
+
+    bool operator<=(Time const& other) const
+    {
+        ASSERT(other.m_unit == m_unit);
+        return m_value <= other.m_value;
+    }
+
+    bool operator>=(Time const& other) const
+    {
+        ASSERT(other.m_unit == m_unit);
+        return m_value >= other.m_value;
+    }
 
 private:
     MaxFloat m_value;
