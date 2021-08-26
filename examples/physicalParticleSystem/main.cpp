@@ -92,7 +92,7 @@ public:
     {
         EGE::String info;
         info += "Particle count: " + std::to_string(m_particleSystem.getParticleCount());
-        info += " FPS: " + std::to_string(getLoop().getLastTPS());
+        info += " FPS: " + std::to_string(getLoop().getLastTicksPerSecond());
         setString(info);
     }
 
@@ -144,7 +144,7 @@ int main()
 
     auto resourceManager = make<EGE::GUIResourceManager>();
     resourceManager->registerDefaultFont("font.ttf");
-    resourceManager->registerShader("filter", {"filter.vert", "filter.frag"});
+    //resourceManager->registerShader("filter", {"filter.vert", "filter.frag"});
     loop.setResourceManager(resourceManager);
 
     auto scene = make<EGE::Scene>(loop);

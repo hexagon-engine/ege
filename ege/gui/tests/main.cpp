@@ -351,7 +351,7 @@ public:
 
     virtual void onTick() override
     {
-        labelFPS->setString("FPS: " + std::to_string(getLoop().getLastTPS()));
+        labelFPS->setString("FPS: " + std::to_string(getLoop().getLastTicksPerSecond()));
     }
 };
 
