@@ -71,6 +71,8 @@ int MainLoop::run()
         }
         profiler->end();
         onProfilerResults(*profiler);
+        if(m_requestedProfilerDisplay)
+            ege_log.info() << profiler->toString();
         destroyProfiler();
     }
 

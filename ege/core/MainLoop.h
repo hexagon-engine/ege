@@ -58,9 +58,11 @@ public:
 
     void setMinimalTickTime(Time time) { m_minTickTime = time; }
     void setMaxTicksPerSecond(int value) { setMinimalTickTime({1.0 / value}); }
+    void requestProfilerDisplay() { m_requestedProfilerDisplay = true; }
 
 private:
     Time m_minTickTime = {0.0, Time::Unit::Seconds};
+    bool m_requestedProfilerDisplay = false;
 };
 
 }
