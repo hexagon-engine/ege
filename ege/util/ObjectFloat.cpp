@@ -50,7 +50,7 @@ SharedPtr<Object> ObjectFloat::copy() const
 
 std::string ObjectFloat::toString() const
 {
-    return asString() + "f";
+    return asString();
 }
 
 }
