@@ -93,7 +93,7 @@ macro(ege_add_module targetname)
     endif()
 
     install(TARGETS ${target_name} EXPORT ege DESTINATION lib)
-    install(DIRECTORY "${CMAKE_SOURCE_DIR}/ege/" DESTINATION include/ege FILES_MATCHING PATTERN "*.h")
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/ege/" DESTINATION include/ege FILES_MATCHING PATTERN "*.h" PATTERN "*.inl")
     
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
         ege_add_all_tests_for(${targetname})
