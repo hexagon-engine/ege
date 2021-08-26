@@ -86,7 +86,7 @@ public:
     : Internal::_BehaviourBase(component) {}
 
 protected:
-    T& component() { return static_cast<T>(m_component); }
+    T& component() { return static_cast<T&>(m_component); }
 };
 
 template<class T>
