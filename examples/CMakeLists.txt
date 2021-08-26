@@ -21,3 +21,4 @@ endmacro()
 
 ege_add_example(complexLoader           "main.cpp"  scene)
 ege_add_example(physicalParticleSystem  "main.cpp"  scene)
+ege_add_example(physics                 "main.cpp"  scene)

@@ -39,6 +39,7 @@
 #include "Scene.h"
 
 #include <ege/debug/Dump.h>
+#include <ege/scene/PhysicsBehaviour.h>
 #include <ege/util/ObjectString.h>
 #include <ege/util/Vector.h>
 #include <ege/util/VectorOperations.h>
@@ -108,30 +109,40 @@ double SceneObject::getRoll() const
 
 bool SceneObject::moveTo(Vec3d pos)
 {
-    // TODO: collisions
+    ProfilerSectionStarter starter(*getProfiler(), "moveTo");
 
     auto currentPos = getLocalPosition();
-    auto posx = Vec3d{pos.x, getLocalPosition().y, getLocalPosition().z};
-    auto posy = Vec3d{getLocalPosition().x, pos.y, getLocalPosition().z};
-    auto posz = Vec3d{getLocalPosition().x, getLocalPosition().y, pos.z};
+    auto offsetx = Vec3d(pos.x - currentPos.x, currentPos.y, currentPos.z);
+    auto offsety = Vec3d(pos.x, currentPos.y - currentPos.y, currentPos.z);
+    auto offsetz = Vec3d(pos.x, currentPos.y, currentPos.z - currentPos.z);
 
-    if(!isCollidedIn(posx))
+    if(!isCollidedIn(offsetx))
         currentPos.x = pos.x;
     else
         onCollide(Axis::X);
     
-    if(!isCollidedIn(posy))
+    if(!isCollidedIn(offsety))
         currentPos.y = pos.y;
     else
         onCollide(Axis::Y);
     
-    if(!isCollidedIn(posz))
+    if(!isCollidedIn(offsetz))
         currentPos.z = pos.z;
     else
         onCollide(Axis::Z);
     
     setPosition(currentPos);
     return true;
+}
+
+bool SceneObject::isCollidedIn(Vec3d offset)
+{
+    bool collided = false;
+    ProfilerSectionStarter starter(*getProfiler(), "collisionCheck");
+    forEachBehaviourOfType<PhysicsBehaviour>([&](auto& behaviour) {
+        collided |= behaviour.collisionResult(offset);
+    });
+    return collided;
 }
 
 bool SceneObject::flyTo(Vec3d toPos, double time, std::function<double(double)> easing)
@@ -193,6 +204,7 @@ bool SceneObject::deserializeMain(SharedPtr<ObjectMap> object)
 
 void SceneObject::onTick()
 {
+    ProfilerSectionStarter starter(*getProfiler(), "parentSetup");
     if(!m_parentId.empty() && !m_parent)
     {
         setParent(getOwner().getObjectByName(m_parentId));
@@ -204,6 +216,7 @@ void SceneObject::onTick()
     // Don't notify client because it already knows about the motion
     // and can update it on its side.
     // TODO: fps/tps scaling! m_motion should be in pxs/SECOND
+    starter.switchSection("motion");
     if(m_motion != Vec3d())
     {
         moveTo(m_position + m_motion);

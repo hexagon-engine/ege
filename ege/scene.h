@@ -41,6 +41,7 @@
 #include <ege/scene/ObjectRenderer.h>
 #include <ege/scene/ParticleSystem2D.h>
 #include <ege/scene/PhysicalParticleSystem.h>
+#include <ege/scene/PhysicsBehaviour.h>
 #include <ege/scene/Plain2DCamera.h>
 #include <ege/scene/Scene.h>
 #include <ege/scene/SceneLoader.h>

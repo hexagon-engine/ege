@@ -168,7 +168,7 @@ public:
     double getRotation() const { return getYaw(); }
 
     virtual bool moveTo(Vec3d targetPos);
-    virtual bool isCollidedIn(Vec3d) { return false; }
+    virtual bool isCollidedIn(Vec3d offset);
 
     enum class Axis
     {

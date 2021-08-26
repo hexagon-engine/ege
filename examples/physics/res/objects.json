@@ -1,0 +1,14 @@
+{
+    "PhysicalSO": {
+        "data": {
+            "parts": [
+                {"name": "base", "layer": 1, "type": "Rectangle", "rect": {"pos": {"x": -6, "y": -6}, "size": {"x": 12, "y": 12}}, "fillColor": "#00FF80"}
+            ],
+            "defaults": {
+                "m": {
+                    "layer": 1
+                }
+            }
+        }
+    }
+}

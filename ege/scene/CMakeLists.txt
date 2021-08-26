@@ -9,6 +9,8 @@ set(SOURCES
 	"ParticleSystem2D.h"
 	"PhysicalParticleSystem.cpp"
 	"PhysicalParticleSystem.h"
+	"PhysicsBehaviour.cpp"
+	"PhysicsBehaviour.h"
 	"Plain2DCamera.cpp"
 	"Plain2DCamera.h"
 	"Scene.cpp"
