@@ -39,6 +39,7 @@
 #include <ege/core/EventTarget.h>
 #include <ege/main/Config.h>
 #include <ege/util/Time.h>
+#include <ege/util/TypeID.h>
 
 #include <functional>
 
@@ -53,6 +54,8 @@ namespace Internal
 class _BehaviourBase : public EventTarget
 {
 public:
+    EGE_ADD_TYPEID()
+
     _BehaviourBase(ComponentBase& component)
     : m_component(component) {}
 
@@ -75,6 +78,8 @@ template<class T>
 class Behaviour : public Internal::_BehaviourBase
 {
 public:
+    EGE_ADD_TYPEID(override)
+
     using ComponentType = T;
 
     Behaviour(T& component)
@@ -88,6 +93,8 @@ template<class T>
 class SimpleBehaviour : public Behaviour<T>
 {
 public:
+    EGE_ADD_TYPEID(final override)
+
     SimpleBehaviour(T& component, std::function<void(T&)> onupdate)
     : Behaviour<T>(component), m_onUpdate(onupdate) { ASSERT(m_onUpdate); }
 
