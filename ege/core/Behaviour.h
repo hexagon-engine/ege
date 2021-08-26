@@ -66,7 +66,7 @@ public:
 
     virtual ~_BehaviourBase() = default;
 
-    virtual void onUpdate() = 0;
+    virtual void onUpdate() {};
 
 protected:
     ComponentBase& m_component;
