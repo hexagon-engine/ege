@@ -51,6 +51,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+#include <sstream>
 #include <thread>
 #include <vector>
 
@@ -213,7 +214,9 @@ public:
 
         ComponentBase::onUpdate();
         forEachChild([this](auto& child)->void {
-            ProfilerSectionStarter starter(*getProfiler(), "Component<" + child.isnName() + "@" + std::to_string((size_t)&child) + ">/onUpdate");
+            std::ostringstream oss;
+            oss << "Component<" << child.isnName() << "@" << std::hex << &child << ">/onUpdate";
+            ProfilerSectionStarter starter(*getProfiler(), oss.str());
             child.onUpdate();
         });
 
