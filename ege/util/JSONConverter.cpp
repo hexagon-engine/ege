@@ -252,7 +252,7 @@ bool consumeNumber(JSONConverter::InputStreamType& input, std::string& object)
 {
     char c = 0;
     c = input.peek();
-    while(isdigit(c) || c == '-' || c == '+' || c == 'e' || c == 'E' || c == '.' || c == 'n' || c == 'a' || c == 'N' || c == 'i' || c == 'f')
+    while(isdigit(c) || c == '-' || c == '+' || c == 'e' || c == 'E' || c == '.' || c == 'n' || c == 'a' || c == 'N')
     {
         if(input.eof())
         {
