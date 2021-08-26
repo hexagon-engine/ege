@@ -69,11 +69,11 @@ void Label::updateGeometry(Renderer& renderer)
 
     if(!m_font)
         m_font = getLoop().getResourceManager()->getDefaultFont();
-
+    
+    ASSERT(m_font);
     m_text.setString(m_string);
     m_text.setFont(*m_font);
     m_text.setCharacterSize(m_fontSize);
-
 
     sf::FloatRect bounds = m_text.getLocalBounds();
     bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
