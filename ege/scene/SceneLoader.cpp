@@ -51,7 +51,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
     std::ifstream file(CommonPaths::resourceDir() + "/" + fileName);
     if(!file.good())
     {
-        ege_log.error() << "Failed to open registry file";
+        ege_log.error() << "Failed to open registry file: " << fileName;
         return false; // couldn't open file
     }
 
