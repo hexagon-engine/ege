@@ -84,6 +84,22 @@ public:
         return *behaviourRawPtr;
     }
 
+    // T must be derived from Internal::_BehaviourBase
+    // Callback must be a function of type void(T&)
+    template<class T, class Callback>
+    void forEachBehaviourOfType(Callback&& callback)
+    {
+        ProfilerSectionStarter starter(*getProfiler(), "lock");
+        std::lock_guard<std::mutex> lock(m_behaviourMutex);
+
+        for(auto& behaviour: m_behaviours)
+        {
+            starter.switchSection("Behaviour<" + std::to_string(behaviour->typeId().id()) + ">/callback");
+            if(behaviour->typeId() == T::typeIdStatic())
+                callback(static_cast<T&>(*behaviour));
+        }
+    }
+
     // get in-loop time in ticks or ms
     // it should be used ONLY for comparisions
     double time(Time::Unit unit);
@@ -119,19 +135,6 @@ protected:
     virtual EventResult onFinishInternal(int exitCode) { return onFinish(exitCode); }
 
     virtual EventResult fireEventOnBehaviours(Event&);
-
-    // T must be derived from Internal::_BehaviourBase
-    // Callback must be a function of type void(T&)
-    template<class T, class Callback>
-    void forEachBehaviourOfType(Callback&& callback)
-    {
-        std::lock_guard<std::mutex> lock(m_behaviourMutex);
-        for(auto& behaviour: m_behaviours)
-        {
-            if(behaviour->typeId() == T::typeIdStatic())
-                callback(static_cast<T&>(*behaviour));
-        }
-    }
 
 private:
     std::atomic<TickCount> m_ticks = 0;
@@ -210,7 +213,7 @@ public:
 
         ComponentBase::onUpdate();
         forEachChild([this](auto& child)->void {
-            ProfilerSectionStarter starter(*getProfiler(), "Component<" + child.isnName() + ">/onUpdate");
+            ProfilerSectionStarter starter(*getProfiler(), "Component<" + child.isnName() + "@" + std::to_string((size_t)&child) + ">/onUpdate");
             child.onUpdate();
         });
 
