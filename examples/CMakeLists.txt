@@ -19,4 +19,5 @@ macro(ege_add_example name sources ege_deps)
     endif()
 endmacro()
 
-ege_add_example(physicalParticleSystem "main.cpp" scene)
+ege_add_example(complexLoader           "main.cpp"  scene)
+ege_add_example(physicalParticleSystem  "main.cpp"  scene)
