@@ -120,6 +120,19 @@ protected:
 
     virtual EventResult fireEventOnBehaviours(Event&);
 
+    // T must be derived from Internal::_BehaviourBase
+    // Callback must be a function of type void(T&)
+    template<class T, class Callback>
+    void forEachBehaviourOfType(Callback&& callback)
+    {
+        std::lock_guard<std::mutex> lock(m_behaviourMutex);
+        for(auto& behaviour: m_behaviours)
+        {
+            if(behaviour->typeId() == T::typeIdStatic())
+                callback(static_cast<T&>(*behaviour));
+        }
+    }
+
 private:
     std::atomic<TickCount> m_ticks = 0;
     std::atomic<int> m_exitCode = 0;
