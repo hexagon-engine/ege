@@ -49,6 +49,7 @@ namespace EGE
 Scene::Scene(SharedPtr<SceneObjectRegistry> registry)
 : Component<SceneObject>("Scene (headless)"), m_registry(registry), m_loop(nullptr)
 {
+    ege_log.notice() << "Creating headless scene!";
     if(!m_registry)
         m_registry = make<SceneObjectRegistry>();
 }
