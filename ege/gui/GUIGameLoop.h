@@ -71,9 +71,6 @@ public:
     SharedPtr<ResourceManager> getResourceManager();
     void setResourceManager(SharedPtr<ResourceManager> manager);
 
-    sf::Time getLatestFrameTime() const  { return m_frameTime; }
-    double getLastTPS() const { return 1.0 / m_frameTime.asSeconds(); }
-
     SharedPtr<Window> openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style = sf::Style::Default, const sf::ContextSettings& settings = sf::ContextSettings());
     SharedPtr<Window> openWindow(sf::WindowHandle handle, const sf::ContextSettings& settings = sf::ContextSettings());
 
@@ -86,8 +83,6 @@ private:
     virtual EventResult onLoad() override;
 
     SharedPtr<ResourceManager> m_resourceManager;
-    sf::Clock m_fpsClock;
-    sf::Time m_frameTime;
     bool m_exitOnCloseAllWindows = true;
 };
 

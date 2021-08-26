@@ -49,4 +49,3 @@
 #include <ege/core/TickEvent.h>
 #include <ege/core/TimerEvent.h>
 #include <ege/core/Timer.h>
-

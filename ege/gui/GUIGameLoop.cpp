@@ -69,7 +69,6 @@ EventResult GUIGameLoop::onLoad()
     }
 
     return EventResult::Success;
-    m_fpsClock.restart();
 }
 
 void GUIGameLoop::onTick()
@@ -91,10 +90,6 @@ void GUIGameLoop::onTick()
 
     starter.switchSection("GUIGameLoop/render");
     render();
-
-    // TODO: tick rate limit?
-    //log() << m_frameTime.asMicroseconds();
-    m_frameTime = m_fpsClock.restart();
 }
 
 SharedPtr<Window> GUIGameLoop::openWindow(const sf::VideoMode& mode, sf::String label, sf::Uint32 style, const sf::ContextSettings& settings)
