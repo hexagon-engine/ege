@@ -75,9 +75,7 @@ void Label::updateGeometry(Renderer& renderer)
     m_text.setFont(*m_font);
     m_text.setCharacterSize(m_fontSize);
 
-    sf::FloatRect bounds = m_text.getLocalBounds();
-    bounds.height += 5.f * m_fontSize / 20.f; //SFML text bounds bug??
-    bounds.width += 1.f * m_fontSize / 15.f;
+    sf::FloatRect bounds = m_text.getGlobalBounds();
     switch(m_align)
     {
         case Renderer::TextAlign::Left:
@@ -85,16 +83,16 @@ void Label::updateGeometry(Renderer& renderer)
             position = Vec2d();
             break;
         case Renderer::TextAlign::Center:
-            m_text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
+            m_text.setOrigin(round(bounds.width / 2.0), round(bounds.height / 2.0));
             position = getSize() / 2.0;
             break;
         case Renderer::TextAlign::Right:
-            m_text.setOrigin(bounds.width, bounds.height);
+            m_text.setOrigin(round(bounds.width), round(bounds.height + 3));
             position = getSize();
             break;
     }
 
-    m_text.setPosition(static_cast<int>(position.x), static_cast<int>(position.y));
+    m_text.setPosition(round(position.x), round(position.y));
     m_text.setFillColor({m_color.r, m_color.g, m_color.b, m_color.a});
 }
 
