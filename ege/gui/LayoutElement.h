@@ -81,6 +81,7 @@ public:
         LayoutSizeD size;
         LayoutSizeD padding;
         LayoutAlign align = LayoutAlign::Left;
+        double spacing;
     };
 
     struct _InputDimensionsVec2
@@ -119,6 +120,7 @@ public:
     virtual void setPosition(LVec2d position) { m_position = position; setGeometryNeedUpdate(); }
     virtual void setSize(LVec2d size) { m_size = size; setGeometryNeedUpdate(); }
     virtual void setPadding(LVec2d size) { m_padding = size; setGeometryNeedUpdate(); }
+    virtual void setSpacing(double spacing) { m_spacing = spacing; setGeometryNeedUpdate(); }
 
     LayoutElement* getLayoutParent() const { return m_parent; }
 
@@ -150,6 +152,7 @@ private:
         double position;
         double size;
         double padding;
+        double spacing;
     };
 
     struct _LayoutElementCalculated
@@ -158,6 +161,7 @@ private:
         Vec2d position;
         Vec2d size;
         Vec2d padding;
+        double spacing;
         bool autoSizingX = false;
         bool autoSizingY = false;
 
@@ -171,6 +175,7 @@ private:
     LVec2d m_position;
     LVec2d m_size;
     LVec2d m_padding;
+    double m_spacing;
 
     // Calculated layout.
     _LayoutElementCalculated m_layout;

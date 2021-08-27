@@ -159,7 +159,7 @@ int main()
     camera->setScalingMode(EGE::ScalingMode::Fit);
     camera->setDisplaySize({200, 200});
 
-    auto window = loop.openWindow(sf::VideoMode(500, 500), "EGE::PhysicalParticleSystem");
+    auto window = loop.openWindow(sf::VideoMode(600, 600), "EGE::PhysicalParticleSystem");
     auto guiScreen = window->setNewGUIScreen<MyGuiScreen>();
     guiScreen->setPadding({"5px", "5px"});
 
@@ -176,6 +176,7 @@ int main()
         controlsWidget->setLabel("Controls");
         controlsWidget->setLabelColor(EGE::Colors::white);
         controlsWidget->setSize({"300px", "1N"});
+        controlsWidget->setSpacing(3);
         controlsWidget->layoutDirection = EGE::LayoutElement::Direction::Vertical;
         {
             auto killAllParticles = controlsWidget->addNewWidget<EGE::Button>();
@@ -202,6 +203,15 @@ int main()
             showOverlayCheckbox->setLabel("SceneObject Overlay");
             showOverlayCheckbox->setLabelColor(EGE::Colors::white);
             showOverlayCheckbox->setSize({"1N", "25px"});
+
+            auto showGUIOverlayCheckbox = controlsWidget->addNewWidget<EGE::CheckBox>();
+            showGUIOverlayCheckbox->events<EGE::CheckBox::CheckEvent>().add([](auto& event) {
+                EGE::GlobalConfig::set(EGE::GlobalConfig::Option::GUI_LayoutBox, event.checked);
+                return EGE::EventResult::Success;
+            });
+            showGUIOverlayCheckbox->setLabel("GUI Overlay");
+            showGUIOverlayCheckbox->setLabelColor(EGE::Colors::white);
+            showGUIOverlayCheckbox->setSize({"1N", "25px"});
 
             auto gravitySlider = controlsWidget->addNewWidget<SliderAndValue>();
             gravitySlider->setName("Gravity");

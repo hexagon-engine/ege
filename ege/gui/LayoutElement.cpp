@@ -94,6 +94,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             object.position = element.position.value();
             object.size = element.size.value();
             object.padding = element.padding.value();
+            object.spacing = element.spacing;
             output[s] = object;
             ege_log.debug() <<  "Add immediately and count to usedElements (but not usedSize)";
             usedElements++;
@@ -119,8 +120,9 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
         usedSpace += element.size.value();  // total space
     }
 
+    size_t remainingElements = dimensions.size() - usedElements;
     double remainingSpace = thisDimensions.size.value() - usedSpace - thisDimensions.padding.value() * 2;
-    double partSize = remainingSpace / (dimensions.size() - usedElements);
+    double partSize = remainingSpace / remainingElements - (thisDimensions.spacing * (remainingElements - 1) / remainingElements);
 
     // Auto sizing!
     if(thisDimensions.size.unit() == EGE_LAYOUT_AUTO)
@@ -145,7 +147,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             {
                 /* Set position relative to last part */
                 element.position.setUnit(EGE_LAYOUT_PIXELS);
-                element.position.setValue(last.position.value() + last.size.value());
+                element.position.setValue(last.position.value() + last.size.value() + thisDimensions.spacing);
 
                 if(element.size.unit() == EGE_LAYOUT_FILL)
                 {
@@ -159,6 +161,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.position = element.position.value() + thisDimensions.padding.value();
                 object.size = element.size.value();
                 object.padding = element.padding.value();
+                object.spacing = element.spacing;
                 output[s] = object;
                 ege_log.debug() << "Add align=left";
 
@@ -198,6 +201,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 object.position = element.position.value() - thisDimensions.padding.value();
                 object.size = element.size.value();
                 object.padding = element.padding.value();
+                object.spacing = element.spacing;
                 output[s] = object;
                 ege_log.debug() << "Add align=right";
 
@@ -264,6 +268,7 @@ void LayoutElement::calculateLayout()
         m_layout.position = { m_position.x.value(), m_position.y.value() };
         m_layout.size = { std::max(0.0, m_size.x.value()), std::max(0.0, m_size.y.value()) };
         m_layout.padding = { m_padding.x.value(), m_padding.y.value() };
+        m_layout.spacing = m_spacing;
         if(m_size.x.unit() == EGE_LAYOUT_AUTO) m_layout.autoSizingX = true;
         if(m_size.y.unit() == EGE_LAYOUT_AUTO) m_layout.autoSizingY = true;
     }
@@ -282,6 +287,7 @@ void LayoutElement::calculateLayout()
         objectX.size = child->m_size.x;
         objectX.padding = child->m_padding.x;
         objectX.align = child->align.x;
+        objectX.spacing = child->m_spacing;
         dimensionsX.push_back(objectX);
 
         _InputDimensions objectY;
@@ -289,6 +295,7 @@ void LayoutElement::calculateLayout()
         objectY.size = child->m_size.y;
         objectY.padding = child->m_padding.y;
         objectY.align = child->align.y;
+        objectY.spacing = child->m_spacing;
         dimensionsY.push_back(objectY);
     }
 
@@ -296,11 +303,13 @@ void LayoutElement::calculateLayout()
     thisDimensionsX.size = { m_layout.size.x, m_layout.autoSizingX ? EGE_LAYOUT_AUTO : EGE_LAYOUT_PIXELS };
     thisDimensionsX.padding = m_layout.padding.x;
     thisDimensionsX.align = align.x;
+    thisDimensionsX.spacing = m_spacing;
 
     thisDimensionsY.position = m_layout.position.y;
     thisDimensionsY.size = { m_layout.size.y, m_layout.autoSizingY ? EGE_LAYOUT_AUTO : EGE_LAYOUT_PIXELS };
     thisDimensionsY.padding = m_layout.padding.y;
     thisDimensionsY.align = align.y;
+    thisDimensionsY.spacing = m_spacing;
 
     ege_log.debug() << "Raw: id(" << m_id << ") pos(" << m_position.x << "," << m_position.y << ") size(" << m_size.x << "," << m_size.y << ") padding(" << m_padding.x << "," << m_padding.y << ")";
     ege_log.debug() << "Layout: pos(" << m_layout.position.x << "," << m_layout.position.y << ") size(" << m_layout.size.x << "," << m_layout.size.y << ") padding(" << m_layout.padding.x << "," << m_layout.padding.y << ")";
@@ -363,6 +372,7 @@ void LayoutElement::calculateLayout()
 
         calc.autoSizingX = child->m_size.x.unit() == EGE_LAYOUT_AUTO;
         calc.autoSizingY = child->m_size.y.unit() == EGE_LAYOUT_AUTO;
+        calc.spacing = lms.spacing;
 
         // Ensure that parent is properly set
         child->m_parent = this;
