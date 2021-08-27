@@ -54,7 +54,7 @@ public:
     virtual void onTick() override;
 
     void setScene(SharedPtr<Scene> scene);
-    SharedPtr<Scene> getScene() { return m_scene; }
+    SharedPtr<Scene> getScene() const { return m_scene.lock(); }
 
     void setCamera(SharedPtr<Camera> cameraObject) { m_cameraObject = cameraObject; }
 
@@ -67,8 +67,8 @@ protected:
     virtual void updateGeometry(Renderer&) override;
 
 private:
-    SharedPtr<Scene> m_scene;
-    SharedPtr<Scene> m_initialScene;
+    WeakPtr<Scene> m_scene;
+    WeakPtr<Scene> m_initialScene;
     WeakPtr<Camera> m_cameraObject;
 };
 

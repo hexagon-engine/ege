@@ -45,44 +45,46 @@ namespace EGE
 
 void SceneWidget::render(Renderer& renderer) const
 {
-    if(m_scene)
+    auto scene = m_scene.lock();
+    if(scene)
     {
         if(!m_cameraObject.expired())
         {
             auto camera = m_cameraObject.lock();
             camera->applyTransform(renderer);
-            m_scene->m_currentCamera = camera.get();
+            scene->m_currentCamera = camera.get();
         }
 
-        m_scene->doRender(renderer, renderer.getStates());
-        m_scene->m_currentCamera = nullptr;
+        scene->doRender(renderer, renderer.getStates());
+        scene->m_currentCamera = nullptr;
     }
 }
 
 void SceneWidget::setScene(SharedPtr<Scene> scene)
 {
-    ASSERT(scene);    
+    ASSERT(scene);
     m_scene = scene;
     runLayoutUpdate();
-    m_scene->setSize(getSize());
+    scene->setSize(getSize());
 }
 
 void SceneWidget::onTick()
 {
     Widget::onTick();
 
-    if(!m_scene && m_initialScene)
-        setScene(m_initialScene);
+    auto scene = m_scene.lock();
+    if(!scene && !m_initialScene.expired())
+        setScene(m_initialScene.lock());
 
     // FIXME: This should be done by Component system somehow!
-    if(m_scene)
-        m_scene->onUpdate();
+    if(scene)
+        scene->onUpdate();
 }
 
 void SceneWidget::updateGeometry(Renderer&)
 {
-    if(m_scene)
-        m_scene->setSize(getSize());
+    if(!m_scene.expired())
+        m_scene.lock()->setSize(getSize());
 }
 
 Vec2d SceneWidget::mapToScreenCoords(Renderer& renderer, Vec3d scene) const
@@ -99,8 +101,8 @@ EventResult SceneWidget::fireEvent(Event& event)
 {
     Widget::fireEvent(event);
     // FIXME: This should be done by Component system somehow!
-    if(m_scene)
-        m_scene->fireEvent(event);
+    if(!m_scene.expired())
+        m_scene.lock()->fireEvent(event);
 
     // TODO: Care about errors
     return EventResult::Success;
