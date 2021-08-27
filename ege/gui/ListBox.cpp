@@ -64,6 +64,7 @@ ListBox::ListBox(Widget& parent, String id)
     });
 
     m_entries = addNewWidget<Widget>("ListBoxList");
+    m_entries->setPadding({"2px", "0px"});
     m_entries->layoutDirection = LayoutElement::Direction::Vertical;
     m_entries->setSize({"0N", "0a"});
 }
