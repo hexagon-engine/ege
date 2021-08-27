@@ -15,9 +15,6 @@ void Window::setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit in
     {
         // FIXME: Handle code dupe with onTick()
         // FIXME: this is almost never used, why does it exist?
-        events<SystemEvent>().remove(*m_currentGui);
-
-        // it's 'delete'd by eventhandler
         if(m_currentGui)
            m_currentGui->onUnload();
 
@@ -28,8 +25,6 @@ void Window::setGUIScreen(SharedPtr<GUIScreen> screen, GUIScreenImmediateInit in
         sf::Vector2u wndSize = getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
-
-        events<SystemEvent>().addHandler(m_currentGui);
     }
     else
         m_pendingGui = screen;
@@ -46,9 +41,7 @@ void Window::onTick()
         // FIXME: Handle code dupe with immediate-init path of setGUIScreen()
         if(m_currentGui)
         {
-            events<SystemEvent>().remove(*m_currentGui);
             removeChild(*m_currentGui);
-            // it's 'delete'd by eventhandler
             m_currentGui->onUnload();
         }
         m_currentGui = m_pendingGui;
@@ -59,8 +52,6 @@ void Window::onTick()
         sf::Vector2u wndSize = getSize();
         sf::Event::SizeEvent event{wndSize.x, wndSize.y};
         m_currentGui->onResize(event);
-
-        events<SystemEvent>().addHandler(m_currentGui);
         m_pendingGui = nullptr;
     }
 

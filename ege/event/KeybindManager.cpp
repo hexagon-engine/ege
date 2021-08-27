@@ -111,9 +111,9 @@ void KeybindManager::setStrength(String name, Input input)
         ege_log.warning() << "No keybind (strength) in keybind manager: " << name;
 }
 
-void KeybindManager::hook(SharedPtr<KeybindManager> manager, ComponentBase& loop)
+void KeybindManager::hook(UniquePtr<KeybindManager>&& manager, ComponentBase& loop)
 {
-    loop.events<SystemEvent>().addHandler(manager);
+    loop.events<SystemEvent>().addHandler(std::move(manager));
 }
 
 void KeybindManager::onKeyPress(sf::Event::KeyEvent& event)

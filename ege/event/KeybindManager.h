@@ -142,7 +142,7 @@ public:
     void setSwitch(String name, Input);
     void setStrength(String name, Input);
 
-    static void hook(SharedPtr<KeybindManager> manager, ComponentBase& loop);
+    static void hook(UniquePtr<KeybindManager>&& manager, ComponentBase& loop);
 
     // TODO: Allow iteration for 'controls' GUI
 

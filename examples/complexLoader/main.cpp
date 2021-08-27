@@ -32,12 +32,12 @@ int main()
     auto window = loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
 
     // Setup keybinds
-    auto keybinds = make<EGE::KeybindManager>();
+    auto keybinds = makeUnique<EGE::KeybindManager>();
     keybinds->addTrigger("place", sf::Mouse::Left, [&scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
     keybinds->addSwitch("test", sf::Keyboard::Space, [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
     keybinds->addStrength("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D}, [player](float p) { player->setMotion({1*p, player->getMotion().y}); });
     keybinds->addStrength("moveVertical", {sf::Keyboard::W, sf::Keyboard::S}, [player](float p) { player->setMotion({player->getMotion().x, 1*p}); });
-    EGE::KeybindManager::hook(keybinds, *player);
+    EGE::KeybindManager::hook(std::move(keybinds), *player);
 
     // Setup GUI and camera
     auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();

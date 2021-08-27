@@ -54,22 +54,22 @@ public:
     LockingEventArray(LockingEventArray&&) = default;
 
     template<class Evt = EvtT>
-    LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler handler)
-        { m_array.add(handler); return *this; }
+    LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler&& handler)
+        { m_array.add(std::move(handler)); return *this; }
 
     LockingEventArray<EvtT>& remove(EventHandlerBase& handler)
         { m_array.remove(handler); return *this; }
 
     template<class EvtHandler, class... Args>
     LockingEventArray<EvtT>& addHandler(Args&&... args)
-        { m_array.template addHandler<EvtHandler>(args...); return *this; }
+        { m_array.template addHandler<EvtHandler>(std::forward<Args>(args)...); return *this; }
 
-    LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> const& handler)
-        { m_array.addHandler(handler); return *this; }
+    LockingEventArray<EvtT>& addHandler(UniquePtr<EventHandlerBase>&& handler)
+        { m_array.addHandler(std::move(handler)); return *this; }
 
     template<class Evt = EvtT, class... Args>
     EventResult fire(Args&&... args)
-        { return m_array.template fire<Evt>(args...); }
+        { return m_array.template fire<Evt>(std::forward<Args>(args)...); }
 
     EventResult fire(EvtT& event)
         { return m_array.fire(event); }
