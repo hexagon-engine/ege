@@ -50,7 +50,7 @@ class GroupBox : public Widget
 {
 public:
     explicit GroupBox(Widget& parent, String id = "GroupBox")
-    : Widget(parent, id) { setPadding({10.0, 15.0}); }
+    : Widget(parent, id) { setPadding({10.0, 20.0}); }
 
     void setLabel(sf::String label) { m_label = label; }
 
