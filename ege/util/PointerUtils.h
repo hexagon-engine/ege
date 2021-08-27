@@ -50,6 +50,14 @@ inline SharedPtr<T> make(Args&&... args)
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template<typename T, typename... Args>
+inline UniquePtr<T> makeUnique(Args&&... args)
+{
+    //std::cerr << "EGE::make<" << typeName<T>() << ">(" << display(args...) << ")" << std::endl;
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
 }
 
 using EGE::make;
+using EGE::makeUnique;
