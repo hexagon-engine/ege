@@ -198,7 +198,7 @@ public:
                         button2->hide(false);
                         timerRunning = true;
                         addTimer("TimerHideWidget", make<EGE::Timer>(*this, EGE::Timer::Mode::Limited, EGE::Time(1.0, EGE::Time::Unit::Seconds), [this, myFrame](std::string, EGE::Timer*) {
-                            myFrame->removeWidget(*button2);
+                            button2->hide(true);
                             timerRunning = false;
                         }));
                     }
@@ -207,6 +207,7 @@ public:
 
                 button2 = myFrame->addNewWidget<EGE::Button>();
                 button2->setLabel("T.e.s.t&:2");
+                button2->setImage("texture.png");
                 button2->hide(true);
 
                 auto labelLeft = myFrame->addNewWidget<EGE::Label>();
@@ -363,7 +364,10 @@ public:
     virtual bool reload() override
     {
         ege_log.info() << "MyResourceManager reload";
-        setDefaultFont("font.ttf");
+        if(!setDefaultFont("font.ttf"))
+            return false;
+        if(!loadTextureFromFile("texture.png"))
+            return false;
         return true;
     }
 };
