@@ -85,6 +85,7 @@ public:
     TrackedSharedPtr& operator=(std::nullptr_t)
     {
         printMessage(MessageType::AssignedNullptr, typeof_<T>());
+        m_ptr = nullptr;
         return *this;
     }
 
