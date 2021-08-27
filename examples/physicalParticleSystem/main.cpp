@@ -69,7 +69,9 @@ public:
                 m_valueLabel->setColor(EGE::Colors::white);
             }
         }
-        m_slider->events<EGE::SliderSlideEvent>().add([&](EGE::SliderSlideEvent& event) { m_valueLabel->setString(std::to_string(event.value)); return EGE::EventResult::Success; });
+        m_slider->events<EGE::SliderSlideEvent>().add([&](EGE::SliderSlideEvent& event) {
+            m_valueLabel->setString(std::to_string(event.value)); return EGE::EventResult::Success;
+        });
     }
 
     EGE::Slider& slider() { return *m_slider; }
@@ -193,11 +195,8 @@ int main()
             dumpProfiler->setSize({"1N", "25px"});
 
             auto showOverlayCheckbox = controlsWidget->addNewWidget<EGE::CheckBox>();
-            showOverlayCheckbox->events<EGE::Button::ClickEvent>().add([showOverlayCheckbox](EGE::Button::ClickEvent&) {
-                if(showOverlayCheckbox->isChecked())
-                    EGE::GlobalConfig::set(EGE::GlobalConfig::Option::SceneObject_Overlay);
-                else
-                    EGE::GlobalConfig::unset(EGE::GlobalConfig::Option::SceneObject_Overlay);
+            showOverlayCheckbox->events<EGE::CheckBox::CheckEvent>().add([](auto& event) {
+                EGE::GlobalConfig::set(EGE::GlobalConfig::Option::SceneObject_Overlay, event.checked);
                 return EGE::EventResult::Success;
             });
             showOverlayCheckbox->setLabel("SceneObject Overlay");

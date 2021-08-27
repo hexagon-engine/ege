@@ -120,6 +120,7 @@ void CheckBox::onClick(EGE::Vec2d position)
 {
     Button::onClick(position);
     m_checked = !m_checked;
+    fire<CheckEvent>(m_checked);
 }
 
 }

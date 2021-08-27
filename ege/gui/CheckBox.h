@@ -47,6 +47,17 @@ namespace EGE
 class CheckBox : public Button
 {
 public:
+    class CheckEvent : public Event
+    {
+    public:
+        EGE_EVENT("EGE::CheckEvent")
+
+        CheckEvent(bool _checked)
+        : checked(_checked) {}
+
+        bool checked = false;
+    };
+
     explicit CheckBox(Widget& parent, String id = "CheckBox")
     : Button(parent, id) {}
 
