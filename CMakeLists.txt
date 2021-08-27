@@ -48,7 +48,7 @@ macro(ege_add_all_tests_for targetname)
         get_filename_component(testfile_only_name ${testfile} NAME_WE)
         set(target_name "ege-test-${targetname}-${testfile_only_name}")
         add_executable(${target_name} ${testfile})
-        target_compile_options(${target_name} PUBLIC -Wall -Wextra)
+        target_compile_options(${target_name} PUBLIC -Wall -Wextra -Wnon-virtual-dtor)
 
         # Sanitizers
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -74,7 +74,7 @@ macro(ege_add_module targetname)
     set_property(GLOBAL APPEND PROPERTY configured_modules "${targetname}")
     set(target_name "ege-${targetname}")
     add_library(${target_name} STATIC ${SOURCES})
-    target_compile_options(${target_name} PUBLIC -Wall -Wextra -Werror)
+    target_compile_options(${target_name} PUBLIC -Wall -Wextra -Werror -Wnon-virtual-dtor)
 
     # Sanitizers
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")

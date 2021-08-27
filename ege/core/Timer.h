@@ -67,6 +67,8 @@ public:
     , m_component(component)
     , m_callback(callback) {}
 
+    virtual ~Timer() = default;
+
     virtual void start();
     virtual void stop();
 

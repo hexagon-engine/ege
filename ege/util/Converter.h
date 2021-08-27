@@ -55,6 +55,7 @@ public:
     typedef I InputStreamType;
     typedef O OutputStreamType;
 
+    virtual ~Converter() = default;
     virtual bool in(InputStreamType& input, SharedPtr<Object>& object) const = 0;
     virtual bool out(OutputStreamType& output, const Object& object) const = 0;
 };

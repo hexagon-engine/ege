@@ -50,6 +50,8 @@ namespace Internal
 class _TrackedSharedPtrBase
 {
 protected:
+    ~_TrackedSharedPtrBase() = default;
+
     enum MessageType
     {
         DefaultConstructed,
@@ -71,7 +73,7 @@ protected:
 }
 
 template<class T>
-class TrackedSharedPtr : Internal::_TrackedSharedPtrBase
+class TrackedSharedPtr final : Internal::_TrackedSharedPtrBase
 {
 public:
     // Default constructor
@@ -126,7 +128,7 @@ public:
     }
 
     // Destructor
-    ~TrackedSharedPtr()
+    virtual ~TrackedSharedPtr()
     {
         printMessage(MessageType::Destructed, typeof_<T>());
     }

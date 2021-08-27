@@ -46,6 +46,8 @@ class Renderer;
 class ThemeRenderer
 {
 public:
+    virtual ~ThemeRenderer() = default;
+
     virtual void renderButtonLike(Renderer& renderer, double x, double y, double width, double height) = 0;
     virtual void renderTextBoxLikeBorder(Renderer& renderer, double x, double y, double width, double height) = 0;
     virtual void renderTextBoxLikeBackground(Renderer& renderer, double x, double y, double width, double height) = 0;

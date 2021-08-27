@@ -46,6 +46,8 @@ namespace EGE
 class EventTarget
 {
 public:
+    virtual ~EventTarget() = default;
+
     template<class Evt>
     LockingEventArray<Evt> events()
     {

@@ -47,6 +47,8 @@ class Renderable;
 class GfxFilter
 {
 public:
+    virtual ~GfxFilter() = default;
+
     virtual void apply(Renderable&, Renderer&, RenderStates&) = 0;
 };
 

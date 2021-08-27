@@ -59,6 +59,7 @@ class Event
 public:
     typedef std::string EventType;
 
+    virtual ~Event() = default;
     virtual EGE::Event::EventType getType() const = 0;
 
     bool isCanceled() { return m_canceled; }

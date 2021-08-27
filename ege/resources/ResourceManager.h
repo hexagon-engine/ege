@@ -52,6 +52,7 @@ namespace EGE
 class ResourceManager
 {
 public:
+    virtual ~ResourceManager() = default;
     virtual bool reload() { return true; }
     void clear();
     bool isError();

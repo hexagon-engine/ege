@@ -68,6 +68,8 @@ public:
     explicit ComponentBase(String id = "ComponentBase")
     : InspectorNode(id) {}
 
+    virtual ~ComponentBase() = default;
+
     EGE_ENUM_YES_NO(TimerImmediateStart);
 
     void addTimer(std::string const& name, SharedPtr<Timer> timer, TimerImmediateStart start = TimerImmediateStart::Yes);
@@ -173,10 +175,6 @@ public:
     explicit Component(String id = "Component")
     : ComponentBase(id) {}
 
-    virtual ~Component() = default;
-
-// FIXME:
-// protected:
     template<class Callback>
     void forEachChild(Callback&& function)
     {
@@ -247,11 +245,12 @@ protected:
     class _ForEachChildCallbackBase
     {
     public:
+        virtual ~_ForEachChildCallbackBase() = default;
         virtual void operator()(ChildType&) = 0;
     };
 
     template<class U>
-    class _ForEachChildCallback : public _ForEachChildCallbackBase
+    class _ForEachChildCallback final : public _ForEachChildCallbackBase
     {
     public:
         _ForEachChildCallback(U&& callback)

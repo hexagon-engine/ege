@@ -45,6 +45,7 @@ namespace EGE
 class Texture
 {
 public:
+    virtual ~Texture() = default;
     String getName() { return m_name; }
     virtual sf::Texture& getTexture() = 0;
 

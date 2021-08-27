@@ -49,6 +49,8 @@ namespace EGE
 class Renderable
 {
 public:
+    virtual ~Renderable() = default;
+
     void renderWithStates(Renderer& renderer, const RenderStates& states) const;
 
     // Render with setting view and states.

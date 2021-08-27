@@ -82,6 +82,7 @@ struct EquationResult
 class GenericEquation
 {
 public:
+    virtual ~GenericEquation() = default;
     virtual EquationResult solve() const = 0;
 };
 

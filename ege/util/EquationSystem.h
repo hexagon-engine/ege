@@ -119,6 +119,7 @@ private:
 class GenericEquationSystem
 {
 public:
+    virtual ~GenericEquationSystem() = default;
     virtual EquationSystemResult solve() const = 0;
 };
 

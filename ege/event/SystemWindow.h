@@ -45,6 +45,8 @@ namespace EGE
 class SystemWindow
 {
 public:
+    virtual ~SystemWindow() = default;
+
     EGE_ENUM_YES_NO(WaitForEvents);
     virtual void callEvents(ComponentBase& loop, WaitForEvents wait) = 0;
 };

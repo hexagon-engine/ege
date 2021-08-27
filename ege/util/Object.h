@@ -54,6 +54,8 @@ class ObjectList;
 class Object
 {
 public:
+    virtual ~Object() = default;
+
     virtual String toString() const { return "<empty Object>"; };
 
     virtual String asString() const { return ""; }
