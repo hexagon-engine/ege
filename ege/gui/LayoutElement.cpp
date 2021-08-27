@@ -122,7 +122,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
 
     size_t remainingElements = dimensions.size() - usedElements;
     double remainingSpace = thisDimensions.size.value() - usedSpace - thisDimensions.padding.value() * 2;
-    double partSize = remainingSpace / remainingElements - (thisDimensions.spacing * (remainingElements - 1) / remainingElements);
+    double partSize = remainingSpace / remainingElements - thisDimensions.spacing;
 
     // Auto sizing!
     if(thisDimensions.size.unit() == EGE_LAYOUT_AUTO)
@@ -147,7 +147,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
             {
                 /* Set position relative to last part */
                 element.position.setUnit(EGE_LAYOUT_PIXELS);
-                element.position.setValue(last.position.value() + last.size.value() + thisDimensions.spacing);
+                element.position.setValue(last.position.value() + last.size.value());
 
                 if(element.size.unit() == EGE_LAYOUT_FILL)
                 {
@@ -165,6 +165,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 output[s] = object;
                 ege_log.debug() << "Add align=left";
 
+                element.position.setValue(element.position.value() + thisDimensions.spacing);
                 last = element;
             }
         }
@@ -206,6 +207,7 @@ Vector<LayoutElement::_OutputDimensions> LayoutElement::calculateMainDimension(L
                 ege_log.debug() << "Add align=right";
 
                 // TODO: this should be outside this "if"?
+                element.position.setValue(element.position.value() - thisDimensions.spacing);
                 next = element;
             }
         }
