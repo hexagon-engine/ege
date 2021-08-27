@@ -113,6 +113,7 @@ void Slider::render(Renderer& renderer) const
     renderer.renderRectangle(0, getSize().y / 2 - 3, getSize().x, 6, ColorRGBA::fromBytes(200, 200, 200));
     auto knob = getKnobBounds();
     renderer.getThemeRenderer()->renderButtonLike(renderer, knob.position.x, knob.position.y, knob.size.x, knob.size.y);
+    Widget::render(renderer);
 }
 
 RectF Slider::getKnobBounds() const
