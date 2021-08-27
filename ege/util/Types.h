@@ -45,6 +45,8 @@
 #include <string>
 #include <vector>
 
+#include <ege/util/TrackedSharedPtr.h>
+
 namespace EGE
 {
 
@@ -98,8 +100,14 @@ using FlatPtr = T*;
 template<class T>
 using UniquePtr = std::unique_ptr<T>;
 
+#define SHARED_PTR_TRACKING
+
 template<class T>
-using SharedPtr = std::shared_ptr<T>;
+#ifdef SHARED_PTR_TRACKING
+    using SharedPtr = TrackedSharedPtr<T>;
+#else
+    using SharedPtr = std::shared_ptr<T>;
+#endif
 
 template<class T>
 using WeakPtr = std::weak_ptr<T>;

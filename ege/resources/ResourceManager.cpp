@@ -82,7 +82,7 @@ SharedPtr<sf::Font> ResourceManager::loadFontFromFile(std::string fileName)
 
 SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, sf::Shader::Type type)
 {
-    SharedPtr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader = make<sf::Shader>();
     if(!shader->loadFromFile(CommonPaths::resourceDir() + "/" + fileName, type))
     {
         ege_log.error() << "ResourceManager: Could not load resource: [" << (int)type << "] SHADER " << fileName;
@@ -95,7 +95,7 @@ SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string fileName, 
 
 SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string fragmentShader)
 {
-    SharedPtr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader = make<sf::Shader>();
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + fragmentShader))
     {
@@ -109,7 +109,7 @@ SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std:
 
 SharedPtr<sf::Shader> ResourceManager::loadShaderFromFile(std::string name, std::string vertexShader, std::string geometryShader, std::string fragmentShader)
 {
-    SharedPtr<sf::Shader> shader(new sf::Shader);
+    SharedPtr<sf::Shader> shader = make<sf::Shader>();
     auto res = CommonPaths::resourceDir();
     if(!shader->loadFromFile(res + "/" + vertexShader, res + "/" + geometryShader, res + "/" + fragmentShader))
     {
@@ -274,7 +274,7 @@ SharedPtr<sf::Shader> ResourceManager::getShader(std::string name)
 
 SharedPtr<sf::Cursor> ResourceManager::loadSystemCursor(sf::Cursor::Type type)
 {
-    SharedPtr<sf::Cursor> cursor(new sf::Cursor);
+    SharedPtr<sf::Cursor> cursor = make<sf::Cursor>();
     if(!cursor->loadFromSystem(type))
     {
         ege_log.error() << "ResourceManager: Could not load resource: SYSTEM CURSOR" << (int)type;

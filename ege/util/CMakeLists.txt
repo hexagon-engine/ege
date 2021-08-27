@@ -48,6 +48,7 @@ set(SOURCES
 	"StringUtils.h"
 	"Time.cpp"
 	"Time.h"
+	"TrackedSharedPtr.cpp"
 	"TypeID.h"
 	"Types.h"
 	"Vector.cpp"
