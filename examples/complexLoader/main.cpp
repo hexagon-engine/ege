@@ -33,7 +33,7 @@ int main()
 
     // Setup keybinds
     auto keybinds = make<EGE::KeybindManager>();
-    keybinds->addTrigger("place", sf::Mouse::Left, [scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
+    keybinds->addTrigger("place", sf::Mouse::Left, [&scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
     keybinds->addSwitch("test", sf::Keyboard::Space, [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
     keybinds->addStrength("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D}, [player](float p) { player->setMotion({1*p, player->getMotion().y}); });
     keybinds->addStrength("moveVertical", {sf::Keyboard::W, sf::Keyboard::S}, [player](float p) { player->setMotion({player->getMotion().x, 1*p}); });
