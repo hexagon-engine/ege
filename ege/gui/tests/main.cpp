@@ -174,7 +174,7 @@ public:
 
         labelFPS = addNewWidget<EGE::Label>();
         labelFPS->setString("FPS: 0.0");
-        labelFPS->setTextAlign(EGE::Label::Align::Center);
+        labelFPS->setTextAlign(EGE::Renderer::TextAlign::Center);
         labelFPS->setSize({"1N", "20px"});
 
         auto widgets = addNewWidget<EGE::Widget>();
@@ -212,19 +212,19 @@ public:
 
                 auto labelCenter = myFrame->addNewWidget<EGE::Label>();
                 labelCenter->setString("Label Center");
-                labelCenter->setTextAlign(EGE::Label::Align::Center);
+                labelCenter->setTextAlign(EGE::Renderer::TextAlign::Center);
 
                 auto labelRight = myFrame->addNewWidget<EGE::Label>();
                 labelRight->setString("Label Right");
-                labelRight->setTextAlign(EGE::Label::Align::Right);
+                labelRight->setTextAlign(EGE::Renderer::TextAlign::Right);
 
                 labelAnimated = myFrame->addNewWidget<EGE::Label>();
                 labelAnimated->setString("Animation");
-                labelAnimated->setTextAlign(EGE::Label::Align::Center);
+                labelAnimated->setTextAlign(EGE::Renderer::TextAlign::Center);
 
                 ball = myFrame->addNewWidget<EGE::Label>();
                 ball->setString("O");
-                ball->setTextAlign(EGE::Label::Align::Center);
+                ball->setTextAlign(EGE::Renderer::TextAlign::Center);
 
                 auto myTextBox = myFrame->addNewWidget<EGE::TextBox>();
                 //myTextBox->setSize(EGE::Vec2d(440.f, 25.f));

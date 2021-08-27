@@ -46,18 +46,11 @@ namespace EGE
 class Label : public Widget
 {
 public:
-    enum class Align
-    {
-        Left,
-        Center,
-        Right
-    };
-
     explicit Label(Widget& parent, sf::String label = "", String id = "Label")
     : Widget(parent, id), m_string(label) {}
 
     void setString(sf::String str);
-    void setTextAlign(Align align);
+    void setTextAlign(Renderer::TextAlign align);
     void setFontSize(int size);
     void setColor(ColorRGBA const& color) { m_color = color; setGeometryNeedUpdate(); }
 
@@ -69,7 +62,7 @@ protected:
     virtual void updateLayout() override;
 
     sf::String m_string;
-    Align m_align = Align::Left;
+    Renderer::TextAlign m_align = Renderer::TextAlign::Left;
     int m_fontSize = 12;
     ColorRGBA m_color { Colors::black };
     sf::Text m_text;

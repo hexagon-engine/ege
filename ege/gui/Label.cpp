@@ -49,7 +49,7 @@ void Label::setString(sf::String str)
     setGeometryNeedUpdate();
 }
 
-void Label::setTextAlign(Align align)
+void Label::setTextAlign(Renderer::TextAlign align)
 {
     m_align = align;
     setGeometryNeedUpdate();
@@ -80,21 +80,21 @@ void Label::updateGeometry(Renderer& renderer)
     bounds.width += 1.f * m_fontSize / 15.f;
     switch(m_align)
     {
-        case Align::Left:
+        case Renderer::TextAlign::Left:
             m_text.setOrigin(0.f, 0.f);
             position = Vec2d();
             break;
-        case Align::Center:
+        case Renderer::TextAlign::Center:
             m_text.setOrigin(bounds.width / 2.0, bounds.height / 2.0);
             position = getSize() / 2.0;
             break;
-        case Align::Right:
+        case Renderer::TextAlign::Right:
             m_text.setOrigin(bounds.width, bounds.height);
             position = getSize();
             break;
     }
 
-    m_text.setPosition(position.x, position.y);
+    m_text.setPosition(static_cast<int>(position.x), static_cast<int>(position.y));
     m_text.setFillColor({m_color.r, m_color.g, m_color.b, m_color.a});
 }
 
