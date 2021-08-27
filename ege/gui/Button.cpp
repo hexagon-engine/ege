@@ -116,19 +116,25 @@ void Button::render(Renderer& renderer) const
         target.draw(rs, renderer.getStates().sfStates());
     }
 
+    // image
+    double labelPosition = 10;
+    if(m_texture)
+    {
+        renderer.renderTexturedRectangle(4, 4, getSize().y - 8, getSize().y - 8, m_texture->getTexture());
+        labelPosition += getSize().y - 4;
+    }
+
     // label
     if(!m_label.isEmpty())
     {
         auto font = getParent<Widget>()->getLoop().getResourceManager()->getDefaultFont();
         ASSERT(font);
         sf::Text text(m_label, *font, 12);
-        text.setPosition((int)size.x / 2, (int)size.y / 2);
-        text.setOrigin((int)text.getLocalBounds().width / 2, (int)text.getLocalBounds().height / 2);
+        text.setPosition(labelPosition, round(size.y / 2));
+        text.setOrigin(0, round(text.getLocalBounds().height / 2));
         text.setFillColor(sf::Color(m_labelColor.r, m_labelColor.g, m_labelColor.b, m_labelColor.a));
         target.draw(text, renderer.getStates().sfStates());
     }
-
-    // TODO: allow images
 
     Widget::render(renderer);
 }
@@ -140,6 +146,12 @@ void Button::handleClick(EGE::Vec2d position)
         onClick(position);
         fire<ClickEvent>();
     }
+}
+
+void Button::updateGeometry(Renderer&)
+{
+    if(!m_textureName.empty())
+        m_texture = getResourceManager()->getTexture(m_textureName);
 }
 
 }

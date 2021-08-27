@@ -53,6 +53,8 @@ public:
 
     virtual void setLabel(sf::String label) { m_label = label; setGeometryNeedUpdate(); }
     sf::String getLabel() const { return m_label; }
+    void setImage(String const& texture) { m_textureName = texture; setGeometryNeedUpdate(); }
+    String getImage() const { return m_textureName; }
     void setLabelColor(EGE::ColorRGBA color) { m_labelColor = color; }
 
     virtual void onMouseButtonRelease(sf::Event::MouseButtonEvent& event) override;
@@ -69,9 +71,12 @@ protected:
 
 private:
     void handleClick(Vec2d position);
+    virtual void updateGeometry(Renderer&) override;
 
     Vec2d m_lastClickPos;
     sf::String m_label;
+    SharedPtr<Texture> m_texture;
+    String m_textureName;
 };
 
 }
