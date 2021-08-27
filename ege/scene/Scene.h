@@ -102,8 +102,8 @@ public:
     virtual void onTick() override;
 
     // %overwrite - overwrite object instead of skipping when name conflict arises
-    UidType addObject(SharedPtr<SceneObject> object);
-    UidType addStaticObject(SharedPtr<SceneObject> object, bool overwrite = false);
+    UidType addObject(SharedPtr<SceneObject> const& object);
+    UidType addStaticObject(SharedPtr<SceneObject> const& object, bool overwrite = false);
 
     // Custom object
     template<class SO>

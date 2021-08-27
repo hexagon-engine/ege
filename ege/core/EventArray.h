@@ -79,7 +79,7 @@ public:
         return addHandler(make<EvtHandler>(args...));
     }
 
-    EventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
+    EventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> const& handler)
     {
         m_handlers.push_back(handler);
         return *this;

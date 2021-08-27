@@ -106,7 +106,7 @@ void Scene::onTick()
         for(auto it = objects.begin(); it != objects.end();)
         {
             starter.switchSection("update");
-            auto object = *it;
+            auto& object = *it;
             auto oldIt = it++;
 
             if(allowDead)
@@ -148,7 +148,7 @@ void Scene::onTick()
     doUpdateForObjectMap(m_staticObjects, false);
 }
 
-UidType Scene::addObject(SharedPtr<SceneObject> object)
+UidType Scene::addObject(SharedPtr<SceneObject> const& object)
 {
     if(!object)
         return 0;
@@ -198,7 +198,7 @@ UidType Scene::addObject(SharedPtr<SceneObject> object)
     return object->getObjectId();
 }
 
-UidType Scene::addStaticObject(SharedPtr<SceneObject> object, bool overwrite)
+UidType Scene::addStaticObject(SharedPtr<SceneObject> const& object, bool overwrite)
 {
     if(!object)
         return 0;
@@ -350,10 +350,10 @@ void Scene::rebuildLayers()
     std::lock_guard<std::recursive_mutex> lock(m_objectsMutex);
     m_objectsByLayer.clear();
 
-    for(auto pr: m_staticObjects)
+    for(auto& pr: m_staticObjects)
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
 
-    for(auto pr: m_objects)
+    for(auto& pr: m_objects)
         m_objectsByLayer.insert(std::make_pair(pr.second->getRenderLayer(), pr.second.get()));
 }
 

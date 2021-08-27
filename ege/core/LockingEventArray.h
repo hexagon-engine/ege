@@ -64,7 +64,7 @@ public:
     LockingEventArray<EvtT>& addHandler(Args&&... args)
         { m_array.template addHandler<EvtHandler>(args...); return *this; }
 
-    LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> handler)
+    LockingEventArray<EvtT>& addHandler(SharedPtr<EventHandlerBase> const& handler)
         { m_array.addHandler(handler); return *this; }
 
     template<class Evt = EvtT, class... Args>
