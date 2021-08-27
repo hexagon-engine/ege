@@ -37,6 +37,7 @@
 #include "CheckBox.h"
 
 #include <ege/gui/GUIGameLoop.h>
+#include <ege/util/Color.h>
 
 namespace EGE
 {
@@ -45,46 +46,19 @@ void CheckBox::render(Renderer& renderer) const
 {
     sf::RenderTarget& target = renderer.getTarget();
 
-    sf::RectangleShape rs;
-    rs.setFillColor(sf::Color(255, 255, 255));
-    rs.setOutlineThickness(1.f);
+    double center = getSize().y / 2;
 
     // background
-    rs.setPosition(2.f, 2.f);
-    rs.setOutlineColor(sf::Color(60, 60, 60));
-    rs.setSize(sf::Vector2f(11.f, 11.f));
-    target.draw(rs, renderer.getStates().sfStates());
-
-    // border
-    rs.setSize(sf::Vector2f(12.f, 12.f));
-    rs.setPosition(1.f, 1.f);
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setOutlineColor(sf::Color(173, 173, 173));
-    target.draw(rs, renderer.getStates().sfStates());
-
-    rs.setSize(sf::Vector2f(13.f, 13.f));
-    rs.setPosition(1.f, 1.f);
-    rs.setOutlineColor(sf::Color(210, 210, 210));
-    target.draw(rs, renderer.getStates().sfStates());
+    renderer.getThemeRenderer()->renderTextBoxLikeBackground(renderer, 0, center - 7.5, 15, 15);
+    renderer.getThemeRenderer()->renderTextBoxLikeBorder(renderer, 0, center - 7.5, 15, 15);
 
     // border if clicked
     if(m_leftClicked)
-    {
-        rs.setSize(sf::Vector2f(9.f, 9.f));
-        rs.setPosition(3.f, 3.f);
-        rs.setOutlineColor(sf::Color(70, 70, 70));
-        target.draw(rs, renderer.getStates().sfStates());
-    }
+        renderer.renderRectangle(2, center - 5, 11, 11, ColorRGBA::fromBytes(210, 210, 210));
 
     // check
     if(m_checked)
-    {
-        rs.setFillColor(sf::Color(60, 60, 60));
-        rs.setOutlineColor(sf::Color::Transparent);
-        rs.setPosition(5.f, 5.f);
-        rs.setSize(sf::Vector2f(5.f, 5.f));
-        target.draw(rs, renderer.getStates().sfStates());
-    }
+        renderer.renderRectangle(5, center - 2.5, 5, 5, ColorRGBA::fromBytes(60, 60, 60));
 
     // label
     if(!getLabel().isEmpty())
@@ -92,7 +66,8 @@ void CheckBox::render(Renderer& renderer) const
         auto font = getLoop().getResourceManager()->getDefaultFont();
         ASSERT(font);
         sf::Text text(getLabel(), *font, 12);
-        text.setPosition(20.f, 0.f);
+        double centerAlign = center - text.getGlobalBounds().height / 2;
+        text.setPosition(20.f, centerAlign - 1);
         text.setFillColor(sf::Color(m_labelColor.r, m_labelColor.g, m_labelColor.b, m_labelColor.a));
         target.draw(text, renderer.getStates().sfStates());
     }
