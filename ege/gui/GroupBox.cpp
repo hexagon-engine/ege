@@ -64,7 +64,7 @@ void GroupBox::render(Renderer& renderer) const
     auto font = getResourceManager()->getDefaultFont();
     ASSERT(font);
     sf::Text text(m_label, *font, 12);
-    text.setFillColor(sf::Color(m_labelColor.r * 255, m_labelColor.g * 255, m_labelColor.b * 255, m_labelColor.a * 255));
+    text.setFillColor(sf::Color(m_labelColor.r, m_labelColor.g, m_labelColor.b, m_labelColor.a));
     text.setOrigin(text.getLocalBounds().width / 2.f, 0.f);
     text.setPosition(size.x / 2.f, 0.f);
 
@@ -72,10 +72,10 @@ void GroupBox::render(Renderer& renderer) const
     sf::RectangleShape rsBg(sf::Vector2f(text.getLocalBounds().width + 10.f, text.getLocalBounds().height * 2.f + 6.f));
     rsBg.setOrigin(rsBg.getSize() / 2.f);
     auto bgColor = getWindow().getBackgroundColor();
-    rsBg.setFillColor({ static_cast<sf::Uint8>(bgColor.r * 255),
-                        static_cast<sf::Uint8>(bgColor.g * 255),
-                        static_cast<sf::Uint8>(bgColor.b * 255),
-                        static_cast<sf::Uint8>(bgColor.a * 255)});
+    rsBg.setFillColor({ static_cast<sf::Uint8>(bgColor.r),
+                        static_cast<sf::Uint8>(bgColor.g),
+                        static_cast<sf::Uint8>(bgColor.b),
+                        static_cast<sf::Uint8>(bgColor.a)});
     rsBg.setPosition(size.x / 2.f, 0.f);
 
     // Frame (draw)
