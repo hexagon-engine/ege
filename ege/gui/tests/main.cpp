@@ -178,12 +178,14 @@ public:
         labelFPS->setSize({"1N", "20px"});
 
         auto widgets = addNewWidget<EGE::Widget>();
+        widgets->setSpacing(4);
 
         {
             auto myFrame = widgets->addNewWidget<EGE::GroupBox>();
             myFrame->setLabel("Widget test");
             myFrame->layoutDirection = EGE::LayoutElement::Direction::Vertical;
             myFrame->setSize({"66%", "0N"});
+            myFrame->setSpacing(4);
 
             {
                 auto button = myFrame->addNewWidget<EGE::Button>();
