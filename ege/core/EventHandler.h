@@ -51,6 +51,7 @@ namespace EGE
 class EventHandlerBase
 {
 public:
+    virtual ~EventHandlerBase() = default;
     virtual EventResult doHandle(Event& event) = 0;
 };
 
