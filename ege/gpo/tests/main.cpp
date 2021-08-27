@@ -68,8 +68,8 @@ public:
 
     bool load()
     {
-        registerMyObject(std::make_unique<MyObjectTest>("testObject", -123, "addd"));
-        numeric = registerMyObject(std::make_unique<MyObject>("unknownObject", 54, "araer"));
+        registerMyObject(makeUnique<MyObjectTest>("testObject", -123, "addd"));
+        numeric = registerMyObject(makeUnique<MyObject>("unknownObject", 54, "araer"));
         m_myObjectRegistry.replace("testObject", nullptr);
         m_myObjectRegistry.freeze();
         return true;

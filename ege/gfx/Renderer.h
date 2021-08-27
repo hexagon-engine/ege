@@ -65,7 +65,7 @@ class Renderer
 {
 public:
     Renderer(sf::RenderTarget& target)
-    : m_target(target) { setThemeRenderer(std::make_unique<DefaultThemeRenderer>()); }
+    : m_target(target) { setThemeRenderer(makeUnique<DefaultThemeRenderer>()); }
 
     // Common renderers.
     // For more complex shapes, use SFML sf::Drawables.

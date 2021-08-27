@@ -113,7 +113,7 @@ Profiler* InspectorNode::getProfiler() const
 void InspectorNode::createProfiler()
 {
     ASSERT_WITH_MESSAGE(!getProfiler(), "Profiler can be created if there is no profiler from parent");
-    m_profiler = std::make_unique<Profiler>();
+    m_profiler = makeUnique<Profiler>();
 }
 
 void InspectorNode::destroyProfilerIfNeeded()

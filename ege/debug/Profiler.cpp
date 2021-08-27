@@ -122,7 +122,7 @@ void Profiler::startSectionLL(std::string const& name)
 
     if(section == nullptr)
     {
-        auto newSection = std::make_unique<Section>();
+        auto newSection = makeUnique<Section>();
         section = newSection.get();
         section->m_name = name;
         section->m_time = 0LL;

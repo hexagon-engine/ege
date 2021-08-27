@@ -36,7 +36,8 @@
 
 #pragma once
 
-#include "Types.h"
+#include <ege/util/PointerUtils.h>
+#include <ege/util/Types.h>
 
 #include <memory>
 
@@ -89,7 +90,7 @@ public:
 
     // The default randomizer is LCG with specified seed.
     Random(MaxUint seed)
-    : m_randomizer(std::make_unique<DefaultLCGRandomizer>(seed)) {}
+    : m_randomizer(makeUnique<DefaultLCGRandomizer>(seed)) {}
 
     MaxUint nextInt(MaxUint range);
 

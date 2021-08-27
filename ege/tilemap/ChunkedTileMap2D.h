@@ -40,6 +40,7 @@
 #include "TileMap2D.h"
 
 #include <ege/debug/Logger.h>
+#include <ege/util/PointerUtils.h>
 #include <ege/util/Vector.h>
 #include <functional>
 
@@ -161,7 +162,7 @@ private:
     // Add chunk to tile map without initializing it.
     ChunkType& allocateChunk(Vec2i chunkCoords)
     {
-        UniquePtr<ChunkType> chunk = std::make_unique<ChunkType>();
+        UniquePtr<ChunkType> chunk = makeUnique<ChunkType>();
         ChunkType& ptr = *chunk.get();
         addChunk(chunkCoords, std::move(chunk));
         return ptr;

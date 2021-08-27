@@ -36,6 +36,8 @@
 
 #include "SystemImplUnix.h"
 
+#include <ege/util/PointerUtils.h>
+
 #include <ctime>
 #include <dirent.h>
 #include <errno.h>
@@ -51,7 +53,7 @@ namespace EGE
 namespace System
 {
 
-std::unique_ptr<Internal::SystemImpl> g_impl = std::make_unique<Unix::SystemImplUnix>();
+std::unique_ptr<Internal::SystemImpl> g_impl = makeUnique<Unix::SystemImplUnix>();
 
 } // System
 

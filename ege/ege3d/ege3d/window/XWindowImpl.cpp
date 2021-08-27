@@ -181,7 +181,7 @@ Mouse::Button xButtonToEGE(int button)
 std::unique_ptr<WindowImpl> WindowImpl::make(Window* window)
 {
     ASSERT(window);
-    return std::make_unique<XWindowImpl>(window);
+    return makeUnique<XWindowImpl>(window);
 }
 
 // XWindowImpl

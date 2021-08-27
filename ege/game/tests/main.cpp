@@ -50,7 +50,7 @@ public:
 
     virtual void registerObject(std::string id, int r, int g, int b)
     {
-        colors.add(id, std::make_unique<MyColor>(id, sf::Color(r,g,b)));
+        colors.add(id, makeUnique<MyColor>(id, sf::Color(r,g,b)));
     }
 
     virtual bool clear()

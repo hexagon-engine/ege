@@ -87,7 +87,7 @@ Optional<AtlasTexture::TextureRect> AtlasTexture::getIcon(String name)
 
 void AtlasTexture::allocateAtlas(unsigned unitCount)
 {
-    m_texture = std::make_unique<SFMLTexture>();
+    m_texture = makeUnique<SFMLTexture>();
     m_texture->getTexture().create(unitCount * m_unit.x, unitCount * m_unit.y);
     m_atlasSize = unitCount;
 }

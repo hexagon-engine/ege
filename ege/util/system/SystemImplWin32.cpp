@@ -36,6 +36,7 @@
 
 #include "SystemImplWin32.h"
 
+#include <ege/util/PointerUtils.h>
 #include <ege/util/Types.h>
 
 #include <dirent.h>
@@ -52,7 +53,7 @@ namespace EGE
 namespace System
 {
 
-std::unique_ptr<Internal::SystemImpl> g_impl = std::make_unique<Windows::SystemImplWin32>();
+std::unique_ptr<Internal::SystemImpl> g_impl = makeUnique<Windows::SystemImplWin32>();
 
 } // System
 

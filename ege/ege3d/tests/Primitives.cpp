@@ -22,7 +22,7 @@ public:
 
     virtual void updateGeometry() override
     {
-        image = std::make_unique<EGE::ColorRGBA[]>(32*32);
+        image = makeUnique<EGE::ColorRGBA[]>(32*32);
         for(unsigned x = 0; x < 32; x++)
         {
             for(unsigned y = 0; y < 32; y++)
