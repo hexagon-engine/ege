@@ -62,6 +62,14 @@ SharedPtr<Object> object(Boolean t) { return make<ObjectBoolean>(t); }
 
 Vec2d toVector2(const ObjectValue& object)
 {
+    auto list = object.to<ObjectList>();
+    if(list.hasValue())
+    {
+        auto x = list.value()->size() > 0 ? (*list.value()).get(0).asFloat().valueOr(0) : 0.0;
+        auto y = list.value()->size() > 1 ? (*list.value()).get(1).asFloat().valueOr(0) : 0.0;
+        return Vec2d(x, y);
+    }
+
     auto map = object.to<ObjectMap>();
     if(!map.hasValue())
         return {};
@@ -72,6 +80,15 @@ Vec2d toVector2(const ObjectValue& object)
 
 Vec3d toVector3(const ObjectValue& object)
 {
+    auto list = object.to<ObjectList>();
+    if(list.hasValue())
+    {
+        auto x = list.value()->size() > 0 ? (*list.value()).get(0).asFloat().valueOr(0) : 0.0;
+        auto y = list.value()->size() > 1 ? (*list.value()).get(1).asFloat().valueOr(0) : 0.0;
+        auto z = list.value()->size() > 2 ? (*list.value()).get(2).asFloat().valueOr(0) : 0.0;
+        return Vec3d(x, y, z);
+    }
+
     auto map = object.to<ObjectMap>();
     if(!map.hasValue())
         return {};
