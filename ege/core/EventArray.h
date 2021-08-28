@@ -53,12 +53,6 @@ public:
 
     void clear() { m_handlers.clear(); }
 
-    template<class Evt = EvtT>
-    EventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler&& handler)
-    {
-        return addHandler<SimpleEventHandler<Evt>>(std::move(handler));
-    }
-
     EventArray<EvtT>& remove(EventHandlerBase& handler)
     {
         ASSERT(!m_inEventHandler);
@@ -71,12 +65,6 @@ public:
             }
         }
         return *this;
-    }
-
-    template<class EvtHandler, class... Args>
-    EventArray<EvtT>& addHandler(Args&&... args)
-    {
-        return addHandler(makeUnique<EvtHandler>(args...));
     }
 
     EventArray<EvtT>& addHandler(UniquePtr<EventHandlerBase>&& handler)

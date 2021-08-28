@@ -55,14 +55,43 @@ public:
 
     template<class Evt = EvtT>
     LockingEventArray<EvtT>& add(typename SimpleEventHandler<Evt>::Handler&& handler)
-        { m_array.add(std::move(handler)); return *this; }
+        { addHandler<SimpleEventHandler<Evt>>(std::move(handler)); return *this; }
+
+    template<class Evt = EvtT>
+    LockingEventArray<EvtT>& add(Function<EventResult()>&& handler)
+    {
+        addHandler<SimpleEventHandler<Evt>>([handler = std::move(handler)](auto&) {
+            return handler();
+        });
+        return *this; 
+    }
+
+    template<class Evt = EvtT>
+    LockingEventArray<EvtT>& add(Function<void()>&& handler)
+    {
+        addHandler<SimpleEventHandler<Evt>>([handler = std::move(handler)](auto&) {
+            handler();
+            return EventResult::Success;
+        });
+        return *this; 
+    }
+
+    template<class Evt = EvtT>
+    LockingEventArray<EvtT>& add(Function<void(Evt&)>&& handler)
+    {
+        addHandler<SimpleEventHandler<Evt>>([handler = std::move(handler)](auto& event) {
+            handler(event);
+            return EventResult::Success;
+        });
+        return *this; 
+    }
 
     LockingEventArray<EvtT>& remove(EventHandlerBase& handler)
         { m_array.remove(handler); return *this; }
 
     template<class EvtHandler, class... Args>
     LockingEventArray<EvtT>& addHandler(Args&&... args)
-        { m_array.template addHandler<EvtHandler>(std::forward<Args>(args)...); return *this; }
+        { addHandler(makeUnique<EvtHandler>(std::forward<Args>(args)...)); return *this; }
 
     LockingEventArray<EvtT>& addHandler(UniquePtr<EventHandlerBase>&& handler)
         { m_array.addHandler(std::move(handler)); return *this; }
