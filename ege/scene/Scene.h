@@ -109,6 +109,7 @@ public:
     template<class SO>
     SharedPtr<SO> addNewObject(SharedPtr<ObjectMap> data = nullptr)
     {
+        static_assert(std::is_base_of_v<SceneObject, SO>);
         SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
         ASSERT(sceneObject);
         addObject(sceneObject);
@@ -118,6 +119,7 @@ public:
     template<class SO>
     SharedPtr<SO> addNewStaticObject(SharedPtr<ObjectMap> data = nullptr)
     {
+        static_assert(std::is_base_of_v<SceneObject, SO>);
         SharedPtr<SO> sceneObject = SceneObject::cast<SO>(createObject(SO::type(), data));
         ASSERT(sceneObject);
         addStaticObject(sceneObject);
@@ -134,6 +136,7 @@ public:
     template<class SO>
     SharedPtr<SO> createObject(SharedPtr<ObjectMap> data)
     {
+        static_assert(std::is_base_of_v<SceneObject, SO>);
         return SceneObject::cast<SO>(createObject(SO::type(), data));
     }
 

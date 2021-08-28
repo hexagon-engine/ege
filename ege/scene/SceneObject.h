@@ -114,7 +114,11 @@ public:
     void setType(SharedPtr<SceneObjectType> type) { if(!m_type) m_type = type; }
 
     template<class SO>
-    static SharedPtr<SO> cast(SharedPtr<SceneObject> obj) { return std::dynamic_pointer_cast<SO>(obj); }
+    static SharedPtr<SO> cast(SharedPtr<SceneObject> obj)
+    {
+        static_assert(std::is_base_of_v<SceneObject, SO>);
+        return std::dynamic_pointer_cast<SO>(obj);
+    }
 
     // Called by init() function (e.g when the object is added
     // and it's sure that it's deserialized, if applicable).
