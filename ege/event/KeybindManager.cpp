@@ -59,64 +59,22 @@ bool Input::operator==(const Input& other) const
     }
 }
 
-bool KeybindManager::load(String)
+void KeybindHandler::addTriggerHandler(StringView name, TriggerKeybindHandler handler)
 {
-    NOT_IMPLEMENTED("KeybindManager loading");
+    m_triggerKBs.insert(std::make_pair(name, handler));
 }
 
-bool KeybindManager::save(String)
+void KeybindHandler::addSwitchHandler(StringView name, SwitchKeybindHandler handler)
 {
-    NOT_IMPLEMENTED("KeybindManager saving");
+    m_switchKBs.insert(std::make_pair(name, handler));
 }
 
-void KeybindManager::addTrigger(String name, Input defaultInput, TriggerKeybindHandler handler)
+void KeybindHandler::addStrengthHandler(StringView name, StrengthKeybindHandler handler)
 {
-    m_triggerKBs.insert(std::make_pair(name, TriggerKB{defaultInput, handler}));
+    m_strengthKBs.insert(std::make_pair(name, handler));
 }
 
-void KeybindManager::addSwitch(String name, Input defaultInput, SwitchKeybindHandler handler)
-{
-    m_switchKBs.insert(std::make_pair(name, SwitchKB{defaultInput, handler}));
-}
-
-void KeybindManager::addStrength(String name, Input defaultInput, StrengthKeybindHandler handler)
-{
-    m_strengthKBs.insert(std::make_pair(name, StrengthKB{defaultInput, handler}));
-}
-
-void KeybindManager::setTrigger(String name, Input input)
-{
-    auto it = m_triggerKBs.find(name);
-    if(it != m_triggerKBs.end())
-        it->second.input = input;
-    else
-        ege_log.warning() << "No keybind (trigger) in keybind manager: " << name;
-}
-
-void KeybindManager::setSwitch(String name, Input input)
-{
-    auto it = m_switchKBs.find(name);
-    if(it != m_switchKBs.end())
-        it->second.input = input;
-    else
-        ege_log.warning() << "No keybind (switch) in keybind manager: " << name;
-}
-
-void KeybindManager::setStrength(String name, Input input)
-{
-    auto it = m_strengthKBs.find(name);
-    if(it != m_strengthKBs.end())
-        it->second.input = input;
-    else
-        ege_log.warning() << "No keybind (strength) in keybind manager: " << name;
-}
-
-void KeybindManager::hook(UniquePtr<KeybindManager>&& manager, ComponentBase& loop)
-{
-    loop.events<SystemEvent>().addHandler(std::move(manager));
-}
-
-void KeybindManager::onKeyPress(sf::Event::KeyEvent& event)
+void KeybindHandler::onKeyPress(sf::Event::KeyEvent& event)
 {
     ege_log.debug() << "KeybindManager::onKeyPress " << (int)event.code;
     callAllTriggerKBs(Input(event.code));
@@ -124,14 +82,14 @@ void KeybindManager::onKeyPress(sf::Event::KeyEvent& event)
     callAllKeyPairs(false, event.code);
 }
 
-void KeybindManager::onKeyRelease(sf::Event::KeyEvent& event)
+void KeybindHandler::onKeyRelease(sf::Event::KeyEvent& event)
 {
     ege_log.debug() << "KeybindManager::onKeyRelease " << (int)event.code;
     callAllSwitchKBs(Input(event.code), false);
     callAllKeyPairs(true, event.code);
 }
 
-void KeybindManager::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
+void KeybindHandler::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
 {
     ege_log.debug() << "KeybindManager::onMouseWheelScroll " << (int)event.wheel << ";" << event.delta;
     if(event.delta > 0)
@@ -139,37 +97,39 @@ void KeybindManager::onMouseWheelScroll(sf::Event::MouseWheelScrollEvent& event)
         callAllTriggerKBs(Input(event.wheel));
         callAllSwitchKBs(Input(event.wheel), true);
     }
+    else
+        callAllSwitchKBs(Input(event.wheel), false);
 
     callAllStrengthKBs(Input(event.wheel), event.delta);
 }
 
-void KeybindManager::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
+void KeybindHandler::onMouseButtonPress(sf::Event::MouseButtonEvent& event)
 {
     ege_log.debug() << "KeybindManager::onMouseButtonPress " << (int)event.button;
     callAllTriggerKBs(Input(event.button));
     callAllSwitchKBs(Input(event.button), true);
 }
 
-void KeybindManager::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
+void KeybindHandler::onMouseButtonRelease(sf::Event::MouseButtonEvent& event)
 {
     ege_log.debug() << "KeybindManager::onMouseButtonRelease " << (int)event.button;
     callAllSwitchKBs(Input(event.button), false);
 }
 
-void KeybindManager::onJoystickButtonPress(sf::Event::JoystickButtonEvent& event)
+void KeybindHandler::onJoystickButtonPress(sf::Event::JoystickButtonEvent& event)
 {
     ege_log.debug() << "KeybindManager::onJoystickButtonPress " << event.joystickId << ";" << event.button;
     callAllTriggerKBs(Input(event.joystickId, event.button));
     callAllSwitchKBs(Input(event.joystickId, event.button), true);
 }
 
-void KeybindManager::onJoystickButtonRelease(sf::Event::JoystickButtonEvent& event)
+void KeybindHandler::onJoystickButtonRelease(sf::Event::JoystickButtonEvent& event)
 {
     ege_log.debug() << "KeybindManager::onJoystickButtonRelease " << event.joystickId << ";" << event.button;
     callAllSwitchKBs(Input(event.joystickId, event.button), false);
 }
 
-void KeybindManager::onJoystickMove(sf::Event::JoystickMoveEvent& event)
+void KeybindHandler::onJoystickMove(sf::Event::JoystickMoveEvent& event)
 {
     ege_log.debug() << "KeybindManager::JoystickMoveEvent " << event.joystickId << ";" << (int)event.axis << ";" << event.position;
     callAllStrengthKBs(Input(event.joystickId, event.axis), event.position / 100.0);
@@ -182,74 +142,92 @@ void KeybindManager::onJoystickMove(sf::Event::JoystickMoveEvent& event)
         callAllSwitchKBs(Input(event.joystickId, event.axis), false);
 }
 
-Vector<const KeybindManager::TriggerKB*> KeybindManager::findAllTriggerKBs(Input input) const
+void KeybindHandler::callAllTriggerKBs(Input const& input)
 {
-    Vector<const KeybindManager::TriggerKB*> tmp;
-    for(auto& it: m_triggerKBs)
-        if(it.second.input == input)
-            tmp.push_back(&it.second);
-    return tmp;
+    for(auto& kb: m_triggerKBs)
+    {
+        if(m_manager->ensureKeybind(kb.first) == input)
+            kb.second();
+    }
 }
 
-Vector<const KeybindManager::SwitchKB*> KeybindManager::findAllSwitchKBs(Input input) const
+void KeybindHandler::callAllSwitchKBs(Input const& input, Boolean value)
 {
-    Vector<const KeybindManager::SwitchKB*> tmp;
-    for(auto& it: m_switchKBs)
-        if(it.second.input == input)
-            tmp.push_back(&it.second);
-    return tmp;
+    for(auto& kb: m_switchKBs)
+    {
+        if(m_manager->ensureKeybind(kb.first) == input)
+            kb.second(value);
+    }
 }
 
-Vector<const KeybindManager::StrengthKB*> KeybindManager::findAllStrengthKBs(Input input) const
+void KeybindHandler::callAllStrengthKBs(Input const& input, Float value)
 {
-    Vector<const KeybindManager::StrengthKB*> tmp;
-    for(auto& it: m_strengthKBs)
-        if(it.second.input == input)
-            tmp.push_back(&it.second);
-    return tmp;
+    for(auto& kb: m_strengthKBs)
+    {
+        if(m_manager->ensureKeybind(kb.first) == input)
+            kb.second(value);
+    }
 }
 
-void KeybindManager::callAllTriggerKBs(Input input)
-{
-    auto vec = findAllTriggerKBs(input);
-    for(auto& kb: vec)
-        kb->handler();
-}
-
-void KeybindManager::callAllSwitchKBs(Input input, Boolean value)
-{
-    auto vec = findAllSwitchKBs(input);
-    for(auto& kb: vec)
-        kb->handler(value);
-}
-
-void KeybindManager::callAllStrengthKBs(Input input, Float value)
-{
-    auto vec = findAllStrengthKBs(input);
-    for(auto& kb: vec)
-        kb->handler(value);
-}
-
-void KeybindManager::callAllKeyPairs(bool release, sf::Keyboard::Key key)
+void KeybindHandler::callAllKeyPairs(bool release, sf::Keyboard::Key key)
 {
     for(auto& it: m_strengthKBs)
     {
-        if(it.second.input.type == Input::KeyPair)
+        auto input = m_manager->ensureKeybind(it.first);
+        if(input.type == Input::KeyPair)
         {
-            auto minus = it.second.input.value.keyPair.minus;
-            auto plus = it.second.input.value.keyPair.plus;
+            auto minus = input.value.keyPair.minus;
+            auto plus = input.value.keyPair.plus;
             bool isMinusPressed = sf::Keyboard::isKeyPressed(minus) || (key == minus && !release);
             bool isPlusPressed = sf::Keyboard::isKeyPressed(plus) || (key == plus && !release);
 
             // TODO: Make it configurable somehow
             if(isMinusPressed == isPlusPressed)
-                it.second.handler(0);
+                it.second(0);
             else if(isMinusPressed)
-                it.second.handler(-1);
+                it.second(-1);
             else if(isPlusPressed)
-                it.second.handler(1);
+                it.second(1);
         }
     }
+}
+
+bool KeybindManager::load(StringView)
+{
+    NOT_IMPLEMENTED("KeybindManager loading");
+}
+
+bool KeybindManager::save(StringView)
+{
+    NOT_IMPLEMENTED("KeybindManager saving");
+}
+
+void KeybindManager::setKeybind(StringView name, Input const& input)
+{
+    m_keybinds.insert(std::make_pair(name, input));
+}
+
+Input KeybindManager::ensureKeybind(StringView name) const
+{
+    auto it = m_keybinds.find(String(name));
+    ASSERT(it != m_keybinds.end());
+    return it->second;
+}
+
+Optional<Input> KeybindManager::getKeybind(StringView name) const
+{
+    auto it = m_keybinds.find(String(name));
+    if(it != m_keybinds.end())
+        return it->second;
+    return {};
+}
+
+KeybindHandler& KeybindManager::hook(SharedPtr<KeybindManager> const& manager, EventTarget& target)
+{
+    auto keybindHandler = wrapUnique(new KeybindHandler(manager));
+    auto keybindHandlerRaw = keybindHandler.get();
+    target.events<SystemEvent>().addHandler(std::move(keybindHandler));
+    return *keybindHandlerRaw;
 }
 
 }

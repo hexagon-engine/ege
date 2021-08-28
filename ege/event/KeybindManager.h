@@ -40,6 +40,8 @@
 #include "SystemEventHandler.h"
 
 #include <ege/core/EventHandler.h>
+#include <ege/core/EventTarget.h>
+#include <ege/util/Optional.h>
 #include <SFML/Window.hpp>
 
 namespace EGE
@@ -106,45 +108,35 @@ struct Input
 };
 
 class ComponentBase;
+class KeybindManager;
 
-class KeybindManager : public SystemEventHandler
+class KeybindHandler : public SystemEventHandler
 {
 public:
     // void handle(), event called on press.
     // For JoystickAxis/MouseWheel, called on any 'up' move (value > 0).
     // NOTE: this allows to bind scroll up to space :^)
-    typedef std::function<void()> TriggerKeybindHandler;
+    typedef Function<void()> TriggerKeybindHandler;
 
     // void handle(Boolean pressed), event called on press(pressed=true), and release(pressed=false)
     // For JoystickAxis/MouseWheel, pressed=0 for value < 0.5, pressed=1 otherwise.
-    typedef std::function<void(Boolean)> SwitchKeybindHandler;
+    typedef Function<void(Boolean)> SwitchKeybindHandler;
 
     // void handle(Float strength), event called on change, strength is useful for joystick keybinds.
     // strength is always in range -1 - 1
     // For non-JoystickAxis/MouseWheel: press -> strength=1; release -> strength=0
     // For key pairs: none pressed / both pressed -> strength=0, minus pressed -> strength=-1, plus pressed -> strength=1
-    typedef std::function<void(Float)> StrengthKeybindHandler; // for joystick
+    typedef Function<void(Float)> StrengthKeybindHandler; // for joystick
 
-    // TODO: add API for mouse moves
+    void addTriggerHandler(StringView name, TriggerKeybindHandler handler);
+    void addSwitchHandler(StringView name, SwitchKeybindHandler handler);
+    void addStrengthHandler(StringView name, StrengthKeybindHandler handler);
 
-    // Uses last file name if name not given. The default is 'keybinds.json'
-    // The fileName is relative to 'config' dir.
-    bool load(String fileName = "");
+private:
+    friend class KeybindManager;
 
-    // Last file name, or 'keybinds.json' is used by default.
-    bool save(String fileName = "");
-
-    void addTrigger(String name, Input defaultInput, TriggerKeybindHandler handler);
-    void addSwitch(String name, Input defaultInput, SwitchKeybindHandler handler);
-    void addStrength(String name, Input defaultInput, StrengthKeybindHandler handler);
-
-    void setTrigger(String name, Input);
-    void setSwitch(String name, Input);
-    void setStrength(String name, Input);
-
-    static void hook(UniquePtr<KeybindManager>&& manager, ComponentBase& loop);
-
-    // TODO: Allow iteration for 'controls' GUI
+    KeybindHandler(SharedPtr<KeybindManager> const& manager)
+    : m_manager(manager) { ASSERT(manager); }
 
     virtual void onKeyPress(sf::Event::KeyEvent&) override;
     virtual void onKeyRelease(sf::Event::KeyEvent&) override;
@@ -155,24 +147,42 @@ public:
     virtual void onJoystickButtonRelease(sf::Event::JoystickButtonEvent&) override;
     virtual void onJoystickMove(sf::Event::JoystickMoveEvent&) override;
 
-private:
-    struct TriggerKB { Input input; TriggerKeybindHandler handler; };
-    struct SwitchKB { Input input; SwitchKeybindHandler handler; };
-    struct StrengthKB { Input input; StrengthKeybindHandler handler; };
-
-    Vector<const TriggerKB*> findAllTriggerKBs(Input) const;
-    Vector<const SwitchKB*> findAllSwitchKBs(Input) const;
-    Vector<const StrengthKB*> findAllStrengthKBs(Input) const;
-
-    void callAllTriggerKBs(Input);
-    void callAllSwitchKBs(Input, Boolean value);
-    void callAllStrengthKBs(Input, Float value);
+    void callAllTriggerKBs(Input const&);
+    void callAllSwitchKBs(Input const&, Boolean value);
+    void callAllStrengthKBs(Input const&, Float value);
     void callAllKeyPairs(bool release, sf::Keyboard::Key key);
 
-    String m_lastFileName = "keybinds.json";
-    StringMap<TriggerKB> m_triggerKBs;
-    StringMap<SwitchKB> m_switchKBs;
-    StringMap<StrengthKB> m_strengthKBs;
+    StringMap<TriggerKeybindHandler> m_triggerKBs;
+    StringMap<SwitchKeybindHandler> m_switchKBs;
+    StringMap<StrengthKeybindHandler> m_strengthKBs;
+
+    SharedPtr<KeybindManager> m_manager;
+};
+
+class KeybindManager
+{
+public:
+    // TODO: add API for mouse moves
+
+    // Uses last file name if name not given. The default is 'keybinds.json'
+    // The fileName is relative to 'config' dir.
+    bool load(StringView fileName = ""sv);
+
+    // Last file name, or 'keybinds.json' is used by default.
+    bool save(StringView fileName = ""sv);
+
+    // It's ignored if already exists.
+    void setKeybind(StringView name, Input const&);
+
+    Input ensureKeybind(StringView name) const;
+    Optional<Input> getKeybind(StringView name) const;
+
+    static KeybindHandler& hook(SharedPtr<KeybindManager> const&, EventTarget&);
+
+    // TODO: Allow iteration for 'controls' GUI
+private:
+    String m_lastFileName { "keybinds.json" };
+    UnorderedStringMap<Input> m_keybinds;
 };
 
 }

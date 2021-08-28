@@ -32,13 +32,17 @@ TESTCASE(keybind)
 
     MyWndLoop loop;
 
-    auto keybinds = makeUnique<EGE::KeybindManager>();
-    keybinds->addTrigger("MyKeybind1", sf::Keyboard::A, []() { ege_log.info() << "MyKeybind1 pressed!"; });
-    keybinds->addTrigger("MyKeybind2", sf::Mouse::Left, []() { ege_log.info() << "MyKeybind2 pressed!"; });
-    keybinds->addTrigger("MyKeybind3", sf::Mouse::VerticalWheel, []() { ege_log.info() << "MyKeybind3 pressed!"; });
-    keybinds->addSwitch("MyKeybind3", sf::Mouse::VerticalWheel, [](bool pressed) { ege_log.info() << "MyKeybind3 pressed, pressed=" << pressed; });
-    keybinds->addStrength("MyKeybind3", sf::Mouse::VerticalWheel, [](float value) { ege_log.info() << "MyKeybind3 pressed, value=" << value; });
-    EGE::KeybindManager::hook(std::move(keybinds), loop);
+    auto keybinds = make<EGE::KeybindManager>();
+    keybinds->setKeybind("MyKeybind1", sf::Keyboard::A);
+    keybinds->setKeybind("MyKeybind2", sf::Mouse::Left);
+    keybinds->setKeybind("MyKeybind3", sf::Mouse::VerticalWheel);
+
+    auto& handler = EGE::KeybindManager::hook(keybinds, loop);
+    handler.addTriggerHandler("MyKeybind1", []() { ege_log.info() << "MyKeybind1 triggered!"; });
+    handler.addTriggerHandler("MyKeybind2", []() { ege_log.info() << "MyKeybind2 triggered!"; });
+    handler.addTriggerHandler("MyKeybind3", []() { ege_log.info() << "MyKeybind3 triggered!"; });
+    handler.addSwitchHandler("MyKeybind3", [](bool pressed) { ege_log.info() << "MyKeybind3 switched, pressed=" << pressed; });
+    handler.addStrengthHandler("MyKeybind3", [](float value) { ege_log.info() << "MyKeybind3 changed, value=" << value; });
 
     return loop.run();
 }

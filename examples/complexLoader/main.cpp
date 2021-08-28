@@ -32,12 +32,17 @@ int main()
     auto window = loop.openWindow(sf::VideoMode(500, 500), "Complex Test");
 
     // Setup keybinds
-    auto keybinds = makeUnique<EGE::KeybindManager>();
-    keybinds->addTrigger("place", sf::Mouse::Left, [&scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
-    keybinds->addSwitch("test", sf::Keyboard::Space, [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
-    keybinds->addStrength("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D}, [player](float p) { player->setMotion({1*p, player->getMotion().y}); });
-    keybinds->addStrength("moveVertical", {sf::Keyboard::W, sf::Keyboard::S}, [player](float p) { player->setMotion({player->getMotion().x, 1*p}); });
-    EGE::KeybindManager::hook(std::move(keybinds), *player);
+    auto keybinds = make<EGE::KeybindManager>();
+    keybinds->setKeybind("place", sf::Mouse::Left);
+    keybinds->setKeybind("test", sf::Keyboard::Space);
+    keybinds->setKeybind("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D});
+    keybinds->setKeybind("moveVertical", {sf::Keyboard::W, sf::Keyboard::S});
+
+    auto& keybindHandler = EGE::KeybindManager::hook(keybinds, *player);
+    keybindHandler.addTriggerHandler("place", [&scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
+    keybindHandler.addSwitchHandler("test", [](bool b) { ege_log.info() << std::boolalpha << b << std::noboolalpha; });
+    keybindHandler.addStrengthHandler("moveHorizontal", [player](float p) { player->setMotion({1*p, player->getMotion().y}); });
+    keybindHandler.addStrengthHandler("moveVertical", [player](float p) { player->setMotion({player->getMotion().x, 1*p}); });
 
     // Setup GUI and camera
     auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
