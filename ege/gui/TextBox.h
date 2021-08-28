@@ -36,6 +36,7 @@
 
 #pragma once
 
+#include "ege/debug/InspectorNode.h"
 #include <ege/core/Event.h>
 #include <ege/gfx/RenderStates.h>
 #include <ege/gui/Widget.h>
@@ -65,6 +66,8 @@ public:
     void setText(sf::String text)
     {
         m_text = text;
+        if(m_caretPos > m_text.getSize())
+            m_caretPos = m_text.getSize();
         setGeometryNeedUpdate();
     }
 
