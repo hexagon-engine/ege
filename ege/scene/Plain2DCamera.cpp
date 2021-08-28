@@ -49,11 +49,13 @@ sf::View Plain2DCamera::getView(sf::View parentView) const
     view.setCenter({(float)eye.x, (float)eye.y});
     Vec2d _size;
 
+    Vec2d parentSize = {parentView.getSize().x, parentView.getSize().y};
+
     switch(m_scalingMode)
     {
     case ScalingMode::None:
         {
-            _size = getOwner().getSize();
+            _size = parentSize;
 
             // The SFML camera is by default centered, so "uncenter" it.
             view.move({(float)_size.x / 2, (float)_size.y / 2});
@@ -61,12 +63,12 @@ sf::View Plain2DCamera::getView(sf::View parentView) const
         break;
     case ScalingMode::Centered:
         {
-            _size = getOwner().getSize();
+            _size = parentSize;
         }
         break;
     case ScalingMode::Fit:
         {
-            float aspect = getOwner().getSize().x / getOwner().getSize().y;
+            float aspect = parentView.getSize().x / parentView.getSize().y;
             float sizeAspect = getDisplaySize().x / getDisplaySize().y;
             if(aspect > sizeAspect)
                 _size = Vec2d(getDisplaySize().y * aspect, getDisplaySize().y);
@@ -76,13 +78,13 @@ sf::View Plain2DCamera::getView(sf::View parentView) const
         break;
     case ScalingMode::XLocked:
         {
-            float aspect = getOwner().getSize().x / getOwner().getSize().y;
+            float aspect = parentView.getSize().x / parentView.getSize().y;
             _size = Vec2d(getFOV(), getFOV() / aspect);
         }
         break;
     case ScalingMode::YLocked:
         {
-            float aspect = getOwner().getSize().x / getOwner().getSize().y;
+            float aspect = parentView.getSize().x / parentView.getSize().y;
             _size = Vec2d(getFOV() * aspect, getFOV());
         }
         break;
