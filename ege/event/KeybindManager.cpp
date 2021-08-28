@@ -359,10 +359,18 @@ bool KeybindManager::save(StringView fileName)
 
     return true;
 }
+   
+void KeybindManager::addKeybind(StringView name, Input const& input)
+{
+    m_keybinds.insert(std::make_pair(name, input));
+}
 
 void KeybindManager::setKeybind(StringView name, Input const& input)
 {
-    m_keybinds.insert(std::make_pair(name, input));
+    auto it = m_keybinds.find(String(name));
+    if(it != m_keybinds.end())
+        it->second = input;
+    addKeybind(name, input);
 }
 
 Input KeybindManager::ensureKeybind(StringView name) const

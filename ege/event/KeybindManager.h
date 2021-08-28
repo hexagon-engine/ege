@@ -179,6 +179,9 @@ public:
     bool save(StringView fileName = ""sv);
 
     // It's ignored if already exists.
+    void addKeybind(StringView name, Input const&);
+
+    // It overrides old value if exists.
     void setKeybind(StringView name, Input const&);
 
     Input ensureKeybind(StringView name) const;
