@@ -64,9 +64,9 @@ inline UniquePtr<T> makeUnique(Args&&... args)
 }
 
 template<typename T>
-inline SharedPtr<T> wrapUnique(T* ptr)
+inline UniquePtr<T> wrapUnique(T* ptr)
 {
-    return SharedPtr<T>(std::shared_ptr<T>(ptr));
+    return UniquePtr<T>(ptr);
 }
 
 }
