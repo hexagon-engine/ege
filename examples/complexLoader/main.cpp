@@ -33,14 +33,15 @@ int main()
 
     // Setup keybinds
     auto keybinds = make<EGE::KeybindManager>();
-    if(!keybinds->load())
-    {
-        // Use defaults
-        keybinds->setKeybind("place", sf::Mouse::Left);
-        keybinds->setKeybind("test", sf::Keyboard::Space);
-        keybinds->setKeybind("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D});
-        keybinds->setKeybind("moveVertical", {sf::Keyboard::W, sf::Keyboard::S});
-    }
+
+    // Add some defaults
+    keybinds->addKeybind("place", sf::Mouse::Left);
+    keybinds->addKeybind("test", sf::Keyboard::Space);
+    keybinds->addKeybind("moveHorizontal", {sf::Keyboard::A, sf::Keyboard::D});
+    keybinds->addKeybind("moveVertical", {sf::Keyboard::W, sf::Keyboard::S});
+
+    // Load keybinds from file (if it exists)
+    keybinds->load();
 
     auto& keybindHandler = EGE::KeybindManager::hook(keybinds, *player);
     keybindHandler.addTriggerHandler("place", [&scene, player]{ scene->addNewObject("CLBlock")->setPosition(player->getPosition()); });
