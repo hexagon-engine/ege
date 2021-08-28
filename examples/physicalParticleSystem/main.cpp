@@ -169,7 +169,7 @@ int main()
         // HACK: layout align should work
         infoLabel->setPosition({"0px", "0px"});
         infoLabel->setSize({"100%", "20px"});
-        infoLabel->setTextAlign(EGE::Label::Align::Right);
+        infoLabel->setTextAlign(EGE::Renderer::TextAlign::Right);
         infoLabel->setColor(EGE::Colors::white);
 
         auto controlsWidget = guiScreen->addNewWidget<EGE::GroupBox>();

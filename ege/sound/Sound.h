@@ -47,6 +47,8 @@ class Sound;
 class SoundInstance
 {
 public:
+    virtual ~SoundInstance() = default;
+
     SoundInstance(Sound& sound)
     : m_sound(sound) {}
 
@@ -67,6 +69,8 @@ private:
 class Sound
 {
 public:
+    virtual ~Sound() = default;
+
     virtual SharedPtr<SoundInstance> play() = 0;
 
     constexpr bool isError() const { return m_error; }

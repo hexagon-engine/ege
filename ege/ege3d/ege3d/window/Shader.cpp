@@ -38,7 +38,7 @@ namespace EGE3d
 
 EGE::SharedPtr<ShaderObject> ShaderObject::create(EGE::String const& source, Type type)
 {
-    return EGE::SharedPtr<ShaderObject>(new ShaderObject(source, type));
+    return wrap(new ShaderObject(source, type));
 }
 
 ShaderObject::ShaderObject(EGE::String const& source, Type type)
@@ -92,7 +92,7 @@ ShaderObject::~ShaderObject()
 
 EGE::SharedPtr<Shader> Shader::create(EGE::SharedPtrVector<ShaderObject> const& shaderObjects)
 {
-    return EGE::SharedPtr<Shader>(new Shader(shaderObjects));
+    return wrap(new Shader(shaderObjects));
 }
 
 Shader::Shader(EGE::SharedPtrVector<ShaderObject> const& shaderObjects)
