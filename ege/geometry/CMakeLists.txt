@@ -14,5 +14,5 @@ set(SOURCES
 )
 
 ege_add_module(geometry)
-ege_depend_module(geometry main)
+ege_depend_module(geometry util main)
 
