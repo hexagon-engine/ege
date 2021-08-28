@@ -85,6 +85,8 @@ typedef std::basic_string<Uint32> UString; // Unicode String
 using StringView = std::string_view;
 using UStringView = std::basic_string_view<Uint32>; // Unicode StringView
 
+using namespace std::literals;
+
 /////////////////
 // Other types //
 /////////////////
