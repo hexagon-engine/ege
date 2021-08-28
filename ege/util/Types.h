@@ -37,6 +37,7 @@
 #pragma once
 
 #include <cstddef>
+#include <functional>
 #include <iostream>
 #include <list>
 #include <map>
@@ -188,5 +189,8 @@ using UnorderedSharedPtrStringMap = UnorderedMap<K, SharedPtr<V>>;
 
 template<class V>
 using IdMap = Map<IdType, V>;
+
+template<class... Args>
+using Function = std::function<Args...>;
 
 }
