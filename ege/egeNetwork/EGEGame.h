@@ -49,6 +49,7 @@ namespace EGE
 class EGEGame
 {
 public:
+    virtual ~EGEGame() = default;
     virtual void setScene(SharedPtr<Scene> scene);
 
     SharedPtr<Scene> getScene() { return m_scene; }

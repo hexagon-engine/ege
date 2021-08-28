@@ -47,6 +47,7 @@ public:
     TcpPacket() = default;
     TcpPacket(const TcpPacket&) = delete;
     TcpPacket(TcpPacket&&) = default;
+    virtual ~TcpPacket() = default;
 
     virtual bool send(sf::TcpSocket& socket) const = 0;
     virtual bool receive(sf::TcpSocket& socket) = 0;

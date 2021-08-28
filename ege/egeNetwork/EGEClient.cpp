@@ -271,7 +271,7 @@ void EGEClient::onReceive(EGEPacket const& packet)
     }
 }
 
-void EGEClient::control(SceneObject const& object, std::string action, std::shared_ptr<ObjectMap> data)
+void EGEClient::control(SceneObject const& object, std::string action, SharedPtr<ObjectMap> data)
 {
     send(EGEPacket::generateCSceneObjectControl(object, ControlPacket(action, data)));
 }

@@ -57,7 +57,7 @@ class TcpServer : public MainLoop
 public:
     using Packet = P;
     using ClientConnection = C;
-    using ClientList = std::list<std::shared_ptr<ClientConnection>>;
+    using ClientList = std::list<SharedPtr<ClientConnection>>;
 
     bool listen(Uint16 port, sf::IpAddress address = sf::IpAddress::Any)
     {
