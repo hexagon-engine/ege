@@ -43,6 +43,8 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <ege/util/TrackedSharedPtr.h>
@@ -150,21 +152,39 @@ using List = std::list<T>;
 template<class T>
 using Set = std::set<T>;
 
+template<class T>
+using UnorderedSet = std::unordered_set<T>;
+
 typedef Set<String> StringSet;
 typedef Set<IdType> IdSet;
+
+typedef UnorderedSet<String> UnorderedStringSet;
+typedef UnorderedSet<IdType> UnorderedIdSet;
 
 template<class K, class V>
 using Map = std::map<K,V>;
 
+template<class K, class V>
+using UnorderedMap = std::unordered_map<K,V>;
+
 template<class V>
 using StringMap = Map<String, V>;
+
+template<class V>
+using UnorderedStringMap = UnorderedMap<String, V>;
 
 template<class K, class V>
 using SharedPtrMap = Map<K, SharedPtr<V>>;
 
+template<class K, class V>
+using UnorderedSharedPtrMap = UnorderedMap<K, SharedPtr<V>>;
+
 // Used for Object system
 template<class V>
 using SharedPtrStringMap = Map<String, SharedPtr<V>>;
+
+template<class K, class V>
+using UnorderedSharedPtrStringMap = UnorderedMap<K, SharedPtr<V>>;
 
 template<class V>
 using IdMap = Map<IdType, V>;
