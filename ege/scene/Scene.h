@@ -148,6 +148,13 @@ public:
 
     SceneObject* getObjectByName(String name);
 
+    template<class SO>
+    SO* getObjectByName(String const& name)
+    {
+        static_assert(std::is_base_of_v<SceneObject, SO>);
+        return dynamic_cast<SO*>(getObjectByName(name));
+    }
+
     ObjectMapType::const_iterator begin() const { return m_objects.begin(); }
     ObjectMapType::const_iterator end() const { return m_objects.end(); }
 
