@@ -73,7 +73,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
         auto sodata = Object::cast<ObjectMap>(pr.second);
         if(!sodata.hasValue())
         {
-            ege_log.error() << "Data entry must be a map";
+            ege_log.error() << "Data entry '" << pr.first << "' must be a map";
             return false; // entry not a map
         }
 
@@ -118,7 +118,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             auto data = sodata.value()->getObject("data").to<ObjectMap>();
             if(!data.hasValue())
             {
-                ege_log.error() << "A registry entry must have 'data' or 'include' key";
+                ege_log.error() << "A registry entry '" << pr.first << "' must have 'data' or 'include' key";
                 return false;
             }
             sd_data = data.value();
