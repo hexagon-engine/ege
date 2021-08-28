@@ -51,6 +51,10 @@ int main()
 
     keybinds->save();
 
+    keybinds->forEachKeybind([](auto& name, auto& input) {
+        ege_log.info() << "Keybind " << name << ": " << input.serialize()->toString();
+    });
+
     // Setup GUI and camera
     auto guiScreen = window->setNewGUIScreen<EGE::GUIScreen>();
     auto sceneWidget = guiScreen->addNewWidget<EGE::SceneWidget>(scene);

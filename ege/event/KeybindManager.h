@@ -189,7 +189,14 @@ public:
 
     static KeybindHandler& hook(SharedPtr<KeybindManager> const&, EventTarget&);
 
-    // TODO: Allow iteration for 'controls' GUI
+    // Callback must be of type void(String const&, Input const&).
+    template<class Callback>
+    void forEachKeybind(Callback&& callback)
+    {
+        for(auto& it: m_keybinds)
+            callback(it.first, it.second);
+    }
+
 private:
     String m_lastFileName { "keybinds.json" };
     UnorderedStringMap<Input> m_keybinds;
