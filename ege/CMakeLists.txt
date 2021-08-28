@@ -1,7 +1,6 @@
 add_subdirectory(debug)
 add_subdirectory(egeNetwork)
 add_subdirectory(event)
-add_subdirectory(game)
 add_subdirectory(geometry)
 add_subdirectory(gfx)
 add_subdirectory(gpo)
