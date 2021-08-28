@@ -66,6 +66,7 @@ public:
     template<class T, class... Args>
     SharedPtr<T> setNewGUIScreen(Args&&... args)
     {
+        static_assert(std::is_base_of_v<GUIScreen, T>);
         auto gui = make<T>(*this, args...);
         setGUIScreen(gui);
         return gui;
