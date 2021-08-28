@@ -50,6 +50,12 @@ inline SharedPtr<T> make(Args&&... args)
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template<typename T>
+inline SharedPtr<T> wrap(T* ptr)
+{
+    return SharedPtr<T>(std::shared_ptr<T>(ptr));
+}
+
 template<typename T, typename... Args>
 inline UniquePtr<T> makeUnique(Args&&... args)
 {
@@ -57,7 +63,15 @@ inline UniquePtr<T> makeUnique(Args&&... args)
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
+template<typename T>
+inline SharedPtr<T> wrapUnique(T* ptr)
+{
+    return SharedPtr<T>(std::shared_ptr<T>(ptr));
+}
+
 }
 
 using EGE::make;
 using EGE::makeUnique;
+using EGE::wrap;
+using EGE::wrapUnique;
