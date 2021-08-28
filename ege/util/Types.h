@@ -81,6 +81,10 @@ typedef std::string String;
 typedef std::wstring WString;
 typedef std::basic_string<Uint32> UString; // Unicode String
 
+// String Views
+using StringView = std::string_view;
+using UStringView = std::basic_string_view<Uint32>; // Unicode StringView
+
 /////////////////
 // Other types //
 /////////////////
