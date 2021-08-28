@@ -118,7 +118,7 @@ bool SceneLoader::loadRegistry(SceneObjectRegistry& registry, String fileName, c
             auto data = sodata.value()->getObject("data").to<ObjectMap>();
             if(!data.hasValue())
             {
-                ege_log.error() << "A registry entry must have 'data' or 'loadFrom' key";
+                ege_log.error() << "A registry entry must have 'data' or 'include' key";
                 return false;
             }
             sd_data = data.value();
