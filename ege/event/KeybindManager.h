@@ -42,12 +42,13 @@
 #include <ege/core/EventHandler.h>
 #include <ege/core/EventTarget.h>
 #include <ege/util/Optional.h>
+#include <ege/util/Serializable.h>
 #include <SFML/Window.hpp>
 
 namespace EGE
 {
 
-struct Input
+struct Input : public Serializable
 {
     enum Type
     {
@@ -56,7 +57,8 @@ struct Input
         JoystickAxis,
         MouseButton,
         MouseWheel,
-        KeyPair
+        KeyPair,
+        Invalid
         // TODO: mouse move
     } type;
 
@@ -84,27 +86,32 @@ struct Input
         sf::Mouse::Wheel mouseWheel; // For type=MouseWheel
     } value;
 
+    Input()
+    : type(Invalid), value({}) {}
 
     Input(sf::Keyboard::Key key)
-        : type(Keyboard), value(Value{.key = key}) {}
+    : type(Keyboard), value(Value{.key = key}) {}
 
     Input(int id, sf::Joystick::Axis axis)
-        : type(JoystickAxis), value(Value{.joystick = Value::JoystickData{.id = id, .axis = axis}}) {}
+    : type(JoystickAxis), value(Value{.joystick = Value::JoystickData{.id = id, .axis = axis}}) {}
 
     Input(int id, int button)
-        : type(JoystickButton), value(Value{.joystick = Value::JoystickData{.id = id, .button = button}}) {}
+    : type(JoystickButton), value(Value{.joystick = Value::JoystickData{.id = id, .button = button}}) {}
 
     Input(sf::Mouse::Button button)
-        : type(MouseButton), value(Value{.mouseButton = button}) {}
+    : type(MouseButton), value(Value{.mouseButton = button}) {}
 
     Input(sf::Mouse::Wheel wheel)
-        : type(MouseWheel), value(Value{.mouseWheel = wheel}) {}
+    : type(MouseWheel), value(Value{.mouseWheel = wheel}) {}
 
     Input(sf::Keyboard::Key minusKey, sf::Keyboard::Key plusKey)
-        : type(KeyPair), value(Value{.keyPair = Value::KeyPair{.minus = minusKey, .plus = plusKey}}) {}
+    : type(KeyPair), value(Value{.keyPair = Value::KeyPair{.minus = minusKey, .plus = plusKey}}) {}
 
     bool operator==(const Input& other) const;
     bool operator!=(const Input& other) const { return !(*this == other); }
+
+    virtual SharedPtr<ObjectMap> serialize() const override;
+    virtual bool deserialize(SharedPtr<ObjectMap>) override;
 };
 
 class ComponentBase;

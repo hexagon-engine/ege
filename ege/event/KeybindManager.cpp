@@ -38,6 +38,12 @@
 
 #include <ege/core/Component.h>
 #include <ege/debug/Logger.h>
+#include <ege/util/CommonPaths.h>
+#include <ege/util/JSONConverter.h>
+#include <ege/util/system/FileSystem.h>
+
+#include <SFML/Window.hpp>
+#include <fstream>
 
 namespace EGE
 {
@@ -57,6 +63,111 @@ bool Input::operator==(const Input& other) const
         case KeyPair: return value.keyPair.minus == other.value.keyPair.minus || value.keyPair.plus == other.value.keyPair.plus;
         default: CRASH_WITH_MESSAGE("Unknown input type!");
     }
+}
+
+SharedPtr<ObjectMap> Input::serialize() const
+{
+    auto object = make<ObjectMap>();
+
+    auto typeToString = [](Type type) {
+        switch(type)
+        {
+            case Keyboard:
+                return "Keyboard"sv;
+            case JoystickButton:
+                return "JoystickButton"sv;
+            case JoystickAxis:
+                return "JoystickAxis"sv;
+            case MouseButton:
+                return "MouseButton"sv;
+            case MouseWheel:
+                return "MouseWheel"sv;
+            case KeyPair:
+                return "KeyPair"sv;
+            default:
+                CRASH();
+        }
+    };
+
+    object->addString("type", String(typeToString(type)));
+    switch(type)
+    {
+        case Keyboard:
+            object->addInt("key", value.key);
+            break;
+        case JoystickButton:
+            object->addInt("id", value.joystick.id);
+            object->addInt("button", value.joystick.button);
+            break;
+        case JoystickAxis:
+            object->addInt("id", value.joystick.id);
+            object->addUnsignedInt("axis", value.joystick.axis);
+            break;
+        case MouseButton:
+            object->addUnsignedInt("button", value.mouseButton);
+            break;
+        case MouseWheel:
+            object->addUnsignedInt("wheel", value.mouseWheel);
+            break;
+        case KeyPair:
+            object->addInt("minus", value.keyPair.minus);
+            object->addInt("plus", value.keyPair.plus);
+            break;
+        default:
+            CRASH();
+    }
+    return object;
+}
+
+bool Input::deserialize(SharedPtr<ObjectMap> object)
+{
+    auto typeFromString = [](String const& type) {
+        if(type == "Keyboard"sv)
+            return Keyboard;
+        if(type == "JoystickButton"sv)
+            return JoystickButton;
+        if(type == "JoystickAxis"sv)
+            return JoystickAxis;
+        if(type == "MouseButton"sv)
+            return MouseButton;
+        if(type == "MouseWheel"sv)
+            return MouseWheel;
+        if(type == "KeyPair"sv)
+            return KeyPair;
+        return Invalid;
+    };
+
+    type = typeFromString(object->get("type").asString().valueOr(""));
+    if(type == Invalid)
+        return false;
+
+    switch(type)
+    {
+        case Keyboard:
+            value.key = static_cast<sf::Keyboard::Key>(object->get("key").asInt().valueOr(-1));
+            break;
+        case JoystickButton:
+            value.joystick.id = object->get("id").asInt().valueOr(0);
+            value.joystick.button = object->get("button").asInt().valueOr(0);
+            break;
+        case JoystickAxis:
+            value.joystick.id = object->get("id").asInt().valueOr(0);
+            value.joystick.axis = static_cast<sf::Joystick::Axis>(object->get("axis").asUnsignedInt().valueOr(0));
+            break;
+        case MouseButton:
+            value.mouseButton = static_cast<sf::Mouse::Button>(object->get("button").asUnsignedInt().valueOr(0));
+            break;
+        case MouseWheel:
+            value.mouseWheel = static_cast<sf::Mouse::Wheel>(object->get("wheel").asUnsignedInt().valueOr(0));
+            break;
+        case KeyPair:
+            value.keyPair.minus = static_cast<sf::Keyboard::Key>(object->get("minus").asInt().valueOr(-1));
+            value.keyPair.plus = static_cast<sf::Keyboard::Key>(object->get("plus").asInt().valueOr(-1));
+            break;
+        default:
+            return false;
+    }
+    return true;
 }
 
 void KeybindHandler::addTriggerHandler(StringView name, TriggerKeybindHandler handler)
@@ -192,14 +303,61 @@ void KeybindHandler::callAllKeyPairs(bool release, sf::Keyboard::Key key)
     }
 }
 
-bool KeybindManager::load(StringView)
+bool KeybindManager::load(StringView fileName)
 {
-    NOT_IMPLEMENTED("KeybindManager loading");
+    if(!fileName.empty() && fileName != m_lastFileName)
+        m_lastFileName = fileName;
+
+    ege_log.info() << "Loading keybinds from " << m_lastFileName;
+    std::ifstream file(CommonPaths::configDir() + "/" + String{m_lastFileName});
+    if(!file.good())
+        return false;
+
+    SharedPtr<Object> object;
+    if(!(file >> objectIn(object, JSONConverter())))
+        return false;
+
+    auto objectMap = ObjectValue(object).asMap();
+    if(!objectMap.hasValue())
+        return false;
+
+    for(auto it: objectMap.value())
+    {
+        auto name = it.first;
+        auto inputMap = it.second.asMap();
+        if(!inputMap.hasValue())
+            return false;
+
+        Input input;
+        if(!input.deserialize(inputMap.value().map()))
+            return false;
+
+        setKeybind(name, input);
+    }
+
+    return true;
 }
 
-bool KeybindManager::save(StringView)
+bool KeybindManager::save(StringView fileName)
 {
-    NOT_IMPLEMENTED("KeybindManager saving");
+    if(!fileName.empty() && fileName != m_lastFileName)
+        m_lastFileName = fileName;
+
+    ege_log.info() << "Saving keybinds to " << m_lastFileName;
+    System::createPath(CommonPaths::configDir());
+    std::ofstream file(CommonPaths::configDir() + "/" + String{m_lastFileName});
+    if(!file.good())
+        return false;
+    
+    SharedPtr<ObjectMap> object = make<ObjectMap>();
+
+    for(auto& keybind: m_keybinds)
+        object->add(keybind.first, keybind.second);
+
+    if(!(file << objectOut(*object, JSONConverter())))
+        return false;
+
+    return true;
 }
 
 void KeybindManager::setKeybind(StringView name, Input const& input)
